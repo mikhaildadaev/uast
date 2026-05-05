@@ -13,7 +13,7 @@ export default defineConfig({
       label: 'English',
       lang: 'en',
       link: '/en/',
-      title: 'uast',
+      title: 'UAST',
       themeConfig: {
         search: {
           provider: 'local',
@@ -121,7 +121,7 @@ export default defineConfig({
       label: 'Русский',
       lang: 'ru',
       link: '/ru/',
-      title: 'uast',
+      title: 'UAST',
       themeConfig: {
         search: {
           provider: 'local',
@@ -229,7 +229,7 @@ export default defineConfig({
       label: '简体中文',
       lang: 'zh',
       link: '/zh/',
-      title: 'uast',
+      title: 'UAST',
       themeConfig: {
         search: {
           provider: 'local',

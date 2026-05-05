@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  text: "A high‑performance, zero‑allocation, type‑safe SQL builder."
+  text: "A high‑performance, zero‑allocation, type‑safe query builder."
   tagline: SQL 2.0
   actions:
     - theme: brand

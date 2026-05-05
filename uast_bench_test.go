@@ -1,0 +1,225 @@
+package uast
+
+import (
+	"testing"
+)
+
+// Бенчмарки компонентов
+func Benchmark_Select_Multi(b *testing.B) {
+	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
+		builder, _ := NewBuilder(supportDialect)
+		defer builder.Close()
+		b.Run("Simple", func(b *testing.B) {
+			b.ResetTimer()
+			b.RunParallel(func(pb *testing.PB) {
+				i := 0
+				for pb.Next() {
+					queryMain := builder.Select(Users.ID).From(Users.Table).Where(Equal(Users.Age, Value(i%1000)))
+					_, _, err := builder.Build(queryMain)
+					if err != nil {
+						b.Errorf("Build failed: %v", err)
+					}
+					i++
+				}
+			})
+		})
+		b.Run("Complex", func(b *testing.B) {
+			b.ResetTimer()
+			b.RunParallel(func(pb *testing.PB) {
+				i := 0
+				for pb.Next() {
+					querySub := builder.Select(Count(Orders.ID, false)).
+						From(Orders.Table).
+						Where(
+							Equal(Orders.UserID, Users.ID),
+						)
+					queryInSub := builder.Select(Orders.UserID.As("uid")).
+						From(Orders.Table).
+						Where(
+							Greater(Orders.Amount, Value(10)),
+						)
+					queryExistsSub := builder.Select(Levels.ID).
+						From(Levels.Table).
+						Where(
+							And(
+								Equal(Levels.UserID, Users.ID),
+								Equal(Levels.Status, Value("active")),
+							),
+						)
+					queryMain := builder.Select(
+						Users.ID.As("user_id"),
+						Users.Name.As("user_name"),
+						Users.Email.As("user_email"),
+						Users.Age.As("user_age"),
+						Users.Status.As("user_status"),
+						Subquery[int](querySub).As("order_count"),
+						Subquery[int](builder.Select(Sum(Orders.Amount, false)).
+							From(Orders.Table).
+							Where(
+								Equal(Orders.UserID, Users.ID),
+							),
+						).As("total_spent"),
+					).
+						From(Users.Table).
+						Join(
+							Inner(Levels.Table, Equal(Users.ID, Levels.UserID)),
+							Left(Categories.Table, Equal(Categories.Type, Users.Status)),
+						).
+						Where(And(
+							Equal(Users.Status, Value("active")),
+							Greater(Users.Age, Value(18)),
+							In(Users.ID, Subquery[int64](queryInSub)),
+							Exists(Subquery[int](queryExistsSub)),
+							NotExists(Subquery[int](builder.Select(ConstIntOne()).
+								From(Users.Table).
+								Where(
+									And(
+										Equal(Users.ID, Users.ID), IsNull(Users.Email),
+									),
+								),
+							)),
+						)).
+						GroupBy(
+							Users.ID,
+							Users.Name,
+							Users.Email,
+							Users.Age,
+							Users.Status,
+						).
+						Having(
+							And(
+								Greater(Subquery[int64](builder.Select(Count(Orders.ID, false)).
+									From(Orders.Table).
+									Where(Equal(Orders.UserID, Users.ID)),
+								), Value(int64(0))),
+								Greater(Subquery[int64](builder.Select(Sum(Orders.Amount, false)).
+									From(Orders.Table).
+									Where(Equal(Orders.UserID, Users.ID)),
+								), Value(int64(100))),
+							),
+						).
+						OrderBy(
+							Desc(Subquery[int](builder.Select(Sum(Orders.Amount, false)).
+								From(Orders.Table).
+								Where(Equal(Orders.UserID, Users.ID)),
+							)),
+							Asc(Users.Name),
+							Asc(Users.Age),
+						).
+						Limit(48)
+					_, _, err := builder.Build(queryMain)
+					if err != nil {
+						b.Errorf("Build failed: %v", err)
+					}
+					i++
+				}
+			})
+		})
+	})
+}
+func Benchmark_Select_Single(b *testing.B) {
+	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
+		builder, _ := NewBuilder(supportDialect)
+		defer builder.Close()
+		b.Run("Simple", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				queryMain := builder.Select(Users.ID).From(Users.Table).Where(Equal(Users.Age, Value(i%1000)))
+				builder.Build(queryMain)
+			}
+		})
+		b.Run("Complex", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				querySub := builder.Select(Count(Orders.ID, false)).
+					From(Orders.Table).
+					Where(
+						Equal(Orders.UserID, Users.ID),
+					)
+				queryInSub := builder.Select(Orders.UserID.As("uid")).
+					From(Orders.Table).
+					Where(
+						Greater(Orders.Amount, Value(10)),
+					)
+				queryExistsSub := builder.Select(Levels.ID).
+					From(Levels.Table).
+					Where(
+						And(
+							Equal(Levels.UserID, Users.ID),
+							Equal(Levels.Status, Value("active")),
+						),
+					)
+				queryMain := builder.Select(
+					Users.ID.As("user_id"),
+					Users.Name.As("user_name"),
+					Users.Email.As("user_email"),
+					Users.Age.As("user_age"),
+					Users.Status.As("user_status"),
+					Subquery[int](querySub).As("order_count"),
+					Subquery[int](builder.Select(Sum(Orders.Amount, false)).
+						From(Orders.Table).
+						Where(
+							Equal(Orders.UserID, Users.ID),
+						),
+					).As("total_spent"),
+				).
+					From(Users.Table).
+					Join(
+						Inner(Levels.Table, Equal(Users.ID, Levels.UserID)),
+						Left(Categories.Table, Equal(Categories.Type, Users.Status)),
+					).
+					Where(And(
+						Equal(Users.Status, Value("active")),
+						Greater(Users.Age, Value(18)),
+						In(Users.ID, Subquery[int64](queryInSub)),
+						Exists(Subquery[int](queryExistsSub)),
+						NotExists(Subquery[int](builder.Select(ConstIntOne()).
+							From(Users.Table).
+							Where(
+								And(
+									Equal(Users.ID, Users.ID), IsNull(Users.Email),
+								),
+							),
+						)),
+					)).
+					GroupBy(
+						Users.ID,
+						Users.Name,
+						Users.Email,
+						Users.Age,
+						Users.Status,
+					).
+					Having(
+						And(
+							Greater(Subquery[int64](builder.Select(Count(Orders.ID, false)).
+								From(Orders.Table).
+								Where(Equal(Orders.UserID, Users.ID)),
+							), Value(int64(0))),
+							Greater(Subquery[int64](builder.Select(Sum(Orders.Amount, false)).
+								From(Orders.Table).
+								Where(Equal(Orders.UserID, Users.ID)),
+							), Value(int64(100))),
+						),
+					).
+					OrderBy(
+						Desc(Subquery[int](builder.Select(Sum(Orders.Amount, false)).
+							From(Orders.Table).
+							Where(Equal(Orders.UserID, Users.ID)),
+						)),
+						Asc(Users.Name),
+						Asc(Users.Age),
+					).
+					Limit(48)
+				builder.Build(queryMain)
+			}
+		})
+	})
+}
+
+// Приватные функции
+func benchmarkAllDialects(b *testing.B, testFunc func(b *testing.B, supportDialect *SupportDialect)) {
+	for _, supportDialect := range listSupportDialects {
+		currentDialect := supportDialect
+		b.Run(currentDialect.name, func(b *testing.B) {
+			testFunc(b, currentDialect)
+		})
+	}
+}

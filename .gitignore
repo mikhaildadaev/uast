@@ -1,0 +1,94 @@
+# OS Linux 
+.directory
+core.dump
+*.pid
+*.socket
+*.part
+*.swap
+
+# OS Mac
+.fseventsd/
+.Spotlight-V100/
+.Trashes/
+.DS_Store
+.AppleDouble
+.LSOverride
+.AppleDB
+._*
+
+# OS Windows
+$RECYCLE.BIN/
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Docker
+.docker/
+*.dockerignore
+Dockerfile.dev
+
+# Binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Archives and compressed files
+*.zip
+*.tar.gz
+*.tar
+*.gz
+*.bz2
+*.7z
+
+# Logs and environment files
+*.log
+.env
+.env.local
+.env.*.local
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.bak
+*.cache
+*.temp
+*.tmp
+*.orig
+*.rej
+
+# Safety and security
+.safety/
+.secure/
+*.crt
+*.key
+*.keyring
+*.password
+*.p8
+*.p12
+*.pem
+*.pwd
+*.secret
+*.secrets
+*.token
+
+# Go specific
+*.test
+coverage.out
+coverage.html
+go.work
+go.work.sum
+/bin/
+/dist/
+
+# Node specific
+node_modules/
+
+# VitePress specific
+docs/.vitepress/dist/
+docs/.vitepress/cache/

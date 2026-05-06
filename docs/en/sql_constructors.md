@@ -2,48 +2,46 @@
 outline: deep
 ---
 
-# API / Core / Constructors
+# API / SQL / Constructors
 
 ::: info **Info**
 This page describes how to create a telemetry instance, configure all the settings, and understand each data type and field constructor.
 :::
 
-## NewDelete
-Сreates a new DELETE statement instance
+## NewSQL
+SQL instance configured for the specified dialect
 ```go
+mySQL, err := uast.NewSQL(uast.DialectMySQL)
+if err != nil {
+    return fmt.Errorf("mysql builder: %w", err)
+}
+defer builderMySQL.Close()
+postgreSQL, err := uast.NewSQL(uast.DialectPostgreSQL)
+if err != nil {
+    return fmt.Errorf("postgresql builder: %w", err)
+}
+defer builderPostgreSQL.Close()
 stmtDelete := NewDelete(...)
-```
-Output:
-```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
-```
-
-## NewInsert
-Сreates a new INSERT statement instance
-```go
 stmtInsert := NewInsert(...)
-```
-Output:
-```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
-```
-
-## NewSelect
-Сreates a new SELECT statement instance
-```go
 stmtSelect := NewSelect(...)
-```
-Output:
-```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
-```
-
-## NewUpdate
-Сreates a new UPDATE statement instance
-```go
 stmtUpdate := NewUpdate(...)
+mySQLDeleteQuery, mySQLDeleteArguments, err := builderMySQL.Build(stmtDelete)
+if err != nil {
+    return fmt.Errorf("build delete: %w", err)
+}
+mySQLInsertQuery, mySQLInsertArguments, err := builderMySQL.Build(stmtInsert)
+if err != nil {
+    return fmt.Errorf("build insert: %w", err)
+}
+postgreSQLSelectQuery, postgreSQLSelectArguments, err := builderPostgreSQL.Build(stmtSelect)
+if err != nil {
+    return fmt.Errorf("build select: %w", err)
+}
+postgreSQLUpdateQuery, postgreSQLUpdateArguments, err := builderPostgreSQL.Build(stmtUpdate)
+if err != nil {
+    return fmt.Errorf("build update: %w", err)
+}
 ```
-
 Output:
 ```text
 {"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}

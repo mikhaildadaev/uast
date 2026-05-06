@@ -8,107 +8,55 @@ outline: deep
 This page covers all configuration options: `Extractor`, `Format`, `Level`, `Mode`, `Theme`. Each option is shown with a working code example and expected output.
 :::
 
-## WithExtractor/SetExtractor
-Automatic context extraction. Fields from `context.Context` are added to every log, metric, and trace automatically
-```go
-...
-```
-Output:
-```text
-...
-```
-
-func CaseIf[OutT typeScalar](pairs ...casePair[OutT]) []casePair[OutT] {
-	return pairs
-}
-func CaseElse[OutT typeScalar](else_ ExpressionSafe[OutT]) ExpressionSafe[OutT] {
-	return else_
-}
-func CasePair[InT, OutT typeScalar](when ExpressionSafe[InT], then ExpressionSafe[OutT]) casePair[OutT] {
-	return casePair[OutT]{
-		then: then,
-		when: when,
-	}
-}
-func JsonGroup(expressions []ExpressionBase, values ...ExpressionBase) *exprJson {
-	return &exprJson{
-		expressions: expressions,
-		values:      values,
-	}
-}
-func JsonIndex(index int) *exprLiteral[int] {
-	return &exprLiteral[int]{
-		value: index,
-	}
-}
-func JsonKey(key string) *exprLiteral[string] {
-	return &exprLiteral[string]{
-		value: key,
-	}
-}
-func JsonPair(key ExpressionSafe[string], value ExpressionBase) *exprJson {
-	return &exprJson{
-		expressions: []ExpressionBase{key},
-		operator:    uastCompositeCommaSpace,
-		values:      []ExpressionBase{value},
-	}
-}
-func JsonPath(path ...ExpressionBase) []ExpressionBase {
-	return path
-}
-func ValueRow[T typeScalar](row ...T) []T {
-	return row
-}
-
 ## Array
-...
+Constructs an array expression for use in SQL queries.
 ```go
-...
+arr := uast.Array(1, 2, 3)
 ```
 Output:
 ```text
-...
+ARRAY[1, 2, 3]
 ```
 
 ## Binary
 ### BitwiseAnd
-...
+Performs a bitwise AND operation between two expressions.
 ```go
-...
+expr := uast.BitwiseAnd(uast.Column[int]("t", "flags"), uast.Value(0b0011))
 ```
 Output:
 ```text
-...
+"t"."flags" & 3
 ```
 
 ### BitwiseOr
-...
+Performs a bitwise OR operation between two expressions.
 ```go
-...
+expr := uast.BitwiseOr(uast.Column[int]("t", "flags"), uast.Value(0b1100))
 ```
 Output:
 ```text
-...
+"t"."flags" | 12
 ```
 
 ### BitwiseXor
-...
+Performs a bitwise XOR operation between two expressions.
 ```go
-...
+expr := uast.BitwiseXor(uast.Column[int]("t", "flags"), uast.Value(0b1111))
 ```
 Output:
 ```text
-...
+"t"."flags" ^ 15
 ```
 
 ### Divide
-...
+Divides the left expression by the right expression.
 ```go
-...
+expr := uast.Divide(uast.Column[float64]("t", "price"), uast.Value(2.0))
 ```
 Output:
 ```text
-...
+"t"."price" / 2.000000
 ```
 
 ### Minus

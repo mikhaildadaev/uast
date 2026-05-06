@@ -126,6 +126,12 @@ const (
 	uastFunctionStdDev      functionService = "STDDEV"
 	uastFunctionSum         functionService = "SUM"
 	uastFunctionVariance    functionService = "VARIANCE"
+	// Функции аналитические
+	uastFunctionFirstValue functionService = "FIRST_VALUE"
+	uastFunctionLag        functionService = "LAG"
+	uastFunctionLastValue  functionService = "LAST_VALUE"
+	uastFunctionLead       functionService = "LEAD"
+	uastFunctionNthValue   functionService = "NTH_VALUE"
 	// Функции условий
 	uastFunctionCase     functionService = "CASE"
 	uastFunctionCoalesce functionService = "COALESCE"
@@ -215,12 +221,6 @@ const (
 	uastFunctionPercentRank functionService = "PERCENT_RANK"
 	uastFunctionRank        functionService = "RANK"
 	uastFunctionRowNumber   functionService = "ROW_NUMBER"
-	// Функции аналитические
-	uastFunctionFirstValue functionService = "FIRST_VALUE"
-	uastFunctionLag        functionService = "LAG"
-	uastFunctionLastValue  functionService = "LAST_VALUE"
-	uastFunctionLead       functionService = "LEAD"
-	uastFunctionNthValue   functionService = "NTH_VALUE"
 )
 const (
 	// Обьединяющие операторы
@@ -349,6 +349,8 @@ var listUnionOperators = []unionOperator{uastUnion, uastUnionAll, uastUnionExcep
 var listFunctionServices = []functionService{
 	// Функции агрегатные
 	uastFunctionAvg, uastFunctionBitAnd, uastFunctionBitOr, uastFunctionBitXor, uastFunctionCount, uastFunctionGroupConcat, uastFunctionMax, uastFunctionMin, uastFunctionStdDev, uastFunctionSum, uastFunctionVariance,
+	// Функции аналитические
+	uastFunctionFirstValue, uastFunctionLag, uastFunctionLastValue, uastFunctionLead, uastFunctionNthValue,
 	// Функции условий
 	uastFunctionCase, uastFunctionCoalesce, uastFunctionGreatest, uastFunctionLeast, uastFunctionNullIf,
 	// Функции конвертации
@@ -363,8 +365,6 @@ var listFunctionServices = []functionService{
 	uastFunctionConcat, uastFunctionConcatWs, uastFunctionLeftString, uastFunctionLower, uastFunctionLPad, uastFunctionLTrim, uastFunctionRepeat, uastFunctionReplace, uastFunctionReverse, uastFunctionRightString, uastFunctionRPad, uastFunctionRTrim, uastFunctionSubString, uastFunctionTrim, uastFunctionUpper,
 	// Функции ранжирующие
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
-	// Функции аналитические
-	uastFunctionFirstValue, uastFunctionLag, uastFunctionLastValue, uastFunctionLead, uastFunctionNthValue,
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
 var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierBetween, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierInterval, uastModifierOn, uastModifierOver, uastModifierRecursive, uastModifierSeparator, uastModifierThen, uastModifierWhen}
@@ -483,6 +483,8 @@ func initServiceMaps() {
 	}{
 		// Функции агрегатные
 		uastFunctionAvg: {true, 1, 1}, uastFunctionBitAnd: {true, 1, 1}, uastFunctionBitOr: {true, 1, 1}, uastFunctionBitXor: {true, 1, 1}, uastFunctionCount: {true, 0, 1}, uastFunctionGroupConcat: {true, 1, 1}, uastFunctionMax: {true, 1, 1}, uastFunctionMin: {true, 1, 1}, uastFunctionStdDev: {true, 1, 1}, uastFunctionSum: {true, 1, 1}, uastFunctionVariance: {true, 1, 1},
+		// Функции аналитические
+		uastFunctionFirstValue: {false, 1, 1}, uastFunctionLag: {false, 1, 3}, uastFunctionLastValue: {false, 1, 1}, uastFunctionLead: {false, 1, 3}, uastFunctionNthValue: {false, 2, 2},
 		// Функции условий
 		uastFunctionCase: {false, 2, -1}, uastFunctionCoalesce: {false, 1, -1}, uastFunctionGreatest: {false, 1, -1}, uastFunctionLeast: {false, 1, -1}, uastFunctionNullIf: {false, 2, 2},
 		// Функции конвертации
@@ -497,8 +499,6 @@ func initServiceMaps() {
 		uastFunctionConcat: {false, 1, -1}, uastFunctionConcatWs: {false, 2, -1}, uastFunctionLeftString: {false, 2, 2}, uastFunctionLower: {false, 1, 1}, uastFunctionLPad: {false, 3, 3}, uastFunctionLTrim: {false, 1, 1}, uastFunctionRepeat: {false, 2, 2}, uastFunctionReplace: {false, 3, 3}, uastFunctionReverse: {false, 1, 1}, uastFunctionRightString: {false, 2, 2}, uastFunctionRPad: {false, 3, 3}, uastFunctionRTrim: {false, 1, 1}, uastFunctionSubString: {false, 3, 3}, uastFunctionTrim: {false, 1, 1}, uastFunctionUpper: {false, 1, 1},
 		// Функции ранжирующие
 		uastFunctionCumeDist: {false, 0, 0}, uastFunctionDenseRank: {false, 0, 0}, uastFunctionNTile: {false, 1, 1}, uastFunctionPercentRank: {false, 0, 0}, uastFunctionRank: {false, 0, 0}, uastFunctionRowNumber: {false, 0, 0},
-		// Функции аналитические
-		uastFunctionFirstValue: {false, 1, 1}, uastFunctionLag: {false, 1, 3}, uastFunctionLastValue: {false, 1, 1}, uastFunctionLead: {false, 1, 3}, uastFunctionNthValue: {false, 2, 2},
 	}
 	constManagementServices = make(map[managementService]string, len(listManagementServices))
 	for _, keyword := range listManagementServices {

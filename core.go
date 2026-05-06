@@ -619,6 +619,46 @@ func Variance[T typeNumeric](number ExpressionSafe[T], distinct bool) *exprFunct
 	}
 }
 
+// -- Function [analytical] -- //
+func FirstValue[T typeScalar](expr ExpressionSafe[T]) *exprFunction[T, string, T] {
+	return &exprFunction[T, string, T]{
+		left:    expr,
+		service: uastFunctionFirstValue,
+		process: uastProcessWindow,
+	}
+}
+func Lag[T typeScalar](expr ExpressionSafe[T], offset int) *exprFunction[T, int, T] {
+	return &exprFunction[T, int, T]{
+		left:    expr,
+		right:   &exprLiteral[int]{value: offset},
+		service: uastFunctionLag,
+		process: uastProcessWindow,
+	}
+}
+func LastValue[T typeScalar](expr ExpressionSafe[T]) *exprFunction[T, string, T] {
+	return &exprFunction[T, string, T]{
+		left:    expr,
+		service: uastFunctionLastValue,
+		process: uastProcessWindow,
+	}
+}
+func Lead[T typeScalar](expr ExpressionSafe[T], offset int) *exprFunction[T, int, T] {
+	return &exprFunction[T, int, T]{
+		left:    expr,
+		right:   &exprLiteral[int]{value: offset},
+		service: uastFunctionLead,
+		process: uastProcessWindow,
+	}
+}
+func NthValue[T typeScalar](expr ExpressionSafe[T], n int) *exprFunction[T, int, T] {
+	return &exprFunction[T, int, T]{
+		left:    expr,
+		right:   &exprLiteral[int]{value: n},
+		service: uastFunctionNthValue,
+		process: uastProcessWindow,
+	}
+}
+
 // -- Function [condition] -- //
 func Case[OutT typeScalar](pairs []casePair[OutT], else_ ...ExpressionSafe[OutT]) *exprFunction[string, string, OutT] {
 	valueArray := make([]ExpressionBase, 0, len(pairs)*2+1)
@@ -1342,46 +1382,6 @@ func Rank() *exprFunction[string, string, int64] {
 func RowNumber() *exprFunction[string, string, int64] {
 	return &exprFunction[string, string, int64]{
 		service: uastFunctionRowNumber,
-		process: uastProcessWindow,
-	}
-}
-
-// -- Function [analytical] -- //
-func FirstValue[T typeScalar](expr ExpressionSafe[T]) *exprFunction[T, string, T] {
-	return &exprFunction[T, string, T]{
-		left:    expr,
-		service: uastFunctionFirstValue,
-		process: uastProcessWindow,
-	}
-}
-func Lag[T typeScalar](expr ExpressionSafe[T], offset int) *exprFunction[T, int, T] {
-	return &exprFunction[T, int, T]{
-		left:    expr,
-		right:   &exprLiteral[int]{value: offset},
-		service: uastFunctionLag,
-		process: uastProcessWindow,
-	}
-}
-func LastValue[T typeScalar](expr ExpressionSafe[T]) *exprFunction[T, string, T] {
-	return &exprFunction[T, string, T]{
-		left:    expr,
-		service: uastFunctionLastValue,
-		process: uastProcessWindow,
-	}
-}
-func Lead[T typeScalar](expr ExpressionSafe[T], offset int) *exprFunction[T, int, T] {
-	return &exprFunction[T, int, T]{
-		left:    expr,
-		right:   &exprLiteral[int]{value: offset},
-		service: uastFunctionLead,
-		process: uastProcessWindow,
-	}
-}
-func NthValue[T typeScalar](expr ExpressionSafe[T], n int) *exprFunction[T, int, T] {
-	return &exprFunction[T, int, T]{
-		left:    expr,
-		right:   &exprLiteral[int]{value: n},
-		service: uastFunctionNthValue,
 		process: uastProcessWindow,
 	}
 }

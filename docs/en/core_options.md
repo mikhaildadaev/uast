@@ -680,112 +680,146 @@ NTH_VALUE("t"."log_entry", 3) OVER (PARTITION BY "t"."batch_id" ORDER BY "t"."se
 
 ### Condition
 #### Case
+Evaluates a list of WHEN-THEN pairs and returns the THEN expression for the first true WHEN. If no condition is true, returns the ELSE expression if provided, or NULL.
 ```go
-...
+pairs := uast.CaseIf(
+    uast.CasePair(
+        uast.Greater(uast.Column[int]("t", "score"), uast.Value(90)),
+        uast.Value("A"),
+    ),
+    uast.CasePair(
+        uast.Greater(uast.Column[int]("t", "score"), uast.Value(75)),
+        uast.Value("B"),
+    ),
+)
+elseExpr := uast.CaseElse(uast.Value("C"))
+expr := uast.Case(pairs, elseExpr)
 ```
 Output:
 ```text
-...
+CASE WHEN "t"."score" > 90 THEN 'A' WHEN "t"."score" > 75 THEN 'B' ELSE 'C' END
 ```
 
 #### Coalesce
+Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
 ```go
-...
+expr := uast.Coalesce(
+    uast.Column[string]("u", "nickname"),
+    uast.Column[string]("u", "username"),
+    uast.Value("Anonymous"),
+)
 ```
 Output:
 ```text
-...
+COALESCE("u"."nickname", "u"."username", 'Anonymous')
 ```
 
 #### Greatest
+Returns the largest value from the provided list of expressions.
 ```go
-...
+expr := uast.Greatest(
+    uast.Column[int]("t", "score_a"),
+    uast.Column[int]("t", "score_b"),
+    uast.Column[int]("t", "score_c"),
+)
 ```
 Output:
 ```text
-...
+GREATEST("t"."score_a", "t"."score_b", "t"."score_c")
 ```
 
 #### Least
+Returns the smallest value from the provided list of expressions.
 ```go
-...
+expr := uast.Least(
+    uast.Column[time.Time]("t", "start_a"),
+    uast.Column[time.Time]("t", "start_b"),
+)
 ```
 Output:
 ```text
-...
+LEAST("t"."start_a", "t"."start_b")
 ```
 
 #### NullIf
+Returns NULL if the two expressions are equal; otherwise returns the first expression.
 ```go
-...
+expr := uast.NullIf(uast.Column[int]("t", "value"), uast.Value(0))
 ```
 Output:
 ```text
-...
+NULLIF("t"."value", 0)
 ```
 
 ### Convert
 #### Cast
+Converts an expression to a specified data type.
 ```go
-...
+expr := uast.Cast(uast.Column[string]("t", "json_str"), uast.TypeJSON)
 ```
 Output:
 ```text
-...
+CAST("t"."json_str" AS JSON)
 ```
 
 #### CharLength
+Returns the number of characters in a string expression.
 ```go
-...
+expr := uast.CharLength(uast.Column[string]("t", "body"))
 ```
 Output:
 ```text
-...
+CHAR_LENGTH("t"."body")
 ```
 
 #### DateFormat
+Formats a datetime expression according to a specified format mask.
 ```go
-...
+expr := uast.DateFormat(uast.Column[time.Time]("t", "event_date"), uast.Value("%Y-%m-%d"))
 ```
 Output:
 ```text
-...
+DATE_FORMAT("t"."event_date", '%Y-%m-%d')
 ```
 
 #### Degrees
+Converts an angle from radians to degrees.
 ```go
-...
+expr := uast.Degrees(uast.Column[float64]("t", "angle_rad"))
 ```
 Output:
 ```text
-...
+DEGREES("t"."angle_rad")
 ```
 
 #### Length
+Returns the byte length of a string expression.
 ```go
-...
+expr := uast.Length(uast.Column[string]("t", "payload"))
 ```
 Output:
 ```text
-...
+LENGTH("t"."payload")
 ```
 
 #### Position
+Returns the starting position of the first occurrence of a substring within a string.
 ```go
-...
+expr := uast.Position(uast.Column[string]("t", "url"), uast.Value("https://"))
 ```
 Output:
 ```text
-...
+POSITION('https://' IN "t"."url")
 ```
 
 #### Radians
+Converts an angle from degrees to radians.
 ```go
-...
+expr := uast.Radians(uast.Column[float64]("t", "angle_deg"))
 ```
 Output:
 ```text
-...
+RADIANS("t"."angle_deg")
 ```
 
 ### Date and time

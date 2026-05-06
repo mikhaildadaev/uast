@@ -5,11 +5,11 @@ import (
 )
 
 // Публичные конструкторы
-func NewSQL(currentDialect *SupportDialect) (*builder, error) {
+func NewSQL(currentDialect *SupportDialect) (*sql, error) {
 	if currentDialect == nil {
 		return nil, ErrInvalidDialect
 	}
-	return &builder{
+	return &sql{
 		config: currentDialect.config,
 		pool: &sync.Pool{
 			New: func() any {
@@ -21,18 +21,18 @@ func NewSQL(currentDialect *SupportDialect) (*builder, error) {
 }
 
 // Публичные методы
-func (builder *builder) Build(statement statement) (string, []any, error) {
+func (sql *sql) Build(statement statement) (string, []any, error) {
 	if statement == nil {
 		return "", nil, ErrInvalidStatement
 	}
-	contexter := builder.pool.Get().(*contexter)
+	contexter := sql.pool.Get().(*contexter)
 	defer func() {
 		contexter.resetAll()
-		builder.pool.Put(contexter)
+		sql.pool.Put(contexter)
 	}()
-	baseRenderer := newRenderer(builder.config, contexter, builder.strateger)
-	baseTransformer := newTransformer(builder.config, contexter, builder.strateger)
-	baseValidator := newValidator(builder.config, contexter, builder.strateger)
+	baseRenderer := newRenderer(sql.config, contexter, sql.strateger)
+	baseTransformer := newTransformer(sql.config, contexter, sql.strateger)
+	baseValidator := newValidator(sql.config, contexter, sql.strateger)
 	if err := statement.validate(baseValidator); err != nil {
 		return "", nil, err
 	}
@@ -44,8 +44,8 @@ func (builder *builder) Build(statement statement) (string, []any, error) {
 	}
 	return contexter.bufferQuery.String(), contexter.bufferValue, nil
 }
-func (builder *builder) Close() {
-	builder.pool = nil
+func (sql *sql) Close() {
+	sql.pool = nil
 }
 
 // Приватные интерфейсы
@@ -56,7 +56,7 @@ type statement interface {
 }
 
 // Приватные структуры
-type builder struct {
+type sql struct {
 	config    *config
 	pool      *sync.Pool
 	strateger strateger

@@ -141,7 +141,7 @@ Output:
 ```
 
 ### Equal
-Compares two expressions for equality (=).
+Compares two expressions for equality (`=`).
 ```go
 expr := uast.Equal(uast.Column[int]("t", "status"), uast.Value("active"))
 ```
@@ -167,7 +167,7 @@ EXISTS (SELECT * FROM "orders" WHERE "orders"."user_id" = "users"."id")
 ```
 
 ### Greater
-Compares if the left expression is greater than the right expression (>).
+Compares if the left expression is greater than the right expression (`>`).
 ```go
 expr := uast.Greater(uast.Column[float64]("t", "price"), uast.Value(100.0))
 ```
@@ -177,7 +177,7 @@ Output:
 ```
 
 ### GreaterEqual
-Compares if the left expression is greater than or equal to the right expression (>=).
+Compares if the left expression is greater than or equal to the right expression (`>=`).
 ```go
 expr := uast.GreaterEqual(uast.Column[int]("t", "quantity"), uast.Value(1))
 ```
@@ -234,7 +234,7 @@ Output:
 ```
 
 ### Less
-Compares if the left expression is less than the right expression (<).
+Compares if the left expression is less than the right expression (`<`).
 ```go
 expr := uast.Less(uast.Column[int]("t", "stock"), uast.Value(10))
 ```
@@ -244,7 +244,7 @@ Output:
 ```
 
 ### LessEqual
-Compares if the left expression is less than or equal to the right expression (<=).
+Compares if the left expression is less than or equal to the right expression (`<=`).
 ```go
 expr := uast.LessEqual(uast.Column[float64]("t", "discount"), uast.Value(0.5))
 ```
@@ -254,7 +254,7 @@ Output:
 ```
 
 ### Like
-Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with % and _ wildcards.
+Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
 ```go
 expr := uast.Like(uast.Column[string]("t", "code"), uast.Value("UA-%"))
 ```
@@ -264,7 +264,7 @@ Output:
 ```
 
 ### NotBetween
-Checks if the left expression falls outside the range defined by valueStart and valueEnd.
+Checks if the left expression falls outside the range defined by `valueStart` and `valueEnd`.
 ```go
 expr := uast.NotBetween(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
 ```
@@ -274,7 +274,7 @@ Output:
 ```
 
 ### NotEqual
-Compares two expressions for inequality (!= or <>).
+Compares two expressions for inequality (`!=` or `<>`).
 ```go
 expr := uast.NotEqual(uast.Column[string]("t", "status"), uast.Value("banned"))
 ```
@@ -284,7 +284,7 @@ Output:
 ```
 
 ### NotExists
-Checks if the subquery returns no rows. Returns true if the subquery result is empty.
+Checks if the subquery returns no rows. Returns `true` if the subquery result is empty.
 ```go
 sub := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("bans")).Where(
     uast.Equal(
@@ -338,163 +338,163 @@ Output:
 
 ## Constant
 ### ConstBoolFalse
-...
+Returns a constant boolean `FALSE` expression. Useful as a default placeholder or for constructing logical expressions without value binding.
 ```go
-...
+expr := uast.ConstBoolFalse()
 ```
 Output:
 ```text
-...
+FALSE
 ```
 
 ### ConstBoolTrue
-...
+Returns a constant boolean `TRUE` expression.
 ```go
-...
+expr := uast.ConstBoolTrue()
 ```
 Output:
 ```text
-...
+TRUE
 ```
 
 ### ConstFloat32One
-...
+Returns a constant `float32` value of `1.0`. Optimized for internal comparisons and arithmetic where a unit value is required without binding a placeholder.
 ```go
-...
+expr := uast.ConstFloat32One()
 ```
 Output:
 ```text
-...
+1.000000
 ```
 
 ### ConstFloat64One
-...
+Returns a constant `float64` value of `1.0`.
 ```go
-...
+expr := uast.ConstFloat64One()
 ```
 Output:
 ```text
-...
+1.000000
 ```
 
 ### ConstIntOne
-...
+Returns a constant `int` value of `1`.
 ```go
-...
+expr := uast.ConstIntOne()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstInt8One
-...
+Returns a constant `int8` value of `1`.
 ```go
-...
+expr := uast.ConstInt8One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstInt16One
-...
+Returns a constant `int16` value of `1`.
 ```go
-...
+expr := uast.ConstInt16One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstInt32One
-...
+Returns a constant `int32` value of `1`.
 ```go
-...
+expr := uast.ConstInt32One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstInt64One
-...
+Returns a constant `int64` value of `1`.
 ```go
-...
+expr := uast.ConstInt64One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstNullDefault
-...
+Returns a typed `NULL` constant. The type is determined by the generic parameter `T`. This allows `NULL` to be used in typed contexts without explicit casting.
 ```go
-...
+expr := uast.ConstNullDefault[string]()
 ```
 Output:
 ```text
-...
+NULL
 ```
 
 ### ConstStringDefault
-...
+Returns a constant empty string expression (` `). Used when an empty string needs to be embedded directly in the SQL without a placeholder.
 ```go
-...
+expr := uast.ConstStringDefault()
 ```
 Output:
 ```text
-...
+
 ```
 
 ### ConstUintOne
-...
+Returns a constant `uint` value of `1`.
 ```go
-...
+expr := uast.ConstUintOne()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstUint8One
-...
+Returns a constant `uint8` value of `1`.
 ```go
-...
+expr := uast.ConstUint8One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstUint16One
-...
+Returns a constant `uint16` value of `1`.
 ```go
-...
+expr := uast.ConstUint16One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstUint32One
-...
+Returns a constant `uint32` value of `1`.
 ```go
-...
+expr := uast.ConstUint32One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ### ConstUint64One
-...
+Returns a constant `uint64` value of `1`.
 ```go
-...
+expr := uast.ConstUint64One()
 ```
 Output:
 ```text
-...
+1
 ```
 
 ## Function

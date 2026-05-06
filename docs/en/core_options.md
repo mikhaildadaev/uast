@@ -11,7 +11,7 @@ This page covers all configuration options: `Extractor`, `Format`, `Level`, `Mod
 ## Array
 Constructs an array expression for use in SQL queries.
 ```go
-arr := uast.Array(1, 2, 3)
+array := uast.Array(1, 2, 3)
 ```
 Output:
 ```text
@@ -153,13 +153,13 @@ Output:
 ### Exists
 Checks if the subquery returns any rows. Returns `true` if at least one row exists.
 ```go
-sub := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("orders")).Where(
+nested := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("orders")).Where(
     uast.Equal(
         uast.Column[int]("orders", "user_id"),
         uast.Column[int]("users", "id"),
     ),
 )
-comparison := uast.Exists(uast.Subquery[int](sub))
+comparison := uast.Exists(uast.Subquery[int](nested))
 ```
 Output:
 ```text
@@ -286,13 +286,13 @@ Output:
 ### NotExists
 Checks if the subquery returns no rows. Returns `true` if the subquery result is empty.
 ```go
-sub := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("bans")).Where(
+nested := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("bans")).Where(
     uast.Equal(
         uast.Column[int]("bans", "user_id"),
         uast.Column[int]("users", "id"),
     ),
 )
-comparison := uast.NotExists(uast.Subquery[int](sub))
+comparison := uast.NotExists(uast.Subquery[int](nested))
 ```
 Output:
 ```text
@@ -1448,12 +1448,12 @@ Output:
 ## Subquery
 Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
-sub := uast.Subquery[int](
+nested := uast.Subquery[int](
     uast.NewSelect(uast.Column[int]("c", "id")).
         From(uast.Table("categories")).
         Where(uast.Equal(uast.Column[string]("c", "slug"), uast.Value("books"))),
 )
-subquery := uast.Equal(uast.Column[int]("p", "category_id"), sub)
+subquery := uast.Equal(uast.Column[int]("p", "category_id"), nested)
 ```
 Output:
 ```text

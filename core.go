@@ -161,6 +161,32 @@ type SupportDialect struct {
 	strateger strateger
 }
 
+// Публичные конструкторы
+func NewDelete(from SourceBase) *stmtDelete {
+	return &stmtDelete{
+		command: uastManagementDelete,
+		from:    from,
+	}
+}
+func NewInsert(columns ...markColumnable) *stmtInsert {
+	return &stmtInsert{
+		command: uastManagementInsert,
+		column:  columns,
+	}
+}
+func NewSelect(fields ...markFieldable) *stmtSelect {
+	return &stmtSelect{
+		command: uastManagementSelect,
+		field:   fields,
+	}
+}
+func NewUpdate(onto SourceBase) *stmtUpdate {
+	return &stmtUpdate{
+		command: uastManagementUpdate,
+		onto:    onto,
+	}
+}
+
 // Публичные функции
 func CaseIf[OutT typeScalar](pairs ...casePair[OutT]) []casePair[OutT] {
 	return pairs

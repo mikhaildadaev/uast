@@ -5,7 +5,7 @@ import (
 )
 
 // Публичные конструкторы
-func NewBuilder(currentDialect *SupportDialect) (*builder, error) {
+func NewSQL(currentDialect *SupportDialect) (*builder, error) {
 	if currentDialect == nil {
 		return nil, ErrInvalidDialect
 	}
@@ -46,30 +46,6 @@ func (builder *builder) Build(statement statement) (string, []any, error) {
 }
 func (builder *builder) Close() {
 	builder.pool = nil
-}
-func (builder *builder) Delete(from SourceBase) *stmtDelete {
-	return &stmtDelete{
-		command: uastManagementDelete,
-		from:    from,
-	}
-}
-func (builder *builder) Insert(columns ...markColumnable) *stmtInsert {
-	return &stmtInsert{
-		command: uastManagementInsert,
-		column:  columns,
-	}
-}
-func (builder *builder) Select(fields ...markFieldable) *stmtSelect {
-	return &stmtSelect{
-		command: uastManagementSelect,
-		field:   fields,
-	}
-}
-func (builder *builder) Update(onto SourceBase) *stmtUpdate {
-	return &stmtUpdate{
-		command: uastManagementUpdate,
-		onto:    onto,
-	}
 }
 
 // Приватные интерфейсы

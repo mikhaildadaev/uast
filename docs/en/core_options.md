@@ -500,7 +500,7 @@ Output:
 ## Function
 ### Aggregate
 #### Avg
-Returns the average (arithmetic mean) of all non-NULL values in the expression. If distinct is true, the average is calculated over distinct values only.
+Returns the average (arithmetic mean) of all non-NULL values in the expression. If `distinct` is `true`, the average is calculated over distinct values only.
 ```go
 function := uast.Avg(uast.Column[float64]("o", "total_price"), false)
 ```
@@ -540,7 +540,7 @@ BIT_XOR("t"."checksum")
 ```
 
 #### Count
-Returns the number of rows matching the query, or the number of non-NULL values if an expression is provided. When distinct is true, counts only distinct values.
+Returns the number of rows matching the query, or the number of non-NULL values if an expression is provided. When `distinct` is `true`, counts only distinct values.
 ```go
 function := uast.Count(uast.Column[int]("*"), false)
 functionWithDistinct := uast.Count(uast.Column[string]("u", "email"), true)
@@ -552,7 +552,7 @@ COUNT(DISTINCT "u"."email")
 ```
 
 #### GroupConcat
-Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The distinct flag removes duplicates before concatenation.
+Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The `distinct` flag removes duplicates before concatenation.
 ```go
 function := uast.GroupConcat(uast.Column[string]("t", "tag"), true)
 ```
@@ -592,7 +592,7 @@ STDDEV("t"."score")
 ```
 
 #### Sum
-Returns the sum of all values in the expression. If distinct is true, sums only distinct values.
+Returns the sum of all values in the expression. If `distinct` is `true`, sums only distinct values.
 ```go
 function := uast.Sum(uast.Column[float64]("o", "tax"), false)
 ```
@@ -613,7 +613,7 @@ VARIANCE("t"."latency")
 
 ### Analytical
 #### FirstValue
-Returns the value of the expression from the first row of the window frame. Requires an OVER clause with window specification.
+Returns the value of the expression from the first row of the window frame. Requires an `OVER` clause with window specification.
 ```go
 function := uast.FirstValue(uast.Column[string]("t", "event")).Over(
     uast.PartitionBy(uast.Column[int]("t", "user_id")),
@@ -626,7 +626,7 @@ FIRST_VALUE("t"."event") OVER (PARTITION BY "t"."user_id" ORDER BY "t"."created_
 ```
 
 #### Lag
-Returns the value of the expression from a row that is offset rows before the current row within the partition.
+Returns the value of the expression from a row that is `offset` rows before the current row within the partition.
 ```go
 function := uast.Lag(uast.Column[float64]("t", "price"), 1).Over(
     uast.PartitionBy(uast.Column[int]("t", "symbol_id")),
@@ -653,7 +653,7 @@ LAST_VALUE("t"."status") OVER (PARTITION BY "t"."order_id" ORDER BY "t"."updated
 ```
 
 #### Lead
-Returns the value of the expression from a row that is offset rows after the current row within the partition.
+Returns the value of the expression from a row that is `offset` rows after the current row within the partition.
 ```go
 function := uast.Lead(uast.Column[float64]("t", "temperature"), 1).Over(
     uast.PartitionBy(uast.Column[int]("t", "sensor_id")),
@@ -666,7 +666,7 @@ LEAD("t"."temperature", 1) OVER (PARTITION BY "t"."sensor_id" ORDER BY "t"."meas
 ```
 
 #### NthValue
-Returns the value of the expression from the n-th row of the window frame (1-based).
+Returns the value of the expression from the `n-th` row of the window frame (1-based).
 ```go
 function := uast.NthValue(uast.Column[string]("t", "log_entry"), 3).Over(
     uast.PartitionBy(uast.Column[int]("t", "batch_id")),
@@ -680,7 +680,7 @@ NTH_VALUE("t"."log_entry", 3) OVER (PARTITION BY "t"."batch_id" ORDER BY "t"."se
 
 ### Condition
 #### Case
-Evaluates a list of WHEN-THEN pairs and returns the THEN expression for the first true WHEN. If no condition is true, returns the ELSE expression if provided, or NULL.
+Evaluates a list of `WHEN`-`THEN` pairs and returns the `THEN` expression for the first true WHEN. If no condition is true, returns the `ELSE` expression if provided, or `NULL`.
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
@@ -693,7 +693,7 @@ pairs := uast.CaseIf(
     ),
 )
 elseExpr := uast.CaseElse(uast.Value("C"))
-expr := uast.Case(pairs, elseExpr)
+function := uast.Case(pairs, elseExpr)
 ```
 Output:
 ```text
@@ -703,7 +703,7 @@ CASE WHEN "t"."score" > 90 THEN 'A' WHEN "t"."score" > 75 THEN 'B' ELSE 'C' END
 #### Coalesce
 Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
 ```go
-expr := uast.Coalesce(
+function := uast.Coalesce(
     uast.Column[string]("u", "nickname"),
     uast.Column[string]("u", "username"),
     uast.Value("Anonymous"),
@@ -717,7 +717,7 @@ COALESCE("u"."nickname", "u"."username", 'Anonymous')
 #### Greatest
 Returns the largest value from the provided list of expressions.
 ```go
-expr := uast.Greatest(
+function := uast.Greatest(
     uast.Column[int]("t", "score_a"),
     uast.Column[int]("t", "score_b"),
     uast.Column[int]("t", "score_c"),
@@ -731,7 +731,7 @@ GREATEST("t"."score_a", "t"."score_b", "t"."score_c")
 #### Least
 Returns the smallest value from the provided list of expressions.
 ```go
-expr := uast.Least(
+function := uast.Least(
     uast.Column[time.Time]("t", "start_a"),
     uast.Column[time.Time]("t", "start_b"),
 )
@@ -742,9 +742,9 @@ LEAST("t"."start_a", "t"."start_b")
 ```
 
 #### NullIf
-Returns NULL if the two expressions are equal; otherwise returns the first expression.
+Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
 ```go
-expr := uast.NullIf(uast.Column[int]("t", "value"), uast.Value(0))
+function := uast.NullIf(uast.Column[int]("t", "value"), uast.Value(0))
 ```
 Output:
 ```text
@@ -755,7 +755,7 @@ NULLIF("t"."value", 0)
 #### Cast
 Converts an expression to a specified data type.
 ```go
-expr := uast.Cast(uast.Column[string]("t", "json_str"), uast.TypeJSON)
+function := uast.Cast(uast.Column[string]("t", "json_str"), uast.TypeJSON)
 ```
 Output:
 ```text
@@ -765,7 +765,7 @@ CAST("t"."json_str" AS JSON)
 #### CharLength
 Returns the number of characters in a string expression.
 ```go
-expr := uast.CharLength(uast.Column[string]("t", "body"))
+function := uast.CharLength(uast.Column[string]("t", "body"))
 ```
 Output:
 ```text
@@ -775,7 +775,7 @@ CHAR_LENGTH("t"."body")
 #### DateFormat
 Formats a datetime expression according to a specified format mask.
 ```go
-expr := uast.DateFormat(uast.Column[time.Time]("t", "event_date"), uast.Value("%Y-%m-%d"))
+function := uast.DateFormat(uast.Column[time.Time]("t", "event_date"), uast.Value("%Y-%m-%d"))
 ```
 Output:
 ```text
@@ -785,7 +785,7 @@ DATE_FORMAT("t"."event_date", '%Y-%m-%d')
 #### Degrees
 Converts an angle from radians to degrees.
 ```go
-expr := uast.Degrees(uast.Column[float64]("t", "angle_rad"))
+function := uast.Degrees(uast.Column[float64]("t", "angle_rad"))
 ```
 Output:
 ```text
@@ -795,7 +795,7 @@ DEGREES("t"."angle_rad")
 #### Length
 Returns the byte length of a string expression.
 ```go
-expr := uast.Length(uast.Column[string]("t", "payload"))
+function := uast.Length(uast.Column[string]("t", "payload"))
 ```
 Output:
 ```text
@@ -805,7 +805,7 @@ LENGTH("t"."payload")
 #### Position
 Returns the starting position of the first occurrence of a substring within a string.
 ```go
-expr := uast.Position(uast.Column[string]("t", "url"), uast.Value("https://"))
+function := uast.Position(uast.Column[string]("t", "url"), uast.Value("https://"))
 ```
 Output:
 ```text
@@ -815,7 +815,7 @@ POSITION('https://' IN "t"."url")
 #### Radians
 Converts an angle from degrees to radians.
 ```go
-expr := uast.Radians(uast.Column[float64]("t", "angle_deg"))
+function := uast.Radians(uast.Column[float64]("t", "angle_deg"))
 ```
 Output:
 ```text
@@ -824,174 +824,199 @@ RADIANS("t"."angle_deg")
 
 ### Date and time
 #### CurDate
+Returns the current date (without time).
 ```go
-...
+function := uast.CurDate()
 ```
 Output:
 ```text
-...
+CURDATE()
 ```
 
 #### CurTime
+Returns the current time (without date).
 ```go
-...
+function := uast.CurTime()
 ```
 Output:
 ```text
-...
+CURTIME()
 ```
 
 #### DateAdd
+Adds a time/date interval to a datetime expression and returns the resulting datetime.
 ```go
-...
+function := uast.DateAdd(uast.Column[time.Time]("t", "start_date"), uast.Value("1 YEAR"))
 ```
 Output:
 ```text
-...
+DATE_ADD("t"."start_date", '1 YEAR')
 ```
 
 #### DateDiff
+Returns the difference in days between two datetime expressions (`datetimeEnd` - `datetimeStart`).
 ```go
-...
+function := uast.DateDiff(
+    uast.Column[time.Time]("t", "closed_at"),
+    uast.Column[time.Time]("t", "opened_at"),
+)
 ```
 Output:
 ```text
-...
+DATEDIFF("t"."closed_at", "t"."opened_at")
 ```
 
 #### DateSub
+Subtracts a time/date interval from a datetime expression and returns the resulting datetime.
 ```go
-...
+function := uast.DateSub(uast.Column[time.Time]("t", "due_date"), uast.Value("3 MONTH"))
 ```
 Output:
 ```text
-...
+DATE_SUB("t"."due_date", '3 MONTH')
 ```
 
 #### Day
+Extracts the day of the month (1–31) from a datetime expression.
 ```go
-...
+function := uast.Day(uast.Column[time.Time]("t", "created_at"))
 ```
 Output:
 ```text
-...
+DAY("t"."created_at")
 ```
 
 #### DayName
+Returns the name of the weekday (e.g., 'Monday', 'Tuesday') for a given datetime expression.
 ```go
-...
+function := uast.DayName(uast.Column[time.Time]("t", "event_date"))
 ```
 Output:
 ```text
-...
+DAYNAME("t"."event_date")
 ```
 
 #### Hour
+Extracts the hour (0–23) from a datetime expression.
 ```go
-...
+function := uast.Hour(uast.Column[time.Time]("t", "log_time"))
 ```
 Output:
 ```text
-...
+HOUR("t"."log_time")
 ```
 
 #### Minute
+Extracts the minute (0–59) from a datetime expression.
 ```go
-...
+function := uast.Minute(uast.Column[time.Time]("t", "log_time"))
 ```
 Output:
 ```text
-...
+MINUTE("t"."log_time")
 ```
 
 #### Month
+Extracts the month (1–12) from a datetime expression.
 ```go
-...
+function := uast.Month(uast.Column[time.Time]("t", "birth_date"))
 ```
 Output:
 ```text
-...
+MONTH("t"."birth_date")
 ```
 
 #### MonthName
+Returns the name of the month (e.g., 'January', 'February') for a given datetime expression.
 ```go
-...
+function := uast.MonthName(uast.Column[time.Time]("t", "holiday"))
 ```
 Output:
 ```text
-...
+MONTHNAME("t"."holiday")
 ```
 
 #### Now
+Returns the current date and time.
 ```go
-...
+function := uast.Now()
 ```
 Output:
 ```text
-...
+NOW()
 ```
 
 #### Quarter
+Extracts the quarter (1–4) from a datetime expression.
 ```go
-...
+function := uast.Quarter(uast.Column[time.Time]("t", "fiscal_date"))
 ```
 Output:
 ```text
-...
+QUARTER("t"."fiscal_date")
 ```
 
 #### Second
+Extracts the second (0–59) from a datetime expression.
 ```go
-...
+function := uast.Second(uast.Column[time.Time]("t", "response_time"))
 ```
 Output:
 ```text
-...
+SECOND("t"."response_time")
 ```
 
 #### TimeAdd
+Adds a time interval to a time/datetime expression and returns the resulting time.
 ```go
-...
+function := uast.TimeAdd(uast.Column[time.Time]("t", "shift_start"), uast.Value("8 HOUR"))
 ```
 Output:
 ```text
-...
+TIME_ADD("t"."shift_start", '8 HOUR')
 ```
 
 #### TimeDiff
+Returns the difference between two time/datetime expressions (`timeEnd` - `timeStart`).
 ```go
-...
+function := uast.TimeDiff(
+    uast.Column[time.Time]("t", "check_out"),
+    uast.Column[time.Time]("t", "check_in"),
+)
 ```
 Output:
 ```text
-...
+TIMEDIFF("t"."check_out", "t"."check_in")
 ```
 
 #### TimeSub
+Subtracts a time interval from a time/datetime expression and returns the resulting time.
 ```go
-...
+function := uast.TimeSub(uast.Column[time.Time]("t", "lunch_end"), uast.Value("30 MINUTE"))
 ```
 Output:
 ```text
-...
+TIME_SUB("t"."lunch_end", '30 MINUTE')
 ```
 
 #### Week
+Extracts the week number (1–53) from a datetime expression.
 ```go
-...
+function := uast.Week(uast.Column[time.Time]("t", "ship_date"))
 ```
 Output:
 ```text
-...
+WEEK("t"."ship_date")
 ```
 
 #### Year
+Extracts the year from a datetime expression.
 ```go
-...
+function := uast.Year(uast.Column[time.Time]("t", "founded"))
 ```
 Output:
 ```text
-...
+YEAR("t"."founded")
 ```
 
 ### Json

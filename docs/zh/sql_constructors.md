@@ -2,14 +2,14 @@
 outline: deep
 ---
 
-# API / SQL / Constructors
+# API / 核心 / 构造函数
 
-::: info **Info**
-This page describes how to create a telemetry instance, configure all the settings, and understand each data type and field constructor.
+::: info **关于**
+本页文档介绍如何创建遥测实例、配置所有设置以及了解每个数据类型和字段构造函数。
 :::
 
 ## NewSQL
-SQL instance configured for the specified dialect
+为指定方言配置的 SQL 实例
 ```go
 mySQL, err := uast.NewSQL(uast.DialectMySQL)
 if err != nil {

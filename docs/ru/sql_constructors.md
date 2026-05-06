@@ -2,14 +2,14 @@
 outline: deep
 ---
 
-# API / SQL / Constructors
+# API / Ядро / Конструкторы
 
-::: info **Info**
-This page describes how to create a telemetry instance, configure all the settings, and understand each data type and field constructor.
+::: info **Информация**
+На этой странице описано, как создать экземпляр телеметрии, настроить все параметры и разобраться в каждом типе данных и конструкторе полей.
 :::
 
 ## NewSQL
-SQL instance configured for the specified dialect
+SQL-инстанс, сконфигурированный под указанный диалект
 ```go
 mySQL, err := uast.NewSQL(uast.DialectMySQL)
 if err != nil {

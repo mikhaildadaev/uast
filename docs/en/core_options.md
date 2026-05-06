@@ -525,112 +525,894 @@ Output:
 
 ## Function
 ### Aggregate
-#### Avg
-#### BitAnd
-#### BitOr
+#### Avg...
+```go
+...
+```
+Output:
+```text
+...
+```
+
+#### BitAnd```go
+...
+```
+Output:
+```text
+...
+```
+
+#### BitOr```go
+...
+```
+Output:
+```text
+...
+```
+
 #### BitXor
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Count
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### GroupConcat
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Max
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Min
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### StdDev
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Sum
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Variance
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### Analytical
 #### FirstValue
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Lag
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### LastValue
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Lead
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### NthValue
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### Condition
 #### Case
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Coalesce
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Greatest
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Least
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### NullIf
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### Convert
 #### Cast
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### CharLength
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### DateFormat
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Degrees
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Length
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Position
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Radians
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### Date and time
 #### CurDate
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### CurTime
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### DateAdd
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### DateDiff
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### DateSub
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Day
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### DayName
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Hour
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Minute
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Month
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### MonthName
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Now
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Quarter
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Second
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### TimeAdd
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### TimeDiff
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### TimeSub
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Week
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Year
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### Json
 #### JsonArray
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonArrayAgg
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonContains
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonExtract
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonObject
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonObjectAgg
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonRemove
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonSet
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### JsonType
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### Math
 #### Abs
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### ACos
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### ASin
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### ATan
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### ATan2
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Cbrt
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Ceil
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Cos
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Exp
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Floor
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Ln
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Log
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Mod
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Pi
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Power
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Rand
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Round
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Sin
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Sqrt
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Tan
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Trunc
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### String
 #### Concat
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### ConcatWs
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### LeftString
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Lower
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### LPad
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### LTrim
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Repeat
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Replace
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Reverse
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### RightString
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### RPad
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### RTrim
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### SubString
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Trim
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Upper
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ### Ranking
 #### CumeDist
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### DenseRank
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### NTile
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### PercentRank
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### Rank
+```go
+...
+```
+Output:
+```text
+...
+```
+
 #### RowNumber
+```go
+...
+```
+Output:
+```text
+...
+```
+
 ## Literal
 ...
 ```go

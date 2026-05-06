@@ -1021,274 +1021,315 @@ YEAR("t"."founded")
 
 ### Json
 #### JsonArray
+Creates a JSON array from the given expression and optional additional values.
 ```go
-...
+function := uast.JsonArray(uast.Column[int]("t", "tag_id"), uast.Value("urgent"))
 ```
 Output:
 ```text
-...
+JSON_ARRAY("t"."tag_id", 'urgent')
 ```
 
 #### JsonArrayAgg
+Aggregates values from a group into a JSON array.
 ```go
-...
+function := uast.JsonArrayAgg(uast.Column[string]("t", "label"))
 ```
 Output:
 ```text
-...
+JSON_ARRAYAGG("t"."label")
 ```
 
 #### JsonContains
+Checks whether a JSON document contains a specified value.
 ```go
-...
+function := uast.JsonContains(uast.Column[string]("t", "metadata"), uast.Value(`"key1"`))
 ```
 Output:
 ```text
-...
+JSON_CONTAINS("t"."metadata", '"key1"')
 ```
 
 #### JsonExtract
+Extracts a value from a JSON document at the specified path. The `json` parameter is built with JsonPath and optional `JsonKey`/`JsonIndex`.
 ```go
-...
+path := uast.JsonGroup(nil, uast.JsonKey("address"), uast.JsonKey("city"))
+function := uast.JsonExtract(uast.Column[string]("t", "profile"), uast.JsonPair(uast.Literal("$.address.city"), nil), uast.TypeString)
 ```
 Output:
 ```text
-...
+JSON_EXTRACT("t"."profile", '$.address.city') AS STRING
 ```
 
 #### JsonObject
+Builds a JSON object from key-value pairs.
 ```go
-...
+function := uast.JsonObject(
+    uast.JsonPair(uast.Value("name"), uast.Column[string]("u", "full_name")),
+    uast.JsonPair(uast.Value("age"), uast.Column[int]("u", "age")),
+)
 ```
 Output:
 ```text
-...
+JSON_OBJECT('name', "u"."full_name", 'age', "u"."age")
 ```
 
 #### JsonObjectAgg
+Aggregates key-value pairs from a group into a single JSON object.
 ```go
-...
+function := uast.JsonObjectAgg(
+    uast.Column[string]("t", "config_key"),
+    uast.Column[string]("t", "config_value"),
+)
 ```
 Output:
 ```text
-...
+JSON_OBJECTAGG("t"."config_key", "t"."config_value")
 ```
 
 #### JsonRemove
+Removes a value from a JSON document at the specified path(s).
 ```go
-...
+paths := uast.JsonGroup(nil, uast.JsonKey("temp_field"))
+function := uast.JsonRemove(uast.Column[string]("t", "data"), paths)
 ```
 Output:
 ```text
-...
+JSON_REMOVE("t"."data", '$.temp_field')
 ```
 
 #### JsonSet
+Sets a value in a JSON document at the specified path(s). Creates the path if it does not exist.
 ```go
-...
+function := uast.JsonSet(
+    uast.Column[string]("t", "settings"),
+    uast.JsonPair(uast.Value("$.theme"), uast.Value("dark")),
+)
 ```
 Output:
 ```text
-...
+JSON_SET("t"."settings", '$.theme', 'dark')
 ```
 
 #### JsonType
+Returns the JSON type of a JSON value (e.g., 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
 ```go
-...
+function := uast.JsonType(uast.Column[string]("t", "attributes"))
 ```
 Output:
 ```text
-...
+JSON_TYPE("t"."attributes")
 ```
 
 ### Math
 #### Abs
+Returns the absolute (non-negative) value of a numeric expression.
 ```go
-...
+math := uast.Abs(uast.Column[float64]("t", "deviation"))
 ```
 Output:
 ```text
-...
+ABS("t"."deviation")
 ```
 
 #### ACos
+Returns the arc cosine (inverse cosine) of the expression, in radians.
 ```go
-...
+math := uast.ACos(uast.Column[float64]("t", "cosine_val"))
 ```
 Output:
 ```text
-...
+ACOS("t"."cosine_val")
 ```
 
 #### ASin
+Returns the arc sine (inverse sine) of the expression, in radians.
 ```go
-...
+math := uast.ASin(uast.Column[float64]("t", "sine_val"))
 ```
 Output:
 ```text
-...
+ASIN("t"."sine_val")
 ```
 
 #### ATan
+Returns the arc tangent (inverse tangent) of the expression, in radians.
 ```go
-...
+math := uast.ATan(uast.Column[float64]("t", "slope"))
 ```
 Output:
 ```text
-...
+ATAN("t"."slope")
 ```
 
 #### ATan2
+Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using their signs to determine the quadrant.
 ```go
-...
+math := uast.ATan2(uast.Column[float64]("t", "y"), uast.Column[float64]("t", "x"))
 ```
 Output:
 ```text
-...
+ATAN2("t"."y", "t"."x")
 ```
 
 #### Cbrt
+Returns the cube root of a numeric expression.
 ```go
-...
+math := uast.Cbrt(uast.Column[float64]("t", "volume"))
 ```
 Output:
 ```text
-...
+CBRT("t"."volume")
 ```
 
 #### Ceil
+Returns the smallest integer value not less than the argument (rounds up).
 ```go
-...
+math := uast.Ceil(uast.Column[float64]("t", "rating"))
 ```
 Output:
 ```text
-...
+CEIL("t"."rating")
 ```
 
 #### Cos
+Returns the cosine of the expression, where the expression is in radians.
 ```go
-...
+math := uast.Cos(uast.Column[float64]("t", "angle"))
 ```
 Output:
 ```text
-...
+COS("t"."angle")
 ```
 
 #### Exp
+Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
 ```go
-...
+math := uast.Exp(uast.Column[float64]("t", "log_odds"))
 ```
 Output:
 ```text
-...
+EXP("t"."log_odds")
 ```
 
 #### Floor
+Returns the largest integer value not greater than the argument (rounds down).
 ```go
-...
+math := uast.Floor(uast.Column[float64]("t", "amount"))
 ```
 Output:
 ```text
-...
+FLOOR("t"."amount")
 ```
 
 #### Ln
+Returns the natural logarithm (base `e`) of the expression.
 ```go
-...
+math := uast.Ln(uast.Column[float64]("t", "ratio"))
 ```
 Output:
 ```text
-...
+LN("t"."ratio")
 ```
 
 #### Log
+Returns the logarithm of the expression to the specified base.
 ```go
-...
+math := uast.Log(uast.Column[float64]("t", "value"), uast.Value(10.0))
 ```
 Output:
 ```text
-...
+LOG(10.000000, "t"."value")
 ```
 
 #### Mod
+Returns the remainder (modulo) of the division of the first expression by the second.
 ```go
-...
+math := uast.Mod(uast.Column[int]("t", "serial"), uast.Value(16))
 ```
 Output:
 ```text
-...
+MOD("t"."serial", 16)
 ```
 
 #### Pi
+Returns the mathematical constant `p` (~3.14159).
 ```go
-...
+math := uast.Pi()
 ```
 Output:
 ```text
-...
+PI()
 ```
 
 #### Power
+Returns the expression raised to the power of the exponent.
 ```go
-...
+math := uast.Power(uast.Column[float64]("t", "base"), uast.Column[float64]("t", "exponent"))
 ```
 Output:
 ```text
-...
+POWER("t"."base", "t"."exponent")
 ```
 
 #### Rand
+Returns a random floating-point value in the range [0, 1].
 ```go
-...
+math := uast.Rand()
 ```
 Output:
 ```text
-...
+RAND()
 ```
 
 #### Round
+Rounds the expression to the specified number of decimal places.
 ```go
-...
+math := uast.Round(uast.Column[float64]("t", "price"), uast.Value(2))
 ```
 Output:
 ```text
-...
+ROUND("t"."price", 2)
 ```
 
 #### Sin
+Returns the sine of the expression, where the expression is in radians.
 ```go
-...
+math := uast.Sin(uast.Column[float64]("t", "phase"))
 ```
 Output:
 ```text
-...
+SIN("t"."phase")
 ```
 
 #### Sqrt
+Returns the square root of the expression.
 ```go
-...
+math := uast.Sqrt(uast.Column[float64]("t", "area"))
 ```
 Output:
 ```text
-...
+SQRT("t"."area")
 ```
 
 #### Tan
+Returns the tangent of the expression, where the expression is in radians.
 ```go
-...
+math := uast.Tan(uast.Column[float64]("t", "incidence"))
 ```
 Output:
 ```text
-...
+TAN("t"."incidence")
 ```
 
 #### Trunc
+Truncates the numeric expression to the specified number of decimal places (without rounding).
 ```go
-...
+math := uast.Trunc(uast.Column[float64]("t", "measurement"), uast.Value(3))
 ```
 Output:
 ```text
-...
+TRUNC("t"."measurement", 3)
 ```
 
 ### String

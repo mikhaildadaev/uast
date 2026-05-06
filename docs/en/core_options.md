@@ -444,7 +444,7 @@ expr := uast.ConstStringDefault()
 ```
 Output:
 ```text
-
+ 
 ```
 
 ### ConstUintOne
@@ -1388,73 +1388,84 @@ Output:
 ```
 
 ## Literal
-...
+Embeds a raw literal value directly into the generated SQL string (not parameterized). Use with caution — values are written as-is. Prefer `Value` for user-supplied data.
 ```go
-...
+expr := uast.Literal("CURRENT_TIMESTAMP")
 ```
 Output:
 ```text
-...
+CURRENT_TIMESTAMP
 ```
 
 ## Logical
 ### And
-...
+Combines multiple conditions with a logical `AND`. All conditions must be true for the combined expression to be true.
 ```go
-...
+expr := uast.And(
+    uast.Equal(uast.Column[string]("t", "status"), uast.Value("active")),
+    uast.Greater(uast.Column[int]("t", "login_count"), uast.Value(0)),
+)
 ```
 Output:
 ```text
-...
+("t"."status" = 'active' AND "t"."login_count" > 0)
 ```
 
 ### Or
-...
+Combines multiple conditions with a logical `OR`. At least one condition must be true for the combined expression to be true.
 ```go
-...
+expr := uast.Or(
+    uast.IsNull(uast.Column[string]("t", "closed_at")),
+    uast.Greater(uast.Column[time.Time]("t", "closed_at"), uast.Value("2026-01-01")),
+)
 ```
 Output:
 ```text
-...
+("t"."closed_at" IS NULL OR "t"."closed_at" > '2026-01-01')
 ```
 
 ## Order
 ### Asc
-...
+Specifies ascending order for an `ORDER BY` clause or window function ordering.
 ```go
-...
+order := uast.Asc(uast.Column[string]("u", "last_name"))
 ```
 Output:
 ```text
-...
+"u"."last_name" ASC
 ```
 
 ### Desc
-...
+Specifies descending order for an `ORDER BY` clause or window function ordering.
 ```go
-...
+order := uast.Desc(uast.Column[int]("o", "total"))
 ```
 Output:
 ```text
-...
+"o"."total" DESC
 ```
 
 ## Subquery
-...
+Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
-...
+sub := uast.Subquery[int](
+    uast.NewSelect(uast.Column[int]("c", "id")).
+        From(uast.Table("categories")).
+        Where(uast.Equal(uast.Column[string]("c", "slug"), uast.Value("books"))),
+)
+expr := uast.Equal(uast.Column[int]("p", "category_id"), sub)
 ```
 Output:
 ```text
-...
+"p"."category_id" = (SELECT "c"."id" FROM "categories" WHERE "c"."slug" = 'books')
 ```
 
 ## Value
-...
+Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`$1`, `?`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data.
 ```go
-...
+expr := uast.Value("hello@world.com")
 ```
 Output:
 ```text
-...
+$1
 ```

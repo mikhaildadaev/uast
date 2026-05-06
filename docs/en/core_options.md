@@ -234,93 +234,106 @@ Output:
 ```
 
 ### Less
-...
+Compares if the left expression is less than the right expression (<).
 ```go
-...
+expr := uast.Less(uast.Column[int]("t", "stock"), uast.Value(10))
 ```
 Output:
 ```text
-...
+"t"."stock" < 10
 ```
 
 ### LessEqual
-...
+Compares if the left expression is less than or equal to the right expression (<=).
 ```go
-...
+expr := uast.LessEqual(uast.Column[float64]("t", "discount"), uast.Value(0.5))
 ```
 Output:
 ```text
-...
+"t"."discount" <= 0.500000
 ```
 
 ### Like
-...
+Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with % and _ wildcards.
 ```go
-...
+expr := uast.Like(uast.Column[string]("t", "code"), uast.Value("UA-%"))
 ```
 Output:
 ```text
-...
+"t"."code" LIKE 'UA-%'
 ```
 
 ### NotBetween
-...
+Checks if the left expression falls outside the range defined by valueStart and valueEnd.
 ```go
-...
+expr := uast.NotBetween(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
 ```
 Output:
 ```text
-...
+"t"."age" NOT BETWEEN 18 AND 65
 ```
 
 ### NotEqual
-...
+Compares two expressions for inequality (!= or <>).
 ```go
-...
+expr := uast.NotEqual(uast.Column[string]("t", "status"), uast.Value("banned"))
 ```
 Output:
 ```text
-...
+"t"."status" != 'banned'
 ```
 
 ### NotExists
-...
+Checks if the subquery returns no rows. Returns true if the subquery result is empty.
 ```go
-...
+sub := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("bans")).Where(
+    uast.Equal(
+        uast.Column[int]("bans", "user_id"),
+        uast.Column[int]("users", "id"),
+    ),
+)
+expr := uast.NotExists(uast.Subquery[int](sub))
 ```
 Output:
 ```text
-...
+NOT EXISTS (SELECT * FROM "bans" WHERE "bans"."user_id" = "users"."id")
 ```
 
 ### NotILike
-...
+Performs a negated case-insensitive pattern matching comparison.
 ```go
-...
+expr := uast.NotILike(uast.Column[string]("t", "email"), uast.Value("%@spam.com"))
 ```
 Output:
 ```text
-...
+"t"."email" NOT ILIKE '%@spam.com'
 ```
 
 ### NotIn
-...
+Checks if the left expression does not match any value contained within the right expression.
 ```go
-...
+expr := uast.NotIn(
+    uast.Column[int]("t", "status_id"),
+    uast.Subquery[int](
+        uast.NewSelect(uast.Column[int]("s", "id")).
+            From(uast.Table("statuses")).
+            Where(uast.Equal(uast.Column[string]("s", "archived"), uast.Value(true))),
+    ),
+)
 ```
 Output:
 ```text
-...
+"t"."status_id" NOT IN (SELECT "s"."id" FROM "statuses" WHERE "s"."archived" = TRUE)
 ```
 
 ### NotLike
-...
+Performs a negated case-sensitive pattern matching comparison.
 ```go
-...
+expr := uast.NotLike(uast.Column[string]("t", "phone"), uast.Value("+7-000-%"))
 ```
 Output:
 ```text
-...
+"t"."phone" NOT LIKE '+7-000-%'
 ```
 
 ## Constant

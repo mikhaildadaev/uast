@@ -22,7 +22,7 @@ ARRAY[1, 2, 3]
 ### BitwiseAnd
 Performs a bitwise AND operation between two expressions.
 ```go
-expr := uast.BitwiseAnd(uast.Column[int]("t", "flags"), uast.Value(0b0011))
+binary := uast.BitwiseAnd(uast.Column[int]("t", "flags"), uast.Value(0b0011))
 ```
 Output:
 ```text
@@ -32,7 +32,7 @@ Output:
 ### BitwiseOr
 Performs a bitwise OR operation between two expressions.
 ```go
-expr := uast.BitwiseOr(uast.Column[int]("t", "flags"), uast.Value(0b1100))
+binary := uast.BitwiseOr(uast.Column[int]("t", "flags"), uast.Value(0b1100))
 ```
 Output:
 ```text
@@ -42,7 +42,7 @@ Output:
 ### BitwiseXor
 Performs a bitwise XOR operation between two expressions.
 ```go
-expr := uast.BitwiseXor(uast.Column[int]("t", "flags"), uast.Value(0b1111))
+binary := uast.BitwiseXor(uast.Column[int]("t", "flags"), uast.Value(0b1111))
 ```
 Output:
 ```text
@@ -52,7 +52,7 @@ Output:
 ### Divide
 Divides the left expression by the right expression.
 ```go
-expr := uast.Divide(uast.Column[float64]("t", "price"), uast.Value(2.0))
+binary := uast.Divide(uast.Column[float64]("t", "price"), uast.Value(2.0))
 ```
 Output:
 ```text
@@ -62,7 +62,7 @@ Output:
 ### Minus
 Subtracts the right expression from the left expression.
 ```go
-expr := uast.Minus(uast.Column[int]("t", "total"), uast.Value(10))
+binary := uast.Minus(uast.Column[int]("t", "total"), uast.Value(10))
 ```
 Output:
 ```text
@@ -72,7 +72,7 @@ Output:
 ### Modulo
 Returns the remainder of dividing the left expression by the right expression.
 ```go
-expr := uast.Modulo(uast.Column[int]("t", "id"), uast.Value(5))
+binary := uast.Modulo(uast.Column[int]("t", "id"), uast.Value(5))
 ```
 Output:
 ```text
@@ -82,7 +82,7 @@ Output:
 ### Multiply
 Multiplies the left expression by the right expression.
 ```go
-expr := uast.Multiply(uast.Column[float64]("t", "price"), uast.Value(1.2))
+binary := uast.Multiply(uast.Column[float64]("t", "price"), uast.Value(1.2))
 ```
 Output:
 ```text
@@ -92,7 +92,7 @@ Output:
 ### Plus
 Adds the left expression to the right expression.
 ```go
-expr := uast.Plus(uast.Column[int]("t", "amount"), uast.Value(100))
+binary := uast.Plus(uast.Column[int]("t", "amount"), uast.Value(100))
 ```
 Output:
 ```text
@@ -102,7 +102,7 @@ Output:
 ### ShiftLeft
 Performs a bitwise left shift on the left expression by the number of bits specified in the right expression.
 ```go
-expr := uast.ShiftLeft(uast.Column[int]("t", "mask"), uast.Value(4))
+binary := uast.ShiftLeft(uast.Column[int]("t", "mask"), uast.Value(4))
 ```
 Output:
 ```text
@@ -112,7 +112,7 @@ Output:
 ### ShiftRight
 Performs a bitwise right shift on the left expression by the number of bits specified in the right expression.
 ```go
-expr := uast.ShiftRight(uast.Column[int]("t", "mask"), uast.Value(2))
+binary := uast.ShiftRight(uast.Column[int]("t", "mask"), uast.Value(2))
 ```
 Output:
 ```text
@@ -122,7 +122,7 @@ Output:
 ## Column
 Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
 ```go
-col := uast.Column[string]("u", "email")
+column := uast.Column[string]("u", "email")
 ```
 Output:
 ```text
@@ -133,7 +133,7 @@ Output:
 ### Between
 Checks if the left expression falls within the range defined by `valueStart` and `valueEnd` (inclusive).
 ```go
-expr := uast.Between(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
+comparison := uast.Between(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
 ```
 Output:
 ```text
@@ -143,7 +143,7 @@ Output:
 ### Equal
 Compares two expressions for equality (`=`).
 ```go
-expr := uast.Equal(uast.Column[int]("t", "status"), uast.Value("active"))
+comparison := uast.Equal(uast.Column[int]("t", "status"), uast.Value("active"))
 ```
 Output:
 ```text
@@ -159,7 +159,7 @@ sub := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("orders")).Where(
         uast.Column[int]("users", "id"),
     ),
 )
-expr := uast.Exists(uast.Subquery[int](sub))
+comparison := uast.Exists(uast.Subquery[int](sub))
 ```
 Output:
 ```text
@@ -169,7 +169,7 @@ EXISTS (SELECT * FROM "orders" WHERE "orders"."user_id" = "users"."id")
 ### Greater
 Compares if the left expression is greater than the right expression (`>`).
 ```go
-expr := uast.Greater(uast.Column[float64]("t", "price"), uast.Value(100.0))
+comparison := uast.Greater(uast.Column[float64]("t", "price"), uast.Value(100.0))
 ```
 Output:
 ```text
@@ -179,7 +179,7 @@ Output:
 ### GreaterEqual
 Compares if the left expression is greater than or equal to the right expression (`>=`).
 ```go
-expr := uast.GreaterEqual(uast.Column[int]("t", "quantity"), uast.Value(1))
+comparison := uast.GreaterEqual(uast.Column[int]("t", "quantity"), uast.Value(1))
 ```
 Output:
 ```text
@@ -189,7 +189,7 @@ Output:
 ### ILike
 Performs a case-insensitive pattern matching comparison. The right expression should contain a pattern with `%` (any sequence) and `_` (single character) wildcards.
 ```go
-expr := uast.ILike(uast.Column[string]("t", "name"), uast.Value("%ivan%"))
+comparison := uast.ILike(uast.Column[string]("t", "name"), uast.Value("%ivan%"))
 ```
 Output:
 ```text
@@ -199,7 +199,7 @@ Output:
 ### In
 Checks if the left expression matches any value contained within the right expression (typically a subquery or array).
 ```go
-expr := uast.In(
+comparison := uast.In(
     uast.Column[int]("t", "category_id"),
     uast.Subquery[int](
         uast.NewSelect(uast.Column[int]("c", "id")).
@@ -216,7 +216,7 @@ Output:
 ### IsNotNull
 Checks if the expression is not `NULL`.
 ```go
-expr := uast.IsNotNull(uast.Column[string]("t", "deleted_at"))
+comparison := uast.IsNotNull(uast.Column[string]("t", "deleted_at"))
 ```
 Output:
 ```text
@@ -226,7 +226,7 @@ Output:
 ### IsNull
 Checks if the expression is `NULL`.
 ```go
-expr := uast.IsNull(uast.Column[string]("t", "deleted_at"))
+comparison := uast.IsNull(uast.Column[string]("t", "deleted_at"))
 ```
 Output:
 ```text
@@ -236,7 +236,7 @@ Output:
 ### Less
 Compares if the left expression is less than the right expression (`<`).
 ```go
-expr := uast.Less(uast.Column[int]("t", "stock"), uast.Value(10))
+comparison := uast.Less(uast.Column[int]("t", "stock"), uast.Value(10))
 ```
 Output:
 ```text
@@ -246,7 +246,7 @@ Output:
 ### LessEqual
 Compares if the left expression is less than or equal to the right expression (`<=`).
 ```go
-expr := uast.LessEqual(uast.Column[float64]("t", "discount"), uast.Value(0.5))
+comparison := uast.LessEqual(uast.Column[float64]("t", "discount"), uast.Value(0.5))
 ```
 Output:
 ```text
@@ -256,7 +256,7 @@ Output:
 ### Like
 Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
 ```go
-expr := uast.Like(uast.Column[string]("t", "code"), uast.Value("UA-%"))
+comparison := uast.Like(uast.Column[string]("t", "code"), uast.Value("UA-%"))
 ```
 Output:
 ```text
@@ -266,7 +266,7 @@ Output:
 ### NotBetween
 Checks if the left expression falls outside the range defined by `valueStart` and `valueEnd`.
 ```go
-expr := uast.NotBetween(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
+comparison := uast.NotBetween(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
 ```
 Output:
 ```text
@@ -276,7 +276,7 @@ Output:
 ### NotEqual
 Compares two expressions for inequality (`!=` or `<>`).
 ```go
-expr := uast.NotEqual(uast.Column[string]("t", "status"), uast.Value("banned"))
+comparison := uast.NotEqual(uast.Column[string]("t", "status"), uast.Value("banned"))
 ```
 Output:
 ```text
@@ -292,7 +292,7 @@ sub := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("bans")).Where(
         uast.Column[int]("users", "id"),
     ),
 )
-expr := uast.NotExists(uast.Subquery[int](sub))
+comparison := uast.NotExists(uast.Subquery[int](sub))
 ```
 Output:
 ```text
@@ -302,7 +302,7 @@ NOT EXISTS (SELECT * FROM "bans" WHERE "bans"."user_id" = "users"."id")
 ### NotILike
 Performs a negated case-insensitive pattern matching comparison.
 ```go
-expr := uast.NotILike(uast.Column[string]("t", "email"), uast.Value("%@spam.com"))
+comparison := uast.NotILike(uast.Column[string]("t", "email"), uast.Value("%@spam.com"))
 ```
 Output:
 ```text
@@ -312,7 +312,7 @@ Output:
 ### NotIn
 Checks if the left expression does not match any value contained within the right expression.
 ```go
-expr := uast.NotIn(
+comparison := uast.NotIn(
     uast.Column[int]("t", "status_id"),
     uast.Subquery[int](
         uast.NewSelect(uast.Column[int]("s", "id")).
@@ -329,7 +329,7 @@ Output:
 ### NotLike
 Performs a negated case-sensitive pattern matching comparison.
 ```go
-expr := uast.NotLike(uast.Column[string]("t", "phone"), uast.Value("+7-000-%"))
+comparison := uast.NotLike(uast.Column[string]("t", "phone"), uast.Value("+7-000-%"))
 ```
 Output:
 ```text
@@ -340,7 +340,7 @@ Output:
 ### ConstBoolFalse
 Returns a constant boolean `FALSE` expression. Useful as a default placeholder or for constructing logical expressions without value binding.
 ```go
-expr := uast.ConstBoolFalse()
+constant := uast.ConstBoolFalse()
 ```
 Output:
 ```text
@@ -350,7 +350,7 @@ FALSE
 ### ConstBoolTrue
 Returns a constant boolean `TRUE` expression.
 ```go
-expr := uast.ConstBoolTrue()
+constant := uast.ConstBoolTrue()
 ```
 Output:
 ```text
@@ -360,7 +360,7 @@ TRUE
 ### ConstFloat32One
 Returns a constant `float32` value of `1.0`. Optimized for internal comparisons and arithmetic where a unit value is required without binding a placeholder.
 ```go
-expr := uast.ConstFloat32One()
+constant := uast.ConstFloat32One()
 ```
 Output:
 ```text
@@ -370,7 +370,7 @@ Output:
 ### ConstFloat64One
 Returns a constant `float64` value of `1.0`.
 ```go
-expr := uast.ConstFloat64One()
+constant := uast.ConstFloat64One()
 ```
 Output:
 ```text
@@ -380,7 +380,7 @@ Output:
 ### ConstIntOne
 Returns a constant `int` value of `1`.
 ```go
-expr := uast.ConstIntOne()
+constant := uast.ConstIntOne()
 ```
 Output:
 ```text
@@ -390,7 +390,7 @@ Output:
 ### ConstInt8One
 Returns a constant `int8` value of `1`.
 ```go
-expr := uast.ConstInt8One()
+constant := uast.ConstInt8One()
 ```
 Output:
 ```text
@@ -400,7 +400,7 @@ Output:
 ### ConstInt16One
 Returns a constant `int16` value of `1`.
 ```go
-expr := uast.ConstInt16One()
+constant := uast.ConstInt16One()
 ```
 Output:
 ```text
@@ -410,7 +410,7 @@ Output:
 ### ConstInt32One
 Returns a constant `int32` value of `1`.
 ```go
-expr := uast.ConstInt32One()
+constant := uast.ConstInt32One()
 ```
 Output:
 ```text
@@ -420,7 +420,7 @@ Output:
 ### ConstInt64One
 Returns a constant `int64` value of `1`.
 ```go
-expr := uast.ConstInt64One()
+constant := uast.ConstInt64One()
 ```
 Output:
 ```text
@@ -430,7 +430,7 @@ Output:
 ### ConstNullDefault
 Returns a typed `NULL` constant. The type is determined by the generic parameter `T`. This allows `NULL` to be used in typed contexts without explicit casting.
 ```go
-expr := uast.ConstNullDefault[string]()
+constant := uast.ConstNullDefault[string]()
 ```
 Output:
 ```text
@@ -440,7 +440,7 @@ NULL
 ### ConstStringDefault
 Returns a constant empty string expression (` `). Used when an empty string needs to be embedded directly in the SQL without a placeholder.
 ```go
-expr := uast.ConstStringDefault()
+constant := uast.ConstStringDefault()
 ```
 Output:
 ```text
@@ -450,7 +450,7 @@ Output:
 ### ConstUintOne
 Returns a constant `uint` value of `1`.
 ```go
-expr := uast.ConstUintOne()
+constant := uast.ConstUintOne()
 ```
 Output:
 ```text
@@ -460,7 +460,7 @@ Output:
 ### ConstUint8One
 Returns a constant `uint8` value of `1`.
 ```go
-expr := uast.ConstUint8One()
+constant := uast.ConstUint8One()
 ```
 Output:
 ```text
@@ -470,7 +470,7 @@ Output:
 ### ConstUint16One
 Returns a constant `uint16` value of `1`.
 ```go
-expr := uast.ConstUint16One()
+constant := uast.ConstUint16One()
 ```
 Output:
 ```text
@@ -480,7 +480,7 @@ Output:
 ### ConstUint32One
 Returns a constant `uint32` value of `1`.
 ```go
-expr := uast.ConstUint32One()
+constant := uast.ConstUint32One()
 ```
 Output:
 ```text
@@ -490,7 +490,7 @@ Output:
 ### ConstUint64One
 Returns a constant `uint64` value of `1`.
 ```go
-expr := uast.ConstUint64One()
+constant := uast.ConstUint64One()
 ```
 Output:
 ```text
@@ -1390,7 +1390,7 @@ Output:
 ## Literal
 Embeds a raw literal value directly into the generated SQL string (not parameterized). Use with caution — values are written as-is. Prefer `Value` for user-supplied data.
 ```go
-expr := uast.Literal("CURRENT_TIMESTAMP")
+literal := uast.Literal("CURRENT_TIMESTAMP")
 ```
 Output:
 ```text
@@ -1401,7 +1401,7 @@ CURRENT_TIMESTAMP
 ### And
 Combines multiple conditions with a logical `AND`. All conditions must be true for the combined expression to be true.
 ```go
-expr := uast.And(
+logical := uast.And(
     uast.Equal(uast.Column[string]("t", "status"), uast.Value("active")),
     uast.Greater(uast.Column[int]("t", "login_count"), uast.Value(0)),
 )
@@ -1414,7 +1414,7 @@ Output:
 ### Or
 Combines multiple conditions with a logical `OR`. At least one condition must be true for the combined expression to be true.
 ```go
-expr := uast.Or(
+logical := uast.Or(
     uast.IsNull(uast.Column[string]("t", "closed_at")),
     uast.Greater(uast.Column[time.Time]("t", "closed_at"), uast.Value("2026-01-01")),
 )
@@ -1453,7 +1453,7 @@ sub := uast.Subquery[int](
         From(uast.Table("categories")).
         Where(uast.Equal(uast.Column[string]("c", "slug"), uast.Value("books"))),
 )
-expr := uast.Equal(uast.Column[int]("p", "category_id"), sub)
+subquery := uast.Equal(uast.Column[int]("p", "category_id"), sub)
 ```
 Output:
 ```text
@@ -1463,7 +1463,7 @@ Output:
 ## Value
 Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`$1`, `?`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data.
 ```go
-expr := uast.Value("hello@world.com")
+value := uast.Value("hello@world.com")
 ```
 Output:
 ```text

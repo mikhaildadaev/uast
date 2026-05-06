@@ -499,147 +499,183 @@ Output:
 
 ## Function
 ### Aggregate
-#### Avg...
+#### Avg
+Returns the average (arithmetic mean) of all non-NULL values in the expression. If distinct is true, the average is calculated over distinct values only.
 ```go
-...
+function := uast.Avg(uast.Column[float64]("o", "total_price"), false)
 ```
 Output:
 ```text
-...
+AVG("o"."total_price")
 ```
 
-#### BitAnd```go
-...
+#### BitAnd
+Returns the bitwise AND of all bits in the expression. Only meaningful for integer types.
+```go
+function := uast.BitAnd(uast.Column[int]("t", "permissions"), false)
 ```
 Output:
 ```text
-...
+BIT_AND("t"."permissions")
 ```
 
-#### BitOr```go
-...
+#### BitOr
+Returns the bitwise OR of all bits in the expression. Only meaningful for integer types.
+```go
+function := uast.BitOr(uast.Column[int]("t", "flags"), true)
 ```
 Output:
 ```text
-...
+BIT_OR(DISTINCT "t"."flags")
 ```
 
 #### BitXor
+Returns the bitwise XOR of all bits in the expression. Only meaningful for integer types.
 ```go
-...
+function := uast.BitXor(uast.Column[int]("t", "checksum"), false)
 ```
 Output:
 ```text
-...
+BIT_XOR("t"."checksum")
 ```
 
 #### Count
+Returns the number of rows matching the query, or the number of non-NULL values if an expression is provided. When distinct is true, counts only distinct values.
 ```go
-...
+function := uast.Count(uast.Column[int]("*"), false)
+functionWithDistinct := uast.Count(uast.Column[string]("u", "email"), true)
 ```
 Output:
 ```text
-...
+COUNT(*)
+COUNT(DISTINCT "u"."email")
 ```
 
 #### GroupConcat
+Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The distinct flag removes duplicates before concatenation.
 ```go
-...
+function := uast.GroupConcat(uast.Column[string]("t", "tag"), true)
 ```
 Output:
 ```text
-...
+GROUP_CONCAT(DISTINCT "t"."tag")
 ```
 
 #### Max
+Returns the maximum value of the expression across all rows in the group.
 ```go
-...
+function := uast.Max(uast.Column[float64]("o", "amount"), false)
 ```
 Output:
 ```text
-...
+MAX("o"."amount")
 ```
 
 #### Min
+Returns the minimum value of the expression across all rows in the group.
 ```go
-...
+function := uast.Min(uast.Column[time.Time]("o", "created_at"), false)
 ```
 Output:
 ```text
-...
+MIN("o"."created_at")
 ```
 
 #### StdDev
+Returns the population standard deviation of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
 ```go
-...
+function := uast.StdDev(uast.Column[float64]("t", "score"), false)
 ```
 Output:
 ```text
-...
+STDDEV("t"."score")
 ```
 
 #### Sum
+Returns the sum of all values in the expression. If distinct is true, sums only distinct values.
 ```go
-...
+function := uast.Sum(uast.Column[float64]("o", "tax"), false)
 ```
 Output:
 ```text
-...
+SUM("o"."tax")
 ```
 
 #### Variance
+Returns the population variance of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
 ```go
-...
+function := uast.Variance(uast.Column[float64]("t", "latency"), false)
 ```
 Output:
 ```text
-...
+VARIANCE("t"."latency")
 ```
 
 ### Analytical
 #### FirstValue
+Returns the value of the expression from the first row of the window frame. Requires an OVER clause with window specification.
 ```go
-...
+function := uast.FirstValue(uast.Column[string]("t", "event")).Over(
+    uast.PartitionBy(uast.Column[int]("t", "user_id")),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "created_at"))),
+)
 ```
 Output:
 ```text
-...
+FIRST_VALUE("t"."event") OVER (PARTITION BY "t"."user_id" ORDER BY "t"."created_at" ASC)
 ```
 
 #### Lag
+Returns the value of the expression from a row that is offset rows before the current row within the partition.
 ```go
-...
+function := uast.Lag(uast.Column[float64]("t", "price"), 1).Over(
+    uast.PartitionBy(uast.Column[int]("t", "symbol_id")),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "tick_time"))),
+)
 ```
 Output:
 ```text
-...
+LAG("t"."price", 1) OVER (PARTITION BY "t"."symbol_id" ORDER BY "t"."tick_time" ASC)
 ```
 
 #### LastValue
+Returns the value of the expression from the last row of the window frame.
 ```go
-...
+function := uast.LastValue(uast.Column[string]("t", "status")).Over(
+    uast.PartitionBy(uast.Column[int]("t", "order_id")),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "updated_at"))),
+    uast.Frame(uast.RowsCurrent(), uast.UnboundedFollowing()),
+)
 ```
 Output:
 ```text
-...
+LAST_VALUE("t"."status") OVER (PARTITION BY "t"."order_id" ORDER BY "t"."updated_at" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 
 #### Lead
+Returns the value of the expression from a row that is offset rows after the current row within the partition.
 ```go
-...
+function := uast.Lead(uast.Column[float64]("t", "temperature"), 1).Over(
+    uast.PartitionBy(uast.Column[int]("t", "sensor_id")),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "measured_at"))),
+)
 ```
 Output:
 ```text
-...
+LEAD("t"."temperature", 1) OVER (PARTITION BY "t"."sensor_id" ORDER BY "t"."measured_at" ASC)
 ```
 
 #### NthValue
+Returns the value of the expression from the n-th row of the window frame (1-based).
 ```go
-...
+function := uast.NthValue(uast.Column[string]("t", "log_entry"), 3).Over(
+    uast.PartitionBy(uast.Column[int]("t", "batch_id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "severity"))),
+)
 ```
 Output:
 ```text
-...
+NTH_VALUE("t"."log_entry", 3) OVER (PARTITION BY "t"."batch_id" ORDER BY "t"."severity" DESC)
 ```
 
 ### Condition

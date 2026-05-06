@@ -1125,7 +1125,7 @@ JSON_TYPE("t"."attributes")
 #### Abs
 Returns the absolute (non-negative) value of a numeric expression.
 ```go
-math := uast.Abs(uast.Column[float64]("t", "deviation"))
+function := uast.Abs(uast.Column[float64]("t", "deviation"))
 ```
 Output:
 ```text
@@ -1135,7 +1135,7 @@ ABS("t"."deviation")
 #### ACos
 Returns the arc cosine (inverse cosine) of the expression, in radians.
 ```go
-math := uast.ACos(uast.Column[float64]("t", "cosine_val"))
+function := uast.ACos(uast.Column[float64]("t", "cosine_val"))
 ```
 Output:
 ```text
@@ -1145,7 +1145,7 @@ ACOS("t"."cosine_val")
 #### ASin
 Returns the arc sine (inverse sine) of the expression, in radians.
 ```go
-math := uast.ASin(uast.Column[float64]("t", "sine_val"))
+function := uast.ASin(uast.Column[float64]("t", "sine_val"))
 ```
 Output:
 ```text
@@ -1155,7 +1155,7 @@ ASIN("t"."sine_val")
 #### ATan
 Returns the arc tangent (inverse tangent) of the expression, in radians.
 ```go
-math := uast.ATan(uast.Column[float64]("t", "slope"))
+function := uast.ATan(uast.Column[float64]("t", "slope"))
 ```
 Output:
 ```text
@@ -1165,7 +1165,7 @@ ATAN("t"."slope")
 #### ATan2
 Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using their signs to determine the quadrant.
 ```go
-math := uast.ATan2(uast.Column[float64]("t", "y"), uast.Column[float64]("t", "x"))
+function := uast.ATan2(uast.Column[float64]("t", "y"), uast.Column[float64]("t", "x"))
 ```
 Output:
 ```text
@@ -1175,7 +1175,7 @@ ATAN2("t"."y", "t"."x")
 #### Cbrt
 Returns the cube root of a numeric expression.
 ```go
-math := uast.Cbrt(uast.Column[float64]("t", "volume"))
+function := uast.Cbrt(uast.Column[float64]("t", "volume"))
 ```
 Output:
 ```text
@@ -1185,7 +1185,7 @@ CBRT("t"."volume")
 #### Ceil
 Returns the smallest integer value not less than the argument (rounds up).
 ```go
-math := uast.Ceil(uast.Column[float64]("t", "rating"))
+function := uast.Ceil(uast.Column[float64]("t", "rating"))
 ```
 Output:
 ```text
@@ -1195,7 +1195,7 @@ CEIL("t"."rating")
 #### Cos
 Returns the cosine of the expression, where the expression is in radians.
 ```go
-math := uast.Cos(uast.Column[float64]("t", "angle"))
+function := uast.Cos(uast.Column[float64]("t", "angle"))
 ```
 Output:
 ```text
@@ -1205,7 +1205,7 @@ COS("t"."angle")
 #### Exp
 Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
 ```go
-math := uast.Exp(uast.Column[float64]("t", "log_odds"))
+function := uast.Exp(uast.Column[float64]("t", "log_odds"))
 ```
 Output:
 ```text
@@ -1215,7 +1215,7 @@ EXP("t"."log_odds")
 #### Floor
 Returns the largest integer value not greater than the argument (rounds down).
 ```go
-math := uast.Floor(uast.Column[float64]("t", "amount"))
+function := uast.Floor(uast.Column[float64]("t", "amount"))
 ```
 Output:
 ```text
@@ -1225,7 +1225,7 @@ FLOOR("t"."amount")
 #### Ln
 Returns the natural logarithm (base `e`) of the expression.
 ```go
-math := uast.Ln(uast.Column[float64]("t", "ratio"))
+function := uast.Ln(uast.Column[float64]("t", "ratio"))
 ```
 Output:
 ```text
@@ -1235,7 +1235,7 @@ LN("t"."ratio")
 #### Log
 Returns the logarithm of the expression to the specified base.
 ```go
-math := uast.Log(uast.Column[float64]("t", "value"), uast.Value(10.0))
+function := uast.Log(uast.Column[float64]("t", "value"), uast.Value(10.0))
 ```
 Output:
 ```text
@@ -1245,7 +1245,7 @@ LOG(10.000000, "t"."value")
 #### Mod
 Returns the remainder (modulo) of the division of the first expression by the second.
 ```go
-math := uast.Mod(uast.Column[int]("t", "serial"), uast.Value(16))
+function := uast.Mod(uast.Column[int]("t", "serial"), uast.Value(16))
 ```
 Output:
 ```text
@@ -1255,7 +1255,7 @@ MOD("t"."serial", 16)
 #### Pi
 Returns the mathematical constant `p` (~3.14159).
 ```go
-math := uast.Pi()
+function := uast.Pi()
 ```
 Output:
 ```text
@@ -1265,7 +1265,7 @@ PI()
 #### Power
 Returns the expression raised to the power of the exponent.
 ```go
-math := uast.Power(uast.Column[float64]("t", "base"), uast.Column[float64]("t", "exponent"))
+function := uast.Power(uast.Column[float64]("t", "base"), uast.Column[float64]("t", "exponent"))
 ```
 Output:
 ```text
@@ -1275,7 +1275,7 @@ POWER("t"."base", "t"."exponent")
 #### Rand
 Returns a random floating-point value in the range [0, 1].
 ```go
-math := uast.Rand()
+function := uast.Rand()
 ```
 Output:
 ```text
@@ -1285,7 +1285,7 @@ RAND()
 #### Round
 Rounds the expression to the specified number of decimal places.
 ```go
-math := uast.Round(uast.Column[float64]("t", "price"), uast.Value(2))
+function := uast.Round(uast.Column[float64]("t", "price"), uast.Value(2))
 ```
 Output:
 ```text
@@ -1295,7 +1295,7 @@ ROUND("t"."price", 2)
 #### Sin
 Returns the sine of the expression, where the expression is in radians.
 ```go
-math := uast.Sin(uast.Column[float64]("t", "phase"))
+function := uast.Sin(uast.Column[float64]("t", "phase"))
 ```
 Output:
 ```text
@@ -1305,7 +1305,7 @@ SIN("t"."phase")
 #### Sqrt
 Returns the square root of the expression.
 ```go
-math := uast.Sqrt(uast.Column[float64]("t", "area"))
+function := uast.Sqrt(uast.Column[float64]("t", "area"))
 ```
 Output:
 ```text
@@ -1315,7 +1315,7 @@ SQRT("t"."area")
 #### Tan
 Returns the tangent of the expression, where the expression is in radians.
 ```go
-math := uast.Tan(uast.Column[float64]("t", "incidence"))
+function := uast.Tan(uast.Column[float64]("t", "incidence"))
 ```
 Output:
 ```text
@@ -1325,7 +1325,7 @@ TAN("t"."incidence")
 #### Trunc
 Truncates the numeric expression to the specified number of decimal places (without rounding).
 ```go
-math := uast.Trunc(uast.Column[float64]("t", "measurement"), uast.Value(3))
+function := uast.Trunc(uast.Column[float64]("t", "measurement"), uast.Value(3))
 ```
 Output:
 ```text
@@ -1334,193 +1334,237 @@ TRUNC("t"."measurement", 3)
 
 ### String
 #### Concat
+Concatenates two or more string expressions into a single string. `NULL` arguments are treated as empty strings in most dialects.
 ```go
-...
+function := uast.Concat(
+    uast.Column[string]("u", "first_name"),
+    uast.Value(" "),
+    uast.Column[string]("u", "last_name"),
+)
 ```
 Output:
 ```text
-...
+CONCAT("u"."first_name", ' ', "u"."last_name")
 ```
 
 #### ConcatWs
+Concatenates two or more string expressions with a specified separator between them. Skips `NULL` arguments.
 ```go
-...
+function := uast.ConcatWs(
+    uast.Value(", "),
+    uast.Column[string]("a", "city"),
+    uast.Column[string]("a", "country"),
+)
 ```
 Output:
 ```text
-...
+CONCAT_WS(', ', "a"."city", "a"."country")
 ```
 
 #### LeftString
+Returns the leftmost `count` characters from a string expression.
 ```go
-...
+function := uast.LeftString(uast.Column[string]("t", "sku"), uast.Value(3))
 ```
 Output:
 ```text
-...
+LEFT("t"."sku", 3)
 ```
 
 #### Lower
+Converts a string expression to lowercase.
 ```go
-...
+function := uast.Lower(uast.Column[string]("t", "email"))
 ```
 Output:
 ```text
-...
+LOWER("t"."email")
 ```
 
 #### LPad
+Left-pads a string expression with the specified separator to a total length of `count` characters.
 ```go
-...
+function := uast.LPad(uast.Column[string]("t", "code"), uast.Value(10), uast.Value("0"))
 ```
 Output:
 ```text
-...
+LPAD("t"."code", 10, '0')
 ```
 
 #### LTrim
+Removes leading spaces from a string expression.
 ```go
-...
+function := uast.LTrim(uast.Column[string]("t", "raw_input"))
 ```
 Output:
 ```text
-...
+LTRIM("t"."raw_input")
 ```
 
 #### Repeat
+Repeats a string expression `count` times.
 ```go
-...
+function := uast.Repeat(uast.Value("-"), uast.Value(5))
 ```
 Output:
 ```text
-...
+REPEAT('-', 5)
 ```
 
 #### Replace
+Replaces all occurrences of a substring in a string with a new substring.
 ```go
-...
+function := uast.Replace(uast.Column[string]("t", "url"), uast.Value("http://"), uast.Value("https://"))
 ```
 Output:
 ```text
-...
+REPLACE("t"."url", 'http://', 'https://')
 ```
 
 #### Reverse
+Reverses the characters in a string expression.
 ```go
-...
+function := uast.Reverse(uast.Column[string]("t", "dna_sequence"))
 ```
 Output:
 ```text
-...
+REVERSE("t"."dna_sequence")
 ```
 
 #### RightString
+Returns the rightmost `count` characters from a string expression.
 ```go
-...
+function := uast.RightString(uast.Column[string]("t", "filename"), uast.Value(4))
 ```
 Output:
 ```text
-...
+RIGHT("t"."filename", 4)
 ```
 
 #### RPad
+Right-pads a string expression with the specified separator to a total length of `count` characters.
 ```go
-...
+function := uast.RPad(uast.Column[string]("t", "title"), uast.Value(30), uast.Value("."))
 ```
 Output:
 ```text
-...
+RPAD("t"."title", 30, '.')
 ```
 
 #### RTrim
+Removes trailing spaces from a string expression.
 ```go
-...
+function := uast.RTrim(uast.Column[string]("t", "comment"))
 ```
 Output:
 ```text
-...
+RTRIM("t"."comment")
 ```
 
 #### SubString
+Extracts a substring from a string expression starting at `startPos` (1-based) for `lengthStr` characters.
 ```go
-...
+function := uast.SubString(uast.Column[string]("t", "isbn"), uast.Value(1), uast.Value(3))
 ```
 Output:
 ```text
-...
+SUBSTRING("t"."isbn", 1, 3)
 ```
 
 #### Trim
+Removes both leading and trailing spaces from a string expression.
 ```go
-...
+function := uast.Trim(uast.Column[string]("t", "username"))
 ```
 Output:
 ```text
-...
+TRIM("t"."username")
 ```
 
 #### Upper
+Converts a string expression to uppercase.
 ```go
-...
+function := uast.Upper(uast.Column[string]("t", "country_code"))
 ```
 Output:
 ```text
-...
+UPPER("t"."country_code")
 ```
 
 ### Ranking
 #### CumeDist
+Returns the cumulative distribution of a value within a partition (the ratio of rows that come before or are peers with the current row). Must be used with an `OVER` clause.
 ```go
-...
+function := uast.CumeDist().Over(
+    uast.OrderBy(uast.Desc(uast.Column[float64]("t", "score"))),
+)
 ```
 Output:
 ```text
-...
+CUME_DIST() OVER (ORDER BY "t"."score" DESC)
 ```
 
 #### DenseRank
+Returns the rank of a row without gaps. Rows with equal values receive the same rank, and the next rank is the immediate next integer. Requires `OVER`.
 ```go
-...
+function := uast.DenseRank().Over(
+    uast.PartitionBy(uast.Column[int]("t", "category_id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "points"))),
+)
 ```
 Output:
 ```text
-...
+DENSE_RANK() OVER (PARTITION BY "t"."category_id" ORDER BY "t"."points" DESC)
 ```
 
 #### NTile
+Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
 ```go
-...
+function := uast.NTile(4).Over(
+    uast.OrderBy(uast.Asc(uast.Column[float64]("t", "gpa"))),
+)
 ```
 Output:
 ```text
-...
+NTILE(4) OVER (ORDER BY "t"."gpa" ASC)
 ```
 
 #### PercentRank
+Returns the percentile rank of a row within a partition (range 0 to 1). Rank of first row is always 0. Requires `OVER`.
 ```go
-...
+function := uast.PercentRank().Over(
+    uast.OrderBy(uast.Asc(uast.Column[float64]("t", "latency"))),
+)
 ```
 Output:
 ```text
-...
+PERCENT_RANK() OVER (ORDER BY "t"."latency" ASC)
 ```
 
 #### Rank
+Returns the rank of a row with gaps. Equal values receive the same rank, and the next distinct value skips ahead. Requires `OVER`.
 ```go
-...
+function := uast.Rank().Over(
+    uast.PartitionBy(uast.Column[int]("t", "league_id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "wins"))),
+)
 ```
 Output:
 ```text
-...
+RANK() OVER (PARTITION BY "t"."league_id" ORDER BY "t"."wins" DESC)
 ```
 
 #### RowNumber
+Assigns a unique sequential integer to each row within the partition, starting from 1. Order determines the numbering sequence.
 ```go
-...
+function := uast.RowNumber().Over(
+    uast.PartitionBy(uast.Column[int]("t", "session_id")),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "event_time"))),
+)
 ```
 Output:
 ```text
-...
+ROW_NUMBER() OVER (PARTITION BY "t"."session_id" ORDER BY "t"."event_time" ASC)
 ```
 
 ## Literal

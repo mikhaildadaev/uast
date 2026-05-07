@@ -652,12 +652,12 @@ Returns the value of the expression from the first row of the window frame. Requ
 ```go
 function := uast.FirstValue(uast.Column[string]("t", "event")).Over(
     uast.PartitionBy(uast.Column[int]("t", "user_id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "created_at"))),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "createat"))),
 )
 ```
 Output:
 ```text
-FIRST_VALUE("t"."event") OVER (PARTITION BY "t"."user_id" ORDER BY "t"."created_at" ASC)
+FIRST_VALUE("t"."event") OVER (PARTITION BY "t"."user_id" ORDER BY "t"."createat" ASC)
 ```
 
 #### Lag
@@ -734,115 +734,120 @@ CASE WHEN "t"."number" < 2 THEN 'old' ELSE 'new' END
 #### Coalesce
 Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
 ```go
-function := uast.Coalesce(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
+function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
 Output:
 ```text
-COALESCE("t"."createAt", "t"."updateAt")
+COALESCE("t"."createat", "t"."updateat")
 ```
 
 #### Greatest
 Returns the largest value from the provided list of expressions.
 ```go
-function := uast.Greatest(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
+function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
 Output:
 ```text
-GREATEST("t"."createAt", "t"."updateAt")
+GREATEST("t"."createat", "t"."updateat")
 ```
 
 #### Least
 Returns the smallest value from the provided list of expressions.
 ```go
-function := uast.Least(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
+function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
 Output:
 ```text
-LEAST("t"."createAt", "t"."updateAt")
+LEAST("t"."createat", "t"."updateat")
 ```
 
 #### NullIf
 Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
 ```go
-function := uast.NullIf(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
+function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
 Output:
 ```text
-NULLIF("t"."createAt", "t"."updateAt")
+NULLIF("t"."createat", "t"."updateat")
 ```
 
 ### Convert
 #### Cast
 Converts an expression to a specified data type.
 ```go
-function := uast.Cast(uast.Column[string]("t", "json_str"), uast.TypeJSON)
+function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: CAST("t"."json_str" AS JSON)
-PostgreSQL: "t"."json_str"::JSON
+CAST("t"."number" AS CHAR)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS VARCHAR)
 ```
 
 #### CharLength
 Returns the number of characters in a string expression.
 ```go
-function := uast.CharLength(uast.Column[string]("t", "body"))
+function := uast.CharLength(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-MySQL: CHAR_LENGTH("t"."body")
-PostgreSQL: LENGTH("t"."body")
+CHAR_LENGTH("t"."string")
 ```
 
 #### DateFormat
 Formats a datetime expression according to a specified format mask.
 ```go
-function := uast.DateFormat(uast.Column[time.Time]("t", "event_date"), uast.Value("%Y-%m-%d"))
+function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
 ```
-Output:
+Output MySQL:
 ```text
-DATE_FORMAT("t"."event_date", '%Y-%m-%d')
+DATE_FORMAT("t"."createat", '%Y-%m-%d')
+```
+Output PostgreSQL:
+```text
+TO_CHAR("t"."createat", '%Y-%m-%d')
 ```
 
 #### Degrees
 Converts an angle from radians to degrees.
 ```go
-function := uast.Degrees(uast.Column[float64]("t", "angle_rad"))
+function := uast.Degrees(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-DEGREES("t"."angle_rad")
+DEGREES("t"."number")
 ```
 
 #### Length
 Returns the byte length of a string expression.
 ```go
-function := uast.Length(uast.Column[string]("t", "payload"))
+function := uast.Length(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-LENGTH("t"."payload")
+LENGTH("t"."string")
 ```
 
 #### Position
 Returns the starting position of the first occurrence of a substring within a string.
 ```go
-function := uast.Position(uast.Column[string]("t", "url"), uast.Value("https://"))
+function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
 ```
 Output:
 ```text
-MySQL: POSITION('https://' IN "t"."url")
-PostgreSQL: STRPOS("t"."url", 'https://')
+POSITION('old' IN "t"."string")
 ```
 
 #### Radians
 Converts an angle from degrees to radians.
 ```go
-function := uast.Radians(uast.Column[float64]("t", "angle_deg"))
+function := uast.Radians(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-RADIANS("t"."angle_deg")
+RADIANS("t"."number")
 ```
 
 ### Date and time
@@ -919,25 +924,25 @@ Output PostgreSQL:
 #### Day
 Extracts the day of the month (1–31) from a datetime expression.
 ```go
-function := uast.Day(uast.Column[time.Time]("t", "created_at"))
+function := uast.Day(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-DAY("t"."created_at")
+DAY("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(DAY FROM "t"."created_at")
+EXTRACT(DAY FROM "t"."createat")
 ```
 
 #### DayName
 Returns the name of the weekday (e.g., 'Monday', 'Tuesday') for a given datetime expression.
 ```go
-function := uast.DayName(uast.Column[time.Time]("t", "created_at"))
+function := uast.DayName(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-DAYNAME("t"."created_at")
+DAYNAME("t"."createat")
 ```
 Output PostgreSQL:
 ```text
@@ -947,43 +952,43 @@ TO_CHAR("t"."createat", 'Day')
 #### Hour
 Extracts the hour (0–23) from a datetime expression.
 ```go
-function := uast.Hour(uast.Column[time.Time]("t", "created_at"))
+function := uast.Hour(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-HOUR("t"."created_at")
+HOUR("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(HOUR FROM "t"."created_at")
+EXTRACT(HOUR FROM "t"."createat")
 ```
 
 #### Minute
 Extracts the minute (0–59) from a datetime expression.
 ```go
-function := uast.Minute(uast.Column[time.Time]("t", "created_at"))
+function := uast.Minute(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-MINUTE("t"."created_at")
+MINUTE("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(MINUTE FROM "t"."created_at")
+EXTRACT(MINUTE FROM "t"."createat")
 ```
 
 #### Month
 Extracts the month (1–12) from a datetime expression.
 ```go
-function := uast.Month(uast.Column[time.Time]("t", "created_at"))
+function := uast.Month(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-MONTH("t"."created_at")
+MONTH("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(MONTH FROM "t"."created_at")
+EXTRACT(MONTH FROM "t"."createat")
 ```
 
 #### MonthName
@@ -1017,29 +1022,29 @@ CURRENT_TIMESTAMP
 #### Quarter
 Extracts the quarter (1–4) from a datetime expression.
 ```go
-function := uast.Quarter(uast.Column[time.Time]("t", "created_at"))
+function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-QUARTER("t"."created_at")
+QUARTER("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(QUARTER FROM "t"."created_at")
+EXTRACT(QUARTER FROM "t"."createat")
 ```
 
 #### Second
 Extracts the second (0–59) from a datetime expression.
 ```go
-function := uast.Second(uast.Column[time.Time]("t", "created_at"))
+function := uast.Second(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-SECOND("t"."created_at")
+SECOND("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(SECOND FROM "t"."created_at")
+EXTRACT(SECOND FROM "t"."createat")
 ```
 
 #### TimeAdd
@@ -1087,29 +1092,29 @@ Output PostgreSQL:
 #### Week
 Extracts the week number (1–53) from a datetime expression.
 ```go
-function := uast.Week(uast.Column[time.Time]("t", "created_at"))
+function := uast.Week(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-WEEK("t"."created_at")
+WEEK("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(WEEK FROM "t"."created_at")
+EXTRACT(WEEK FROM "t"."createat")
 ```
 
 #### Year
 Extracts the year from a datetime expression.
 ```go
-function := uast.Year(uast.Column[time.Time]("t", "created_at"))
+function := uast.Year(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-YEAR("t"."created_at")
+YEAR("t"."createat")
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(YEAR FROM "t"."created_at")
+EXTRACT(YEAR FROM "t"."createat")
 ```
 
 ### Json
@@ -1443,8 +1448,7 @@ function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), u
 ```
 Output:
 ```text
-MySQL: CONCAT("t"."string", 'old', 'new')
-PostgreSQL: "t"."string" || 'old' || 'new'
+CONCAT("t"."string", 'old', 'new')
 ```
 
 #### ConcatWs

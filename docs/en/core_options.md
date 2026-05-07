@@ -502,116 +502,148 @@ Output:
 #### Avg
 Returns the average (arithmetic mean) of all non-NULL values in the expression. If `distinct` is `true`, the average is calculated over distinct values only.
 ```go
-function := uast.Avg(uast.Column[float64]("o", "total_price"), false)
+function := uast.Avg(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
 ```
 Output:
 ```text
-AVG("o"."total_price")
+AVG("t"."number")
+AVG(DISTINCT "t"."number")
 ```
 
 #### BitAnd
 Returns the bitwise AND of all bits in the expression. Only meaningful for integer types.
 ```go
-function := uast.BitAnd(uast.Column[int]("t", "permissions"), false)
+function := uast.BitAnd(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
 ```
 Output:
 ```text
-BIT_AND("t"."permissions")
+BIT_AND("t"."number")
+BIT_AND(DISTINCT "t"."number")
 ```
 
 #### BitOr
 Returns the bitwise OR of all bits in the expression. Only meaningful for integer types.
 ```go
-function := uast.BitOr(uast.Column[int]("t", "flags"), true)
+function := uast.BitOr(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
 ```
 Output:
 ```text
-BIT_OR(DISTINCT "t"."flags")
+BIT_OR("t"."number")
+BIT_OR(DISTINCT "t"."number")
 ```
 
 #### BitXor
 Returns the bitwise XOR of all bits in the expression. Only meaningful for integer types.
 ```go
-function := uast.BitXor(uast.Column[int]("t", "checksum"), false)
+function := uast.BitXor(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
 ```
 Output:
 ```text
-BIT_XOR("t"."checksum")
+BIT_XOR("t"."number")
+BIT_XOR(DISTINCT "t"."number")
 ```
 
 #### Count
 Returns the number of rows matching the query, or the number of non-NULL values if an expression is provided. When `distinct` is `true`, counts only distinct values.
 ```go
-function := uast.Count(uast.Column[int]("*"), false)
-functionWithDistinct := uast.Count(uast.Column[string]("u", "email"), true)
+function := uast.Count(uast.Column[string]("t", "string"), false)
+functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
 ```
 Output:
 ```text
-COUNT(*)
-COUNT(DISTINCT "u"."email")
+COUNT("t"."string")
+COUNT(DISTINCT "t"."string")
 ```
 
 #### GroupConcat
 Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The `distinct` flag removes duplicates before concatenation.
 ```go
-function := uast.GroupConcat(uast.Column[string]("t", "tag"), true)
+function := uast.GroupConcat(uast.Column[string]("t", "string"), false)
+functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), true)
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: GROUP_CONCAT(DISTINCT "t"."tag" SEPARATOR ', ')
-PostgreSQL: STRING_AGG(DISTINCT "t"."tag", ', ')
+GROUP_CONCAT("t"."tag" SEPARATOR ', ')
+GROUP_CONCAT(DISTINCT "t"."tag" SEPARATOR ', ')
+```
+Output PostgreSQL:
+```text
+STRING_AGG("t"."tag", ', ')
+STRING_AGG(DISTINCT "t"."tag", ', ')
 ```
 
 #### Max
 Returns the maximum value of the expression across all rows in the group.
 ```go
-function := uast.Max(uast.Column[float64]("o", "amount"), false)
+function := uast.Max(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
 ```
 Output:
 ```text
-MAX("o"."amount")
+MAX("t"."number")
+MAX(DISTINCT "t"."number")
 ```
 
 #### Min
 Returns the minimum value of the expression across all rows in the group.
 ```go
-function := uast.Min(uast.Column[time.Time]("o", "created_at"), false)
+function := uast.Min(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
 ```
 Output:
 ```text
-MIN("o"."created_at")
+MIN("t"."number")
+MIN(DISTINCT "t"."number")
 ```
 
 #### StdDev
 Returns the population standard deviation of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
 ```go
-function := uast.StdDev(uast.Column[float64]("t", "score"), false)
+function := uast.StdDev(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: STDDEV("t"."score")
-PostgreSQL: STDDEV_POP("t"."score")
+STDDEV("t"."number")
+STDDEV(DISTINCT "t"."number")
+```
+Output PostgreSQL:
+```text
+STDDEV_SAMP("t"."number")
+STDDEV_SAMP(DISTINCT "t"."number")
 ```
 
 #### Sum
 Returns the sum of all values in the expression. If `distinct` is `true`, sums only distinct values.
 ```go
-function := uast.Sum(uast.Column[float64]("o", "tax"), false)
+function := uast.Sum(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
 ```
 Output:
 ```text
-SUM("o"."tax")
+SUM("t"."number")
+SUM(DISTINCT "t"."number")
 ```
 
 #### Variance
 Returns the population variance of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
 ```go
-function := uast.Variance(uast.Column[float64]("t", "latency"), false)
+function := uast.Variance(uast.Column[int]("t", "number"), false)
+functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: VARIANCE("t"."latency")
-PostgreSQL: VAR_POP("t"."latency")
+VARIANCE("t"."number")
+VARIANCE(DISTINCT "t"."number")
+```
+Output PostgreSQL:
+```text
+VAR_SAMP("t"."number")
+VAR_SAMP(DISTINCT "t"."number")
 ```
 
 ### Analytical
@@ -687,71 +719,56 @@ Evaluates a list of `WHEN`-`THEN` pairs and returns the `THEN` expression for th
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
-        uast.Greater(uast.Column[int]("t", "score"), uast.Value(90)),
-        uast.Value("A"),
-    ),
-    uast.CasePair(
-        uast.Greater(uast.Column[int]("t", "score"), uast.Value(75)),
-        uast.Value("B"),
+        uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Value("old"),
     ),
 )
-elseExpr := uast.CaseElse(uast.Value("C"))
+elseExpr := uast.CaseElse(uast.Value("new"))
 function := uast.Case(pairs, elseExpr)
 ```
 Output:
 ```text
-CASE WHEN "t"."score" > 90 THEN 'A' WHEN "t"."score" > 75 THEN 'B' ELSE 'C' END
+CASE WHEN "t"."number" < 2 THEN 'old' ELSE 'new' END
 ```
 
 #### Coalesce
 Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
 ```go
-function := uast.Coalesce(
-    uast.Column[string]("u", "nickname"),
-    uast.Column[string]("u", "username"),
-    uast.Value("Anonymous"),
-)
+function := uast.Coalesce(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
 ```
 Output:
 ```text
-COALESCE("u"."nickname", "u"."username", 'Anonymous')
+COALESCE("t"."createAt", "t"."updateAt")
 ```
 
 #### Greatest
 Returns the largest value from the provided list of expressions.
 ```go
-function := uast.Greatest(
-    uast.Column[int]("t", "score_a"),
-    uast.Column[int]("t", "score_b"),
-    uast.Column[int]("t", "score_c"),
-)
+function := uast.Greatest(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
 ```
 Output:
 ```text
-GREATEST("t"."score_a", "t"."score_b", "t"."score_c")
+GREATEST("t"."createAt", "t"."updateAt")
 ```
 
 #### Least
 Returns the smallest value from the provided list of expressions.
 ```go
-function := uast.Least(
-    uast.Column[time.Time]("t", "start_a"),
-    uast.Column[time.Time]("t", "start_b"),
-)
+function := uast.Least(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
 ```
 Output:
 ```text
-LEAST("t"."start_a", "t"."start_b")
+LEAST("t"."createAt", "t"."updateAt")
 ```
 
 #### NullIf
 Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
 ```go
-function := uast.NullIf(uast.Column[int]("t", "value"), uast.Value(0))
+function := uast.NullIf(uast.Column[time.Time]("t", "createAt"), uast.Column[time.Time]("t", "updateAt"))
 ```
 Output:
 ```text
-NULLIF("t"."value", 0)
+NULLIF("t"."createAt", "t"."updateAt")
 ```
 
 ### Convert
@@ -834,10 +851,13 @@ Returns the current date (without time).
 ```go
 function := uast.CurDate()
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: CURDATE()
-PostgreSQL: CURRENT_DATE
+CURDATE()
+```
+Output PostgreSQL:
+```text
+CURRENT_DATE
 ```
 
 #### CurTime
@@ -845,46 +865,55 @@ Returns the current time (without date).
 ```go
 function := uast.CurTime()
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: CURTIME()
-PostgreSQL: CURRENT_TIME
+CURTIME()
+```
+Output PostgreSQL:
+```text
+CURRENT_TIME
 ```
 
 #### DateAdd
 Adds a time/date interval to a datetime expression and returns the resulting datetime.
 ```go
-function := uast.DateAdd(uast.Column[time.Time]("t", "start_date"), uast.Value("1 YEAR"))
+function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("4 DAY"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: DATE_ADD("t"."start_date", INTERVAL 1 YEAR)
-PostgreSQL: "t"."start_date" + INTERVAL '1 YEAR'
+DATE_ADD("t"."createat", INTERVAL 4 DAY)
+```
+Output PostgreSQL:
+```text
+("t"."createat" + INTERVAL '4 DAY')
 ```
 
 #### DateDiff
 Returns the difference in days between two datetime expressions (`datetimeEnd` - `datetimeStart`).
 ```go
-function := uast.DateDiff(
-    uast.Column[time.Time]("t", "closed_at"),
-    uast.Column[time.Time]("t", "opened_at"),
-)
+function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: DATEDIFF("t"."closed_at", "t"."opened_at")
-PostgreSQL: "t"."closed_at"::date - "t"."opened_at"::date
+DATEDIFF("t"."updateat", "t"."createat")
+```
+Output PostgreSQL:
+```text
+DATE_PART('day', "t"."updateat" - "t"."createat")
 ```
 
 #### DateSub
 Subtracts a time/date interval from a datetime expression and returns the resulting datetime.
 ```go
-function := uast.DateSub(uast.Column[time.Time]("t", "due_date"), uast.Value("3 MONTH"))
+function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("4 DAY"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: DATE_SUB("t"."due_date", INTERVAL 3 MONTH)
-PostgreSQL: "t"."due_date" - INTERVAL '3 MONTH'
+DATE_SUB("t"."createat", INTERVAL 4 DAY)
+```
+Output PostgreSQL:
+```text
+("t"."createat" - INTERVAL '4 DAY')
 ```
 
 #### Day
@@ -892,61 +921,83 @@ Extracts the day of the month (1–31) from a datetime expression.
 ```go
 function := uast.Day(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: DAY("t"."created_at")
-PostgreSQL: EXTRACT(DAY FROM "t"."created_at")
+DAY("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(DAY FROM "t"."created_at")
 ```
 
 #### DayName
 Returns the name of the weekday (e.g., 'Monday', 'Tuesday') for a given datetime expression.
 ```go
-function := uast.DayName(uast.Column[time.Time]("t", "event_date"))
+function := uast.DayName(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-DAYNAME("t"."event_date")
+DAYNAME("t"."created_at")
+```
+Output PostgreSQL:
+```text
+TO_CHAR("t"."createat", 'Day')
 ```
 
 #### Hour
 Extracts the hour (0–23) from a datetime expression.
 ```go
-function := uast.Hour(uast.Column[time.Time]("t", "log_time"))
+function := uast.Hour(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-HOUR("t"."log_time")
+HOUR("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(HOUR FROM "t"."created_at")
 ```
 
 #### Minute
 Extracts the minute (0–59) from a datetime expression.
 ```go
-function := uast.Minute(uast.Column[time.Time]("t", "log_time"))
+function := uast.Minute(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-MINUTE("t"."log_time")
+MINUTE("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(MINUTE FROM "t"."created_at")
 ```
 
 #### Month
 Extracts the month (1–12) from a datetime expression.
 ```go
-function := uast.Month(uast.Column[time.Time]("t", "birth_date"))
+function := uast.Month(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: MONTH("t"."birth_date")
-PostgreSQL: EXTRACT(MONTH FROM "t"."birth_date")
+MONTH("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(MONTH FROM "t"."created_at")
 ```
 
 #### MonthName
 Returns the name of the month (e.g., 'January', 'February') for a given datetime expression.
 ```go
-function := uast.MonthName(uast.Column[time.Time]("t", "holiday"))
+function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
 ```
-Output:
+Output MySQL:
 ```text
-MONTHNAME("t"."holiday")
+MONTHNAME("t"."createat")
+```
+Output PostgreSQL:
+```text
+TO_CHAR("t"."createat", 'Month')
 ```
 
 #### Now
@@ -954,84 +1005,111 @@ Returns the current date and time.
 ```go
 function := uast.Now()
 ```
-Output:
+Output MySQL:
 ```text
 NOW()
+```
+Output PostgreSQL:
+```text
+CURRENT_TIMESTAMP
 ```
 
 #### Quarter
 Extracts the quarter (1–4) from a datetime expression.
 ```go
-function := uast.Quarter(uast.Column[time.Time]("t", "fiscal_date"))
+function := uast.Quarter(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-QUARTER("t"."fiscal_date")
+QUARTER("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(QUARTER FROM "t"."created_at")
 ```
 
 #### Second
 Extracts the second (0–59) from a datetime expression.
 ```go
-function := uast.Second(uast.Column[time.Time]("t", "response_time"))
+function := uast.Second(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-SECOND("t"."response_time")
+SECOND("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(SECOND FROM "t"."created_at")
 ```
 
 #### TimeAdd
 Adds a time interval to a time/datetime expression and returns the resulting time.
 ```go
-function := uast.TimeAdd(uast.Column[time.Time]("t", "shift_start"), uast.Value("8 HOUR"))
+function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("4 HOUR"))
 ```
-Output:
+Output MySQL:
 ```text
-TIME_ADD("t"."shift_start", '8 HOUR')
+TIME_ADD("t"."createat", '4 HOUR')
+```
+Output PostgreSQL:
+```text
+("t"."createat" + INTERVAL '4 HOUR')
 ```
 
 #### TimeDiff
 Returns the difference between two time/datetime expressions (`timeEnd` - `timeStart`).
 ```go
-function := uast.TimeDiff(
-    uast.Column[time.Time]("t", "check_out"),
-    uast.Column[time.Time]("t", "check_in"),
-)
+function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
 ```
-Output:
+Output MySQL:
 ```text
-TIMEDIFF("t"."check_out", "t"."check_in")
+TIMEDIFF("t"."updateat", "t"."createat")
+```
+Output PostgreSQL:
+```text
+DATE_PART('time', "t"."updateat" - "t"."createat")
 ```
 
 #### TimeSub
 Subtracts a time interval from a time/datetime expression and returns the resulting time.
 ```go
-function := uast.TimeSub(uast.Column[time.Time]("t", "lunch_end"), uast.Value("30 MINUTE"))
+function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("4 HOUR"))
 ```
-Output:
+Output MySQL:
 ```text
-TIME_SUB("t"."lunch_end", '30 MINUTE')
+TIME_SUB("t"."createat", '4 HOUR')
+```
+Output PostgreSQL:
+```text
+("t"."createat" - INTERVAL '4 HOUR')
 ```
 
 #### Week
 Extracts the week number (1–53) from a datetime expression.
 ```go
-function := uast.Week(uast.Column[time.Time]("t", "ship_date"))
+function := uast.Week(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: WEEK("t"."ship_date")
-PostgreSQL: EXTRACT(WEEK FROM "t"."ship_date")
+WEEK("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(WEEK FROM "t"."created_at")
 ```
 
 #### Year
 Extracts the year from a datetime expression.
 ```go
-function := uast.Year(uast.Column[time.Time]("t", "founded"))
+function := uast.Year(uast.Column[time.Time]("t", "created_at"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: YEAR("t"."founded")
-PostgreSQL: EXTRACT(YEAR FROM "t"."founded")
+YEAR("t"."created_at")
+```
+Output PostgreSQL:
+```text
+EXTRACT(YEAR FROM "t"."created_at")
 ```
 
 ### Json
@@ -1147,47 +1225,47 @@ PostgreSQL: jsonb_typeof("t"."attributes")
 #### Abs
 Returns the absolute (non-negative) value of a numeric expression.
 ```go
-function := uast.Abs(uast.Column[float64]("t", "deviation"))
+function := uast.Abs(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-ABS("t"."deviation")
+ABS("t"."number")
 ```
 
 #### ACos
 Returns the arc cosine (inverse cosine) of the expression, in radians.
 ```go
-function := uast.ACos(uast.Column[float64]("t", "cosine_val"))
+function := uast.ACos(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-ACOS("t"."cosine_val")
+ACOS("t"."number")
 ```
 
 #### ASin
 Returns the arc sine (inverse sine) of the expression, in radians.
 ```go
-function := uast.ASin(uast.Column[float64]("t", "sine_val"))
+function := uast.ASin(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-ASIN("t"."sine_val")
+ASIN("t"."number")
 ```
 
 #### ATan
 Returns the arc tangent (inverse tangent) of the expression, in radians.
 ```go
-function := uast.ATan(uast.Column[float64]("t", "slope"))
+function := uast.ATan(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-ATAN("t"."slope")
+ATAN("t"."number")
 ```
 
 #### ATan2
 Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using their signs to determine the quadrant.
 ```go
-function := uast.ATan2(uast.Column[float64]("t", "y"), uast.Column[float64]("t", "x"))
+function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
 ```
 Output:
 ```text
@@ -1197,82 +1275,82 @@ ATAN2("t"."y", "t"."x")
 #### Cbrt
 Returns the cube root of a numeric expression.
 ```go
-function := uast.Cbrt(uast.Column[float64]("t", "volume"))
+function := uast.Cbrt(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-CBRT("t"."volume")
+CBRT("t"."number")
 ```
 
 #### Ceil
 Returns the smallest integer value not less than the argument (rounds up).
 ```go
-function := uast.Ceil(uast.Column[float64]("t", "rating"))
+function := uast.Ceil(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-MySQL: CEIL("t"."rating")
-PostgreSQL: CEILING("t"."rating")
+MySQL: CEIL("t"."number")
+PostgreSQL: CEILING("t"."number")
 ```
 
 #### Cos
 Returns the cosine of the expression, where the expression is in radians.
 ```go
-function := uast.Cos(uast.Column[float64]("t", "angle"))
+function := uast.Cos(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-COS("t"."angle")
+COS("t"."number")
 ```
 
 #### Exp
 Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
 ```go
-function := uast.Exp(uast.Column[float64]("t", "log_odds"))
+function := uast.Exp(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-EXP("t"."log_odds")
+EXP("t"."number")
 ```
 
 #### Floor
 Returns the largest integer value not greater than the argument (rounds down).
 ```go
-function := uast.Floor(uast.Column[float64]("t", "amount"))
+function := uast.Floor(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-FLOOR("t"."amount")
+FLOOR("t"."number")
 ```
 
 #### Ln
 Returns the natural logarithm (base `e`) of the expression.
 ```go
-function := uast.Ln(uast.Column[float64]("t", "ratio"))
+function := uast.Ln(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-LN("t"."ratio")
+LN("t"."number")
 ```
 
 #### Log
 Returns the logarithm of the expression to the specified base.
 ```go
-function := uast.Log(uast.Column[float64]("t", "value"), uast.Value(10.0))
+function := uast.Log(uast.Column[int]("t", "number"), uast.Value(3))
 ```
 Output:
 ```text
-LOG(10.000000, "t"."value")
+LOG(3, "t"."number")
 ```
 
 #### Mod
 Returns the remainder (modulo) of the division of the first expression by the second.
 ```go
-function := uast.Mod(uast.Column[int]("t", "serial"), uast.Value(16))
+function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(3))
 ```
 Output:
 ```text
-MOD("t"."serial", 16)
+MOD("t"."number", 3)
 ```
 
 #### Pi
@@ -1288,11 +1366,11 @@ PI()
 #### Power
 Returns the expression raised to the power of the exponent.
 ```go
-function := uast.Power(uast.Column[float64]("t", "base"), uast.Column[float64]("t", "exponent"))
+function := uast.Power(uast.Column[int]("t", "number"), uast.Value(3))
 ```
 Output:
 ```text
-POWER("t"."base", "t"."exponent")
+POWER("t"."number", 3)
 ```
 
 #### Rand
@@ -1309,213 +1387,204 @@ PostgreSQL: RANDOM()
 #### Round
 Rounds the expression to the specified number of decimal places.
 ```go
-function := uast.Round(uast.Column[float64]("t", "price"), uast.Value(2))
+function := uast.Round(uast.Column[int]("t", "number"), uast.Value(3))
 ```
 Output:
 ```text
-ROUND("t"."price", 2)
+ROUND("t"."number", 3)
 ```
 
 #### Sin
 Returns the sine of the expression, where the expression is in radians.
 ```go
-function := uast.Sin(uast.Column[float64]("t", "phase"))
+function := uast.Sin(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-SIN("t"."phase")
+SIN("t"."number")
 ```
 
 #### Sqrt
 Returns the square root of the expression.
 ```go
-function := uast.Sqrt(uast.Column[float64]("t", "area"))
+function := uast.Sqrt(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-SQRT("t"."area")
+SQRT("t"."number")
 ```
 
 #### Tan
 Returns the tangent of the expression, where the expression is in radians.
 ```go
-function := uast.Tan(uast.Column[float64]("t", "incidence"))
+function := uast.Tan(uast.Column[int]("t", "number"))
 ```
 Output:
 ```text
-TAN("t"."incidence")
+TAN("t"."number")
 ```
 
 #### Trunc
 Truncates the numeric expression to the specified number of decimal places (without rounding).
 ```go
-function := uast.Trunc(uast.Column[float64]("t", "measurement"), uast.Value(3))
+function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(3))
 ```
 Output:
 ```text
-MySQL: TRUNCATE("t"."measurement", 3)
-PostgreSQL: TRUNC("t"."measurement", 3)
+MySQL: TRUNCATE("t"."number", 3)
+PostgreSQL: TRUNC("t"."number", 3)
 ```
 
 ### String
 #### Concat
 Concatenates two or more string expressions into a single string. `NULL` arguments are treated as empty strings in most dialects.
 ```go
-function := uast.Concat(
-    uast.Column[string]("u", "first_name"),
-    uast.Value(" "),
-    uast.Column[string]("u", "last_name"),
-)
+function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output:
 ```text
-MySQL: CONCAT("u"."first_name", ' ', "u"."last_name")
-PostgreSQL: "u"."first_name" || ' ' || "u"."last_name"
+MySQL: CONCAT("t"."string", 'old', 'new')
+PostgreSQL: "t"."string" || 'old' || 'new'
 ```
 
 #### ConcatWs
 Concatenates two or more string expressions with a specified separator between them. Skips `NULL` arguments.
 ```go
-function := uast.ConcatWs(
-    uast.Value(", "),
-    uast.Column[string]("a", "city"),
-    uast.Column[string]("a", "country"),
-)
+function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
 ```
 Output:
 ```text
-CONCAT_WS(', ', "a"."city", "a"."country")
+CONCAT_WS('_', "t"."string", 'old', 'new')
 ```
 
 #### LeftString
 Returns the leftmost `count` characters from a string expression.
 ```go
-function := uast.LeftString(uast.Column[string]("t", "sku"), uast.Value(3))
+function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
 Output:
 ```text
-LEFT("t"."sku", 3)
+LEFT("t"."string", 2)
 ```
 
 #### Lower
 Converts a string expression to lowercase.
 ```go
-function := uast.Lower(uast.Column[string]("t", "email"))
+function := uast.Lower(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-LOWER("t"."email")
+LOWER("t"."string")
 ```
 
 #### LPad
 Left-pads a string expression with the specified separator to a total length of `count` characters.
 ```go
-function := uast.LPad(uast.Column[string]("t", "code"), uast.Value(10), uast.Value("0"))
+function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output:
 ```text
-LPAD("t"."code", 10, '0')
+LPAD("t"."string", 2, ',')
 ```
 
 #### LTrim
 Removes leading spaces from a string expression.
 ```go
-function := uast.LTrim(uast.Column[string]("t", "raw_input"))
+function := uast.LTrim(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-LTRIM("t"."raw_input")
+LTRIM("t"."string")
 ```
 
 #### Repeat
 Repeats a string expression `count` times.
 ```go
-function := uast.Repeat(uast.Value("-"), uast.Value(5))
+function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
 ```
 Output:
 ```text
-REPEAT('-', 5)
+REPEAT("t"."string", 2)
 ```
 
 #### Replace
 Replaces all occurrences of a substring in a string with a new substring.
 ```go
-function := uast.Replace(uast.Column[string]("t", "url"), uast.Value("http://"), uast.Value("https://"))
+function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output:
 ```text
-REPLACE("t"."url", 'http://', 'https://')
+REPLACE("t"."string", 'old', 'new')
 ```
 
 #### Reverse
 Reverses the characters in a string expression.
 ```go
-function := uast.Reverse(uast.Column[string]("t", "dna_sequence"))
+function := uast.Reverse(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-REVERSE("t"."dna_sequence")
+REVERSE("t"."string")
 ```
 
 #### RightString
 Returns the rightmost `count` characters from a string expression.
 ```go
-function := uast.RightString(uast.Column[string]("t", "filename"), uast.Value(4))
+function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
 Output:
 ```text
-RIGHT("t"."filename", 4)
+RIGHT("t"."string", 2)
 ```
 
 #### RPad
 Right-pads a string expression with the specified separator to a total length of `count` characters.
 ```go
-function := uast.RPad(uast.Column[string]("t", "title"), uast.Value(30), uast.Value("."))
+function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output:
 ```text
-RPAD("t"."title", 30, '.')
+RPAD("t"."string", 2, ',')
 ```
 
 #### RTrim
 Removes trailing spaces from a string expression.
 ```go
-function := uast.RTrim(uast.Column[string]("t", "comment"))
+function := uast.RTrim(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-RTRIM("t"."comment")
+RTRIM("t"."string")
 ```
 
 #### SubString
 Extracts a substring from a string expression starting at `startPos` (1-based) for `lengthStr` characters.
 ```go
-function := uast.SubString(uast.Column[string]("t", "isbn"), uast.Value(1), uast.Value(3))
+function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
 Output:
 ```text
-MySQL: SUBSTRING("t"."isbn", 1, 3)
-PostgreSQL: SUBSTRING("t"."isbn" FROM 1 FOR 3)
+SUBSTRING("t"."string", 0, 2)
 ```
 
 #### Trim
 Removes both leading and trailing spaces from a string expression.
 ```go
-function := uast.Trim(uast.Column[string]("t", "username"))
+function := uast.Trim(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-TRIM("t"."username")
+TRIM("t"."string")
 ```
 
 #### Upper
 Converts a string expression to uppercase.
 ```go
-function := uast.Upper(uast.Column[string]("t", "country_code"))
+function := uast.Upper(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-UPPER("t"."country_code")
+UPPER("t"."string")
 ```
 
 ### Ranking

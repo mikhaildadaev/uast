@@ -650,67 +650,68 @@ VAR_SAMP(DISTINCT "t"."number")
 #### FirstValue
 Returns the value of the expression from the first row of the window frame. Requires an `OVER` clause with window specification.
 ```go
-function := uast.FirstValue(uast.Column[string]("t", "event")).Over(
-    uast.PartitionBy(uast.Column[int]("t", "user_id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "createat"))),
+function := uast.FirstValue(uast.Column[string]("t", "name")).Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
 Output:
 ```text
-FIRST_VALUE("t"."event") OVER (PARTITION BY "t"."user_id" ORDER BY "t"."createat" ASC)
+FIRST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### Lag
 Returns the value of the expression from a row that is `offset` rows before the current row within the partition.
 ```go
-function := uast.Lag(uast.Column[float64]("t", "price"), 1).Over(
-    uast.PartitionBy(uast.Column[int]("t", "symbol_id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "tick_time"))),
+function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
 )
 ```
 Output:
 ```text
-LAG("t"."price", 1) OVER (PARTITION BY "t"."symbol_id" ORDER BY "t"."tick_time" ASC)
+LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
 
 #### LastValue
 Returns the value of the expression from the last row of the window frame.
 ```go
-function := uast.LastValue(uast.Column[string]("t", "status")).Over(
-    uast.PartitionBy(uast.Column[int]("t", "order_id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "updated_at"))),
-    uast.Frame(uast.RowsCurrent(), uast.UnboundedFollowing()),
+function := uast.LastValue(uast.Column[string]("t", "name")).Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Column[int]("t", "number"))),
+    uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
 Output:
 ```text
-LAST_VALUE("t"."status") OVER (PARTITION BY "t"."order_id" ORDER BY "t"."updated_at" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+LAST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 
 #### Lead
 Returns the value of the expression from a row that is `offset` rows after the current row within the partition.
 ```go
-function := uast.Lead(uast.Column[float64]("t", "temperature"), 1).Over(
-    uast.PartitionBy(uast.Column[int]("t", "sensor_id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "measured_at"))),
+function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
 )
 ```
 Output:
 ```text
-LEAD("t"."temperature", 1) OVER (PARTITION BY "t"."sensor_id" ORDER BY "t"."measured_at" ASC)
+LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
 
 #### NthValue
-Returns the value of the expression from the `n-th` row of the window frame (1-based).
+Returns the value of the expression from the `n-th` row of the window frame.
 ```go
-function := uast.NthValue(uast.Column[string]("t", "log_entry"), 3).Over(
-    uast.PartitionBy(uast.Column[int]("t", "batch_id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "severity"))),
+function := uast.NthValue(uast.Column[string]("t", "name"), 2).Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
 ```
 Output:
 ```text
-NTH_VALUE("t"."log_entry", 3) OVER (PARTITION BY "t"."batch_id" ORDER BY "t"."severity" DESC)
+NTH_VALUE("t"."name", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 
 ### Condition

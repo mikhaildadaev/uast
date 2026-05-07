@@ -518,30 +518,30 @@ func Test_Select_Function(t *testing.T) {
 			Trim(Test.String).As("string_trim"),
 			Upper(Test.String).As("string_upper"),
 			// Функции ранжирующие
-			RowNumber().Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-			).As("ranking_rownumber"),
-			Rank().Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-			).As("ranking_rank"),
-			DenseRank().Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-			).As("ranking_denserank"),
-			PercentRank().Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-			).As("ranking_percentrank"),
 			CumeDist().Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
 			).As("ranking_cumedist"),
+			DenseRank().Over(
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
+			).As("ranking_denserank"),
 			NTile(4).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
 			).As("ranking_ntile"),
+			PercentRank().Over(
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
+			).As("ranking_percentrank"),
+			Rank().Over(
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
+			).As("ranking_rank"),
+			RowNumber().Over(
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
+			).As("ranking_rownumber"),
 		).
 			From(Test.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
@@ -632,12 +632,12 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "TAN(`t`.`number`)", "TAN")
 			assertContains(t, sqlSelectQuery, "TRUNCATE(`t`.`number`, ?)", "TRUNC")
 			// Функции ранжирующие
-			assertContains(t, sqlSelectQuery, "ROW_NUMBER() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "ROWNUMBER")
-			assertContains(t, sqlSelectQuery, "RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "RANK")
-			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "DENSERANK")
-			assertContains(t, sqlSelectQuery, "PERCENT_RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "PERCENTRANK")
-			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "CUMEDIST")
-			assertContains(t, sqlSelectQuery, "NTILE(4) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "NTILE")
+			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "CUMEDIST")
+			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "DENSERANK")
+			assertContains(t, sqlSelectQuery, "NTILE(4) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "NTILE")
+			assertContains(t, sqlSelectQuery, "PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "PERCENTRANK")
+			assertContains(t, sqlSelectQuery, "RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "RANK")
+			assertContains(t, sqlSelectQuery, "ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "ROWNUMBER")
 			// Функции строковые
 			assertContains(t, sqlSelectQuery, "CONCAT(`t`.`string`, ?, ?)", "CONCAT")
 			assertContains(t, sqlSelectQuery, "CONCAT_WS(?, `t`.`string`, ?, ?)", "CONCATWS")
@@ -740,12 +740,12 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `TAN("t"."number")`, "TAN")
 			assertContains(t, sqlSelectQuery, `TRUNC("t"."number", $1)`, "TRUNC")
 			// Функции ранжирующие
-			assertContains(t, sqlSelectQuery, `ROW_NUMBER() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "ROWNUMBER")
-			assertContains(t, sqlSelectQuery, `RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "RANK")
-			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "DENSERANK")
-			assertContains(t, sqlSelectQuery, `PERCENT_RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "PERCENTRANK")
-			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "CUMEDIST")
-			assertContains(t, sqlSelectQuery, `NTILE(4) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "NTILE")
+			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "CUMEDIST")
+			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "DENSERANK")
+			assertContains(t, sqlSelectQuery, `NTILE(4) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "NTILE")
+			assertContains(t, sqlSelectQuery, `PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "PERCENTRANK")
+			assertContains(t, sqlSelectQuery, `RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "RANK")
+			assertContains(t, sqlSelectQuery, `ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "ROWNUMBER")
 			// Функции строковые
 			assertContains(t, sqlSelectQuery, `CONCAT("t"."string", $1, $2)`, "CONCAT")
 			assertContains(t, sqlSelectQuery, `CONCAT_WS($1, "t"."string", $2, $3)`, "CONCATWS")

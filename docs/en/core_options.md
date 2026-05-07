@@ -558,7 +558,8 @@ function := uast.GroupConcat(uast.Column[string]("t", "tag"), true)
 ```
 Output:
 ```text
-GROUP_CONCAT(DISTINCT "t"."tag")
+MySQL: GROUP_CONCAT(DISTINCT "t"."tag" SEPARATOR ', ')
+PostgreSQL: STRING_AGG(DISTINCT "t"."tag", ', ')
 ```
 
 #### Max
@@ -588,7 +589,8 @@ function := uast.StdDev(uast.Column[float64]("t", "score"), false)
 ```
 Output:
 ```text
-STDDEV("t"."score")
+MySQL: STDDEV("t"."score")
+PostgreSQL: STDDEV_POP("t"."score")
 ```
 
 #### Sum
@@ -608,7 +610,8 @@ function := uast.Variance(uast.Column[float64]("t", "latency"), false)
 ```
 Output:
 ```text
-VARIANCE("t"."latency")
+MySQL: VARIANCE("t"."latency")
+PostgreSQL: VAR_POP("t"."latency")
 ```
 
 ### Analytical
@@ -759,7 +762,8 @@ function := uast.Cast(uast.Column[string]("t", "json_str"), uast.TypeJSON)
 ```
 Output:
 ```text
-CAST("t"."json_str" AS JSON)
+MySQL: CAST("t"."json_str" AS JSON)
+PostgreSQL: "t"."json_str"::JSON
 ```
 
 #### CharLength
@@ -769,7 +773,8 @@ function := uast.CharLength(uast.Column[string]("t", "body"))
 ```
 Output:
 ```text
-CHAR_LENGTH("t"."body")
+MySQL: CHAR_LENGTH("t"."body")
+PostgreSQL: LENGTH("t"."body")
 ```
 
 #### DateFormat
@@ -809,7 +814,8 @@ function := uast.Position(uast.Column[string]("t", "url"), uast.Value("https://"
 ```
 Output:
 ```text
-POSITION('https://' IN "t"."url")
+MySQL: POSITION('https://' IN "t"."url")
+PostgreSQL: STRPOS("t"."url", 'https://')
 ```
 
 #### Radians
@@ -830,7 +836,8 @@ function := uast.CurDate()
 ```
 Output:
 ```text
-CURDATE()
+MySQL: CURDATE()
+PostgreSQL: CURRENT_DATE
 ```
 
 #### CurTime
@@ -840,7 +847,8 @@ function := uast.CurTime()
 ```
 Output:
 ```text
-CURTIME()
+MySQL: CURTIME()
+PostgreSQL: CURRENT_TIME
 ```
 
 #### DateAdd
@@ -850,7 +858,8 @@ function := uast.DateAdd(uast.Column[time.Time]("t", "start_date"), uast.Value("
 ```
 Output:
 ```text
-DATE_ADD("t"."start_date", '1 YEAR')
+MySQL: DATE_ADD("t"."start_date", INTERVAL 1 YEAR)
+PostgreSQL: "t"."start_date" + INTERVAL '1 YEAR'
 ```
 
 #### DateDiff
@@ -863,7 +872,8 @@ function := uast.DateDiff(
 ```
 Output:
 ```text
-DATEDIFF("t"."closed_at", "t"."opened_at")
+MySQL: DATEDIFF("t"."closed_at", "t"."opened_at")
+PostgreSQL: "t"."closed_at"::date - "t"."opened_at"::date
 ```
 
 #### DateSub
@@ -873,7 +883,8 @@ function := uast.DateSub(uast.Column[time.Time]("t", "due_date"), uast.Value("3 
 ```
 Output:
 ```text
-DATE_SUB("t"."due_date", '3 MONTH')
+MySQL: DATE_SUB("t"."due_date", INTERVAL 3 MONTH)
+PostgreSQL: "t"."due_date" - INTERVAL '3 MONTH'
 ```
 
 #### Day
@@ -883,7 +894,8 @@ function := uast.Day(uast.Column[time.Time]("t", "created_at"))
 ```
 Output:
 ```text
-DAY("t"."created_at")
+MySQL: DAY("t"."created_at")
+PostgreSQL: EXTRACT(DAY FROM "t"."created_at")
 ```
 
 #### DayName
@@ -923,7 +935,8 @@ function := uast.Month(uast.Column[time.Time]("t", "birth_date"))
 ```
 Output:
 ```text
-MONTH("t"."birth_date")
+MySQL: MONTH("t"."birth_date")
+PostgreSQL: EXTRACT(MONTH FROM "t"."birth_date")
 ```
 
 #### MonthName
@@ -1006,7 +1019,8 @@ function := uast.Week(uast.Column[time.Time]("t", "ship_date"))
 ```
 Output:
 ```text
-WEEK("t"."ship_date")
+MySQL: WEEK("t"."ship_date")
+PostgreSQL: EXTRACT(WEEK FROM "t"."ship_date")
 ```
 
 #### Year
@@ -1016,7 +1030,8 @@ function := uast.Year(uast.Column[time.Time]("t", "founded"))
 ```
 Output:
 ```text
-YEAR("t"."founded")
+MySQL: YEAR("t"."founded")
+PostgreSQL: EXTRACT(YEAR FROM "t"."founded")
 ```
 
 ### Json
@@ -1037,7 +1052,8 @@ function := uast.JsonArrayAgg(uast.Column[string]("t", "label"))
 ```
 Output:
 ```text
-JSON_ARRAYAGG("t"."label")
+MySQL: JSON_ARRAYAGG("t"."label")
+PostgreSQL: JSON_AGG("t"."label")
 ```
 
 #### JsonContains
@@ -1047,7 +1063,8 @@ function := uast.JsonContains(uast.Column[string]("t", "metadata"), uast.Value(`
 ```
 Output:
 ```text
-JSON_CONTAINS("t"."metadata", '"key1"')
+MySQL: JSON_CONTAINS("t"."metadata", '"key1"')
+PostgreSQL: "t"."metadata" @> '"key1"'::jsonb
 ```
 
 #### JsonExtract
@@ -1058,7 +1075,8 @@ function := uast.JsonExtract(uast.Column[string]("t", "profile"), uast.JsonPair(
 ```
 Output:
 ```text
-JSON_EXTRACT("t"."profile", '$.address.city') AS STRING
+MySQL: JSON_EXTRACT("t"."profile", '$.address.city') AS STRING
+PostgreSQL: "t"."profile"->>'address.city'
 ```
 
 #### JsonObject
@@ -1084,7 +1102,8 @@ function := uast.JsonObjectAgg(
 ```
 Output:
 ```text
-JSON_OBJECTAGG("t"."config_key", "t"."config_value")
+MySQL: JSON_OBJECTAGG("t"."config_key", "t"."config_value")
+PostgreSQL: JSON_OBJECT_AGG("t"."key", "t"."value")
 ```
 
 #### JsonRemove
@@ -1095,7 +1114,8 @@ function := uast.JsonRemove(uast.Column[string]("t", "data"), paths)
 ```
 Output:
 ```text
-JSON_REMOVE("t"."data", '$.temp_field')
+MySQL: JSON_REMOVE("t"."data", '$.temp_field')
+PostgreSQL: "t"."data" - 'temp_field'
 ```
 
 #### JsonSet
@@ -1108,7 +1128,8 @@ function := uast.JsonSet(
 ```
 Output:
 ```text
-JSON_SET("t"."settings", '$.theme', 'dark')
+MySQL: JSON_SET("t"."settings", '$.theme', 'dark')
+PostgreSQL: jsonb_set("t"."settings", '{theme}', '"dark"')
 ```
 
 #### JsonType
@@ -1118,7 +1139,8 @@ function := uast.JsonType(uast.Column[string]("t", "attributes"))
 ```
 Output:
 ```text
-JSON_TYPE("t"."attributes")
+MySQL: JSON_TYPE("t"."attributes")
+PostgreSQL: jsonb_typeof("t"."attributes")
 ```
 
 ### Math
@@ -1189,7 +1211,8 @@ function := uast.Ceil(uast.Column[float64]("t", "rating"))
 ```
 Output:
 ```text
-CEIL("t"."rating")
+MySQL: CEIL("t"."rating")
+PostgreSQL: CEILING("t"."rating")
 ```
 
 #### Cos
@@ -1279,7 +1302,8 @@ function := uast.Rand()
 ```
 Output:
 ```text
-RAND()
+MySQL: RAND()
+PostgreSQL: RANDOM()
 ```
 
 #### Round
@@ -1329,7 +1353,8 @@ function := uast.Trunc(uast.Column[float64]("t", "measurement"), uast.Value(3))
 ```
 Output:
 ```text
-TRUNC("t"."measurement", 3)
+MySQL: TRUNCATE("t"."measurement", 3)
+PostgreSQL: TRUNC("t"."measurement", 3)
 ```
 
 ### String
@@ -1344,7 +1369,8 @@ function := uast.Concat(
 ```
 Output:
 ```text
-CONCAT("u"."first_name", ' ', "u"."last_name")
+MySQL: CONCAT("u"."first_name", ' ', "u"."last_name")
+PostgreSQL: "u"."first_name" || ' ' || "u"."last_name"
 ```
 
 #### ConcatWs
@@ -1468,7 +1494,8 @@ function := uast.SubString(uast.Column[string]("t", "isbn"), uast.Value(1), uast
 ```
 Output:
 ```text
-SUBSTRING("t"."isbn", 1, 3)
+MySQL: SUBSTRING("t"."isbn", 1, 3)
+PostgreSQL: SUBSTRING("t"."isbn" FROM 1 FOR 3)
 ```
 
 #### Trim

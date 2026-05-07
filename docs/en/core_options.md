@@ -1450,6 +1450,85 @@ Output PostgreSQL:
 TRUNC("t"."number", 3)
 ```
 
+### Ranking
+#### CumeDist
+Returns the cumulative distribution of a value within a partition (the ratio of rows that come before or are peers with the current row). Must be used with an `OVER` clause.
+```go
+function := uast.CumeDist().Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+)
+```
+Output:
+```text
+CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+
+#### DenseRank
+Returns the rank of a row without gaps. Rows with equal values receive the same rank, and the next rank is the immediate next integer. Requires `OVER`.
+```go
+function := uast.DenseRank().Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+)
+```
+Output:
+```text
+DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+
+#### NTile
+Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
+```go
+function := uast.NTile(4).Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+)
+```
+Output:
+```text
+NTILE(4) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+
+#### PercentRank
+Returns the percentile rank of a row within a partition (range 0 to 1). Rank of first row is always 0. Requires `OVER`.
+```go
+function := uast.PercentRank().Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+)
+```
+Output:
+```text
+PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+
+#### Rank
+Returns the rank of a row with gaps. Equal values receive the same rank, and the next distinct value skips ahead. Requires `OVER`.
+```go
+function := uast.Rank().Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+)
+```
+Output:
+```text
+RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+
+#### RowNumber
+Assigns a unique sequential integer to each row within the partition, starting from 1. Order determines the numbering sequence.
+```go
+function := uast.RowNumber().Over(
+    uast.PartitionBy(uast.Column[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+)
+```
+Output:
+```text
+ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+
 ### String
 #### Concat
 Concatenates two or more string expressions into a single string. `NULL` arguments are treated as empty strings in most dialects.
@@ -1599,85 +1678,6 @@ function := uast.Upper(uast.Column[string]("t", "string"))
 Output:
 ```text
 UPPER("t"."string")
-```
-
-### Ranking
-#### CumeDist
-Returns the cumulative distribution of a value within a partition (the ratio of rows that come before or are peers with the current row). Must be used with an `OVER` clause.
-```go
-function := uast.CumeDist().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
-)
-```
-Output:
-```text
-CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
-```
-
-#### DenseRank
-Returns the rank of a row without gaps. Rows with equal values receive the same rank, and the next rank is the immediate next integer. Requires `OVER`.
-```go
-function := uast.DenseRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
-)
-```
-Output:
-```text
-DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
-```
-
-#### NTile
-Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
-```go
-function := uast.NTile(4).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
-)
-```
-Output:
-```text
-NTILE(4) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
-```
-
-#### PercentRank
-Returns the percentile rank of a row within a partition (range 0 to 1). Rank of first row is always 0. Requires `OVER`.
-```go
-function := uast.PercentRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
-)
-```
-Output:
-```text
-PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
-```
-
-#### Rank
-Returns the rank of a row with gaps. Equal values receive the same rank, and the next distinct value skips ahead. Requires `OVER`.
-```go
-function := uast.Rank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
-)
-```
-Output:
-```text
-RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
-```
-
-#### RowNumber
-Assigns a unique sequential integer to each row within the partition, starting from 1. Order determines the numbering sequence.
-```go
-function := uast.RowNumber().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
-)
-```
-Output:
-```text
-ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 ## Literal

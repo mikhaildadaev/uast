@@ -401,99 +401,121 @@ func Test_Select_Function(t *testing.T) {
 		defer sql.Close()
 		stmtSelect := NewSelect(
 			// Функции агрегатные
-			Avg(Users.Age, false).As("age_avg"),
-			BitAnd(Users.Age, false).As("age_bitand"),
-			BitOr(Users.Age, false).As("age_bitor"),
-			BitXor(Users.Age, false).As("age_bitxor"),
-			Count(Users.ID, false).As("id_count"),
-			GroupConcat(Users.Status, false).As("status_group_concat"),
-			Max(Users.Age, false).As("age_max"),
-			Min(Users.Age, false).As("age_min"),
-			StdDev(Users.Age, false).As("age_stddev"),
-			Sum(Users.Age, false).As("age_sum"),
-			Variance(Users.Age, false).As("age_variance"),
+			Avg(Test.Number, false).As("avg"),
+			BitAnd(Test.Number, false).As("bitand"),
+			BitOr(Test.Number, false).As("bitor"),
+			BitXor(Test.Number, false).As("bitxor"),
+			Count(Test.String, false).As("count"),
+			GroupConcat(Test.String, false).As("groupconcat"),
+			Max(Test.Number, false).As("max"),
+			Min(Test.Number, false).As("min"),
+			StdDev(Test.Number, false).As("stddev"),
+			Sum(Test.Number, false).As("sum"),
+			Variance(Test.Number, false).As("variance"),
+			// Функции аналитические
+			FirstValue(Users.Name).Over(
+				PartitionBy(Users.DepartmentID),
+				OrderBy(Desc(Users.Salary)),
+				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
+			).As("analyt_first_value"),
+			LastValue(Users.Name).Over(
+				PartitionBy(Users.DepartmentID),
+				OrderBy(Desc(Users.Salary)),
+				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW")).As("analyt_last_value"),
+			Lag(Users.Salary, 1).Over(
+				PartitionBy(Users.DepartmentID),
+				OrderBy(Asc(Users.HireDate)),
+			).As("analyt_lag"),
+			Lead(Users.Salary, 1).Over(
+				PartitionBy(Users.DepartmentID),
+				OrderBy(Asc(Users.HireDate)),
+			).As("analyt_lead"),
+			NthValue(Users.Name, 2).Over(
+				PartitionBy(Users.DepartmentID),
+				OrderBy(Desc(Users.Salary)),
+				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW")).As("analyt_nth_value"),
 			// Функции условий
-			Case(CaseIf(CasePair(Less(Users.Age, Value(18)), Value("young"))), CaseElse(Value("adult"))).As("age_case"),
-			Coalesce(Users.CreateAt, Users.UpdateAt).As("date_coalesce"),
-			Greatest(Users.CreateAt, Users.UpdateAt).As("date_greatest"),
-			Least(Users.CreateAt, Users.UpdateAt).As("date_least"),
-			NullIf(Users.CreateAt, Users.UpdateAt).As("date_if"),
+			Case(CaseIf(CasePair(Less(Test.Number, Value(2)), Value("old"))), CaseElse(Value("new"))).As("case"),
+			Coalesce(Test.CreateAt, Test.UpdateAt).As("coalesce"),
+			Greatest(Test.CreateAt, Test.UpdateAt).As("greatest"),
+			Least(Test.CreateAt, Test.UpdateAt).As("least"),
+			NullIf(Test.CreateAt, Test.UpdateAt).As("if"),
 			// Функции конвертации
-			Cast(Users.Age, TypeString).As("age_cast"),
+			Cast(Test.Number, TypeString).As("cast"),
 			CharLength(Users.Status).As("status_length"),
 			DateFormat(Users.CreateAt, Literal("%Y-%m-%d")).As("createat_dateformat"),
-			Degrees(Users.Age).As("age_degrees"),
+			Degrees(Test.Number).As("degrees"),
 			Length(Users.Status).As("status_length"),
 			Position(Users.Status, Value("test")).As("status_position"),
-			Radians(Users.Age).As("age_radians"),
+			Radians(Test.Number).As("radians"),
 			// Функции даты и времени
 			CurDate().As("curdate"),
 			CurTime().As("curtime"),
-			DateAdd(Users.CreateAt, Literal("7 DAY")).As("createat_dateadd"),
-			DateDiff(Users.UpdateAt, Users.CreateAt).As("updateat_datediff"),
-			DateSub(Users.CreateAt, Literal("7 DAY")).As("createat_datesub"),
-			Day(Users.CreateAt).As("createat_day"),
-			DayName(Users.CreateAt).As("createat_dayname"),
-			Hour(Users.CreateAt).As("createat_hour"),
-			Minute(Users.CreateAt).As("createat_minute"),
-			Month(Users.CreateAt).As("createat_month"),
-			MonthName(Users.CreateAt).As("createat_monthname"),
+			DateAdd(Test.CreateAt, Literal("4 DAY")).As("dateadd"),
+			DateDiff(Test.UpdateAt, Test.CreateAt).As("datediff"),
+			DateSub(Test.CreateAt, Literal("4 DAY")).As("datesub"),
+			Day(Test.CreateAt).As("day"),
+			DayName(Test.CreateAt).As("dayname"),
+			Hour(Test.CreateAt).As("hour"),
+			Minute(Test.CreateAt).As("minute"),
+			Month(Test.CreateAt).As("month"),
+			MonthName(Test.CreateAt).As("monthname"),
 			Now().As("now"),
-			Quarter(Users.CreateAt).As("createat_quarter"),
-			Second(Users.CreateAt).As("createat_second"),
-			TimeAdd(Users.CreateAt, Literal("4 HOUR")).As("createat_timeadd"),
-			TimeDiff(Users.UpdateAt, Users.CreateAt).As("updateat_timediff"),
-			TimeSub(Users.CreateAt, Literal("4 HOUR")).As("createat_timesub"),
-			Week(Users.CreateAt).As("createat_week"),
-			Year(Users.CreateAt).As("createat_year"),
+			Quarter(Test.CreateAt).As("quarter"),
+			Second(Test.CreateAt).As("second"),
+			TimeAdd(Test.CreateAt, Literal("4 HOUR")).As("timeadd"),
+			TimeDiff(Test.UpdateAt, Test.CreateAt).As("timediff"),
+			TimeSub(Test.CreateAt, Literal("4 HOUR")).As("timesub"),
+			Week(Test.CreateAt).As("week"),
+			Year(Test.CreateAt).As("year"),
 			// Функции обмена данными
 			JsonArray(Users.Data, Value("test"), Value("test")).As("data_jsonarray"),
 			JsonArrayAgg(Users.Data).As("data_jsonarrayagg"),
 			JsonContains(Users.Data, Value(`{"theme":"dark"}`)).As("data_jsoncontains"),
 			JsonExtract(Users.Data, JsonGroup(JsonPath(JsonKey("col"), JsonIndex(0), JsonKey("name"))), TypeString).As("data_jsonextract"),
 			JsonObject(JsonPair(JsonKey("users"), Count(Users.Data, false))).As("data_jsonobject"),
-			JsonObjectAgg(Users.Data, Users.Age).As("data_jsonobjectagg"),
+			JsonObjectAgg(Users.Data, Test.Number).As("data_jsonobjectagg"),
 			JsonRemove(Users.Data, JsonGroup(JsonPath(JsonKey("temp"))), JsonGroup(JsonPath(JsonKey("session")))).As("data_jsonremove"),
 			JsonSet(Users.Data, JsonGroup(JsonPath(JsonKey("temp")), Value(0)), JsonGroup(JsonPath(JsonKey("session")), Value("active"))).As("data_jsonset"),
 			JsonType(Users.Data).As("jsontype"),
 			// Функции математические
-			Abs(Users.Age).As("age_abs"),
-			ACos(Users.Age).As("age_acos"),
-			ASin(Users.Age).As("age_asin"),
-			ATan(Users.Age).As("age_atan"),
-			ATan2(Users.Age, Users.Age).As("age_atan2"),
-			Cbrt(Users.Age).As("age_cbrt"),
-			Ceil(Users.Age).As("age_ceil"),
-			Cos(Users.Age).As("age_cos"),
-			Exp(Users.Age).As("age_exp"),
-			Floor(Users.Age).As("age_floor"),
-			Ln(Users.Age).As("age_ln"),
-			Log(Users.Age, Value(3)).As("age_log"),
-			Mod(Users.Age, Value(3)).As("age_mod"),
+			Abs(Test.Number).As("abs"),
+			ACos(Test.Number).As("acos"),
+			ASin(Test.Number).As("asin"),
+			ATan(Test.Number).As("atan"),
+			ATan2(Test.Y, Test.X).As("atan2"),
+			Cbrt(Test.Number).As("cbrt"),
+			Ceil(Test.Number).As("ceil"),
+			Cos(Test.Number).As("cos"),
+			Exp(Test.Number).As("exp"),
+			Floor(Test.Number).As("floor"),
+			Ln(Test.Number).As("ln"),
+			Log(Test.Number, Value(3)).As("log"),
+			Mod(Test.Number, Value(3)).As("mod"),
 			Pi().As("pi"),
-			Power(Users.Age, Value(3)).As("age_power"),
+			Power(Test.Number, Value(3)).As("power"),
 			Rand().As("rand"),
-			Round(Users.Age, Value(2)).As("age_round"),
-			Sin(Users.Age).As("age_sin"),
-			Sqrt(Users.Age).As("age_sqrt"),
-			Tan(Users.Age).As("age_tan"),
-			Trunc(Users.Age, Value(2)).As("age_trunc"),
+			Round(Test.Number, Value(3)).As("round"),
+			Sin(Test.Number).As("sin"),
+			Sqrt(Test.Number).As("sqrt"),
+			Tan(Test.Number).As("tan"),
+			Trunc(Test.Number, Value(3)).As("trunc"),
 			// Функции строковые
-			Concat(Users.Status, Users.Name, Users.Email).As("status_concat"),
-			ConcatWs(Value("_"), Users.Status, Users.Name, Users.Email).As("status_concat_ws"),
-			LeftString(Users.Status, Value(2)).As("status_lstr"),
-			Lower(Users.Status).As("status_lower"),
-			LPad(Users.Status, Value(10), Value(",")).As("status_lpad"),
-			LTrim(Users.Status).As("status_ltrim"),
-			Repeat(Users.Status, Value(3)).As("status_repeat"),
-			Replace(Users.Status, Value("old"), Value("new")).As("status_replace"),
-			Reverse(Users.Status).As("status_reverse"),
-			RightString(Users.Status, Value(2)).As("status_rstr"),
-			RPad(Users.Status, Value(10), Value(",")).As("status_rpad"),
-			RTrim(Users.Status).As("status_rtrim"),
-			SubString(Users.Status, Value(0), Value(2)).As("status_substring"),
-			Trim(Users.Status).As("status_trim"),
-			Upper(Users.Status).As("status_upper"),
+			Concat(Test.String, Value("old"), Value("new")).As("concat"),
+			ConcatWs(Value("_"), Test.String, Value("old"), Value("new")).As("concat_ws"),
+			LeftString(Test.String, Value(2)).As("lstr"),
+			Lower(Test.String).As("lower"),
+			LPad(Test.String, Value(2), Value(",")).As("lpad"),
+			LTrim(Test.String).As("ltrim"),
+			Repeat(Test.String, Value(3)).As("repeat"),
+			Replace(Test.String, Value("old"), Value("new")).As("replace"),
+			Reverse(Test.String).As("reverse"),
+			RightString(Test.String, Value(2)).As("rstr"),
+			RPad(Test.String, Value(2), Value(",")).As("rpad"),
+			RTrim(Test.String).As("rtrim"),
+			SubString(Test.String, Value(0), Value(2)).As("substring"),
+			Trim(Test.String).As("trim"),
+			Upper(Test.String).As("upper"),
 			// Функции ранжирующие
 			RowNumber().Over(
 				PartitionBy(Users.DepartmentID),
@@ -519,248 +541,226 @@ func Test_Select_Function(t *testing.T) {
 				PartitionBy(Users.DepartmentID),
 				OrderBy(Desc(Users.Salary)),
 			).As("rank_ntile"),
-			// Функции аналитические
-			FirstValue(Users.Name).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
-			).As("analyt_first_value"),
-			LastValue(Users.Name).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW")).As("analyt_last_value"),
-			Lag(Users.Salary, 1).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Asc(Users.HireDate)),
-			).As("analyt_lag"),
-			Lead(Users.Salary, 1).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Asc(Users.HireDate)),
-			).As("analyt_lead"),
-			NthValue(Users.Name, 2).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW")).As("analyt_nth_value"),
 		).
 			From(Users.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
 			// Функции агрегатные
-			assertContains(t, sqlSelectQuery, "AVG(`u`.`age`)", "AVG")
-			assertContains(t, sqlSelectQuery, "BIT_AND(`u`.`age`)", "BIT_AND")
-			assertContains(t, sqlSelectQuery, "BIT_OR(`u`.`age`)", "BIT_OR")
-			assertContains(t, sqlSelectQuery, "BIT_XOR(`u`.`age`)", "BIT_XOR")
-			assertContains(t, sqlSelectQuery, "COUNT(`u`.`id`)", "COUNT")
-			assertContains(t, sqlSelectQuery, "GROUP_CONCAT(`u`.`status` SEPARATOR ',')", "GROUPCONCAT")
-			assertContains(t, sqlSelectQuery, "MAX(`u`.`age`)", "MAX")
-			assertContains(t, sqlSelectQuery, "MIN(`u`.`age`)", "MIN")
-			assertContains(t, sqlSelectQuery, "STDDEV(`u`.`age`)", "STDDEV")
-			assertContains(t, sqlSelectQuery, "SUM(`u`.`age`)", "SUM")
-			assertContains(t, sqlSelectQuery, "VARIANCE(`u`.`age`)", "VARIANCE")
+			assertContains(t, sqlSelectQuery, "AVG(`t`.`number`)", "AVG")
+			assertContains(t, sqlSelectQuery, "BIT_AND(`t`.`number`)", "BITAND")
+			assertContains(t, sqlSelectQuery, "BIT_OR(`t`.`number`)", "BITOR")
+			assertContains(t, sqlSelectQuery, "BIT_XOR(`t`.`number`)", "BITXOR")
+			assertContains(t, sqlSelectQuery, "COUNT(`t`.`string`)", "COUNT")
+			assertContains(t, sqlSelectQuery, "GROUP_CONCAT(`t`.`string` SEPARATOR ',')", "GROUPCONCAT")
+			assertContains(t, sqlSelectQuery, "MAX(`t`.`number`)", "MAX")
+			assertContains(t, sqlSelectQuery, "MIN(`t`.`number`)", "MIN")
+			assertContains(t, sqlSelectQuery, "STDDEV(`t`.`number`)", "STDDEV")
+			assertContains(t, sqlSelectQuery, "SUM(`t`.`number`)", "SUM")
+			assertContains(t, sqlSelectQuery, "VARIANCE(`t`.`number`)", "VARIANCE")
+			// Функции аналитические
+			assertContains(t, sqlSelectQuery, "FIRST_VALUE(`u`.`name`) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "FIRSTVALUE")
+			assertContains(t, sqlSelectQuery, "LAST_VALUE(`u`.`name`) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "LASTVALUE")
+			assertContains(t, sqlSelectQuery, "LAG(`u`.`salary`, 1) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`hire_date` ASC)", "LAG")
+			assertContains(t, sqlSelectQuery, "LEAD(`u`.`salary`, 1) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`hire_date` ASC)", "LEAD")
+			assertContains(t, sqlSelectQuery, "NTH_VALUE(`u`.`name`, 2) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "NTHVALUE")
 			// Функции условий
-			assertContains(t, sqlSelectQuery, "CASE WHEN `u`.`age` < ? THEN ? ELSE ? END", "CASE")
-			assertContains(t, sqlSelectQuery, "COALESCE(`u`.`createat`, `u`.`updateat`)", "COALESCE")
-			assertContains(t, sqlSelectQuery, "GREATEST(`u`.`createat`, `u`.`updateat`)", "GREATEST")
-			assertContains(t, sqlSelectQuery, "LEAST(`u`.`createat`, `u`.`updateat`)", "LEAST")
-			assertContains(t, sqlSelectQuery, "NULLIF(`u`.`createat`, `u`.`updateat`)", "NULLIF")
+			assertContains(t, sqlSelectQuery, "CASE WHEN `t`.`number` < ? THEN ? ELSE ? END", "CASE")
+			assertContains(t, sqlSelectQuery, "COALESCE(`t`.`createat`, `t`.`updateat`)", "COALESCE")
+			assertContains(t, sqlSelectQuery, "GREATEST(`t`.`createat`, `t`.`updateat`)", "GREATEST")
+			assertContains(t, sqlSelectQuery, "LEAST(`t`.`createat`, `t`.`updateat`)", "LEAST")
+			assertContains(t, sqlSelectQuery, "NULLIF(`t`.`createat`, `t`.`updateat`)", "NULLIF")
 			// Функции конвертации
-			assertContains(t, sqlSelectQuery, "CAST(`u`.`age` AS CHAR)", "CAST")
+			assertContains(t, sqlSelectQuery, "CAST(`t`.`number` AS CHAR)", "CAST")
 			assertContains(t, sqlSelectQuery, "CHAR_LENGTH(`u`.`status`)", "CHARLENGTH")
 			assertContains(t, sqlSelectQuery, "DATE_FORMAT(`u`.`createat`, '%Y-%m-%d')", "DATEFORMAT")
-			assertContains(t, sqlSelectQuery, "DEGREES(`u`.`age`)", "DEGREES")
+			assertContains(t, sqlSelectQuery, "DEGREES(`t`.`number`)", "DEGREES")
 			assertContains(t, sqlSelectQuery, "LENGTH(`u`.`status`)", "LENGTH")
 			assertContains(t, sqlSelectQuery, "POSITION(? IN `u`.`status`)", "POSITION")
-			assertContains(t, sqlSelectQuery, "RADIANS(`u`.`age`)", "RADIANS")
+			assertContains(t, sqlSelectQuery, "RADIANS(`t`.`number`)", "RADIANS")
 			// Функции даты и времени
 			assertContains(t, sqlSelectQuery, "CURDATE()", "CURDATE")
 			assertContains(t, sqlSelectQuery, "CURTIME()", "CURTIME")
-			assertContains(t, sqlSelectQuery, "DATE_ADD(`u`.`createat`, INTERVAL '7 DAY')", "DATEADD")
-			assertContains(t, sqlSelectQuery, "DATEDIFF(`u`.`updateat`, `u`.`createat`)", "DATEDIFF")
-			assertContains(t, sqlSelectQuery, "DATE_SUB(`u`.`createat`, INTERVAL '7 DAY')", "DATESUB")
-			assertContains(t, sqlSelectQuery, "DAY(`u`.`createat`)", "DAY")
-			assertContains(t, sqlSelectQuery, "DAYNAME(`u`.`createat`)", "DAYNAME")
-			assertContains(t, sqlSelectQuery, "HOUR(`u`.`createat`)", "HOUR")
-			assertContains(t, sqlSelectQuery, "MINUTE(`u`.`createat`)", "MINUTE")
-			assertContains(t, sqlSelectQuery, "MONTH(`u`.`createat`)", "MONTH")
-			assertContains(t, sqlSelectQuery, "MONTHNAME(`u`.`createat`)", "MONTHNAME")
+			assertContains(t, sqlSelectQuery, "DATE_ADD(`t`.`createat`, INTERVAL '4 DAY')", "DATEADD")
+			assertContains(t, sqlSelectQuery, "DATEDIFF(`t`.`updateat`, `t`.`createat`)", "DATEDIFF")
+			assertContains(t, sqlSelectQuery, "DATE_SUB(`t`.`createat`, INTERVAL '4 DAY')", "DATESUB")
+			assertContains(t, sqlSelectQuery, "DAY(`t`.`createat`)", "DAY")
+			assertContains(t, sqlSelectQuery, "DAYNAME(`t`.`createat`)", "DAYNAME")
+			assertContains(t, sqlSelectQuery, "HOUR(`t`.`createat`)", "HOUR")
+			assertContains(t, sqlSelectQuery, "MINUTE(`t`.`createat`)", "MINUTE")
+			assertContains(t, sqlSelectQuery, "MONTH(`t`.`createat`)", "MONTH")
+			assertContains(t, sqlSelectQuery, "MONTHNAME(`t`.`createat`)", "MONTHNAME")
 			assertContains(t, sqlSelectQuery, "NOW()", "NOW")
-			assertContains(t, sqlSelectQuery, "QUARTER(`u`.`createat`)", "QUARTER")
-			assertContains(t, sqlSelectQuery, "SECOND(`u`.`createat`)", "SECOND")
-			assertContains(t, sqlSelectQuery, "TIME_ADD(`u`.`createat`, INTERVAL '4 HOUR')", "TIMEADD")
-			assertContains(t, sqlSelectQuery, "TIMEDIFF(`u`.`updateat`, `u`.`createat`)", "TIMEDIFF")
-			assertContains(t, sqlSelectQuery, "TIME_SUB(`u`.`createat`, INTERVAL '4 HOUR')", "TIMESUB")
-			assertContains(t, sqlSelectQuery, "WEEK(`u`.`createat`)", "WEEK")
-			assertContains(t, sqlSelectQuery, "YEAR(`u`.`createat`)", "YEAR")
+			assertContains(t, sqlSelectQuery, "QUARTER(`t`.`createat`)", "QUARTER")
+			assertContains(t, sqlSelectQuery, "SECOND(`t`.`createat`)", "SECOND")
+			assertContains(t, sqlSelectQuery, "TIME_ADD(`t`.`createat`, INTERVAL '4 HOUR')", "TIMEADD")
+			assertContains(t, sqlSelectQuery, "TIMEDIFF(`t`.`updateat`, `t`.`createat`)", "TIMEDIFF")
+			assertContains(t, sqlSelectQuery, "TIME_SUB(`t`.`createat`, INTERVAL '4 HOUR')", "TIMESUB")
+			assertContains(t, sqlSelectQuery, "WEEK(`t`.`createat`)", "WEEK")
+			assertContains(t, sqlSelectQuery, "YEAR(`t`.`createat`)", "YEAR")
 			// Функции обмена данными
-			assertContains(t, sqlSelectQuery, "JSON_ARRAY(`u`.`data`, ?, ?)", "JSON_ARRAY")
-			assertContains(t, sqlSelectQuery, "JSON_ARRAYAGG(`u`.`data`)", "JSON_ARRAYAGG")
-			assertContains(t, sqlSelectQuery, "JSON_CONTAINS(`u`.`data`, ?)", "JSON_CONTAINS")
-			assertContains(t, sqlSelectQuery, "(`u`.`data` ->> '$.col[0].name')", "JSON_EXTRACT")
-			assertContains(t, sqlSelectQuery, "JSON_OBJECT('users', COUNT(`u`.`data`))", "JSON_OBJECT")
-			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG(`u`.`data`, `u`.`age`)", "JSON_OBJECTAGG")
-			assertContains(t, sqlSelectQuery, "JSON_REMOVE(`u`.`data`, '$.temp', '$.session')", "JSON_REMOVE")
-			assertContains(t, sqlSelectQuery, "JSON_SET(`u`.`data`, '$.temp', ?, '$.session', ?)", "JSON_SET")
-			assertContains(t, sqlSelectQuery, "JSON_TYPE(`u`.`data`)", "JSON_TYPE")
+			assertContains(t, sqlSelectQuery, "JSON_ARRAY(`u`.`data`, ?, ?)", "JSONARRAY")
+			assertContains(t, sqlSelectQuery, "JSON_ARRAYAGG(`u`.`data`)", "JSONARRAYAGG")
+			assertContains(t, sqlSelectQuery, "JSON_CONTAINS(`u`.`data`, ?)", "JSONCONTAINS")
+			assertContains(t, sqlSelectQuery, "(`u`.`data` ->> '$.col[0].name')", "JSONEXTRACT")
+			assertContains(t, sqlSelectQuery, "JSON_OBJECT('users', COUNT(`u`.`data`))", "JSONOBJECT")
+			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG(`u`.`data`, `t`.`number`)", "JSONOBJECTAGG")
+			assertContains(t, sqlSelectQuery, "JSON_REMOVE(`u`.`data`, '$.temp', '$.session')", "JSONREMOVE")
+			assertContains(t, sqlSelectQuery, "JSON_SET(`u`.`data`, '$.temp', ?, '$.session', ?)", "JSONSET")
+			assertContains(t, sqlSelectQuery, "JSON_TYPE(`u`.`data`)", "JSONTYPE")
 			// Функции математические
-			assertContains(t, sqlSelectQuery, "ABS(`u`.`age`)", "ABS")
-			assertContains(t, sqlSelectQuery, "ACOS(`u`.`age`)", "ACOS")
-			assertContains(t, sqlSelectQuery, "ASIN(`u`.`age`)", "ASIN")
-			assertContains(t, sqlSelectQuery, "ATAN(`u`.`age`)", "ATAN")
-			assertContains(t, sqlSelectQuery, "ATAN2(`u`.`age`, `u`.`age`)", "ATAN2")
-			assertContains(t, sqlSelectQuery, "CBRT(`u`.`age`)", "CBRT")
-			assertContains(t, sqlSelectQuery, "CEILING(`u`.`age`)", "CEIL")
-			assertContains(t, sqlSelectQuery, "COS(`u`.`age`)", "COS")
-			assertContains(t, sqlSelectQuery, "EXP(`u`.`age`)", "EXP")
-			assertContains(t, sqlSelectQuery, "FLOOR(`u`.`age`)", "FLOOR")
-			assertContains(t, sqlSelectQuery, "LN(`u`.`age`)", "LN")
-			assertContains(t, sqlSelectQuery, "LOG(`u`.`age`, ?)", "LOG")
-			assertContains(t, sqlSelectQuery, "MOD(`u`.`age`, ?)", "MOD")
+			assertContains(t, sqlSelectQuery, "ABS(`t`.`number`)", "ABS")
+			assertContains(t, sqlSelectQuery, "ACOS(`t`.`number`)", "ACOS")
+			assertContains(t, sqlSelectQuery, "ASIN(`t`.`number`)", "ASIN")
+			assertContains(t, sqlSelectQuery, "ATAN(`t`.`number`)", "ATAN")
+			assertContains(t, sqlSelectQuery, "ATAN2(`t`.`y`, `t`.`x`)", "ATAN2")
+			assertContains(t, sqlSelectQuery, "CBRT(`t`.`number`)", "CBRT")
+			assertContains(t, sqlSelectQuery, "CEILING(`t`.`number`)", "CEIL")
+			assertContains(t, sqlSelectQuery, "COS(`t`.`number`)", "COS")
+			assertContains(t, sqlSelectQuery, "EXP(`t`.`number`)", "EXP")
+			assertContains(t, sqlSelectQuery, "FLOOR(`t`.`number`)", "FLOOR")
+			assertContains(t, sqlSelectQuery, "LN(`t`.`number`)", "LN")
+			assertContains(t, sqlSelectQuery, "LOG(`t`.`number`, ?)", "LOG")
+			assertContains(t, sqlSelectQuery, "MOD(`t`.`number`, ?)", "MOD")
 			assertContains(t, sqlSelectQuery, "PI()", "PI")
-			assertContains(t, sqlSelectQuery, "POWER(`u`.`age`, ?)", "POWER")
+			assertContains(t, sqlSelectQuery, "POWER(`t`.`number`, ?)", "POWER")
 			assertContains(t, sqlSelectQuery, "RAND()", "RAND")
-			assertContains(t, sqlSelectQuery, "ROUND(`u`.`age`, ?)", "ROUND")
-			assertContains(t, sqlSelectQuery, "SIN(`u`.`age`)", "SIN")
-			assertContains(t, sqlSelectQuery, "SQRT(`u`.`age`)", "SQRT")
-			assertContains(t, sqlSelectQuery, "TAN(`u`.`age`)", "TAN")
-			assertContains(t, sqlSelectQuery, "TRUNCATE(`u`.`age`, ?)", "TRUNC")
-			// Функции строковые
-			assertContains(t, sqlSelectQuery, "CONCAT(`u`.`status`, `u`.`name`, `u`.`email`)", "CONCAT")
-			assertContains(t, sqlSelectQuery, "CONCAT_WS(?, `u`.`status`, `u`.`name`, `u`.`email`)", "CONCATWS")
-			assertContains(t, sqlSelectQuery, "LEFT(`u`.`status`, ?)", "LEFTSTRING")
-			assertContains(t, sqlSelectQuery, "LOWER(`u`.`status`)", "LOWER")
-			assertContains(t, sqlSelectQuery, "LPAD(`u`.`status`, ?, ?)", "LPAD")
-			assertContains(t, sqlSelectQuery, "LTRIM(`u`.`status`)", "LTRIM")
-			assertContains(t, sqlSelectQuery, "REPEAT(`u`.`status`, ?)", "REPEAT")
-			assertContains(t, sqlSelectQuery, "REPLACE(`u`.`status`, ?, ?)", "REPLACE")
-			assertContains(t, sqlSelectQuery, "REVERSE(`u`.`status`)", "REVERSE")
-			assertContains(t, sqlSelectQuery, "RIGHT(`u`.`status`, ?)", "RIGHTSTRING")
-			assertContains(t, sqlSelectQuery, "RPAD(`u`.`status`, ?, ?)", "RPAD")
-			assertContains(t, sqlSelectQuery, "RTRIM(`u`.`status`)", "RTRIM")
-			assertContains(t, sqlSelectQuery, "SUBSTRING(`u`.`status`, ?, ?)", "SUBSTRING")
-			assertContains(t, sqlSelectQuery, "TRIM(`u`.`status`)", "TRIM")
-			assertContains(t, sqlSelectQuery, "UPPER(`u`.`status`)", "UPPER")
+			assertContains(t, sqlSelectQuery, "ROUND(`t`.`number`, ?)", "ROUND")
+			assertContains(t, sqlSelectQuery, "SIN(`t`.`number`)", "SIN")
+			assertContains(t, sqlSelectQuery, "SQRT(`t`.`number`)", "SQRT")
+			assertContains(t, sqlSelectQuery, "TAN(`t`.`number`)", "TAN")
+			assertContains(t, sqlSelectQuery, "TRUNCATE(`t`.`number`, ?)", "TRUNC")
 			// Функции ранжирующие
-			assertContains(t, sqlSelectQuery, "ROW_NUMBER() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "ROW_NUMBER")
+			assertContains(t, sqlSelectQuery, "ROW_NUMBER() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "ROWNUMBER")
 			assertContains(t, sqlSelectQuery, "RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "RANK")
-			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "DENSE_RANK")
-			assertContains(t, sqlSelectQuery, "PERCENT_RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "PERCENT_RANK")
-			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "CUME_DIST")
+			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "DENSERANK")
+			assertContains(t, sqlSelectQuery, "PERCENT_RANK() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "PERCENTRANK")
+			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "CUMEDIST")
 			assertContains(t, sqlSelectQuery, "NTILE(4) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC)", "NTILE")
-			// Функции аналитические
-			assertContains(t, sqlSelectQuery, "FIRST_VALUE(`u`.`name`) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "FIRST_VALUE")
-			assertContains(t, sqlSelectQuery, "LAST_VALUE(`u`.`name`) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "LAST_VALUE")
-			assertContains(t, sqlSelectQuery, "LAG(`u`.`salary`, 1) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`hire_date` ASC)", "LAG")
-			assertContains(t, sqlSelectQuery, "LEAD(`u`.`salary`, 1) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`hire_date` ASC)", "LEAD")
-			assertContains(t, sqlSelectQuery, "NTH_VALUE(`u`.`name`, 2) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "NTH_VALUE")
+			// Функции строковые
+			assertContains(t, sqlSelectQuery, "CONCAT(`t`.`string`, ?, ?)", "CONCAT")
+			assertContains(t, sqlSelectQuery, "CONCAT_WS(?, `t`.`string`, ?, ?)", "CONCATWS")
+			assertContains(t, sqlSelectQuery, "LEFT(`t`.`string`, ?)", "LEFTSTRING")
+			assertContains(t, sqlSelectQuery, "LOWER(`t`.`string`)", "LOWER")
+			assertContains(t, sqlSelectQuery, "LPAD(`t`.`string`, ?, ?)", "LPAD")
+			assertContains(t, sqlSelectQuery, "LTRIM(`t`.`string`)", "LTRIM")
+			assertContains(t, sqlSelectQuery, "REPEAT(`t`.`string`, ?)", "REPEAT")
+			assertContains(t, sqlSelectQuery, "REPLACE(`t`.`string`, ?, ?)", "REPLACE")
+			assertContains(t, sqlSelectQuery, "REVERSE(`t`.`string`)", "REVERSE")
+			assertContains(t, sqlSelectQuery, "RIGHT(`t`.`string`, ?)", "RIGHTSTRING")
+			assertContains(t, sqlSelectQuery, "RPAD(`t`.`string`, ?, ?)", "RPAD")
+			assertContains(t, sqlSelectQuery, "RTRIM(`t`.`string`)", "RTRIM")
+			assertContains(t, sqlSelectQuery, "SUBSTRING(`t`.`string`, ?, ?)", "SUBSTRING")
+			assertContains(t, sqlSelectQuery, "TRIM(`t`.`string`)", "TRIM")
+			assertContains(t, sqlSelectQuery, "UPPER(`t`.`string`)", "UPPER")
 		case DialectPostgreSQL:
 			// Функции агрегатные
-			assertContains(t, sqlSelectQuery, `AVG("u"."age")`, "AVG")
-			assertContains(t, sqlSelectQuery, `BIT_AND("u"."age")`, "BIT_AND")
-			assertContains(t, sqlSelectQuery, `BIT_OR("u"."age")`, "BIT_OR")
-			assertContains(t, sqlSelectQuery, `BIT_XOR("u"."age")`, "BIT_XOR")
-			assertContains(t, sqlSelectQuery, `COUNT("u"."id")`, "COUNT")
-			assertContains(t, sqlSelectQuery, `STRING_AGG("u"."status", ',')`, "GROUPCONCAT")
-			assertContains(t, sqlSelectQuery, `MAX("u"."age")`, "MAX")
-			assertContains(t, sqlSelectQuery, `MIN("u"."age")`, "MIN")
-			assertContains(t, sqlSelectQuery, `STDDEV_SAMP("u"."age")`, "STDDEV")
-			assertContains(t, sqlSelectQuery, `SUM("u"."age")`, "SUM")
-			assertContains(t, sqlSelectQuery, `VAR_SAMP("u"."age")`, "VARIANCE")
+			assertContains(t, sqlSelectQuery, `AVG("t"."number")`, "AVG")
+			assertContains(t, sqlSelectQuery, `BIT_AND("t"."number")`, "BITAND")
+			assertContains(t, sqlSelectQuery, `BIT_OR("t"."number")`, "BITOR")
+			assertContains(t, sqlSelectQuery, `BIT_XOR("t"."number")`, "BITXOR")
+			assertContains(t, sqlSelectQuery, `COUNT("t"."string")`, "COUNT")
+			assertContains(t, sqlSelectQuery, `STRING_AGG("t"."string", ',')`, "GROUPCONCAT")
+			assertContains(t, sqlSelectQuery, `MAX("t"."number")`, "MAX")
+			assertContains(t, sqlSelectQuery, `MIN("t"."number")`, "MIN")
+			assertContains(t, sqlSelectQuery, `STDDEV_SAMP("t"."number")`, "STDDEV")
+			assertContains(t, sqlSelectQuery, `SUM("t"."number")`, "SUM")
+			assertContains(t, sqlSelectQuery, `VAR_SAMP("t"."number")`, "VARIANCE")
+			// Функции аналитические
+			assertContains(t, sqlSelectQuery, `FIRST_VALUE("u"."name") OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "FIRSTVALUE")
+			assertContains(t, sqlSelectQuery, `LAST_VALUE("u"."name") OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "LASTVALUE")
+			assertContains(t, sqlSelectQuery, `LAG("u"."salary", 1) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."hire_date" ASC)`, "LAG")
+			assertContains(t, sqlSelectQuery, `LEAD("u"."salary", 1) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."hire_date" ASC)`, "LEAD")
+			assertContains(t, sqlSelectQuery, `NTH_VALUE("u"."name", 2) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "NTHVALUE")
 			// Функции условий
-			assertContains(t, sqlSelectQuery, `CASE WHEN "u"."age" < $1 THEN $2 ELSE $3 END`, "CASE")
-			assertContains(t, sqlSelectQuery, `COALESCE("u"."createat", "u"."updateat")`, "COALESCE")
-			assertContains(t, sqlSelectQuery, `GREATEST("u"."createat", "u"."updateat")`, "GREATEST")
-			assertContains(t, sqlSelectQuery, `LEAST("u"."createat", "u"."updateat")`, "LEAST")
-			assertContains(t, sqlSelectQuery, `NULLIF("u"."createat", "u"."updateat")`, "NULLIF")
+			assertContains(t, sqlSelectQuery, `CASE WHEN "t"."number" < $1 THEN $2 ELSE $3 END`, "CASE")
+			assertContains(t, sqlSelectQuery, `COALESCE("t"."createat", "t"."updateat")`, "COALESCE")
+			assertContains(t, sqlSelectQuery, `GREATEST("t"."createat", "t"."updateat")`, "GREATEST")
+			assertContains(t, sqlSelectQuery, `LEAST("t"."createat", "t"."updateat")`, "LEAST")
+			assertContains(t, sqlSelectQuery, `NULLIF("t"."createat", "t"."updateat")`, "NULLIF")
 			// Функции конвертации
-			assertContains(t, sqlSelectQuery, `CAST("u"."age" AS VARCHAR) `, "CAST")
+			assertContains(t, sqlSelectQuery, `CAST("t"."number" AS VARCHAR) `, "CAST")
 			assertContains(t, sqlSelectQuery, `CHAR_LENGTH("u"."status")`, "CHARLENGTH")
-			assertContains(t, sqlSelectQuery, `TO_CHAR("u"."createat", '%Y-%m-%d')`, "DATE_FORMAT")
-			assertContains(t, sqlSelectQuery, `DEGREES("u"."age")`, "DEGREES")
+			assertContains(t, sqlSelectQuery, `TO_CHAR("u"."createat", '%Y-%m-%d')`, "DATEFORMAT")
+			assertContains(t, sqlSelectQuery, `DEGREES("t"."number")`, "DEGREES")
 			assertContains(t, sqlSelectQuery, `LENGTH("u"."status")`, "LENGTH")
 			assertContains(t, sqlSelectQuery, `POSITION($1 IN "u"."status")`, "POSITION")
-			assertContains(t, sqlSelectQuery, `RADIANS("u"."age")`, "RADIANS")
+			assertContains(t, sqlSelectQuery, `RADIANS("t"."number")`, "RADIANS")
 			// Функции даты и времени
 			assertContains(t, sqlSelectQuery, `CURRENT_DATE`, "CURDATE")
 			assertContains(t, sqlSelectQuery, `CURRENT_TIME`, "CURTIME")
-			assertContains(t, sqlSelectQuery, `("u"."createat" + INTERVAL '7 DAY')`, "DATEADD")
-			assertContains(t, sqlSelectQuery, `DATE_PART('day', "u"."updateat" - "u"."createat")`, "DATEDIFF")
-			assertContains(t, sqlSelectQuery, `("u"."createat" - INTERVAL '7 DAY')`, "DATESUB")
-			assertContains(t, sqlSelectQuery, `EXTRACT(DAY FROM "u"."createat")`, "DAY")
-			assertContains(t, sqlSelectQuery, `TO_CHAR("u"."createat", 'Day')`, "DAYNAME")
-			assertContains(t, sqlSelectQuery, `EXTRACT(HOUR FROM "u"."createat")`, "HOUR")
-			assertContains(t, sqlSelectQuery, `EXTRACT(MINUTE FROM "u"."createat")`, "MINUTE")
-			assertContains(t, sqlSelectQuery, `EXTRACT(MONTH FROM "u"."createat")`, "MONTH")
-			assertContains(t, sqlSelectQuery, `TO_CHAR("u"."createat", 'Month')`, "MONTHNAME")
+			assertContains(t, sqlSelectQuery, `("t"."createat" + INTERVAL '4 DAY')`, "DATEADD")
+			assertContains(t, sqlSelectQuery, `DATE_PART('day', "t"."updateat" - "t"."createat")`, "DATEDIFF")
+			assertContains(t, sqlSelectQuery, `("t"."createat" - INTERVAL '4 DAY')`, "DATESUB")
+			assertContains(t, sqlSelectQuery, `EXTRACT(DAY FROM "t"."createat")`, "DAY")
+			assertContains(t, sqlSelectQuery, `TO_CHAR("t"."createat", 'Day')`, "DAYNAME")
+			assertContains(t, sqlSelectQuery, `EXTRACT(HOUR FROM "t"."createat")`, "HOUR")
+			assertContains(t, sqlSelectQuery, `EXTRACT(MINUTE FROM "t"."createat")`, "MINUTE")
+			assertContains(t, sqlSelectQuery, `EXTRACT(MONTH FROM "t"."createat")`, "MONTH")
+			assertContains(t, sqlSelectQuery, `TO_CHAR("t"."createat", 'Month')`, "MONTHNAME")
 			assertContains(t, sqlSelectQuery, `CURRENT_TIMESTAMP`, "NOW")
-			assertContains(t, sqlSelectQuery, `EXTRACT(QUARTER FROM "u"."createat")`, "QUARTER")
-			assertContains(t, sqlSelectQuery, `EXTRACT(SECOND FROM "u"."createat")`, "SECOND")
-			assertContains(t, sqlSelectQuery, `("u"."createat" + INTERVAL '4 HOUR')`, "TIMEADD")
-			assertContains(t, sqlSelectQuery, `DATE_PART('time', "u"."updateat" - "u"."createat")`, "TIMEDIFF")
-			assertContains(t, sqlSelectQuery, `("u"."createat" - INTERVAL '4 HOUR')`, "TIMESUB")
-			assertContains(t, sqlSelectQuery, `EXTRACT(WEEK FROM "u"."createat")`, "WEEK")
-			assertContains(t, sqlSelectQuery, `EXTRACT(YEAR FROM "u"."createat")`, "YEAR")
+			assertContains(t, sqlSelectQuery, `EXTRACT(QUARTER FROM "t"."createat")`, "QUARTER")
+			assertContains(t, sqlSelectQuery, `EXTRACT(SECOND FROM "t"."createat")`, "SECOND")
+			assertContains(t, sqlSelectQuery, `("t"."createat" + INTERVAL '4 HOUR')`, "TIMEADD")
+			assertContains(t, sqlSelectQuery, `DATE_PART('time', "t"."updateat" - "t"."createat")`, "TIMEDIFF")
+			assertContains(t, sqlSelectQuery, `("t"."createat" - INTERVAL '4 HOUR')`, "TIMESUB")
+			assertContains(t, sqlSelectQuery, `EXTRACT(WEEK FROM "t"."createat")`, "WEEK")
+			assertContains(t, sqlSelectQuery, `EXTRACT(YEAR FROM "t"."createat")`, "YEAR")
 			// Функции обмена данными
-			assertContains(t, sqlSelectQuery, `JSON_ARRAY("u"."data", $1, $2)`, "JSON_ARRAY")
-			assertContains(t, sqlSelectQuery, `JSON_AGG("u"."data")`, "JSON_ARRAYAGG")
-			assertContains(t, sqlSelectQuery, `("u"."data" @> $1)`, "JSON_CONTAINS")
-			assertContains(t, sqlSelectQuery, `("u"."data" #>> '{col,0,name}')`, "JSON_EXTRACT")
-			assertContains(t, sqlSelectQuery, `JSON_BUILD_OBJECT('users', COUNT("u"."data"))`, "JSON_OBJECT")
-			assertContains(t, sqlSelectQuery, `JSON_OBJECT_AGG("u"."data", "u"."age")`, "JSON_OBJECTAGG")
-			assertContains(t, sqlSelectQuery, `("u"."data" - '{temp}' - '{session}')`, "JSON_REMOVE")
-			//assertContains(t, sqlSelectQuery, `jsonb_set`, "JSON_SET")
-			assertContains(t, sqlSelectQuery, `jsonb_typeof("u"."data")`, "JSON_TYPE")
+			assertContains(t, sqlSelectQuery, `JSON_ARRAY("u"."data", $1, $2)`, "JSONARRAY")
+			assertContains(t, sqlSelectQuery, `JSON_AGG("u"."data")`, "JSONARRAYAGG")
+			assertContains(t, sqlSelectQuery, `("u"."data" @> $1)`, "JSONCONTAINS")
+			assertContains(t, sqlSelectQuery, `("u"."data" #>> '{col,0,name}')`, "JSONEXTRACT")
+			assertContains(t, sqlSelectQuery, `JSON_BUILD_OBJECT('users', COUNT("u"."data"))`, "JSONOBJECT")
+			assertContains(t, sqlSelectQuery, `JSON_OBJECT_AGG("u"."data", "t"."number")`, "JSONOBJECTAGG")
+			assertContains(t, sqlSelectQuery, `("u"."data" - '{temp}' - '{session}')`, "JSONREMOVE")
+			//assertContains(t, sqlSelectQuery, `jsonb_set`, "JSONSET")
+			assertContains(t, sqlSelectQuery, `jsonb_typeof("u"."data")`, "JSONTYPE")
 			// Функции математические
-			assertContains(t, sqlSelectQuery, `ABS("u"."age")`, "ABS")
-			assertContains(t, sqlSelectQuery, `ACOS("u"."age")`, "ACOS")
-			assertContains(t, sqlSelectQuery, `ASIN("u"."age")`, "ASIN")
-			assertContains(t, sqlSelectQuery, `ATAN("u"."age")`, "ATAN")
-			assertContains(t, sqlSelectQuery, `ATAN2("u"."age", "u"."age")`, "ATAN2")
-			assertContains(t, sqlSelectQuery, `CBRT("u"."age")`, "CBRT")
-			assertContains(t, sqlSelectQuery, `CEIL("u"."age")`, "CEIL")
-			assertContains(t, sqlSelectQuery, `COS("u"."age")`, "COS")
-			assertContains(t, sqlSelectQuery, `EXP("u"."age")`, "EXP")
-			assertContains(t, sqlSelectQuery, `FLOOR("u"."age")`, "FLOOR")
-			assertContains(t, sqlSelectQuery, `LN("u"."age")`, "LN")
-			assertContains(t, sqlSelectQuery, `LOG("u"."age", $1)`, "LOG")
-			assertContains(t, sqlSelectQuery, `MOD("u"."age", $1)`, "MOD")
+			assertContains(t, sqlSelectQuery, `ABS("t"."number")`, "ABS")
+			assertContains(t, sqlSelectQuery, `ACOS("t"."number")`, "ACOS")
+			assertContains(t, sqlSelectQuery, `ASIN("t"."number")`, "ASIN")
+			assertContains(t, sqlSelectQuery, `ATAN("t"."number")`, "ATAN")
+			assertContains(t, sqlSelectQuery, `ATAN2("t"."y", "t"."x")`, "ATAN2")
+			assertContains(t, sqlSelectQuery, `CBRT("t"."number")`, "CBRT")
+			assertContains(t, sqlSelectQuery, `CEIL("t"."number")`, "CEIL")
+			assertContains(t, sqlSelectQuery, `COS("t"."number")`, "COS")
+			assertContains(t, sqlSelectQuery, `EXP("t"."number")`, "EXP")
+			assertContains(t, sqlSelectQuery, `FLOOR("t"."number")`, "FLOOR")
+			assertContains(t, sqlSelectQuery, `LN("t"."number")`, "LN")
+			assertContains(t, sqlSelectQuery, `LOG("t"."number", $1)`, "LOG")
+			assertContains(t, sqlSelectQuery, `MOD("t"."number", $1)`, "MOD")
 			assertContains(t, sqlSelectQuery, `PI()`, "PI")
-			assertContains(t, sqlSelectQuery, `POWER("u"."age", $1)`, "POWER")
+			assertContains(t, sqlSelectQuery, `POWER("t"."number", $1)`, "POWER")
 			assertContains(t, sqlSelectQuery, `RANDOM`, "RAND")
-			assertContains(t, sqlSelectQuery, `ROUND("u"."age", $1)`, "ROUND")
-			assertContains(t, sqlSelectQuery, `SIN("u"."age")`, "SIN")
-			assertContains(t, sqlSelectQuery, `SQRT("u"."age")`, "SQRT")
-			assertContains(t, sqlSelectQuery, `TAN("u"."age")`, "TAN")
-			assertContains(t, sqlSelectQuery, `TRUNC("u"."age", $1)`, "TRUNC")
-			// Функции строковые
-			assertContains(t, sqlSelectQuery, `CONCAT("u"."status", "u"."name", "u"."email")`, "CONCAT")
-			assertContains(t, sqlSelectQuery, `CONCAT_WS($1, "u"."status", "u"."name", "u"."email")`, "CONCATWS")
-			assertContains(t, sqlSelectQuery, `LEFT("u"."status", $1)`, "LEFTSTRING")
-			assertContains(t, sqlSelectQuery, `LOWER("u"."status")`, "LOWER")
-			assertContains(t, sqlSelectQuery, `LPAD("u"."status", $1, $2)`, "LPAD")
-			assertContains(t, sqlSelectQuery, `LTRIM("u"."status")`, "LTRIM")
-			assertContains(t, sqlSelectQuery, `REPEAT("u"."status", $1)`, "REPEAT")
-			assertContains(t, sqlSelectQuery, `REPLACE("u"."status", $1, $2)`, "REPLACE")
-			assertContains(t, sqlSelectQuery, `REVERSE("u"."status")`, "REVERSE")
-			assertContains(t, sqlSelectQuery, `RIGHT("u"."status", $1)`, "RIGHTSTRING")
-			assertContains(t, sqlSelectQuery, `RPAD("u"."status", $1, $2)`, "RPAD")
-			assertContains(t, sqlSelectQuery, `RTRIM("u"."status")`, "RTRIM")
-			assertContains(t, sqlSelectQuery, `SUBSTRING("u"."status", $1, $2)`, "SUBSTRING")
-			assertContains(t, sqlSelectQuery, `TRIM("u"."status")`, "TRIM")
-			assertContains(t, sqlSelectQuery, `UPPER("u"."status")`, "UPPER")
+			assertContains(t, sqlSelectQuery, `ROUND("t"."number", $1)`, "ROUND")
+			assertContains(t, sqlSelectQuery, `SIN("t"."number")`, "SIN")
+			assertContains(t, sqlSelectQuery, `SQRT("t"."number")`, "SQRT")
+			assertContains(t, sqlSelectQuery, `TAN("t"."number")`, "TAN")
+			assertContains(t, sqlSelectQuery, `TRUNC("t"."number", $1)`, "TRUNC")
 			// Функции ранжирующие
-			assertContains(t, sqlSelectQuery, `ROW_NUMBER() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "ROW_NUMBER")
+			assertContains(t, sqlSelectQuery, `ROW_NUMBER() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "ROWNUMBER")
 			assertContains(t, sqlSelectQuery, `RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "RANK")
-			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "DENSE_RANK")
-			assertContains(t, sqlSelectQuery, `PERCENT_RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "PERCENT_RANK")
-			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "CUME_DIST")
+			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "DENSERANK")
+			assertContains(t, sqlSelectQuery, `PERCENT_RANK() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "PERCENTRANK")
+			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "CUMEDIST")
 			assertContains(t, sqlSelectQuery, `NTILE(4) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "NTILE")
-			// Функции аналитические
-			assertContains(t, sqlSelectQuery, `FIRST_VALUE("u"."name") OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "FIRST_VALUE")
-			assertContains(t, sqlSelectQuery, `LAST_VALUE("u"."name") OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "LAST_VALUE")
-			assertContains(t, sqlSelectQuery, `LAG("u"."salary", 1) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."hire_date" ASC)`, "LAG")
-			assertContains(t, sqlSelectQuery, `LEAD("u"."salary", 1) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."hire_date" ASC)`, "LEAD")
-			assertContains(t, sqlSelectQuery, `NTH_VALUE("u"."name", 2) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "NTH_VALUE")
+			// Функции строковые
+			assertContains(t, sqlSelectQuery, `CONCAT("t"."string", $1, $2)`, "CONCAT")
+			assertContains(t, sqlSelectQuery, `CONCAT_WS($1, "t"."string", $1, $2)`, "CONCATWS")
+			assertContains(t, sqlSelectQuery, `LEFT("t"."string", $1)`, "LEFTSTRING")
+			assertContains(t, sqlSelectQuery, `LOWER("t"."string")`, "LOWER")
+			assertContains(t, sqlSelectQuery, `LPAD("t"."string", $1, $2)`, "LPAD")
+			assertContains(t, sqlSelectQuery, `LTRIM("t"."string")`, "LTRIM")
+			assertContains(t, sqlSelectQuery, `REPEAT("t"."string", $1)`, "REPEAT")
+			assertContains(t, sqlSelectQuery, `REPLACE("t"."string", $1, $2)`, "REPLACE")
+			assertContains(t, sqlSelectQuery, `REVERSE("t"."string")`, "REVERSE")
+			assertContains(t, sqlSelectQuery, `RIGHT("t"."string", $1)`, "RIGHTSTRING")
+			assertContains(t, sqlSelectQuery, `RPAD("t"."string", $1, $2)`, "RPAD")
+			assertContains(t, sqlSelectQuery, `RTRIM("t"."string")`, "RTRIM")
+			assertContains(t, sqlSelectQuery, `SUBSTRING("t"."string", $1, $2)`, "SUBSTRING")
+			assertContains(t, sqlSelectQuery, `TRIM("t"."string")`, "TRIM")
+			assertContains(t, sqlSelectQuery, `UPPER("t"."string")`, "UPPER")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

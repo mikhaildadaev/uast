@@ -60,6 +60,17 @@ var Stats = struct {
 }{
 	Table: NewTable("stats", "s"),
 }
+var Test = struct {
+	Table    *TableSource
+	CreateAt *exprColumn[time.Time]
+	Number   *exprColumn[int]
+	String   *exprColumn[string]
+	UpdateAt *exprColumn[time.Time]
+	X        *exprColumn[int]
+	Y        *exprColumn[int]
+}{
+	Table: NewTable("test", "t"),
+}
 var Users = struct {
 	Table        *TableSource
 	Age          *exprColumn[int]
@@ -110,6 +121,13 @@ func init() {
 	Stats.OrderCount = Column[int](Stats.Table.aliasName, "order_count")
 	Stats.TotalSpent = Column[int](Stats.Table.aliasName, "total_spent")
 	Stats.UserID = Column[int64](Stats.Table.aliasName, "user_id")
+	// Test
+	Test.CreateAt = Column[time.Time](Test.Table.aliasName, "createat")
+	Test.Number = Column[int](Test.Table.aliasName, "number")
+	Test.String = Column[string](Test.Table.aliasName, "string")
+	Test.UpdateAt = Column[time.Time](Test.Table.aliasName, "updateat")
+	Test.X = Column[int](Test.Table.aliasName, "x")
+	Test.Y = Column[int](Test.Table.aliasName, "y")
 	// Users
 	Users.Age = Column[int](Users.Table.aliasName, "age")
 	Users.CreateAt = Column[time.Time](Users.Table.aliasName, "createat")

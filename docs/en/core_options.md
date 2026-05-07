@@ -1293,10 +1293,13 @@ Returns the smallest integer value not less than the argument (rounds up).
 ```go
 function := uast.Ceil(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: CEIL("t"."number")
-PostgreSQL: CEILING("t"."number")
+CEILING("t"."number")
+```
+Output PostgreSQL:
+```text
+CEIL("t"."number")
 ```
 
 #### Cos
@@ -1384,10 +1387,13 @@ Returns a random floating-point value in the range [0, 1].
 ```go
 function := uast.Rand()
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: RAND()
-PostgreSQL: RANDOM()
+RAND()
+```
+Output PostgreSQL:
+```text
+RANDOM()
 ```
 
 #### Round
@@ -1435,10 +1441,13 @@ Truncates the numeric expression to the specified number of decimal places (with
 ```go
 function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(3))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: TRUNCATE("t"."number", 3)
-PostgreSQL: TRUNC("t"."number", 3)
+TRUNCATE("t"."number", 3)
+```
+Output PostgreSQL:
+```text
+TRUNC("t"."number", 3)
 ```
 
 ### String

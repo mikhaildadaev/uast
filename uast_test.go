@@ -501,22 +501,6 @@ func Test_Select_Function(t *testing.T) {
 			Sqrt(Test.Number).As("math_sqrt"),
 			Tan(Test.Number).As("math_tan"),
 			Trunc(Test.Number, Value(3)).As("math_trunc"),
-			// Функции строковые
-			Concat(Test.String, Value("old"), Value("new")).As("string_concat"),
-			ConcatWs(Value("_"), Test.String, Value("old"), Value("new")).As("string_concatws"),
-			LeftString(Test.String, Value(2)).As("string_lstr"),
-			Lower(Test.String).As("string_lower"),
-			LPad(Test.String, Value(2), Value(",")).As("string_lpad"),
-			LTrim(Test.String).As("string_ltrim"),
-			Repeat(Test.String, Value(3)).As("string_repeat"),
-			Replace(Test.String, Value("old"), Value("new")).As("string_replace"),
-			Reverse(Test.String).As("string_reverse"),
-			RightString(Test.String, Value(2)).As("string_rstr"),
-			RPad(Test.String, Value(2), Value(",")).As("string_rpad"),
-			RTrim(Test.String).As("string_rtrim"),
-			SubString(Test.String, Value(0), Value(2)).As("string_substring"),
-			Trim(Test.String).As("string_trim"),
-			Upper(Test.String).As("string_upper"),
 			// Функции ранжирующие
 			CumeDist().Over(
 				PartitionBy(Test.ID),
@@ -542,6 +526,22 @@ func Test_Select_Function(t *testing.T) {
 				PartitionBy(Test.ID),
 				OrderBy(Desc(Test.Number)),
 			).As("ranking_rownumber"),
+			// Функции строковые
+			Concat(Test.String, Value("old"), Value("new")).As("string_concat"),
+			ConcatWs(Value("_"), Test.String, Value("old"), Value("new")).As("string_concatws"),
+			LeftString(Test.String, Value(2)).As("string_lstr"),
+			Lower(Test.String).As("string_lower"),
+			LPad(Test.String, Value(2), Value(",")).As("string_lpad"),
+			LTrim(Test.String).As("string_ltrim"),
+			Repeat(Test.String, Value(3)).As("string_repeat"),
+			Replace(Test.String, Value("old"), Value("new")).As("string_replace"),
+			Reverse(Test.String).As("string_reverse"),
+			RightString(Test.String, Value(2)).As("string_rstr"),
+			RPad(Test.String, Value(2), Value(",")).As("string_rpad"),
+			RTrim(Test.String).As("string_rtrim"),
+			SubString(Test.String, Value(0), Value(2)).As("string_substring"),
+			Trim(Test.String).As("string_trim"),
+			Upper(Test.String).As("string_upper"),
 		).
 			From(Test.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)

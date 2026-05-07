@@ -401,148 +401,149 @@ func Test_Select_Function(t *testing.T) {
 		defer sql.Close()
 		stmtSelect := NewSelect(
 			// Функции агрегатные
-			Avg(Test.Number, false).As("avg"),
-			BitAnd(Test.Number, false).As("bitand"),
-			BitOr(Test.Number, false).As("bitor"),
-			BitXor(Test.Number, false).As("bitxor"),
-			Count(Test.String, false).As("count"),
-			GroupConcat(Test.String, false).As("groupconcat"),
-			Max(Test.Number, false).As("max"),
-			Min(Test.Number, false).As("min"),
-			StdDev(Test.Number, false).As("stddev"),
-			Sum(Test.Number, false).As("sum"),
-			Variance(Test.Number, false).As("variance"),
+			Avg(Test.Number, false).As("aggregate_avg"),
+			BitAnd(Test.Number, false).As("aggregate_bitand"),
+			BitOr(Test.Number, false).As("aggregate_bitor"),
+			BitXor(Test.Number, false).As("aggregate_bitxor"),
+			Count(Test.String, false).As("aggregate_count"),
+			GroupConcat(Test.String, false).As("aggregate_groupconcat"),
+			Max(Test.Number, false).As("aggregate_max"),
+			Min(Test.Number, false).As("aggregate_min"),
+			StdDev(Test.Number, false).As("aggregate_stddev"),
+			Sum(Test.Number, false).As("aggregate_sum"),
+			Variance(Test.Number, false).As("aggregate_variance"),
 			// Функции аналитические
-			FirstValue(Users.Name).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
+			FirstValue(Test.Name).Over(
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
+			).As("analytical_firstvalue"),
+			Lag(Test.Number, 2).Over(
+				PartitionBy(Test.ID),
+				OrderBy(Asc(Test.Date)),
+			).As("analytical_lag"),
+			LastValue(Test.Name).Over(
+				PartitionBy(Test.ID),
+				OrderBy(Asc(Test.Number)),
+				RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
+			).As("analytical_lastvalue"),
+			Lead(Test.Number, 2).Over(
+				PartitionBy(Test.ID),
+				OrderBy(Asc(Test.Date)),
+			).As("analytical_lead"),
+			NthValue(Test.Name, 2).Over(
+				PartitionBy(Test.ID),
+				OrderBy(Desc(Test.Number)),
 				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
-			).As("analyt_first_value"),
-			LastValue(Users.Name).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW")).As("analyt_last_value"),
-			Lag(Users.Salary, 1).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Asc(Users.HireDate)),
-			).As("analyt_lag"),
-			Lead(Users.Salary, 1).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Asc(Users.HireDate)),
-			).As("analyt_lead"),
-			NthValue(Users.Name, 2).Over(
-				PartitionBy(Users.DepartmentID),
-				OrderBy(Desc(Users.Salary)),
-				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW")).As("analyt_nth_value"),
+			).As("analytical_nthvalue"),
 			// Функции условий
-			Case(CaseIf(CasePair(Less(Test.Number, Value(2)), Value("old"))), CaseElse(Value("new"))).As("case"),
-			Coalesce(Test.CreateAt, Test.UpdateAt).As("coalesce"),
-			Greatest(Test.CreateAt, Test.UpdateAt).As("greatest"),
-			Least(Test.CreateAt, Test.UpdateAt).As("least"),
-			NullIf(Test.CreateAt, Test.UpdateAt).As("if"),
+			Case(CaseIf(CasePair(Less(Test.Number, Value(2)), Value("old"))), CaseElse(Value("new"))).As("condition_case"),
+			Coalesce(Test.CreateAt, Test.UpdateAt).As("condition_coalesce"),
+			Greatest(Test.CreateAt, Test.UpdateAt).As("condition_greatest"),
+			Least(Test.CreateAt, Test.UpdateAt).As("condition_least"),
+			NullIf(Test.CreateAt, Test.UpdateAt).As("condition_if"),
 			// Функции конвертации
-			Cast(Test.Number, TypeString).As("cast"),
-			CharLength(Test.String).As("length"),
-			DateFormat(Test.CreateAt, Literal("%Y-%m-%d")).As("dateformat"),
-			Degrees(Test.Number).As("degrees"),
-			Length(Test.String).As("length"),
-			Position(Test.String, Value("old")).As("position"),
-			Radians(Test.Number).As("radians"),
+			Cast(Test.Number, TypeString).As("convert_cast"),
+			CharLength(Test.String).As("convert_length"),
+			DateFormat(Test.CreateAt, Literal("%Y-%m-%d")).As("convert_dateformat"),
+			Degrees(Test.Number).As("convert_degrees"),
+			Length(Test.String).As("convert_length"),
+			Position(Test.String, Value("old")).As("convert_position"),
+			Radians(Test.Number).As("convert_radians"),
 			// Функции даты и времени
-			CurDate().As("curdate"),
-			CurTime().As("curtime"),
-			DateAdd(Test.CreateAt, Literal("4 DAY")).As("dateadd"),
-			DateDiff(Test.UpdateAt, Test.CreateAt).As("datediff"),
-			DateSub(Test.CreateAt, Literal("4 DAY")).As("datesub"),
-			Day(Test.CreateAt).As("day"),
-			DayName(Test.CreateAt).As("dayname"),
-			Hour(Test.CreateAt).As("hour"),
-			Minute(Test.CreateAt).As("minute"),
-			Month(Test.CreateAt).As("month"),
-			MonthName(Test.CreateAt).As("monthname"),
-			Now().As("now"),
-			Quarter(Test.CreateAt).As("quarter"),
-			Second(Test.CreateAt).As("second"),
-			TimeAdd(Test.CreateAt, Literal("4 HOUR")).As("timeadd"),
-			TimeDiff(Test.UpdateAt, Test.CreateAt).As("timediff"),
-			TimeSub(Test.CreateAt, Literal("4 HOUR")).As("timesub"),
-			Week(Test.CreateAt).As("week"),
-			Year(Test.CreateAt).As("year"),
+			CurDate().As("datetime_curdate"),
+			CurTime().As("datetime_curtime"),
+			DateAdd(Test.CreateAt, Literal("4 DAY")).As("datetime_dateadd"),
+			DateDiff(Test.UpdateAt, Test.CreateAt).As("datetime_datediff"),
+			DateSub(Test.CreateAt, Literal("4 DAY")).As("datetime_datesub"),
+			Day(Test.CreateAt).As("datetime_day"),
+			DayName(Test.CreateAt).As("datetime_dayname"),
+			Hour(Test.CreateAt).As("datetime_hour"),
+			Minute(Test.CreateAt).As("datetime_minute"),
+			Month(Test.CreateAt).As("datetime_month"),
+			MonthName(Test.CreateAt).As("datetime_monthname"),
+			Now().As("datetime_now"),
+			Quarter(Test.CreateAt).As("datetime_quarter"),
+			Second(Test.CreateAt).As("datetime_second"),
+			TimeAdd(Test.CreateAt, Literal("4 HOUR")).As("datetime_timeadd"),
+			TimeDiff(Test.UpdateAt, Test.CreateAt).As("datetime_timediff"),
+			TimeSub(Test.CreateAt, Literal("4 HOUR")).As("datetime_timesub"),
+			Week(Test.CreateAt).As("datetime_week"),
+			Year(Test.CreateAt).As("datetime_year"),
 			// Функции обмена данными
-			JsonArray(Users.Data, Value("test"), Value("test")).As("data_jsonarray"),
-			JsonArrayAgg(Users.Data).As("data_jsonarrayagg"),
-			JsonContains(Users.Data, Value(`{"theme":"dark"}`)).As("data_jsoncontains"),
-			JsonExtract(Users.Data, JsonGroup(JsonPath(JsonKey("col"), JsonIndex(0), JsonKey("name"))), TypeString).As("data_jsonextract"),
-			JsonObject(JsonPair(JsonKey("users"), Count(Users.Data, false))).As("data_jsonobject"),
-			JsonObjectAgg(Users.Data, Test.Number).As("data_jsonobjectagg"),
-			JsonRemove(Users.Data, JsonGroup(JsonPath(JsonKey("temp"))), JsonGroup(JsonPath(JsonKey("session")))).As("data_jsonremove"),
-			JsonSet(Users.Data, JsonGroup(JsonPath(JsonKey("temp")), Value(0)), JsonGroup(JsonPath(JsonKey("session")), Value("active"))).As("data_jsonset"),
-			JsonType(Users.Data).As("jsontype"),
+			JsonArray(Users.Data, Value("test"), Value("test")).As("json_jsonarray"),
+			JsonArrayAgg(Users.Data).As("json_jsonarrayagg"),
+			JsonContains(Users.Data, Value(`{"theme":"dark"}`)).As("json_jsoncontains"),
+			JsonExtract(Users.Data, JsonGroup(JsonPath(JsonKey("col"), JsonIndex(0), JsonKey("name"))), TypeString).As("json_jsonextract"),
+			JsonObject(JsonPair(JsonKey("users"), Count(Users.Data, false))).As("json_jsonobject"),
+			JsonObjectAgg(Users.Data, Test.Number).As("json_jsonobjectagg"),
+			JsonRemove(Users.Data, JsonGroup(JsonPath(JsonKey("temp"))), JsonGroup(JsonPath(JsonKey("session")))).As("json_jsonremove"),
+			JsonSet(Users.Data, JsonGroup(JsonPath(JsonKey("temp")), Value(0)), JsonGroup(JsonPath(JsonKey("session")), Value("active"))).As("json_jsonset"),
+			JsonType(Users.Data).As("json_jsontype"),
 			// Функции математические
-			Abs(Test.Number).As("abs"),
-			ACos(Test.Number).As("acos"),
-			ASin(Test.Number).As("asin"),
-			ATan(Test.Number).As("atan"),
-			ATan2(Test.Y, Test.X).As("atan2"),
-			Cbrt(Test.Number).As("cbrt"),
-			Ceil(Test.Number).As("ceil"),
-			Cos(Test.Number).As("cos"),
-			Exp(Test.Number).As("exp"),
-			Floor(Test.Number).As("floor"),
-			Ln(Test.Number).As("ln"),
-			Log(Test.Number, Value(3)).As("log"),
-			Mod(Test.Number, Value(3)).As("mod"),
-			Pi().As("pi"),
-			Power(Test.Number, Value(3)).As("power"),
-			Rand().As("rand"),
-			Round(Test.Number, Value(3)).As("round"),
-			Sin(Test.Number).As("sin"),
-			Sqrt(Test.Number).As("sqrt"),
-			Tan(Test.Number).As("tan"),
-			Trunc(Test.Number, Value(3)).As("trunc"),
+			Abs(Test.Number).As("math_abs"),
+			ACos(Test.Number).As("math_acos"),
+			ASin(Test.Number).As("math_asin"),
+			ATan(Test.Number).As("math_atan"),
+			ATan2(Test.Y, Test.X).As("math_atan2"),
+			Cbrt(Test.Number).As("math_cbrt"),
+			Ceil(Test.Number).As("math_ceil"),
+			Cos(Test.Number).As("math_cos"),
+			Exp(Test.Number).As("math_exp"),
+			Floor(Test.Number).As("math_floor"),
+			Ln(Test.Number).As("math_ln"),
+			Log(Test.Number, Value(3)).As("math_log"),
+			Mod(Test.Number, Value(3)).As("math_mod"),
+			Pi().As("math_pi"),
+			Power(Test.Number, Value(3)).As("math_power"),
+			Rand().As("math_rand"),
+			Round(Test.Number, Value(3)).As("math_round"),
+			Sin(Test.Number).As("math_sin"),
+			Sqrt(Test.Number).As("math_sqrt"),
+			Tan(Test.Number).As("math_tan"),
+			Trunc(Test.Number, Value(3)).As("math_trunc"),
 			// Функции строковые
-			Concat(Test.String, Value("old"), Value("new")).As("concat"),
-			ConcatWs(Value("_"), Test.String, Value("old"), Value("new")).As("concat_ws"),
-			LeftString(Test.String, Value(2)).As("lstr"),
-			Lower(Test.String).As("lower"),
-			LPad(Test.String, Value(2), Value(",")).As("lpad"),
-			LTrim(Test.String).As("ltrim"),
-			Repeat(Test.String, Value(3)).As("repeat"),
-			Replace(Test.String, Value("old"), Value("new")).As("replace"),
-			Reverse(Test.String).As("reverse"),
-			RightString(Test.String, Value(2)).As("rstr"),
-			RPad(Test.String, Value(2), Value(",")).As("rpad"),
-			RTrim(Test.String).As("rtrim"),
-			SubString(Test.String, Value(0), Value(2)).As("substring"),
-			Trim(Test.String).As("trim"),
-			Upper(Test.String).As("upper"),
+			Concat(Test.String, Value("old"), Value("new")).As("string_concat"),
+			ConcatWs(Value("_"), Test.String, Value("old"), Value("new")).As("string_concatws"),
+			LeftString(Test.String, Value(2)).As("string_lstr"),
+			Lower(Test.String).As("string_lower"),
+			LPad(Test.String, Value(2), Value(",")).As("string_lpad"),
+			LTrim(Test.String).As("string_ltrim"),
+			Repeat(Test.String, Value(3)).As("string_repeat"),
+			Replace(Test.String, Value("old"), Value("new")).As("string_replace"),
+			Reverse(Test.String).As("string_reverse"),
+			RightString(Test.String, Value(2)).As("string_rstr"),
+			RPad(Test.String, Value(2), Value(",")).As("string_rpad"),
+			RTrim(Test.String).As("string_rtrim"),
+			SubString(Test.String, Value(0), Value(2)).As("string_substring"),
+			Trim(Test.String).As("string_trim"),
+			Upper(Test.String).As("string_upper"),
 			// Функции ранжирующие
 			RowNumber().Over(
 				PartitionBy(Users.DepartmentID),
 				OrderBy(Desc(Users.Salary)),
-			).As("rank_row_number"),
+			).As("ranking_rownumber"),
 			Rank().Over(
 				PartitionBy(Users.DepartmentID),
 				OrderBy(Desc(Users.Salary)),
-			).As("rank_rank"),
+			).As("ranking_rank"),
 			DenseRank().Over(
 				PartitionBy(Users.DepartmentID),
 				OrderBy(Desc(Users.Salary)),
-			).As("rank_dense_rank"),
+			).As("ranking_denserank"),
 			PercentRank().Over(
 				PartitionBy(Users.DepartmentID),
 				OrderBy(Desc(Users.Salary)),
-			).As("rank_percent_rank"),
+			).As("ranking_percentrank"),
 			CumeDist().Over(
 				PartitionBy(Users.DepartmentID),
 				OrderBy(Desc(Users.Salary)),
-			).As("rank_cume_dist"),
+			).As("ranking_cumedist"),
 			NTile(4).Over(
 				PartitionBy(Users.DepartmentID),
 				OrderBy(Desc(Users.Salary)),
-			).As("rank_ntile"),
+			).As("ranking_ntile"),
 		).
-			From(Users.Table)
+			From(Test.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -559,11 +560,11 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "SUM(`t`.`number`)", "SUM")
 			assertContains(t, sqlSelectQuery, "VARIANCE(`t`.`number`)", "VARIANCE")
 			// Функции аналитические
-			assertContains(t, sqlSelectQuery, "FIRST_VALUE(`u`.`name`) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "FIRSTVALUE")
-			assertContains(t, sqlSelectQuery, "LAST_VALUE(`u`.`name`) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "LASTVALUE")
-			assertContains(t, sqlSelectQuery, "LAG(`u`.`salary`, 1) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`hire_date` ASC)", "LAG")
-			assertContains(t, sqlSelectQuery, "LEAD(`u`.`salary`, 1) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`hire_date` ASC)", "LEAD")
-			assertContains(t, sqlSelectQuery, "NTH_VALUE(`u`.`name`, 2) OVER (PARTITION BY `u`.`department_id` ORDER BY `u`.`salary` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "NTHVALUE")
+			assertContains(t, sqlSelectQuery, "FIRST_VALUE(`t`.`name`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC", "FIRSTVALUE")
+			assertContains(t, sqlSelectQuery, "LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)", "LAG")
+			assertContains(t, sqlSelectQuery, "LAST_VALUE(`t`.`name`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)", "LASTVALUE")
+			assertContains(t, sqlSelectQuery, "LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)", "LEAD")
+			assertContains(t, sqlSelectQuery, "NTH_VALUE(`t`.`name`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)", "NTHVALUE")
 			// Функции условий
 			assertContains(t, sqlSelectQuery, "CASE WHEN `t`.`number` < ? THEN ? ELSE ? END", "CASE")
 			assertContains(t, sqlSelectQuery, "COALESCE(`t`.`createat`, `t`.`updateat`)", "COALESCE")
@@ -667,11 +668,11 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `SUM("t"."number")`, "SUM")
 			assertContains(t, sqlSelectQuery, `VAR_SAMP("t"."number")`, "VARIANCE")
 			// Функции аналитические
-			assertContains(t, sqlSelectQuery, `FIRST_VALUE("u"."name") OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "FIRSTVALUE")
-			assertContains(t, sqlSelectQuery, `LAST_VALUE("u"."name") OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "LASTVALUE")
-			assertContains(t, sqlSelectQuery, `LAG("u"."salary", 1) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."hire_date" ASC)`, "LAG")
-			assertContains(t, sqlSelectQuery, `LEAD("u"."salary", 1) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."hire_date" ASC)`, "LEAD")
-			assertContains(t, sqlSelectQuery, `NTH_VALUE("u"."name", 2) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "NTHVALUE")
+			assertContains(t, sqlSelectQuery, `FIRST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FIRSTVALUE")
+			assertContains(t, sqlSelectQuery, `LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)`, "LAG")
+			assertContains(t, sqlSelectQuery, `LAST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)`, "LASTVALUE")
+			assertContains(t, sqlSelectQuery, `LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)`, "LEAD")
+			assertContains(t, sqlSelectQuery, `NTH_VALUE("t"."name", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "NTHVALUE")
 			// Функции условий
 			assertContains(t, sqlSelectQuery, `CASE WHEN "t"."number" < $1 THEN $2 ELSE $3 END`, "CASE")
 			assertContains(t, sqlSelectQuery, `COALESCE("t"."createat", "t"."updateat")`, "COALESCE")

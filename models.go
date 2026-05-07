@@ -63,6 +63,9 @@ var Stats = struct {
 var Test = struct {
 	Table    *TableSource
 	CreateAt *exprColumn[time.Time]
+	Date     *exprColumn[time.Time]
+	ID       *exprColumn[int64]
+	Name     *exprColumn[string]
 	Number   *exprColumn[int]
 	String   *exprColumn[string]
 	UpdateAt *exprColumn[time.Time]
@@ -123,6 +126,9 @@ func init() {
 	Stats.UserID = Column[int64](Stats.Table.aliasName, "user_id")
 	// Test
 	Test.CreateAt = Column[time.Time](Test.Table.aliasName, "createat")
+	Test.Date = Column[time.Time](Test.Table.aliasName, "date")
+	Test.ID = Column[int64](Test.Table.aliasName, "id")
+	Test.Name = Column[string](Test.Table.aliasName, "name")
 	Test.Number = Column[int](Test.Table.aliasName, "number")
 	Test.String = Column[string](Test.Table.aliasName, "string")
 	Test.UpdateAt = Column[time.Time](Test.Table.aliasName, "updateat")

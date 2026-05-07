@@ -442,11 +442,11 @@ func Test_Select_Function(t *testing.T) {
 			NullIf(Test.CreateAt, Test.UpdateAt).As("if"),
 			// Функции конвертации
 			Cast(Test.Number, TypeString).As("cast"),
-			CharLength(Users.Status).As("status_length"),
-			DateFormat(Users.CreateAt, Literal("%Y-%m-%d")).As("createat_dateformat"),
+			CharLength(Test.String).As("length"),
+			DateFormat(Test.CreateAt, Literal("%Y-%m-%d")).As("dateformat"),
 			Degrees(Test.Number).As("degrees"),
-			Length(Users.Status).As("status_length"),
-			Position(Users.Status, Value("test")).As("status_position"),
+			Length(Test.String).As("length"),
+			Position(Test.String, Value("old")).As("position"),
 			Radians(Test.Number).As("radians"),
 			// Функции даты и времени
 			CurDate().As("curdate"),
@@ -572,11 +572,11 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "NULLIF(`t`.`createat`, `t`.`updateat`)", "NULLIF")
 			// Функции конвертации
 			assertContains(t, sqlSelectQuery, "CAST(`t`.`number` AS CHAR)", "CAST")
-			assertContains(t, sqlSelectQuery, "CHAR_LENGTH(`u`.`status`)", "CHARLENGTH")
-			assertContains(t, sqlSelectQuery, "DATE_FORMAT(`u`.`createat`, '%Y-%m-%d')", "DATEFORMAT")
+			assertContains(t, sqlSelectQuery, "CHAR_LENGTH(`t`.`string`)", "CHARLENGTH")
+			assertContains(t, sqlSelectQuery, "DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')", "DATEFORMAT")
 			assertContains(t, sqlSelectQuery, "DEGREES(`t`.`number`)", "DEGREES")
-			assertContains(t, sqlSelectQuery, "LENGTH(`u`.`status`)", "LENGTH")
-			assertContains(t, sqlSelectQuery, "POSITION(? IN `u`.`status`)", "POSITION")
+			assertContains(t, sqlSelectQuery, "LENGTH(`t`.`string`)", "LENGTH")
+			assertContains(t, sqlSelectQuery, "POSITION(? IN `t`.`string`)", "POSITION")
 			assertContains(t, sqlSelectQuery, "RADIANS(`t`.`number`)", "RADIANS")
 			// Функции даты и времени
 			assertContains(t, sqlSelectQuery, "CURDATE()", "CURDATE")
@@ -680,11 +680,11 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `NULLIF("t"."createat", "t"."updateat")`, "NULLIF")
 			// Функции конвертации
 			assertContains(t, sqlSelectQuery, `CAST("t"."number" AS VARCHAR) `, "CAST")
-			assertContains(t, sqlSelectQuery, `CHAR_LENGTH("u"."status")`, "CHARLENGTH")
-			assertContains(t, sqlSelectQuery, `TO_CHAR("u"."createat", '%Y-%m-%d')`, "DATEFORMAT")
+			assertContains(t, sqlSelectQuery, `CHAR_LENGTH("t"."string")`, "CHARLENGTH")
+			assertContains(t, sqlSelectQuery, `TO_CHAR("t"."createat", '%Y-%m-%d')`, "DATEFORMAT")
 			assertContains(t, sqlSelectQuery, `DEGREES("t"."number")`, "DEGREES")
-			assertContains(t, sqlSelectQuery, `LENGTH("u"."status")`, "LENGTH")
-			assertContains(t, sqlSelectQuery, `POSITION($1 IN "u"."status")`, "POSITION")
+			assertContains(t, sqlSelectQuery, `LENGTH("t"."string")`, "LENGTH")
+			assertContains(t, sqlSelectQuery, `POSITION($1 IN "t"."string")`, "POSITION")
 			assertContains(t, sqlSelectQuery, `RADIANS("t"."number")`, "RADIANS")
 			// Функции даты и времени
 			assertContains(t, sqlSelectQuery, `CURRENT_DATE`, "CURDATE")
@@ -747,7 +747,7 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `NTILE(4) OVER (PARTITION BY "u"."department_id" ORDER BY "u"."salary" DESC)`, "NTILE")
 			// Функции строковые
 			assertContains(t, sqlSelectQuery, `CONCAT("t"."string", $1, $2)`, "CONCAT")
-			assertContains(t, sqlSelectQuery, `CONCAT_WS($1, "t"."string", $1, $2)`, "CONCATWS")
+			assertContains(t, sqlSelectQuery, `CONCAT_WS($1, "t"."string", $2, $3)`, "CONCATWS")
 			assertContains(t, sqlSelectQuery, `LEFT("t"."string", $1)`, "LEFTSTRING")
 			assertContains(t, sqlSelectQuery, `LOWER("t"."string")`, "LOWER")
 			assertContains(t, sqlSelectQuery, `LPAD("t"."string", $1, $2)`, "LPAD")

@@ -1681,47 +1681,47 @@ CURRENT_TIMESTAMP
 Combines multiple conditions with a logical `AND`. All conditions must be true for the combined expression to be true.
 ```go
 logical := uast.And(
-    uast.Equal(uast.Column[string]("t", "status"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "login_count"), uast.Value(0)),
+    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Column[int]("t", "number"), uast.Value(18)),
 )
 ```
 Output:
 ```text
-("t"."status" = 'active' AND "t"."login_count" > 0)
+("t"."string" = 'active' AND "t"."number" > 18)
 ```
 
 ### Or
 Combines multiple conditions with a logical `OR`. At least one condition must be true for the combined expression to be true.
 ```go
 logical := uast.Or(
-    uast.IsNull(uast.Column[string]("t", "closed_at")),
-    uast.Greater(uast.Column[time.Time]("t", "closed_at"), uast.Value("2026-01-01")),
+    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Column[int]("t", "number"), uast.Value(18)),
 )
 ```
 Output:
 ```text
-("t"."closed_at" IS NULL OR "t"."closed_at" > '2026-01-01')
+("t"."string" = 'active' OR "t"."number" > 18)
 ```
 
 ## Order
 ### Asc
 Specifies ascending order for an `ORDER BY` clause or window function ordering.
 ```go
-order := uast.Asc(uast.Column[string]("u", "last_name"))
+order := uast.Asc(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-"u"."last_name" ASC
+"t"."string" ASC
 ```
 
 ### Desc
 Specifies descending order for an `ORDER BY` clause or window function ordering.
 ```go
-order := uast.Desc(uast.Column[int]("o", "total"))
+order := uast.Desc(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-"o"."total" DESC
+"t"."string" DESC
 ```
 
 ## Subquery

@@ -132,9 +132,7 @@ func Test_Core_Constant(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			Test.ID,
-		).
+		stmtSelect := NewSelect(Test.ID).
 			From(Test.Table).
 			Where(
 				And(
@@ -662,6 +660,26 @@ func Test_Core_Subquery(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "AS", "SUBQUERT AS")
 			assertContains(t, sqlSelectQuery, "IN", "SUBQUERT IN")
 			assertContains(t, sqlSelectQuery, "EXISTS", "SUBQUERT EXISTS")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Value(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		var data string = "hello@world.com"
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.ID.As("id")).
+			From(Test.Table).
+			Where(
+				Equal(Test.String, Value(data)),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "`t`.`string` = ?", "VALUE PLACEHOLDER")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `"t"."string" = $1`, "VALUE PLACEHOLDER")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

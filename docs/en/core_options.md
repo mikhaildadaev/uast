@@ -420,7 +420,7 @@ constant := uast.ConstNullDefault[string]()
 ```
 Output:
 ```text
-NULL
+
 ```
 
 ### ConstStringDefault
@@ -430,7 +430,7 @@ constant := uast.ConstStringDefault()
 ```
 Output:
 ```text
- 
+DEFAULT
 ```
 
 ### ConstUintOne

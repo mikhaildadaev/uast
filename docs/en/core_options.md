@@ -52,61 +52,61 @@ Output:
 ### Divide
 Divides the left expression by the right expression.
 ```go
-binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2.0))
+binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" / 2.000000
+"t"."number" / 2
 ```
 
 ### Minus
 Subtracts the right expression from the left expression.
 ```go
-binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(10))
+binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" - 10
+"t"."number" - 2
 ```
 
 ### Modulo
 Returns the remainder of dividing the left expression by the right expression.
 ```go
-binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(5))
+binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" % 5
+"t"."number" % 2
 ```
 
 ### Multiply
 Multiplies the left expression by the right expression.
 ```go
-binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(1.2))
+binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" * 1.200000
+"t"."number" * 2
 ```
 
 ### Plus
 Adds the left expression to the right expression.
 ```go
-binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(100))
+binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" + 100
+"t"."number" + 2
 ```
 
 ### ShiftLeft
 Performs a bitwise left shift on the left expression by the number of bits specified in the right expression.
 ```go
-binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(4))
+binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" << 4
+"t"."number" << 2
 ```
 
 ### ShiftRight
@@ -1669,11 +1669,11 @@ UPPER("t"."string")
 ## Literal
 Embeds a raw literal value directly into the generated SQL string (not parameterized). Use with caution — values are written as-is. Prefer `Value` for user-supplied data.
 ```go
-literal := uast.Literal("CURRENT_TIMESTAMP")
+literal := uast.Literal("%Y-%m-%d")
 ```
 Output:
 ```text
-CURRENT_TIMESTAMP
+'%Y-%m-%d'
 ```
 
 ## Logical

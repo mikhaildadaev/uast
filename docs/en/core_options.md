@@ -1705,7 +1705,7 @@ Output:
 
 ## Order
 ### Asc
-Specifies ascending order for an `ORDER BY` clause or window function ordering.
+Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
 ```go
 order := uast.Asc(uast.Column[string]("t", "string"))
 ```
@@ -1715,7 +1715,7 @@ Output:
 ```
 
 ### Desc
-Specifies descending order for an `ORDER BY` clause or window function ordering.
+Specifies descending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
 ```go
 order := uast.Desc(uast.Column[string]("t", "string"))
 ```
@@ -1739,9 +1739,11 @@ Output:
 ```
 
 ## Value
-Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`$1`, `?`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data.
+Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`$1`, `?`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data and prevents SQL injection. 
+Supported types: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `string`, `time.Time`.
 ```go
-value := uast.Value("hello@world.com")
+var data string = "hello@world.com"
+value := uast.Value(data)
 ```
 Output MySQL:
 ```text

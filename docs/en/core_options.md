@@ -22,132 +22,132 @@ ARRAY[1, 2, 3]
 ### BitwiseAnd
 Performs a bitwise AND operation between two expressions.
 ```go
-binary := uast.BitwiseAnd(uast.Column[int]("t", "flags"), uast.Value(0b0011))
+binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0011))
 ```
 Output:
 ```text
-"t"."flags" & 3
+"t"."number" & 3
 ```
 
 ### BitwiseOr
 Performs a bitwise OR operation between two expressions.
 ```go
-binary := uast.BitwiseOr(uast.Column[int]("t", "flags"), uast.Value(0b1100))
+binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b1100))
 ```
 Output:
 ```text
-"t"."flags" | 12
+"t"."number" | 12
 ```
 
 ### BitwiseXor
 Performs a bitwise XOR operation between two expressions.
 ```go
-binary := uast.BitwiseXor(uast.Column[int]("t", "flags"), uast.Value(0b1111))
+binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b1111))
 ```
 Output:
 ```text
-"t"."flags" ^ 15
+"t"."number" ^ 15
 ```
 
 ### Divide
 Divides the left expression by the right expression.
 ```go
-binary := uast.Divide(uast.Column[float64]("t", "price"), uast.Value(2.0))
+binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2.0))
 ```
 Output:
 ```text
-"t"."price" / 2.000000
+"t"."number" / 2.000000
 ```
 
 ### Minus
 Subtracts the right expression from the left expression.
 ```go
-binary := uast.Minus(uast.Column[int]("t", "total"), uast.Value(10))
+binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(10))
 ```
 Output:
 ```text
-"t"."total" - 10
+"t"."number" - 10
 ```
 
 ### Modulo
 Returns the remainder of dividing the left expression by the right expression.
 ```go
-binary := uast.Modulo(uast.Column[int]("t", "id"), uast.Value(5))
+binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(5))
 ```
 Output:
 ```text
-"t"."id" % 5
+"t"."number" % 5
 ```
 
 ### Multiply
 Multiplies the left expression by the right expression.
 ```go
-binary := uast.Multiply(uast.Column[float64]("t", "price"), uast.Value(1.2))
+binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(1.2))
 ```
 Output:
 ```text
-"t"."price" * 1.200000
+"t"."number" * 1.200000
 ```
 
 ### Plus
 Adds the left expression to the right expression.
 ```go
-binary := uast.Plus(uast.Column[int]("t", "amount"), uast.Value(100))
+binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(100))
 ```
 Output:
 ```text
-"t"."amount" + 100
+"t"."number" + 100
 ```
 
 ### ShiftLeft
 Performs a bitwise left shift on the left expression by the number of bits specified in the right expression.
 ```go
-binary := uast.ShiftLeft(uast.Column[int]("t", "mask"), uast.Value(4))
+binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(4))
 ```
 Output:
 ```text
-"t"."mask" << 4
+"t"."number" << 4
 ```
 
 ### ShiftRight
 Performs a bitwise right shift on the left expression by the number of bits specified in the right expression.
 ```go
-binary := uast.ShiftRight(uast.Column[int]("t", "mask"), uast.Value(2))
+binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."mask" >> 2
+"t"."number" >> 2
 ```
 
 ## Column
 Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
 ```go
-column := uast.Column[string]("u", "email")
+column := uast.Column[string]("t", "string")
 ```
 Output:
 ```text
-"u"."email"
+"t"."string"
 ```
 
 ## Comparison
 ### Between
 Checks if the left expression falls within the range defined by `valueStart` and `valueEnd` (inclusive).
 ```go
-comparison := uast.Between(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
+comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(18), uast.Value(65))
 ```
 Output:
 ```text
-"t"."age" BETWEEN 18 AND 65
+"t"."number" BETWEEN 18 AND 65
 ```
 
 ### Equal
 Compares two expressions for equality (`=`).
 ```go
-comparison := uast.Equal(uast.Column[int]("t", "status"), uast.Value("active"))
+comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(18))
 ```
 Output:
 ```text
-"t"."status" = 'active'
+"t"."number" = 18
 ```
 
 ### Exists
@@ -169,118 +169,111 @@ EXISTS (SELECT * FROM "orders" WHERE "orders"."user_id" = "users"."id")
 ### Greater
 Compares if the left expression is greater than the right expression (`>`).
 ```go
-comparison := uast.Greater(uast.Column[float64]("t", "price"), uast.Value(100.0))
+comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(18))
 ```
 Output:
 ```text
-"t"."price" > 100.000000
+"t"."number" > 18
 ```
 
 ### GreaterEqual
 Compares if the left expression is greater than or equal to the right expression (`>=`).
 ```go
-comparison := uast.GreaterEqual(uast.Column[int]("t", "quantity"), uast.Value(1))
+comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(18))
 ```
 Output:
 ```text
-"t"."quantity" >= 1
+"t"."number" >= 18
 ```
 
 ### ILike
 Performs a case-insensitive pattern matching comparison. The right expression should contain a pattern with `%` (any sequence) and `_` (single character) wildcards.
 ```go
-comparison := uast.ILike(uast.Column[string]("t", "name"), uast.Value("%ivan%"))
+comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output:
 ```text
-"t"."name" ILIKE '%ivan%'
+"t"."string" ILIKE '%ivan%'
 ```
 
 ### In
 Checks if the left expression matches any value contained within the right expression (typically a subquery or array).
 ```go
-comparison := uast.In(
-    uast.Column[int]("t", "category_id"),
-    uast.Subquery[int](
-        uast.NewSelect(uast.Column[int]("c", "id")).
-            From(uast.Table("categories")).
-            Where(uast.Equal(uast.Column[string]("c", "type"), uast.Value("premium"))),
-    ),
-)
+comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output:
 ```text
-"t"."category_id" IN (SELECT "c"."id" FROM "categories" WHERE "c"."type" = 'premium')
+"t"."string" IN ('active', 'pending')
 ```
 
 ### IsNotNull
 Checks if the expression is not `NULL`.
 ```go
-comparison := uast.IsNotNull(uast.Column[string]("t", "deleted_at"))
+comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-"t"."deleted_at" IS NOT NULL
+"t"."string" IS NOT NULL
 ```
 
 ### IsNull
 Checks if the expression is `NULL`.
 ```go
-comparison := uast.IsNull(uast.Column[string]("t", "deleted_at"))
+comparison := uast.IsNull(uast.Column[string]("t", "string"))
 ```
 Output:
 ```text
-"t"."deleted_at" IS NULL
+"t"."string" IS NULL
 ```
 
 ### Less
 Compares if the left expression is less than the right expression (`<`).
 ```go
-comparison := uast.Less(uast.Column[int]("t", "stock"), uast.Value(10))
+comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(18))
 ```
 Output:
 ```text
-"t"."stock" < 10
+"t"."number" < 18
 ```
 
 ### LessEqual
 Compares if the left expression is less than or equal to the right expression (`<=`).
 ```go
-comparison := uast.LessEqual(uast.Column[float64]("t", "discount"), uast.Value(0.5))
+comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(18))
 ```
 Output:
 ```text
-"t"."discount" <= 0.500000
+"t"."number" <= 18
 ```
 
 ### Like
 Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
 ```go
-comparison := uast.Like(uast.Column[string]("t", "code"), uast.Value("UA-%"))
+comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%@gmail.com"))
 ```
 Output:
 ```text
-"t"."code" LIKE 'UA-%'
+"t"."string" LIKE '%@gmail.com'
 ```
 
 ### NotBetween
 Checks if the left expression falls outside the range defined by `valueStart` and `valueEnd`.
 ```go
-comparison := uast.NotBetween(uast.Column[int]("t", "age"), uast.Value(18), uast.Value(65))
+comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(18), uast.Value(65))
 ```
 Output:
 ```text
-"t"."age" NOT BETWEEN 18 AND 65
+"t"."number" NOT BETWEEN 18 AND 65
 ```
 
 ### NotEqual
 Compares two expressions for inequality (`!=` or `<>`).
 ```go
-comparison := uast.NotEqual(uast.Column[string]("t", "status"), uast.Value("banned"))
+comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(18))
 ```
 Output:
 ```text
-"t"."status" != 'banned'
+"t"."number" != 18
 ```
 
 ### NotExists
@@ -302,38 +295,31 @@ NOT EXISTS (SELECT * FROM "bans" WHERE "bans"."user_id" = "users"."id")
 ### NotILike
 Performs a negated case-insensitive pattern matching comparison.
 ```go
-comparison := uast.NotILike(uast.Column[string]("t", "email"), uast.Value("%@spam.com"))
+comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output:
 ```text
-"t"."email" NOT ILIKE '%@spam.com'
+"t"."string" NOT ILIKE '%ivan%'
 ```
 
 ### NotIn
 Checks if the left expression does not match any value contained within the right expression.
 ```go
-comparison := uast.NotIn(
-    uast.Column[int]("t", "status_id"),
-    uast.Subquery[int](
-        uast.NewSelect(uast.Column[int]("s", "id")).
-            From(uast.Table("statuses")).
-            Where(uast.Equal(uast.Column[string]("s", "archived"), uast.Value(true))),
-    ),
-)
+comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output:
 ```text
-"t"."status_id" NOT IN (SELECT "s"."id" FROM "statuses" WHERE "s"."archived" = TRUE)
+"t"."string" NOT IN ('active', 'pending')
 ```
 
 ### NotLike
 Performs a negated case-sensitive pattern matching comparison.
 ```go
-comparison := uast.NotLike(uast.Column[string]("t", "phone"), uast.Value("+7-000-%"))
+comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%@gmail.com"))
 ```
 Output:
 ```text
-"t"."phone" NOT LIKE '+7-000-%'
+"t"."string" NOT LIKE '%@gmail.com'
 ```
 
 ## Constant
@@ -1757,7 +1743,11 @@ Wraps a Go value as a parameterized expression. The value is NOT inserted into t
 ```go
 value := uast.Value("hello@world.com")
 ```
-Output:
+Output MySQL:
+```text
+?
+```
+Output PostgreSQL:
 ```text
 $1
 ```

@@ -6,396 +6,78 @@ import (
 )
 
 // Публичные функции
-func Test_Delete(t *testing.T) {
+func Test_Core_Comparison(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		queryWith := WithN("user_stats", NewSelect(
-			Orders.UserID,
-			Count(Orders.ID, false).As("order_count"),
-		).
-			From(Orders.Table).
-			Where(Greater(Orders.Amount, Value(100))).
-			GroupBy(Orders.UserID),
-			"user_id", "order_count")
-		stmtDelete := NewDelete(Users.Table).
-			Join(
-				Inner(CTE("user_stats", "us"), Equal(Users.ID, Stats.UserID)),
-				Left(Levels.Table, Equal(Users.ID, Levels.UserID)),
-			).
+		stmtSelect := NewSelect(Test.ID.As("id")).
+			From(Test.Table).
 			Where(
 				And(
-					Equal(Users.Status, Value("active")),
-					Or(
-						IsNull(Levels.ID),
-						Equal(Levels.Status, Value("expired")),
-					),
-				),
-			).
-			Returning(
-				Users.ID.As("user_id"),
-				Users.Name.As("user_name"),
-				Stats.OrderCount.As("total_orders"),
-			).
-			With(queryWith)
-		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlDeleteQuery, "DELETE", "DELETE")
-			assertContains(t, sqlDeleteQuery, "FROM", "FROM")
-			assertContains(t, sqlDeleteQuery, "JOIN", "JOIN")
-			assertContains(t, sqlDeleteQuery, "WHERE", "WHERE")
-			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
-		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, "DELETE", "DELETE")
-			assertContains(t, sqlDeleteQuery, "FROM", "FROM")
-			assertContains(t, sqlDeleteQuery, "RETURNING", "RETURNING")
-			assertContains(t, sqlDeleteQuery, "USING", "USING")
-			assertContains(t, sqlDeleteQuery, "WHERE", "WHERE")
-			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
-	})
-}
-func Test_Delete_Join(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		stmtDelete := NewDelete(Users.Table).
-			Join(
-				Inner(Orders.Table, Equal(Users.ID, Orders.UserID)),
-				Left(Levels.Table, Equal(Users.ID, Levels.UserID)),
-			).
-			Where(
-				Equal(Orders.Status, Value("cancelled")),
-			)
-		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlDeleteQuery, "INNER JOIN", "INNER JOIN")
-			assertContains(t, sqlDeleteQuery, "LEFT JOIN", "LEFT JOIN")
-		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, `"orders" AS "o", "level" AS "l"`, "USING LIST")
-			assertContains(t, sqlDeleteQuery, `"u"."id" = "o"."user_id" AND "u"."id" = "l"."user_id"`, "JOIN CONDITION")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
-	})
-}
-func Test_Delete_Returning(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		stmtDelete := NewDelete(Users.Table).
-			Where(Equal(Users.Status, Value("inactive"))).
-			Returning(
-				Users.ID.As("user_id"),
-				Users.Name.As("user_name"),
-				Users.Email.As("user_email"),
-			)
-		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
-		switch supportDialect {
-		case DialectMySQL:
-			// Not support
-		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, `"user_id"`, "RETURNING id")
-			assertContains(t, sqlDeleteQuery, `"user_name"`, "RETURNING name")
-			assertContains(t, sqlDeleteQuery, `"user_email"`, "RETURNING email")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
-	})
-}
-func Test_Delete_Where(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		existsSub := NewSelect(Levels.ID).
-			From(Levels.Table).
-			Where(
-				Equal(Levels.UserID, Users.ID),
-			)
-		stmtDelete := NewDelete(Users.Table).
-			Where(
-				And(
-					Equal(Users.Status, Value("active")),
-					Greater(Users.Age, Value(18)),
-					Less(Users.Age, Value(65)),
-					In(Users.DepartmentID, Array[int64](1, 2, 3)),
-					Like(Users.Email, Value("%@company.com")),
-					Exists(Subquery[int](existsSub)),
-					NotEqual(Users.Status, Value("deleted")),
-					IsNotNull(Users.Email),
-				),
-			)
-		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlDeleteQuery, "`u`.`status` = ?", "EQUAL")
-			assertContains(t, sqlDeleteQuery, "`u`.`age` > ?", "GREATER")
-			assertContains(t, sqlDeleteQuery, "`u`.`age` < ?", "LESS")
-			assertContains(t, sqlDeleteQuery, "`u`.`department_id` IN (?, ?, ?)", "IN")
-			assertContains(t, sqlDeleteQuery, "`u`.`email` LIKE ?", "LIKE")
-			assertContains(t, sqlDeleteQuery, "EXISTS", "EXISTS")
-			assertContains(t, sqlDeleteQuery, "`u`.`status` <> ?", "NOTEQUAL")
-			assertContains(t, sqlDeleteQuery, "`u`.`email` IS NOT NULL", "IS NOT NULL")
-		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, `"u"."status" = $1`, "EQUAL")
-			assertContains(t, sqlDeleteQuery, `"u"."age" > $1`, "GREATER")
-			assertContains(t, sqlDeleteQuery, `"u"."age" < $1`, "LESS")
-			assertContains(t, sqlDeleteQuery, `"u"."department_id" IN ($1, $2, $3)`, "IN")
-			assertContains(t, sqlDeleteQuery, `"u"."email" LIKE $1`, "LIKE")
-			assertContains(t, sqlDeleteQuery, `EXISTS`, "EXISTS")
-			assertContains(t, sqlDeleteQuery, `"u"."status" <> $1`, "NOTEQUAL")
-			assertContains(t, sqlDeleteQuery, `"u"."email" IS NOT NULL`, "IS NOT NULL")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
-	})
-}
-func Test_Delete_With(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		cte := WithN("old_users", NewSelect(Users.ID).
-			From(Users.Table).
-			Where(Less(Users.Age, Value(18))),
-		)
-		stmtDelete := NewDelete(Users.Table).
-			Where(In(Users.ID, Subquery[int64](NewSelect(Column[int64]("old_users", "id"))))).
-			With(cte)
-
-		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
-			assertContains(t, sqlDeleteQuery, "old_users", "CTE")
-		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
-			assertContains(t, sqlDeleteQuery, "old_users", "CTE")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
-	})
-}
-func Test_Insert(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		queryWith := WithN("user_stats", NewSelect(
-			Orders.UserID,
-			Count(Orders.ID, false).As("order_count"),
-		).
-			From(Orders.Table).
-			Where(
-				Greater(Orders.Amount, Value(100)),
-			).
-			GroupBy(Orders.UserID),
-			"user_id", "order_count",
-		)
-		stmtInsert := NewInsert(Users.Name, Users.Age).
-			Into(Users.Table).
-			Source(NewSelect(Value("Test User"), Value(35)).
-				Where(
-					Exists(Subquery[int64](NewSelect(Stats.UserID).
-						From(CTE("user_stats", "us")).
-						Where(
-							Greater(Stats.OrderCount, Value(3)),
-						),
-					)),
-				),
-			).
-			Returning(
-				Users.ID.As("user_id"),
-				Users.Name.As("user_name"),
-			).
-			With(queryWith)
-		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
-		switch supportDialect {
-		case DialectMySQL:
-			//assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
-			//assertContains(t, sqlInsertQuery, "INTO", "INTO")
-			//assertContains(t, sqlInsertQuery, "SOURCE", "SOURCE")
-			//assertContains(t, sqlInsertQuery, "WITH", "WITH")
-		case DialectPostgreSQL:
-			//assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
-			//assertContains(t, sqlInsertQuery, "INTO", "INTO")
-			//assertContains(t, sqlInsertQuery, "RETURNING", "RETURNING")
-			//assertContains(t, sqlInsertQuery, "SOURCE", "SOURCE")
-			//assertContains(t, sqlInsertQuery, "WITH", "WITH")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
-	})
-}
-func Test_Select(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		queryWith := WithN("user_stats", NewSelect(
-			Orders.UserID,
-			Count(Orders.ID, false).As("order_count"),
-			Sum(Orders.Amount, false).As("total_spent"),
-		).
-			From(Orders.Table).
-			Where(Greater(Orders.Amount, Value(100))).
-			GroupBy(Orders.UserID),
-			"user_id", "order_count", "total_spent",
-		)
-		stmtSelect := NewSelect(
-			Users.ID.As("user_id"),
-			Users.Name.As("user_name"),
-			Stats.OrderCount.As("premium_orders"),
-			Stats.TotalSpent.As("total_premium_spent"),
-			Count(Products.ID, false).As("count_product"),
-		).
-			From(Users.Table).
-			Join(
-				Left(CTE("user_stats", "us"), Equal(Users.ID, Stats.UserID)),
-				Left(Levels.Table,
-					And(
-						Equal(Users.ID, Levels.UserID),
-						Equal(Levels.Status, Value("active")),
-					),
-				),
-			).
-			Where(
-				Or(
-					Equal(Users.Status, Value("active")),
-					IsNotNull(Levels.ID),
-				),
-			).
-			GroupBy(
-				Users.ID,
-				Users.Name,
-				Stats.OrderCount,
-				Stats.TotalSpent,
-			).
-			Having(
-				Or(
-					IsNotNull(Users.ID),
-					Greater(Stats.OrderCount, Value(0)),
-				),
-			).
-			OrderBy(
-				Desc(Stats.TotalSpent),
-				Asc(Users.Name),
-			).
-			Limit(50).
-			Offset(10).
-			With(queryWith)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "FROM", "FROM")
-			assertContains(t, sqlSelectQuery, "GROUP BY", "GROUP BY")
-			assertContains(t, sqlSelectQuery, "HAVING", "HAVING")
-			assertContains(t, sqlSelectQuery, "JOIN", "JOIN")
-			assertContains(t, sqlSelectQuery, "LIMIT", "LIMIT")
-			assertContains(t, sqlSelectQuery, "OFFSET", "OFFSET")
-			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
-			assertContains(t, sqlSelectQuery, "SELECT", "SELECT")
-			assertContains(t, sqlSelectQuery, "WHERE", "WHERE")
-			assertContains(t, sqlSelectQuery, "WITH", "WITH")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, "FROM", "FROM")
-			assertContains(t, sqlSelectQuery, "GROUP BY", "GROUP BY")
-			assertContains(t, sqlSelectQuery, "HAVING", "HAVING")
-			assertContains(t, sqlSelectQuery, "JOIN", "JOIN")
-			assertContains(t, sqlSelectQuery, "LIMIT", "LIMIT")
-			assertContains(t, sqlSelectQuery, "OFFSET", "OFFSET")
-			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
-			assertContains(t, sqlSelectQuery, "SELECT", "SELECT")
-			assertContains(t, sqlSelectQuery, "WHERE", "WHERE")
-			assertContains(t, sqlSelectQuery, "WITH", "WITH")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
-func Test_Select_Comparison(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		stmtSelect := NewSelect(Users.ID.As("user_data_id")).
-			From(Users.Table).
-			Where(
-				And(
-					Between(Users.Age, Value(18), Value(65)),
-					Equal(Users.Age, Value(18)),
+					Between(Test.Number, Value(18), Value(65)),
+					Equal(Test.Number, Value(18)),
 					Exists(Subquery[int](NewSelect(ConstIntOne()).From(Users.Table))),
-					Greater(Users.Age, Value(18)),
-					GreaterEqual(Users.Age, Value(18)),
-					ILike(Users.Email, Value("john%")),
-					In(Users.Status, Array("active", "pending")),
-					IsNotNull(Users.ID),
-					IsNull(Users.ID),
-					Less(Users.Age, Value(18)),
-					LessEqual(Users.Age, Value(18)),
-					Like(Users.Email, Value("%@gmail.com")),
-					NotBetween(Users.Age, Value(0), Value(17)),
-					NotEqual(Users.Age, Value(18)),
+					Greater(Test.Number, Value(18)),
+					GreaterEqual(Test.Number, Value(18)),
+					ILike(Test.String, Value("%ivan%")),
+					In(Test.String, Array("active", "pending")),
+					IsNotNull(Test.String),
+					IsNull(Test.String),
+					Less(Test.Number, Value(18)),
+					LessEqual(Test.Number, Value(18)),
+					Like(Test.String, Value("%@gmail.com")),
+					NotBetween(Test.Number, Value(18), Value(65)),
+					NotEqual(Test.Number, Value(18)),
 					NotExists(Subquery[int](NewSelect(ConstIntOne()).From(Users.Table))),
-					NotILike(Users.Email, Value("admin%")),
-					NotIn(Users.Status, Array("banned", "deleted")),
-					NotLike(Users.Email, Value("%@test.%")),
+					NotILike(Test.String, Value("%ivan%")),
+					NotIn(Test.String, Array("active", "pending")),
+					NotLike(Test.String, Value("%@gmail.com")),
 				))
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "`u`.`age` BETWEEN ? AND ?", "BETWEEN")
-			assertContains(t, sqlSelectQuery, "`u`.`age` = ?", "EQUAL")
+			assertContains(t, sqlSelectQuery, "`t`.`number` BETWEEN ? AND ?", "BETWEEN")
+			assertContains(t, sqlSelectQuery, "`t`.`number` = ?", "EQUAL")
 			assertContains(t, sqlSelectQuery, "EXISTS (SELECT 1 FROM `users` AS `u`)", "EXISTS")
-			assertContains(t, sqlSelectQuery, "`u`.`age` > ?", "GREATER")
-			assertContains(t, sqlSelectQuery, "`u`.`age` >= ?", "GREATEREQUAL")
-			assertContains(t, sqlSelectQuery, "LOWER(`u`.`email`) LIKE LOWER(?)", "ILIKE")
-			assertContains(t, sqlSelectQuery, "`u`.`status` IN (?, ?)", "IN")
-			assertContains(t, sqlSelectQuery, "`u`.`id` IS NOT NULL", "IS NOT NULL")
-			assertContains(t, sqlSelectQuery, "`u`.`id` IS NULL", "IS NULL")
-			assertContains(t, sqlSelectQuery, "`u`.`age` < ?", "LESS")
-			assertContains(t, sqlSelectQuery, "`u`.`age` <= ? ", "LESSEQUAL")
-			assertContains(t, sqlSelectQuery, "`u`.`email` LIKE ?", "LIKE")
-			assertContains(t, sqlSelectQuery, "`u`.`age` NOT BETWEEN ? AND ?", "NOT BETWEEN")
-			assertContains(t, sqlSelectQuery, "`u`.`age` <> ?", "NOTEQUAL")
+			assertContains(t, sqlSelectQuery, "`t`.`number` > ?", "GREATER")
+			assertContains(t, sqlSelectQuery, "`t`.`number` >= ?", "GREATEREQUAL")
+			assertContains(t, sqlSelectQuery, "LOWER(`t`.`string`) LIKE LOWER(?)", "ILIKE")
+			assertContains(t, sqlSelectQuery, "`t`.`string` IN (?, ?)", "IN")
+			assertContains(t, sqlSelectQuery, "`t`.`string` IS NOT NULL", "IS NOT NULL")
+			assertContains(t, sqlSelectQuery, "`t`.`string` IS NULL", "IS NULL")
+			assertContains(t, sqlSelectQuery, "`t`.`number` < ?", "LESS")
+			assertContains(t, sqlSelectQuery, "`t`.`number` <= ? ", "LESSEQUAL")
+			assertContains(t, sqlSelectQuery, "`t`.`string` LIKE ?", "LIKE")
+			assertContains(t, sqlSelectQuery, "`t`.`number` NOT BETWEEN ? AND ?", "NOT BETWEEN")
+			assertContains(t, sqlSelectQuery, "`t`.`number` <> ?", "NOTEQUAL")
 			assertContains(t, sqlSelectQuery, "NOT EXISTS (SELECT 1 FROM `users` AS `u`)", "NOT EXISTS")
-			assertContains(t, sqlSelectQuery, "LOWER(`u`.`email`) NOT LIKE LOWER(?)", "NOT ILIKE")
-			assertContains(t, sqlSelectQuery, "`u`.`status` NOT IN (?, ?)", "NOT IN")
-			assertContains(t, sqlSelectQuery, "`u`.`email` NOT LIKE ?", "NOT LIKE")
+			assertContains(t, sqlSelectQuery, "LOWER(`t`.`string`) NOT LIKE LOWER(?)", "NOT ILIKE")
+			assertContains(t, sqlSelectQuery, "`t`.`string` NOT IN (?, ?)", "NOT IN")
+			assertContains(t, sqlSelectQuery, "`t`.`string` NOT LIKE ?", "NOT LIKE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `"u"."age" BETWEEN $1 AND $2`, "BETWEEN")
-			assertContains(t, sqlSelectQuery, `"u"."age" = $1`, "EQUAL")
+			assertContains(t, sqlSelectQuery, `"t"."number" BETWEEN $1 AND $2`, "BETWEEN")
+			assertContains(t, sqlSelectQuery, `"t"."number" = $1`, "EQUAL")
 			assertContains(t, sqlSelectQuery, `EXISTS (SELECT 1 FROM "users" AS "u")`, "EXISTS")
-			assertContains(t, sqlSelectQuery, `"u"."age" > $1`, "GREATER")
-			assertContains(t, sqlSelectQuery, `"u"."age" >= $1`, "GREATEREQUAL")
-			assertContains(t, sqlSelectQuery, `"u"."email" ILIKE $1`, "ILIKE")
-			assertContains(t, sqlSelectQuery, `"u"."status" IN ($1, $2)`, "IN")
-			assertContains(t, sqlSelectQuery, `"u"."id" IS NOT NULL`, "IS NOT NULL")
-			assertContains(t, sqlSelectQuery, `"u"."id" IS NULL`, "IS NULL")
-			assertContains(t, sqlSelectQuery, `"u"."age" < $1`, "LESS")
-			assertContains(t, sqlSelectQuery, `"u"."age" <= $1`, "LESSEQUAL")
-			assertContains(t, sqlSelectQuery, `"u"."email" LIKE $1`, "LIKE")
-			assertContains(t, sqlSelectQuery, `"u"."age" NOT BETWEEN $1 AND $2`, "NOT BETWEEN")
-			assertContains(t, sqlSelectQuery, `"u"."age" <> $1`, "NOTEQUAL")
+			assertContains(t, sqlSelectQuery, `"t"."number" > $1`, "GREATER")
+			assertContains(t, sqlSelectQuery, `"t"."number" >= $1`, "GREATEREQUAL")
+			assertContains(t, sqlSelectQuery, `"t"."string" ILIKE $1`, "ILIKE")
+			assertContains(t, sqlSelectQuery, `"t"."string" IN ($1, $2)`, "IN")
+			assertContains(t, sqlSelectQuery, `"t"."string" IS NOT NULL`, "IS NOT NULL")
+			assertContains(t, sqlSelectQuery, `"t"."string" IS NULL`, "IS NULL")
+			assertContains(t, sqlSelectQuery, `"t"."number" < $1`, "LESS")
+			assertContains(t, sqlSelectQuery, `"t"."number" <= $1`, "LESSEQUAL")
+			assertContains(t, sqlSelectQuery, `"t"."string" LIKE $1`, "LIKE")
+			assertContains(t, sqlSelectQuery, `"t"."number" NOT BETWEEN $1 AND $2`, "NOT BETWEEN")
+			assertContains(t, sqlSelectQuery, `"t"."number" <> $1`, "NOTEQUAL")
 			assertContains(t, sqlSelectQuery, `NOT EXISTS (SELECT 1 FROM "users" AS "u")`, "NOT EXISTS")
-			assertContains(t, sqlSelectQuery, `"u"."email" NOT ILIKE $1`, "NOT ILIKE")
-			assertContains(t, sqlSelectQuery, `"u"."status" NOT IN ($1, $2)`, "NOT IN")
-			assertContains(t, sqlSelectQuery, `"u"."email" NOT LIKE $1`, "NOT LIKE")
+			assertContains(t, sqlSelectQuery, `"t"."string" NOT ILIKE $1`, "NOT ILIKE")
+			assertContains(t, sqlSelectQuery, `"t"."string" NOT IN ($1, $2)`, "NOT IN")
+			assertContains(t, sqlSelectQuery, `"t"."string" NOT LIKE $1`, "NOT LIKE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Select_Distinct(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		stmtSelect := NewSelect().Distinct().
-			Field(Users.ID.As("user_id")).
-			From(Users.Table)
-		sqlSelectQuery, _, _ := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
-		}
-		t.Logf("dialect: %s sql: %s", supportDialect.name, sqlSelectQuery)
-	})
-}
-func Test_Select_Function(t *testing.T) {
+func Test_Core_Function(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
@@ -764,6 +446,324 @@ func Test_Select_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `UPPER("t"."string")`, "UPPER")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Delete(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		queryWith := WithN("user_stats", NewSelect(
+			Orders.UserID,
+			Count(Orders.ID, false).As("order_count"),
+		).
+			From(Orders.Table).
+			Where(Greater(Orders.Amount, Value(100))).
+			GroupBy(Orders.UserID),
+			"user_id", "order_count")
+		stmtDelete := NewDelete(Users.Table).
+			Join(
+				Inner(CTE("user_stats", "us"), Equal(Users.ID, Stats.UserID)),
+				Left(Levels.Table, Equal(Users.ID, Levels.UserID)),
+			).
+			Where(
+				And(
+					Equal(Users.Status, Value("active")),
+					Or(
+						IsNull(Levels.ID),
+						Equal(Levels.Status, Value("expired")),
+					),
+				),
+			).
+			Returning(
+				Users.ID.As("user_id"),
+				Users.Name.As("user_name"),
+				Stats.OrderCount.As("total_orders"),
+			).
+			With(queryWith)
+		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlDeleteQuery, "DELETE", "DELETE")
+			assertContains(t, sqlDeleteQuery, "FROM", "FROM")
+			assertContains(t, sqlDeleteQuery, "JOIN", "JOIN")
+			assertContains(t, sqlDeleteQuery, "WHERE", "WHERE")
+			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
+		case DialectPostgreSQL:
+			assertContains(t, sqlDeleteQuery, "DELETE", "DELETE")
+			assertContains(t, sqlDeleteQuery, "FROM", "FROM")
+			assertContains(t, sqlDeleteQuery, "RETURNING", "RETURNING")
+			assertContains(t, sqlDeleteQuery, "USING", "USING")
+			assertContains(t, sqlDeleteQuery, "WHERE", "WHERE")
+			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+	})
+}
+func Test_Delete_Join(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtDelete := NewDelete(Users.Table).
+			Join(
+				Inner(Orders.Table, Equal(Users.ID, Orders.UserID)),
+				Left(Levels.Table, Equal(Users.ID, Levels.UserID)),
+			).
+			Where(
+				Equal(Orders.Status, Value("cancelled")),
+			)
+		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlDeleteQuery, "INNER JOIN", "INNER JOIN")
+			assertContains(t, sqlDeleteQuery, "LEFT JOIN", "LEFT JOIN")
+		case DialectPostgreSQL:
+			assertContains(t, sqlDeleteQuery, `"orders" AS "o", "level" AS "l"`, "USING LIST")
+			assertContains(t, sqlDeleteQuery, `"u"."id" = "o"."user_id" AND "u"."id" = "l"."user_id"`, "JOIN CONDITION")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+	})
+}
+func Test_Delete_Returning(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtDelete := NewDelete(Users.Table).
+			Where(Equal(Users.Status, Value("inactive"))).
+			Returning(
+				Users.ID.As("user_id"),
+				Users.Name.As("user_name"),
+				Users.Email.As("user_email"),
+			)
+		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+		switch supportDialect {
+		case DialectMySQL:
+			// Not support
+		case DialectPostgreSQL:
+			assertContains(t, sqlDeleteQuery, `"user_id"`, "RETURNING id")
+			assertContains(t, sqlDeleteQuery, `"user_name"`, "RETURNING name")
+			assertContains(t, sqlDeleteQuery, `"user_email"`, "RETURNING email")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+	})
+}
+func Test_Delete_Where(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		existsSub := NewSelect(Levels.ID).
+			From(Levels.Table).
+			Where(
+				Equal(Levels.UserID, Users.ID),
+			)
+		stmtDelete := NewDelete(Users.Table).
+			Where(
+				And(
+					Equal(Users.Status, Value("active")),
+					Greater(Users.Age, Value(18)),
+					Less(Users.Age, Value(65)),
+					In(Users.DepartmentID, Array[int64](1, 2, 3)),
+					Like(Users.Email, Value("%@company.com")),
+					Exists(Subquery[int](existsSub)),
+					NotEqual(Users.Status, Value("deleted")),
+					IsNotNull(Users.Email),
+				),
+			)
+		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlDeleteQuery, "`u`.`status` = ?", "EQUAL")
+			assertContains(t, sqlDeleteQuery, "`u`.`age` > ?", "GREATER")
+			assertContains(t, sqlDeleteQuery, "`u`.`age` < ?", "LESS")
+			assertContains(t, sqlDeleteQuery, "`u`.`department_id` IN (?, ?, ?)", "IN")
+			assertContains(t, sqlDeleteQuery, "`u`.`email` LIKE ?", "LIKE")
+			assertContains(t, sqlDeleteQuery, "EXISTS", "EXISTS")
+			assertContains(t, sqlDeleteQuery, "`u`.`status` <> ?", "NOTEQUAL")
+			assertContains(t, sqlDeleteQuery, "`u`.`email` IS NOT NULL", "IS NOT NULL")
+		case DialectPostgreSQL:
+			assertContains(t, sqlDeleteQuery, `"u"."status" = $1`, "EQUAL")
+			assertContains(t, sqlDeleteQuery, `"u"."age" > $1`, "GREATER")
+			assertContains(t, sqlDeleteQuery, `"u"."age" < $1`, "LESS")
+			assertContains(t, sqlDeleteQuery, `"u"."department_id" IN ($1, $2, $3)`, "IN")
+			assertContains(t, sqlDeleteQuery, `"u"."email" LIKE $1`, "LIKE")
+			assertContains(t, sqlDeleteQuery, `EXISTS`, "EXISTS")
+			assertContains(t, sqlDeleteQuery, `"u"."status" <> $1`, "NOTEQUAL")
+			assertContains(t, sqlDeleteQuery, `"u"."email" IS NOT NULL`, "IS NOT NULL")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+	})
+}
+func Test_Delete_With(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		cte := WithN("old_users", NewSelect(Users.ID).
+			From(Users.Table).
+			Where(Less(Users.Age, Value(18))),
+		)
+		stmtDelete := NewDelete(Users.Table).
+			Where(In(Users.ID, Subquery[int64](NewSelect(Column[int64]("old_users", "id"))))).
+			With(cte)
+
+		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
+			assertContains(t, sqlDeleteQuery, "old_users", "CTE")
+		case DialectPostgreSQL:
+			assertContains(t, sqlDeleteQuery, "WITH", "WITH")
+			assertContains(t, sqlDeleteQuery, "old_users", "CTE")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+	})
+}
+func Test_Insert(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		queryWith := WithN("user_stats", NewSelect(
+			Orders.UserID,
+			Count(Orders.ID, false).As("order_count"),
+		).
+			From(Orders.Table).
+			Where(
+				Greater(Orders.Amount, Value(100)),
+			).
+			GroupBy(Orders.UserID),
+			"user_id", "order_count",
+		)
+		stmtInsert := NewInsert(Users.Name, Users.Age).
+			Into(Users.Table).
+			Source(NewSelect(Value("Test User"), Value(35)).
+				Where(
+					Exists(Subquery[int64](NewSelect(Stats.UserID).
+						From(CTE("user_stats", "us")).
+						Where(
+							Greater(Stats.OrderCount, Value(3)),
+						),
+					)),
+				),
+			).
+			Returning(
+				Users.ID.As("user_id"),
+				Users.Name.As("user_name"),
+			).
+			With(queryWith)
+		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
+		switch supportDialect {
+		case DialectMySQL:
+			//assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
+			//assertContains(t, sqlInsertQuery, "INTO", "INTO")
+			//assertContains(t, sqlInsertQuery, "SOURCE", "SOURCE")
+			//assertContains(t, sqlInsertQuery, "WITH", "WITH")
+		case DialectPostgreSQL:
+			//assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
+			//assertContains(t, sqlInsertQuery, "INTO", "INTO")
+			//assertContains(t, sqlInsertQuery, "RETURNING", "RETURNING")
+			//assertContains(t, sqlInsertQuery, "SOURCE", "SOURCE")
+			//assertContains(t, sqlInsertQuery, "WITH", "WITH")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
+	})
+}
+func Test_Select(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		queryWith := WithN("user_stats", NewSelect(
+			Orders.UserID,
+			Count(Orders.ID, false).As("order_count"),
+			Sum(Orders.Amount, false).As("total_spent"),
+		).
+			From(Orders.Table).
+			Where(Greater(Orders.Amount, Value(100))).
+			GroupBy(Orders.UserID),
+			"user_id", "order_count", "total_spent",
+		)
+		stmtSelect := NewSelect(
+			Users.ID.As("user_id"),
+			Users.Name.As("user_name"),
+			Stats.OrderCount.As("premium_orders"),
+			Stats.TotalSpent.As("total_premium_spent"),
+			Count(Products.ID, false).As("count_product"),
+		).
+			From(Users.Table).
+			Join(
+				Left(CTE("user_stats", "us"), Equal(Users.ID, Stats.UserID)),
+				Left(Levels.Table,
+					And(
+						Equal(Users.ID, Levels.UserID),
+						Equal(Levels.Status, Value("active")),
+					),
+				),
+			).
+			Where(
+				Or(
+					Equal(Users.Status, Value("active")),
+					IsNotNull(Levels.ID),
+				),
+			).
+			GroupBy(
+				Users.ID,
+				Users.Name,
+				Stats.OrderCount,
+				Stats.TotalSpent,
+			).
+			Having(
+				Or(
+					IsNotNull(Users.ID),
+					Greater(Stats.OrderCount, Value(0)),
+				),
+			).
+			OrderBy(
+				Desc(Stats.TotalSpent),
+				Asc(Users.Name),
+			).
+			Limit(50).
+			Offset(10).
+			With(queryWith)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "FROM", "FROM")
+			assertContains(t, sqlSelectQuery, "GROUP BY", "GROUP BY")
+			assertContains(t, sqlSelectQuery, "HAVING", "HAVING")
+			assertContains(t, sqlSelectQuery, "JOIN", "JOIN")
+			assertContains(t, sqlSelectQuery, "LIMIT", "LIMIT")
+			assertContains(t, sqlSelectQuery, "OFFSET", "OFFSET")
+			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
+			assertContains(t, sqlSelectQuery, "SELECT", "SELECT")
+			assertContains(t, sqlSelectQuery, "WHERE", "WHERE")
+			assertContains(t, sqlSelectQuery, "WITH", "WITH")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, "FROM", "FROM")
+			assertContains(t, sqlSelectQuery, "GROUP BY", "GROUP BY")
+			assertContains(t, sqlSelectQuery, "HAVING", "HAVING")
+			assertContains(t, sqlSelectQuery, "JOIN", "JOIN")
+			assertContains(t, sqlSelectQuery, "LIMIT", "LIMIT")
+			assertContains(t, sqlSelectQuery, "OFFSET", "OFFSET")
+			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
+			assertContains(t, sqlSelectQuery, "SELECT", "SELECT")
+			assertContains(t, sqlSelectQuery, "WHERE", "WHERE")
+			assertContains(t, sqlSelectQuery, "WITH", "WITH")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Select_Distinct(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect().Distinct().
+			Field(Users.ID.As("user_id")).
+			From(Users.Table)
+		sqlSelectQuery, _, _ := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
+		}
+		t.Logf("dialect: %s sql: %s", supportDialect.name, sqlSelectQuery)
 	})
 }
 func Test_Select_GroupBy(t *testing.T) {

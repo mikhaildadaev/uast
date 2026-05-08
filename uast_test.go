@@ -6,6 +6,23 @@ import (
 )
 
 // Публичные функции
+func Test_Core_Array(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(
+			Array(1, 2, 3),
+		).From(Test.Table)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "ARRAY")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `($1, $2, $3)`, "ARRAY")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
 func Test_Core_Comparison(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
@@ -444,6 +461,82 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `SUBSTRING("t"."string", $1, $2)`, "SUBSTRING")
 			assertContains(t, sqlSelectQuery, `TRIM("t"."string")`, "TRIM")
 			assertContains(t, sqlSelectQuery, `UPPER("t"."string")`, "UPPER")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Logical(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(Users.ID.As("user_id")).
+			From(Users.Table).
+			Where(
+				And(
+					And(
+						Equal(Users.ID, Value[int64](0)),
+						Equal(Users.ID, Value[int64](10)),
+					),
+					Or(
+						Equal(Users.ID, Value[int64](20)),
+						Equal(Users.ID, Value[int64](100)),
+					),
+				),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "`u`.`id` = ? AND `u`.`id` = ?", "AND")
+			assertContains(t, sqlSelectQuery, "`u`.`id` = ? OR `u`.`id` = ?", "OR")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `"u"."id" = $1 AND "u"."id" = $2`, "AND")
+			assertContains(t, sqlSelectQuery, `"u"."id" = $3 OR "u"."id" = $4`, "OR")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Subquery(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		querySub := NewSelect(Count(Orders.ID, false)).
+			From(Orders.Table).
+			Where(
+				Equal(Orders.UserID, Users.ID),
+			)
+		queryInSub := NewSelect(Orders.UserID).
+			From(Orders.Table).
+			Where(
+				Greater(Orders.Amount, Value(1000)),
+			)
+		queryExistsSub := NewSelect(Orders.ID).
+			From(Orders.Table).
+			Where(
+				Equal(Orders.UserID, Users.ID),
+			)
+		stmtSelect := NewSelect(
+			Users.ID,
+			Users.Name,
+			Subquery[int64](querySub).As("SUB"),
+		).
+			From(Users.Table).
+			Where(
+				And(
+					In(Users.ID, Subquery[int64](queryInSub)),
+					Exists(Subquery[int64](queryExistsSub)),
+				),
+			)
+
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "AS", "AS (subquery1)")
+			assertContains(t, sqlSelectQuery, "IN", "IN (subquery2)")
+			assertContains(t, sqlSelectQuery, "EXISTS", "EXISTS (subquery3)")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, "AS", "AS (subquery1)")
+			assertContains(t, sqlSelectQuery, "IN", "IN (subquery2)")
+			assertContains(t, sqlSelectQuery, "EXISTS", "EXISTS (subquery3)")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -898,36 +991,6 @@ func Test_Select_Limit(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Select_Logical(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		stmtSelect := NewSelect(Users.ID.As("user_id")).
-			From(Users.Table).
-			Where(
-				And(
-					And(
-						Equal(Users.ID, Value[int64](0)),
-						Equal(Users.ID, Value[int64](10)),
-					),
-					Or(
-						Equal(Users.ID, Value[int64](20)),
-						Equal(Users.ID, Value[int64](100)),
-					),
-				),
-			)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "`u`.`id` = ? AND `u`.`id` = ?", "AND")
-			assertContains(t, sqlSelectQuery, "`u`.`id` = ? OR `u`.`id` = ?", "OR")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `"u"."id" = $1 AND "u"."id" = $2`, "AND")
-			assertContains(t, sqlSelectQuery, `"u"."id" = $3 OR "u"."id" = $4`, "OR")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
 func Test_Select_Offset(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
@@ -964,52 +1027,6 @@ func Test_Select_OrderBy(t *testing.T) {
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `"u"."name" ASC`, "ASC")
 			assertContains(t, sqlSelectQuery, `"u"."id" DESC`, "DESC")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
-func Test_Select_Subquery(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
-		defer sql.Close()
-		querySub := NewSelect(Count(Orders.ID, false)).
-			From(Orders.Table).
-			Where(
-				Equal(Orders.UserID, Users.ID),
-			)
-		queryInSub := NewSelect(Orders.UserID).
-			From(Orders.Table).
-			Where(
-				Greater(Orders.Amount, Value(1000)),
-			)
-		queryExistsSub := NewSelect(Orders.ID).
-			From(Orders.Table).
-			Where(
-				Equal(Orders.UserID, Users.ID),
-			)
-		stmtSelect := NewSelect(
-			Users.ID,
-			Users.Name,
-			Subquery[int64](querySub).As("SUB"),
-		).
-			From(Users.Table).
-			Where(
-				And(
-					In(Users.ID, Subquery[int64](queryInSub)),
-					Exists(Subquery[int64](queryExistsSub)),
-				),
-			)
-
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "AS", "AS (subquery1)")
-			assertContains(t, sqlSelectQuery, "IN", "IN (subquery2)")
-			assertContains(t, sqlSelectQuery, "EXISTS", "EXISTS (subquery3)")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, "AS", "AS (subquery1)")
-			assertContains(t, sqlSelectQuery, "IN", "IN (subquery2)")
-			assertContains(t, sqlSelectQuery, "EXISTS", "EXISTS (subquery3)")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

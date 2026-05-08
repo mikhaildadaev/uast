@@ -10,9 +10,8 @@ func Test_Core_Array(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			Array(1, 2, 3),
-		).From(Test.Table)
+		stmtSelect := NewSelect(Array(1, 2, 3)).
+			From(Test.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -27,15 +26,46 @@ func Test_Core_Binary(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			Array(1, 2, 3),
-		).From(Test.Table)
+		stmtSelect := NewSelect(Test.ID).
+			From(Test.Table).
+			Where(
+				And(
+					Equal(Test.Number, BitwiseAnd(Test.Number, Value(0b0011))),
+					Equal(Test.Number, BitwiseOr(Test.Number, Value(0b1100))),
+					Equal(Test.Number, BitwiseXor(Test.Number, Value(0b1111))),
+					Equal(Test.Number, Divide(Test.Number, Value(2))),
+					Equal(Test.Number, Minus(Test.Number, Value(2))),
+					Equal(Test.Number, Modulo(Test.Number, Value(2))),
+					Equal(Test.Number, Multiply(Test.Number, Value(2))),
+					Equal(Test.Number, Plus(Test.Number, Value(2))),
+					Equal(Test.Number, ShiftLeft(Test.Number, Value(2))),
+					Equal(Test.Number, ShiftRight(Test.Number, Value(2))),
+				),
+			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "BINARY INT")
+			assertContains(t, sqlSelectQuery, "`t`.`number` & ?", "BINARY BITWISE AND")
+			assertContains(t, sqlSelectQuery, "`t`.`number` | ?", "BINARY BITWISE OR")
+			assertContains(t, sqlSelectQuery, "`t`.`number` ^ ?", "BINARY BITWISE XOR")
+			assertContains(t, sqlSelectQuery, "`t`.`number` / ?", "BINARY DIVIDE")
+			assertContains(t, sqlSelectQuery, "`t`.`number` - ?", "BINARY MINUS")
+			assertContains(t, sqlSelectQuery, "`t`.`number` % ?", "BINARY MODULO")
+			assertContains(t, sqlSelectQuery, "`t`.`number` * ?", "BINARY MULTIPLY")
+			assertContains(t, sqlSelectQuery, "`t`.`number` + ?", "BINARY PLUS")
+			assertContains(t, sqlSelectQuery, "`t`.`number` << ?", "BINARY SHIFT LEFT")
+			assertContains(t, sqlSelectQuery, "`t`.`number` >> ?", "BINARY SHIFT RIGHT")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `($1, $2, $3)`, "BINARY INT")
+			assertContains(t, sqlSelectQuery, `"t"."number" & $1`, "BINARY BITWISE AND")
+			assertContains(t, sqlSelectQuery, `"t"."number" | $1`, "BINARY BITWISE OR")
+			assertContains(t, sqlSelectQuery, `"t"."number" ^ $1`, "BINARY BITWISE XOR")
+			assertContains(t, sqlSelectQuery, `"t"."number" / $1`, "BINARY DIVIDE")
+			assertContains(t, sqlSelectQuery, `"t"."number" - $1`, "BINARY MINUS")
+			assertContains(t, sqlSelectQuery, `"t"."number" % $1`, "BINARY MODULO")
+			assertContains(t, sqlSelectQuery, `"t"."number" * $1`, "BINARY MULTIPLY")
+			assertContains(t, sqlSelectQuery, `"t"."number" + $1`, "BINARY PLUS")
+			assertContains(t, sqlSelectQuery, `"t"."number" << $1`, "BINARY SHIFT LEFT")
+			assertContains(t, sqlSelectQuery, `"t"."number" >> $1`, "BINARY SHIFT RIGHT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -44,9 +74,8 @@ func Test_Core_Column(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			Test.ID.As("id"),
-		).From(Test.Table)
+		stmtSelect := NewSelect(Test.ID.As("id")).
+			From(Test.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -562,6 +591,25 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `SUBSTRING("t"."string", $1, $2)`, "FUNCTION SUBSTRING")
 			assertContains(t, sqlSelectQuery, `TRIM("t"."string")`, "FUNCTION TRIM")
 			assertContains(t, sqlSelectQuery, `UPPER("t"."string")`, "FUNCTION UPPER")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Literal(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.ID).
+			From(Test.Table).
+			Where(
+				Equal(DateFormat(Test.CreateAt, Literal("%Y-%m-%d")), Value("2026-01-01")),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "'%Y-%m-%d'", "LITERAL STRING")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `'%Y-%m-%d'`, "LITERAL STRING")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

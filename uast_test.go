@@ -572,28 +572,50 @@ func Test_Core_Logical(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		stmtSelect := NewSelect(Users.ID.As("user_id")).
-			From(Users.Table).
+		stmtSelect := NewSelect(Test.ID.As("id")).
+			From(Test.Table).
 			Where(
 				And(
 					And(
-						Equal(Users.ID, Value[int64](0)),
-						Equal(Users.ID, Value[int64](10)),
+						Equal(Test.String, Value("active")),
+						Greater(Test.Number, Value(18)),
 					),
 					Or(
-						Equal(Users.ID, Value[int64](20)),
-						Equal(Users.ID, Value[int64](100)),
+						Equal(Test.String, Value("active")),
+						Greater(Test.Number, Value(18)),
 					),
 				),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "`u`.`id` = ? AND `u`.`id` = ?", "LOGICAL AND")
-			assertContains(t, sqlSelectQuery, "`u`.`id` = ? OR `u`.`id` = ?", "LOGICAL OR")
+			assertContains(t, sqlSelectQuery, "`t`.`string` = ? AND `t`.`number` > ?", "LOGICAL AND")
+			assertContains(t, sqlSelectQuery, "`t`.`string` = ? OR `t`.`number` > ?", "LOGICAL OR")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `"u"."id" = $1 AND "u"."id" = $2`, "LOGICAL AND")
-			assertContains(t, sqlSelectQuery, `"u"."id" = $3 OR "u"."id" = $4`, "LOGICAL OR")
+			assertContains(t, sqlSelectQuery, `"t"."string" = $1 AND "t"."number" > $2`, "LOGICAL AND")
+			assertContains(t, sqlSelectQuery, `"t"."string" = $1 OR "t"."number" > $2`, "LOGICAL OR")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Order(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.ID.As("id")).
+			From(Test.Table).
+			OrderBy(
+				Asc(Test.String),
+				Desc(Test.String),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "`t`.`string` ASC", "ORDER ASC")
+			assertContains(t, sqlSelectQuery, "`t`.`string` DESC", "ORDER DESC")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `"t"."string" ASC`, "ORDER ASC")
+			assertContains(t, sqlSelectQuery, `"t"."string" DESC`, "ORDER DESC")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

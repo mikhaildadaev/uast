@@ -88,7 +88,7 @@ func (baseValidator *baseValidator) validateAlias(value string) error {
 	return ErrUnsupportIdentAlias
 }
 func (baseValidator *baseValidator) validateArray(value int) error {
-	if value < baseValidator.config.lengthMaxArray {
+	if value > baseValidator.config.lengthMaxArray {
 		return ErrOverflowArray
 	}
 	return nil

@@ -16,9 +16,43 @@ func Test_Core_Array(t *testing.T) {
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "ARRAY")
+			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "ARRAY INT")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `($1, $2, $3)`, "ARRAY")
+			assertContains(t, sqlSelectQuery, `($1, $2, $3)`, "ARRAY INT")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Binary(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(
+			Array(1, 2, 3),
+		).From(Test.Table)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "ARRAY INT")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `($1, $2, $3)`, "ARRAY INT")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Column(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(
+			Test.ID.As("id"),
+		).From(Test.Table)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "`t`.`id`", "COLUMN ID")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `"t"."id"`, "COLUMN ID")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -90,6 +124,75 @@ func Test_Core_Comparison(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT ILIKE $1`, "NOT ILIKE")
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT IN ($1, $2)`, "NOT IN")
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT LIKE $1`, "NOT LIKE")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_Constant(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql, _ := NewSQL(supportDialect)
+		defer sql.Close()
+		stmtSelect := NewSelect(
+			Test.ID,
+		).
+			From(Test.Table).
+			Where(
+				And(
+					Equal(ConstBoolFalse(), ConstBoolFalse()),
+					Equal(ConstBoolTrue(), ConstBoolTrue()),
+					Equal(ConstFloat32One(), ConstFloat32One()),
+					Equal(ConstFloat64One(), ConstFloat64One()),
+					Equal(ConstIntOne(), ConstIntOne()),
+					Equal(ConstInt8One(), ConstInt8One()),
+					Equal(ConstInt16One(), ConstInt16One()),
+					Equal(ConstInt32One(), ConstInt32One()),
+					Equal(ConstInt64One(), ConstInt64One()),
+					Equal(ConstNullDefault[string](), ConstNullDefault[string]()),
+					Equal(ConstStringDefault(), ConstStringDefault()),
+					Equal(ConstUintOne(), ConstUintOne()),
+					Equal(ConstUint8One(), ConstUint8One()),
+					Equal(ConstUint16One(), ConstUint16One()),
+					Equal(ConstUint32One(), ConstUint32One()),
+					Equal(ConstUint64One(), ConstUint64One()),
+				),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "FALSE", "CONST BOOlFALSE")
+			assertContains(t, sqlSelectQuery, "TRUE", "CONST BOOlTRUE")
+			assertContains(t, sqlSelectQuery, "1", "CONST FLOAT32ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST FLOAT64ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST INTONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST INT8ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST INT16ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST INT32ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST INT64ONE")
+			assertContains(t, sqlSelectQuery, " ", "CONST NULLDEFAULT")
+			assertContains(t, sqlSelectQuery, "DEFAULT", "CONST STRINGDEFAULT")
+			assertContains(t, sqlSelectQuery, "1", "CONST UINTONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST UINT8ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST UINT16ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST UINT32ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONST UINT64ONE")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `FALSE`, "CONST BOOlFALSE")
+			assertContains(t, sqlSelectQuery, `TRUE`, "CONST BOOlTRUE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST FLOAT32ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST FLOAT64ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST INTONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST INT8ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST INT16ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST INT32ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST INT64ONE")
+			assertContains(t, sqlSelectQuery, ` `, "CONST NULLDEFAULT")
+			assertContains(t, sqlSelectQuery, `DEFAULT`, "CONST STRINGDEFAULT")
+			assertContains(t, sqlSelectQuery, `1`, "CONST UINTONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST UINT8ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST UINT16ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST UINT32ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONST UINT64ONE")
+
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

@@ -96,7 +96,7 @@ func Test_Core_Comparison(t *testing.T) {
 				And(
 					Between(Test.Number, Value(0), Value(2)),
 					Equal(Test.Number, Value(2)),
-					Exists(Subquery[int](NewSelect(ConstIntOne()).From(Users.Table))),
+					Exists(Subquery[int](NewSelect(ConstIntOne()).From(Test.Table))),
 					Greater(Test.Number, Value(2)),
 					GreaterEqual(Test.Number, Value(2)),
 					ILike(Test.String, Value("%ivan%")),
@@ -108,7 +108,7 @@ func Test_Core_Comparison(t *testing.T) {
 					Like(Test.String, Value("%ivan%")),
 					NotBetween(Test.Number, Value(0), Value(2)),
 					NotEqual(Test.Number, Value(2)),
-					NotExists(Subquery[int](NewSelect(ConstIntOne()).From(Users.Table))),
+					NotExists(Subquery[int](NewSelect(ConstIntOne()).From(Test.Table))),
 					NotILike(Test.String, Value("%ivan%")),
 					NotIn(Test.String, Array("active", "pending")),
 					NotLike(Test.String, Value("%ivan%")),
@@ -118,7 +118,7 @@ func Test_Core_Comparison(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "`t`.`number` BETWEEN ? AND ?", "COMPARISON BETWEEN")
 			assertContains(t, sqlSelectQuery, "`t`.`number` = ?", "COMPARISON EQUAL")
-			assertContains(t, sqlSelectQuery, "EXISTS (SELECT 1 FROM `users` AS `u`)", "COMPARISON EXISTS")
+			assertContains(t, sqlSelectQuery, "EXISTS (SELECT 1 FROM `test` AS `t`)", "COMPARISON EXISTS")
 			assertContains(t, sqlSelectQuery, "`t`.`number` > ?", "COMPARISON GREATER")
 			assertContains(t, sqlSelectQuery, "`t`.`number` >= ?", "COMPARISON GREATEREQUAL")
 			assertContains(t, sqlSelectQuery, "LOWER(`t`.`string`) LIKE LOWER(?)", "COMPARISON ILIKE")
@@ -130,14 +130,14 @@ func Test_Core_Comparison(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "`t`.`string` LIKE ?", "COMPARISON LIKE")
 			assertContains(t, sqlSelectQuery, "`t`.`number` NOT BETWEEN ? AND ?", "COMPARISON NOT BETWEEN")
 			assertContains(t, sqlSelectQuery, "`t`.`number` <> ?", "COMPARISON NOT EQUAL")
-			assertContains(t, sqlSelectQuery, "NOT EXISTS (SELECT 1 FROM `users` AS `u`)", "COMPARISON NOT EXISTS")
+			assertContains(t, sqlSelectQuery, "NOT EXISTS (SELECT 1 FROM `test` AS `t`)", "COMPARISON NOT EXISTS")
 			assertContains(t, sqlSelectQuery, "LOWER(`t`.`string`) NOT LIKE LOWER(?)", "COMPARISON NOT ILIKE")
 			assertContains(t, sqlSelectQuery, "`t`.`string` NOT IN (?, ?)", "COMPARISON NOT IN")
 			assertContains(t, sqlSelectQuery, "`t`.`string` NOT LIKE ?", "COMPARISON NOT LIKE")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `"t"."number" BETWEEN $1 AND $2`, "COMPARISON BETWEEN")
 			assertContains(t, sqlSelectQuery, `"t"."number" = $1`, "COMPARISON EQUAL")
-			assertContains(t, sqlSelectQuery, `EXISTS (SELECT 1 FROM "users" AS "u")`, "COMPARISON EXISTS")
+			assertContains(t, sqlSelectQuery, `EXISTS (SELECT 1 FROM "test" AS "t")`, "COMPARISON EXISTS")
 			assertContains(t, sqlSelectQuery, `"t"."number" > $1`, "COMPARISON GREATER")
 			assertContains(t, sqlSelectQuery, `"t"."number" >= $1`, "COMPARISON GREATEREQUAL")
 			assertContains(t, sqlSelectQuery, `"t"."string" ILIKE $1`, "COMPARISON ILIKE")
@@ -149,7 +149,7 @@ func Test_Core_Comparison(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `"t"."string" LIKE $1`, "COMPARISON LIKE")
 			assertContains(t, sqlSelectQuery, `"t"."number" NOT BETWEEN $1 AND $2`, "COMPARISON NOT BETWEEN")
 			assertContains(t, sqlSelectQuery, `"t"."number" <> $1`, "COMPARISON NOT EQUAL")
-			assertContains(t, sqlSelectQuery, `NOT EXISTS (SELECT 1 FROM "users" AS "u")`, "COMPARISON NOT EXISTS")
+			assertContains(t, sqlSelectQuery, `NOT EXISTS (SELECT 1 FROM "test" AS "t")`, "COMPARISON NOT EXISTS")
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT ILIKE $1`, "COMPARISON NOT ILIKE")
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT IN ($1, $2)`, "COMPARISON NOT IN")
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT LIKE $1`, "COMPARISON NOT LIKE")

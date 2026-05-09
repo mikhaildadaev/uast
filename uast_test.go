@@ -174,8 +174,8 @@ func Test_Core_Constant(t *testing.T) {
 					Equal(ConstInt16One(), ConstInt16One()),
 					Equal(ConstInt32One(), ConstInt32One()),
 					Equal(ConstInt64One(), ConstInt64One()),
-					Equal(ConstNullDefault[string](), ConstNullDefault[string]()),
 					Equal(ConstStringDefault(), ConstStringDefault()),
+					Equal(ConstStringNull(), ConstStringNull()),
 					Equal(ConstUintOne(), ConstUintOne()),
 					Equal(ConstUint8One(), ConstUint8One()),
 					Equal(ConstUint16One(), ConstUint16One()),
@@ -188,15 +188,15 @@ func Test_Core_Constant(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "FALSE", "CONSTANT BOOlFALSE")
 			assertContains(t, sqlSelectQuery, "TRUE", "CONSTANT BOOlTRUE")
-			assertContains(t, sqlSelectQuery, "1", "CONSTANT FLOAT32ONE")
-			assertContains(t, sqlSelectQuery, "1", "CONSTANT FLOAT64ONE")
+			assertContains(t, sqlSelectQuery, "1.0", "CONSTANT FLOAT32ONE")
+			assertContains(t, sqlSelectQuery, "1.000000", "CONSTANT FLOAT64ONE")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT INTONE")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT8ONE")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT16ONE")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT32ONE")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT64ONE")
-			assertContains(t, sqlSelectQuery, " ", "CONSTANT NULLDEFAULT")
 			assertContains(t, sqlSelectQuery, "DEFAULT", "CONSTANT STRINGDEFAULT")
+			assertContains(t, sqlSelectQuery, "NULL", "CONSTANT NULLSTRINGNULL")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINTONE")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINT8ONE")
 			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINT16ONE")
@@ -205,15 +205,15 @@ func Test_Core_Constant(t *testing.T) {
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `FALSE`, "CONSTANT BOOlFALSE")
 			assertContains(t, sqlSelectQuery, `TRUE`, "CONSTANT BOOlTRUE")
-			assertContains(t, sqlSelectQuery, `1`, "CONSTANT FLOAT32ONE")
-			assertContains(t, sqlSelectQuery, `1`, "CONSTANT FLOAT64ONE")
+			assertContains(t, sqlSelectQuery, `1.0`, "CONSTANT FLOAT32ONE")
+			assertContains(t, sqlSelectQuery, `1.000000`, "CONSTANT FLOAT64ONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INTONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT8ONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT16ONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT32ONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT64ONE")
-			assertContains(t, sqlSelectQuery, ` `, "CONSTANT NULLDEFAULT")
 			assertContains(t, sqlSelectQuery, `DEFAULT`, "CONSTANT STRINGDEFAULT")
+			assertContains(t, sqlSelectQuery, `NULL`, "CONSTANT NULLSTRINGNULL")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINTONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT8ONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT16ONE")

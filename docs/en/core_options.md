@@ -1096,58 +1096,61 @@ EXTRACT(YEAR FROM "t"."createat")
 #### JsonArray
 Creates a JSON array from the given expression and optional additional values.
 ```go
-function := uast.JsonArray(uast.Column[int]("t", "tag_id"), uast.Value("urgent"))
+function := uast.JsonArray(uast.Column[int]("t", "json"), uast.Value("urgent"))
 ```
 Output:
 ```text
-JSON_ARRAY("t"."tag_id", 'urgent')
+JSON_ARRAY("t"."json", 'urgent')
 ```
 
 #### JsonArrayAgg
 Aggregates values from a group into a JSON array.
 ```go
-function := uast.JsonArrayAgg(uast.Column[string]("t", "label"))
+function := uast.JsonArrayAgg(uast.Column[string]("t", "json"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: JSON_ARRAYAGG("t"."label")
-PostgreSQL: JSON_AGG("t"."label")
+JSON_ARRAYAGG("t"."json")
+```
+Output PostgreSQL:
+```text
+JSON_AGG("t"."json")
 ```
 
 #### JsonContains
 Checks whether a JSON document contains a specified value.
 ```go
-function := uast.JsonContains(uast.Column[string]("t", "metadata"), uast.Value(`"key1"`))
+function := uast.JsonContains(uast.Column[string]("t", "json"), uast.Value(`"key1"`))
 ```
 Output:
 ```text
-MySQL: JSON_CONTAINS("t"."metadata", '"key1"')
-PostgreSQL: "t"."metadata" @> '"key1"'::jsonb
+MySQL: JSON_CONTAINS("t"."json", '"key1"')
+PostgreSQL: "t"."json" @> '"key1"'::jsonb
 ```
 
 #### JsonExtract
 Extracts a value from a JSON document at the specified path. The `json` parameter is built with JsonPath and optional `JsonKey`/`JsonIndex`.
 ```go
 path := uast.JsonGroup(nil, uast.JsonKey("address"), uast.JsonKey("city"))
-function := uast.JsonExtract(uast.Column[string]("t", "profile"), uast.JsonPair(uast.Literal("$.address.city"), nil), uast.TypeString)
+function := uast.JsonExtract(uast.Column[string]("t", "json"), uast.JsonPair(uast.Literal("$.address.city"), nil), uast.TypeString)
 ```
 Output:
 ```text
-MySQL: JSON_EXTRACT("t"."profile", '$.address.city') AS STRING
-PostgreSQL: "t"."profile"->>'address.city'
+MySQL: JSON_EXTRACT("t"."json", '$.address.city') AS STRING
+PostgreSQL: "t"."json"->>'address.city'
 ```
 
 #### JsonObject
 Builds a JSON object from key-value pairs.
 ```go
 function := uast.JsonObject(
-    uast.JsonPair(uast.Value("name"), uast.Column[string]("u", "full_name")),
+    uast.JsonPair(uast.Value("name"), uast.Column[string]("u", "json")),
     uast.JsonPair(uast.Value("age"), uast.Column[int]("u", "age")),
 )
 ```
 Output:
 ```text
-JSON_OBJECT('name', "u"."full_name", 'age', "u"."age")
+JSON_OBJECT('name', "u"."json", 'age', "u"."age")
 ```
 
 #### JsonObjectAgg
@@ -1168,37 +1171,40 @@ PostgreSQL: JSON_OBJECT_AGG("t"."key", "t"."value")
 Removes a value from a JSON document at the specified path(s).
 ```go
 paths := uast.JsonGroup(nil, uast.JsonKey("temp_field"))
-function := uast.JsonRemove(uast.Column[string]("t", "data"), paths)
+function := uast.JsonRemove(uast.Column[string]("t", "json"), paths)
 ```
 Output:
 ```text
-MySQL: JSON_REMOVE("t"."data", '$.temp_field')
-PostgreSQL: "t"."data" - 'temp_field'
+MySQL: JSON_REMOVE("t"."json", '$.temp_field')
+PostgreSQL: "t"."json" - 'temp_field'
 ```
 
 #### JsonSet
 Sets a value in a JSON document at the specified path(s). Creates the path if it does not exist.
 ```go
 function := uast.JsonSet(
-    uast.Column[string]("t", "settings"),
+    uast.Column[string]("t", "json"),
     uast.JsonPair(uast.Value("$.theme"), uast.Value("dark")),
 )
 ```
 Output:
 ```text
-MySQL: JSON_SET("t"."settings", '$.theme', 'dark')
-PostgreSQL: jsonb_set("t"."settings", '{theme}', '"dark"')
+MySQL: JSON_SET("t"."json", '$.theme', 'dark')
+PostgreSQL: jsonb_set("t"."json", '{theme}', '"dark"')
 ```
 
 #### JsonType
 Returns the JSON type of a JSON value (e.g., 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
 ```go
-function := uast.JsonType(uast.Column[string]("t", "attributes"))
+function := uast.JsonType(uast.Column[string]("t", "json"))
 ```
-Output:
+Output MySQL:
 ```text
-MySQL: JSON_TYPE("t"."attributes")
-PostgreSQL: jsonb_typeof("t"."attributes")
+JSON_TYPE("t"."json")
+```
+Output PostgreSQL:
+```text
+jsonb_typeof("t"."json")
 ```
 
 ### Math

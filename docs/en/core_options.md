@@ -338,11 +338,11 @@ constant := uast.ConstFloat32One()
 ```
 Output:
 ```text
-1.000000
+1.0
 ```
 
 ### ConstFloat64One
-Returns a constant `float64` value of `1.0`.
+Returns a constant `float64` value of `1.000000`.
 ```go
 constant := uast.ConstFloat64One()
 ```
@@ -401,24 +401,24 @@ Output:
 1
 ```
 
-### ConstNullDefault
-Returns a typed `NULL` constant. The type is determined by the generic parameter `T`. This allows `NULL` to be used in typed contexts without explicit casting.
-```go
-constant := uast.ConstNullDefault[string]()
-```
-Output:
-```text
-
-```
-
 ### ConstStringDefault
-Returns a constant empty string expression (` `). Used when an empty string needs to be embedded directly in the SQL without a placeholder.
+Returns a constant `string` value of `DEFAULT`.
 ```go
 constant := uast.ConstStringDefault()
 ```
 Output:
 ```text
 DEFAULT
+```
+
+### ConstStringNull
+Returns a constant `string` value of `NULL`.
+```go
+constant := uast.ConstStringNull()
+```
+Output:
+```text
+NULL
 ```
 
 ### ConstUintOne

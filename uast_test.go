@@ -299,15 +299,15 @@ func Test_Core_Function(t *testing.T) {
 			Week(Test.CreateAt).As("datetime_week"),
 			Year(Test.CreateAt).As("datetime_year"),
 			// Функции обмена данными
-			JsonArray(Users.Data, Value("test"), Value("test")).As("json_jsonarray"),
-			JsonArrayAgg(Users.Data).As("json_jsonarrayagg"),
-			JsonContains(Users.Data, Value(`{"theme":"dark"}`)).As("json_jsoncontains"),
-			JsonExtract(Users.Data, JsonGroup(JsonPath(JsonKey("col"), JsonIndex(0), JsonKey("name"))), TypeString).As("json_jsonextract"),
-			JsonObject(JsonPair(JsonKey("users"), Count(Users.Data, false))).As("json_jsonobject"),
-			JsonObjectAgg(Users.Data, Test.Number).As("json_jsonobjectagg"),
-			JsonRemove(Users.Data, JsonGroup(JsonPath(JsonKey("temp"))), JsonGroup(JsonPath(JsonKey("session")))).As("json_jsonremove"),
-			JsonSet(Users.Data, JsonGroup(JsonPath(JsonKey("temp")), Value(0)), JsonGroup(JsonPath(JsonKey("session")), Value("active"))).As("json_jsonset"),
-			JsonType(Users.Data).As("json_jsontype"),
+			JsonArray(Test.Json, Value("test"), Value("test")).As("json_jsonarray"),
+			JsonArrayAgg(Test.Json).As("json_jsonarrayagg"),
+			JsonContains(Test.Json, Value(`{"theme":"dark"}`)).As("json_jsoncontains"),
+			JsonExtract(Test.Json, JsonGroup(JsonPath(JsonKey("col"), JsonIndex(0), JsonKey("name"))), TypeString).As("json_jsonextract"),
+			JsonObject(JsonPair(JsonKey("users"), Count(Test.Json, false))).As("json_jsonobject"),
+			JsonObjectAgg(Test.Json, Test.Number).As("json_jsonobjectagg"),
+			JsonRemove(Test.Json, JsonGroup(JsonPath(JsonKey("temp"))), JsonGroup(JsonPath(JsonKey("session")))).As("json_jsonremove"),
+			JsonSet(Test.Json, JsonGroup(JsonPath(JsonKey("temp")), Value(0)), JsonGroup(JsonPath(JsonKey("session")), Value("active"))).As("json_jsonset"),
+			JsonType(Test.Json).As("json_jsontype"),
 			// Функции математические
 			Abs(Test.Number).As("math_abs"),
 			ACos(Test.Number).As("math_acos"),
@@ -429,15 +429,15 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "WEEK(`t`.`createat`)", "FUNCTION WEEK")
 			assertContains(t, sqlSelectQuery, "YEAR(`t`.`createat`)", "FUNCTION YEAR")
 			// Функции обмена данными
-			assertContains(t, sqlSelectQuery, "JSON_ARRAY(`u`.`data`, ?, ?)", "FUNCTION JSONARRAY")
-			assertContains(t, sqlSelectQuery, "JSON_ARRAYAGG(`u`.`data`)", "FUNCTION JSONARRAYAGG")
-			assertContains(t, sqlSelectQuery, "JSON_CONTAINS(`u`.`data`, ?)", "FUNCTION JSONCONTAINS")
-			assertContains(t, sqlSelectQuery, "(`u`.`data` ->> '$.col[0].name')", "FUNCTION JSONEXTRACT")
-			assertContains(t, sqlSelectQuery, "JSON_OBJECT('users', COUNT(`u`.`data`))", "FUNCTION JSONOBJECT")
-			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG(`u`.`data`, `t`.`number`)", "FUNCTION JSONOBJECTAGG")
-			assertContains(t, sqlSelectQuery, "JSON_REMOVE(`u`.`data`, '$.temp', '$.session')", "FUNCTION JSONREMOVE")
-			assertContains(t, sqlSelectQuery, "JSON_SET(`u`.`data`, '$.temp', ?, '$.session', ?)", "FUNCTION JSONSET")
-			assertContains(t, sqlSelectQuery, "JSON_TYPE(`u`.`data`)", "FUNCTION JSONTYPE")
+			assertContains(t, sqlSelectQuery, "JSON_ARRAY(`t`.`json`, ?, ?)", "FUNCTION JSONARRAY")
+			assertContains(t, sqlSelectQuery, "JSON_ARRAYAGG(`t`.`json`)", "FUNCTION JSONARRAYAGG")
+			assertContains(t, sqlSelectQuery, "JSON_CONTAINS(`t`.`json`, ?)", "FUNCTION JSONCONTAINS")
+			assertContains(t, sqlSelectQuery, "(`t`.`json` ->> '$.col[0].name')", "FUNCTION JSONEXTRACT")
+			assertContains(t, sqlSelectQuery, "JSON_OBJECT('users', COUNT(`t`.`json`))", "FUNCTION JSONOBJECT")
+			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG(`t`.`json`, `t`.`number`)", "FUNCTION JSONOBJECTAGG")
+			assertContains(t, sqlSelectQuery, "JSON_REMOVE(`t`.`json`, '$.temp', '$.session')", "FUNCTION JSONREMOVE")
+			assertContains(t, sqlSelectQuery, "JSON_SET(`t`.`json`, '$.temp', ?, '$.session', ?)", "FUNCTION JSONSET")
+			assertContains(t, sqlSelectQuery, "JSON_TYPE(`t`.`json`)", "FUNCTION JSONTYPE")
 			// Функции математические
 			assertContains(t, sqlSelectQuery, "ABS(`t`.`number`)", "FUNCTION ABS")
 			assertContains(t, sqlSelectQuery, "ACOS(`t`.`number`)", "FUNCTION ACOS")
@@ -537,15 +537,15 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `EXTRACT(WEEK FROM "t"."createat")`, "FUNCTION WEEK")
 			assertContains(t, sqlSelectQuery, `EXTRACT(YEAR FROM "t"."createat")`, "FUNCTION YEAR")
 			// Функции обмена данными
-			assertContains(t, sqlSelectQuery, `JSON_ARRAY("u"."data", $1, $2)`, "FUNCTION JSONARRAY")
-			assertContains(t, sqlSelectQuery, `JSON_AGG("u"."data")`, "FUNCTION JSONARRAYAGG")
-			assertContains(t, sqlSelectQuery, `("u"."data" @> $1)`, "FUNCTION JSONCONTAINS")
-			assertContains(t, sqlSelectQuery, `("u"."data" #>> '{col,0,name}')`, "FUNCTION JSONEXTRACT")
-			assertContains(t, sqlSelectQuery, `JSON_BUILD_OBJECT('users', COUNT("u"."data"))`, "FUNCTION JSONOBJECT")
-			assertContains(t, sqlSelectQuery, `JSON_OBJECT_AGG("u"."data", "t"."number")`, "FUNCTION JSONOBJECTAGG")
-			assertContains(t, sqlSelectQuery, `("u"."data" - '{temp}' - '{session}')`, "FUNCTION JSONREMOVE")
+			assertContains(t, sqlSelectQuery, `JSON_ARRAY("t"."json", $1, $2)`, "FUNCTION JSONARRAY")
+			assertContains(t, sqlSelectQuery, `JSON_AGG("t"."json")`, "FUNCTION JSONARRAYAGG")
+			assertContains(t, sqlSelectQuery, `("t"."json" @> $1)`, "FUNCTION JSONCONTAINS")
+			assertContains(t, sqlSelectQuery, `("t"."json" #>> '{col,0,name}')`, "FUNCTION JSONEXTRACT")
+			assertContains(t, sqlSelectQuery, `JSON_BUILD_OBJECT('users', COUNT("t"."json"))`, "FUNCTION JSONOBJECT")
+			assertContains(t, sqlSelectQuery, `JSON_OBJECT_AGG("t"."json", "t"."number")`, "FUNCTION JSONOBJECTAGG")
+			assertContains(t, sqlSelectQuery, `("t"."json" - '{temp}' - '{session}')`, "FUNCTION JSONREMOVE")
 			//assertContains(t, sqlSelectQuery, `jsonb_set`, "FUNCTION JSONSET")
-			assertContains(t, sqlSelectQuery, `jsonb_typeof("u"."data")`, "FUNCTION JSONTYPE")
+			assertContains(t, sqlSelectQuery, `jsonb_typeof("t"."json")`, "FUNCTION JSONTYPE")
 			// Функции математические
 			assertContains(t, sqlSelectQuery, `ABS("t"."number")`, "FUNCTION ABS")
 			assertContains(t, sqlSelectQuery, `ACOS("t"."number")`, "FUNCTION ACOS")

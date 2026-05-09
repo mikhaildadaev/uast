@@ -10,7 +10,7 @@ func Test_Core_Array(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		stmtSelect := NewSelect(Array(1, 2, 3)).
+		stmtSelect := NewSelect(Array(0, 1, 2)).
 			From(Test.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -30,9 +30,9 @@ func Test_Core_Binary(t *testing.T) {
 			From(Test.Table).
 			Where(
 				And(
-					Equal(Test.Number, BitwiseAnd(Test.Number, Value(0b0011))),
-					Equal(Test.Number, BitwiseOr(Test.Number, Value(0b1100))),
-					Equal(Test.Number, BitwiseXor(Test.Number, Value(0b1111))),
+					Equal(Test.Number, BitwiseAnd(Test.Number, Value(0b0010))),
+					Equal(Test.Number, BitwiseOr(Test.Number, Value(0b0010))),
+					Equal(Test.Number, BitwiseXor(Test.Number, Value(0b0010))),
 					Equal(Test.Number, Divide(Test.Number, Value(2))),
 					Equal(Test.Number, Minus(Test.Number, Value(2))),
 					Equal(Test.Number, Modulo(Test.Number, Value(2))),
@@ -94,20 +94,20 @@ func Test_Core_Comparison(t *testing.T) {
 			From(Test.Table).
 			Where(
 				And(
-					Between(Test.Number, Value(18), Value(65)),
-					Equal(Test.Number, Value(18)),
+					Between(Test.Number, Value(0), Value(2)),
+					Equal(Test.Number, Value(2)),
 					Exists(Subquery[int](NewSelect(ConstIntOne()).From(Users.Table))),
-					Greater(Test.Number, Value(18)),
-					GreaterEqual(Test.Number, Value(18)),
+					Greater(Test.Number, Value(2)),
+					GreaterEqual(Test.Number, Value(2)),
 					ILike(Test.String, Value("%ivan%")),
 					In(Test.String, Array("active", "pending")),
 					IsNotNull(Test.String),
 					IsNull(Test.String),
-					Less(Test.Number, Value(18)),
-					LessEqual(Test.Number, Value(18)),
+					Less(Test.Number, Value(2)),
+					LessEqual(Test.Number, Value(2)),
 					Like(Test.String, Value("%@gmail.com")),
-					NotBetween(Test.Number, Value(18), Value(65)),
-					NotEqual(Test.Number, Value(18)),
+					NotBetween(Test.Number, Value(0), Value(2)),
+					NotEqual(Test.Number, Value(2)),
 					NotExists(Subquery[int](NewSelect(ConstIntOne()).From(Users.Table))),
 					NotILike(Test.String, Value("%ivan%")),
 					NotIn(Test.String, Array("active", "pending")),
@@ -281,9 +281,9 @@ func Test_Core_Function(t *testing.T) {
 			// Функции даты и времени
 			CurDate().As("datetime_curdate"),
 			CurTime().As("datetime_curtime"),
-			DateAdd(Test.CreateAt, Literal("4 DAY")).As("datetime_dateadd"),
+			DateAdd(Test.CreateAt, Literal("2 DAY")).As("datetime_dateadd"),
 			DateDiff(Test.UpdateAt, Test.CreateAt).As("datetime_datediff"),
-			DateSub(Test.CreateAt, Literal("4 DAY")).As("datetime_datesub"),
+			DateSub(Test.CreateAt, Literal("2 DAY")).As("datetime_datesub"),
 			Day(Test.CreateAt).As("datetime_day"),
 			DayName(Test.CreateAt).As("datetime_dayname"),
 			Hour(Test.CreateAt).As("datetime_hour"),
@@ -293,9 +293,9 @@ func Test_Core_Function(t *testing.T) {
 			Now().As("datetime_now"),
 			Quarter(Test.CreateAt).As("datetime_quarter"),
 			Second(Test.CreateAt).As("datetime_second"),
-			TimeAdd(Test.CreateAt, Literal("4 HOUR")).As("datetime_timeadd"),
+			TimeAdd(Test.CreateAt, Literal("2 HOUR")).As("datetime_timeadd"),
 			TimeDiff(Test.UpdateAt, Test.CreateAt).As("datetime_timediff"),
-			TimeSub(Test.CreateAt, Literal("4 HOUR")).As("datetime_timesub"),
+			TimeSub(Test.CreateAt, Literal("2 HOUR")).As("datetime_timesub"),
 			Week(Test.CreateAt).As("datetime_week"),
 			Year(Test.CreateAt).As("datetime_year"),
 			// Функции обмена данными
@@ -320,16 +320,16 @@ func Test_Core_Function(t *testing.T) {
 			Exp(Test.Number).As("math_exp"),
 			Floor(Test.Number).As("math_floor"),
 			Ln(Test.Number).As("math_ln"),
-			Log(Test.Number, Value(3)).As("math_log"),
-			Mod(Test.Number, Value(3)).As("math_mod"),
+			Log(Test.Number, Value(2)).As("math_log"),
+			Mod(Test.Number, Value(2)).As("math_mod"),
 			Pi().As("math_pi"),
-			Power(Test.Number, Value(3)).As("math_power"),
+			Power(Test.Number, Value(2)).As("math_power"),
 			Rand().As("math_rand"),
-			Round(Test.Number, Value(3)).As("math_round"),
+			Round(Test.Number, Value(2)).As("math_round"),
 			Sin(Test.Number).As("math_sin"),
 			Sqrt(Test.Number).As("math_sqrt"),
 			Tan(Test.Number).As("math_tan"),
-			Trunc(Test.Number, Value(3)).As("math_trunc"),
+			Trunc(Test.Number, Value(2)).As("math_trunc"),
 			// Функции ранжирующие
 			CumeDist().Over(
 				PartitionBy(Test.ID),
@@ -339,7 +339,7 @@ func Test_Core_Function(t *testing.T) {
 				PartitionBy(Test.ID),
 				OrderBy(Desc(Test.Number)),
 			).As("ranking_denserank"),
-			NTile(4).Over(
+			NTile(2).Over(
 				PartitionBy(Test.ID),
 				OrderBy(Desc(Test.Number)),
 			).As("ranking_ntile"),
@@ -362,7 +362,7 @@ func Test_Core_Function(t *testing.T) {
 			Lower(Test.String).As("string_lower"),
 			LPad(Test.String, Value(2), Value(",")).As("string_lpad"),
 			LTrim(Test.String).As("string_ltrim"),
-			Repeat(Test.String, Value(3)).As("string_repeat"),
+			Repeat(Test.String, Value(2)).As("string_repeat"),
 			Replace(Test.String, Value("old"), Value("new")).As("string_replace"),
 			Reverse(Test.String).As("string_reverse"),
 			RightString(Test.String, Value(2)).As("string_rstr"),
@@ -411,9 +411,9 @@ func Test_Core_Function(t *testing.T) {
 			// Функции даты и времени
 			assertContains(t, sqlSelectQuery, "CURDATE()", "FUNCTION CURDATE")
 			assertContains(t, sqlSelectQuery, "CURTIME()", "FUNCTION CURTIME")
-			assertContains(t, sqlSelectQuery, "DATE_ADD(`t`.`createat`, INTERVAL '4 DAY')", "FUNCTION DATEADD")
+			assertContains(t, sqlSelectQuery, "DATE_ADD(`t`.`createat`, INTERVAL '2 DAY')", "FUNCTION DATEADD")
 			assertContains(t, sqlSelectQuery, "DATEDIFF(`t`.`updateat`, `t`.`createat`)", "FUNCTION DATEDIFF")
-			assertContains(t, sqlSelectQuery, "DATE_SUB(`t`.`createat`, INTERVAL '4 DAY')", "FUNCTION DATESUB")
+			assertContains(t, sqlSelectQuery, "DATE_SUB(`t`.`createat`, INTERVAL '2 DAY')", "FUNCTION DATESUB")
 			assertContains(t, sqlSelectQuery, "DAY(`t`.`createat`)", "FUNCTION DAY")
 			assertContains(t, sqlSelectQuery, "DAYNAME(`t`.`createat`)", "FUNCTION DAYNAME")
 			assertContains(t, sqlSelectQuery, "HOUR(`t`.`createat`)", "FUNCTION HOUR")
@@ -423,9 +423,9 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "NOW()", "FUNCTION NOW")
 			assertContains(t, sqlSelectQuery, "QUARTER(`t`.`createat`)", "FUNCTION QUARTER")
 			assertContains(t, sqlSelectQuery, "SECOND(`t`.`createat`)", "FUNCTION SECOND")
-			assertContains(t, sqlSelectQuery, "TIME_ADD(`t`.`createat`, INTERVAL '4 HOUR')", "FUNCTION TIMEADD")
+			assertContains(t, sqlSelectQuery, "TIME_ADD(`t`.`createat`, INTERVAL '2 HOUR')", "FUNCTION TIMEADD")
 			assertContains(t, sqlSelectQuery, "TIMEDIFF(`t`.`updateat`, `t`.`createat`)", "FUNCTION TIMEDIFF")
-			assertContains(t, sqlSelectQuery, "TIME_SUB(`t`.`createat`, INTERVAL '4 HOUR')", "FUNCTION TIMESUB")
+			assertContains(t, sqlSelectQuery, "TIME_SUB(`t`.`createat`, INTERVAL '2 HOUR')", "FUNCTION TIMESUB")
 			assertContains(t, sqlSelectQuery, "WEEK(`t`.`createat`)", "FUNCTION WEEK")
 			assertContains(t, sqlSelectQuery, "YEAR(`t`.`createat`)", "FUNCTION YEAR")
 			// Функции обмена данными
@@ -463,7 +463,7 @@ func Test_Core_Function(t *testing.T) {
 			// Функции ранжирующие
 			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION CUMEDIST")
 			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION DENSERANK")
-			assertContains(t, sqlSelectQuery, "NTILE(4) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION NTILE")
+			assertContains(t, sqlSelectQuery, "NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION NTILE")
 			assertContains(t, sqlSelectQuery, "PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION PERCENTRANK")
 			assertContains(t, sqlSelectQuery, "RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION RANK")
 			assertContains(t, sqlSelectQuery, "ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION ROWNUMBER")
@@ -519,9 +519,9 @@ func Test_Core_Function(t *testing.T) {
 			// Функции даты и времени
 			assertContains(t, sqlSelectQuery, `CURRENT_DATE`, "FUNCTION CURDATE")
 			assertContains(t, sqlSelectQuery, `CURRENT_TIME`, "FUNCTION CURTIME")
-			assertContains(t, sqlSelectQuery, `("t"."createat" + INTERVAL '4 DAY')`, "FUNCTION DATEADD")
+			assertContains(t, sqlSelectQuery, `("t"."createat" + INTERVAL '2 DAY')`, "FUNCTION DATEADD")
 			assertContains(t, sqlSelectQuery, `DATE_PART('day', "t"."updateat" - "t"."createat")`, "FUNCTION DATEDIFF")
-			assertContains(t, sqlSelectQuery, `("t"."createat" - INTERVAL '4 DAY')`, "FUNCTION DATESUB")
+			assertContains(t, sqlSelectQuery, `("t"."createat" - INTERVAL '2 DAY')`, "FUNCTION DATESUB")
 			assertContains(t, sqlSelectQuery, `EXTRACT(DAY FROM "t"."createat")`, "FUNCTION DAY")
 			assertContains(t, sqlSelectQuery, `TO_CHAR("t"."createat", 'Day')`, "FUNCTION DAYNAME")
 			assertContains(t, sqlSelectQuery, `EXTRACT(HOUR FROM "t"."createat")`, "FUNCTION HOUR")
@@ -531,9 +531,9 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `CURRENT_TIMESTAMP`, "FUNCTION NOW")
 			assertContains(t, sqlSelectQuery, `EXTRACT(QUARTER FROM "t"."createat")`, "FUNCTION QUARTER")
 			assertContains(t, sqlSelectQuery, `EXTRACT(SECOND FROM "t"."createat")`, "FUNCTION SECOND")
-			assertContains(t, sqlSelectQuery, `("t"."createat" + INTERVAL '4 HOUR')`, "FUNCTION TIMEADD")
+			assertContains(t, sqlSelectQuery, `("t"."createat" + INTERVAL '2 HOUR')`, "FUNCTION TIMEADD")
 			assertContains(t, sqlSelectQuery, `DATE_PART('time', "t"."updateat" - "t"."createat")`, "FUNCTION TIMEDIFF")
-			assertContains(t, sqlSelectQuery, `("t"."createat" - INTERVAL '4 HOUR')`, "FUNCTION TIMESUB")
+			assertContains(t, sqlSelectQuery, `("t"."createat" - INTERVAL '2 HOUR')`, "FUNCTION TIMESUB")
 			assertContains(t, sqlSelectQuery, `EXTRACT(WEEK FROM "t"."createat")`, "FUNCTION WEEK")
 			assertContains(t, sqlSelectQuery, `EXTRACT(YEAR FROM "t"."createat")`, "FUNCTION YEAR")
 			// Функции обмена данными
@@ -571,7 +571,7 @@ func Test_Core_Function(t *testing.T) {
 			// Функции ранжирующие
 			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION CUMEDIST")
 			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "DFUNCTION ENSERANK")
-			assertContains(t, sqlSelectQuery, `NTILE(4) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION NTILE")
+			assertContains(t, sqlSelectQuery, `NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION NTILE")
 			assertContains(t, sqlSelectQuery, `PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION PERCENTRANK")
 			assertContains(t, sqlSelectQuery, `RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION RANK")
 			assertContains(t, sqlSelectQuery, `ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION ROWNUMBER")
@@ -624,11 +624,11 @@ func Test_Core_Logical(t *testing.T) {
 				And(
 					And(
 						Equal(Test.String, Value("active")),
-						Greater(Test.Number, Value(18)),
+						Greater(Test.Number, Value(2)),
 					),
 					Or(
 						Equal(Test.String, Value("active")),
-						Greater(Test.Number, Value(18)),
+						Greater(Test.Number, Value(2)),
 					),
 				),
 			)
@@ -678,7 +678,7 @@ func Test_Core_Subquery(t *testing.T) {
 		queryInSub := NewSelect(Orders.UserID).
 			From(Orders.Table).
 			Where(
-				Greater(Orders.Amount, Value(1000)),
+				Greater(Orders.Amount, Value(2)),
 			)
 		queryExistsSub := NewSelect(Orders.ID).
 			From(Orders.Table).
@@ -741,7 +741,7 @@ func Test_Delete(t *testing.T) {
 			Count(Orders.ID, false).As("order_count"),
 		).
 			From(Orders.Table).
-			Where(Greater(Orders.Amount, Value(100))).
+			Where(Greater(Orders.Amount, Value(2))).
 			GroupBy(Orders.UserID),
 			"user_id", "order_count")
 		stmtDelete := NewDelete(Users.Table).
@@ -843,8 +843,8 @@ func Test_Delete_Where(t *testing.T) {
 			Where(
 				And(
 					Equal(Users.Status, Value("active")),
-					Greater(Users.Age, Value(18)),
-					Less(Users.Age, Value(65)),
+					Greater(Users.Age, Value(2)),
+					Less(Users.Age, Value(2)),
 					In(Users.DepartmentID, Array[int64](1, 2, 3)),
 					Like(Users.Email, Value("%@company.com")),
 					Exists(Subquery[int](existsSub)),
@@ -882,7 +882,7 @@ func Test_Delete_With(t *testing.T) {
 		defer sql.Close()
 		cte := WithN("old_users", NewSelect(Users.ID).
 			From(Users.Table).
-			Where(Less(Users.Age, Value(18))),
+			Where(Less(Users.Age, Value(2))),
 		)
 		stmtDelete := NewDelete(Users.Table).
 			Where(In(Users.ID, Subquery[int64](NewSelect(Column[int64]("old_users", "id"))))).
@@ -910,19 +910,19 @@ func Test_Insert(t *testing.T) {
 		).
 			From(Orders.Table).
 			Where(
-				Greater(Orders.Amount, Value(100)),
+				Greater(Orders.Amount, Value(2)),
 			).
 			GroupBy(Orders.UserID),
 			"user_id", "order_count",
 		)
 		stmtInsert := NewInsert(Users.Name, Users.Age).
 			Into(Users.Table).
-			Source(NewSelect(Value("Test User"), Value(35)).
+			Source(NewSelect(Value("Test User"), Value(2)).
 				Where(
 					Exists(Subquery[int64](NewSelect(Stats.UserID).
 						From(CTE("user_stats", "us")).
 						Where(
-							Greater(Stats.OrderCount, Value(3)),
+							Greater(Stats.OrderCount, Value(2)),
 						),
 					)),
 				),
@@ -959,7 +959,7 @@ func Test_Select(t *testing.T) {
 			Sum(Orders.Amount, false).As("total_spent"),
 		).
 			From(Orders.Table).
-			Where(Greater(Orders.Amount, Value(100))).
+			Where(Greater(Orders.Amount, Value(2))).
 			GroupBy(Orders.UserID),
 			"user_id", "order_count", "total_spent",
 		)
@@ -995,7 +995,7 @@ func Test_Select(t *testing.T) {
 			Having(
 				Or(
 					IsNotNull(Users.ID),
-					Greater(Stats.OrderCount, Value(0)),
+					Greater(Stats.OrderCount, Value(2)),
 				),
 			).
 			OrderBy(
@@ -1066,7 +1066,7 @@ func Test_Select_GroupBy(t *testing.T) {
 			From(Users.Table).
 			Where(
 				And(
-					GreaterEqual(Users.Age, Value(18)),
+					GreaterEqual(Users.Age, Value(2)),
 					NotEqual(Users.Status, Value("deleted")),
 				),
 			).
@@ -1098,9 +1098,9 @@ func Test_Select_Having(t *testing.T) {
 			GroupBy(Users.DepartmentID).
 			Having(
 				And(
-					Greater(Count(Users.ID, false), Value[int64](5)),
-					Greater(Sum(Users.Age, false), Value(100)),
-					Between(Avg(Users.Age, false), Value(25), Value(40)),
+					Greater(Count(Users.ID, false), Value[int64](2)),
+					Greater(Sum(Users.Age, false), Value(2)),
+					Between(Avg(Users.Age, false), Value(0), Value(2)),
 					In(Users.DepartmentID, Array[int64](1, 2, 3)),
 				),
 			)
@@ -1243,7 +1243,7 @@ func Test_Select_Unions(t *testing.T) {
 		).
 			From(Products.Table).
 			Where(
-				Greater(Products.Count, Value(10)),
+				Greater(Products.Count, Value(2)),
 			)
 		queryUnionExcept := NewSelect(
 			Categories.Name.As("person_name"),
@@ -1307,8 +1307,8 @@ func Test_Select_Where(t *testing.T) {
 			Where(
 				And(
 					Equal(Users.Status, Value("active")),
-					Greater(Users.Age, Value(18)),
-					Less(Users.Age, Value(65)),
+					Greater(Users.Age, Value(2)),
+					Less(Users.Age, Value(2)),
 					In(Users.DepartmentID, Array[int64](1, 2, 3)),
 					Like(Users.Email, Value("%@company.com")),
 					Exists(Subquery[int](existsSub)),
@@ -1350,7 +1350,7 @@ func Test_Select_With(t *testing.T) {
 			Sum(Orders.Amount, false).As("total_spent"),
 		).
 			From(Orders.Table).
-			Where(Greater(Orders.Amount, Value(1000))).
+			Where(Greater(Orders.Amount, Value(2))).
 			GroupBy(Orders.UserID),
 			"user_id", "order_count", "total_spent",
 		)
@@ -1413,13 +1413,13 @@ func Test_Select_With(t *testing.T) {
 			Where(
 				And(
 					Equal(Users.Status, Value("active")),
-					Greater(Stats.OrderCount, Value(0)),
+					Greater(Stats.OrderCount, Value(2)),
 					Or(
 						And(
-							Greater(Users.Age, Value(18)),
-							Less(Users.Age, Value(65)),
+							Greater(Users.Age, Value(2)),
+							Less(Users.Age, Value(2)),
 						),
-						Equal(Users.Age, Value(0)),
+						Equal(Users.Age, Value(2)),
 					),
 					IsNotNull(Users.Email),
 					NotLike(Users.Email, Value("%@test.%")),
@@ -1432,8 +1432,8 @@ func Test_Select_With(t *testing.T) {
 			).
 			Having(
 				And(
-					Greater(Stats.OrderCount, Value(5)),
-					Greater(Stats.TotalSpent, Value(5000)),
+					Greater(Stats.OrderCount, Value(2)),
+					Greater(Stats.TotalSpent, Value(2)),
 					Or(
 						Equal(Levels.Status, Value("active")),
 						IsNull(Levels.ID),
@@ -1475,7 +1475,7 @@ func Test_Update(t *testing.T) {
 			Count(Orders.ID, false).As("order_count"),
 		).
 			From(Orders.Table).
-			Where(Greater(Orders.Amount, Value(100))).
+			Where(Greater(Orders.Amount, Value(2))).
 			GroupBy(Orders.UserID),
 			"user_id", "order_count")
 		stmtUpdate := NewUpdate(Users.Table).

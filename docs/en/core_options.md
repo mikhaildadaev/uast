@@ -1715,15 +1715,11 @@ Output:
 ## Subquery
 Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
-subquery := uast.Subquery[int](
-    uast.NewSelect(uast.Column[int]("c", "id")).
-        From(uast.Table("categories")).
-        Where(uast.Equal(uast.Column[string]("c", "slug"), uast.Value("books"))),
-)
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test")))
 ```
 Output:
 ```text
-(SELECT "c"."id" FROM "categories" WHERE "c"."slug" = 'books')
+(SELECT "t"."id" FROM "test" AS "t")
 ```
 
 ## Value

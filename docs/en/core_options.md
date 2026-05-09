@@ -153,17 +153,11 @@ Output:
 ### Exists
 Checks if the subquery returns any rows. Returns `true` if at least one row exists.
 ```go
-nested := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("orders")).Where(
-    uast.Equal(
-        uast.Column[int]("orders", "user_id"),
-        uast.Column[int]("users", "id"),
-    ),
-)
-comparison := uast.Exists(uast.Subquery[int](nested))
+comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
 ```
 Output:
 ```text
-EXISTS (SELECT * FROM "orders" WHERE "orders"."user_id" = "users"."id")
+EXISTS (SELECT 1 FROM "test" AS "t")
 ```
 
 ### Greater
@@ -279,17 +273,11 @@ Output:
 ### NotExists
 Checks if the subquery returns no rows. Returns `true` if the subquery result is empty.
 ```go
-nested := uast.NewSelect(uast.Column[int]("*")).From(uast.Table("bans")).Where(
-    uast.Equal(
-        uast.Column[int]("bans", "user_id"),
-        uast.Column[int]("users", "id"),
-    ),
-)
-comparison := uast.NotExists(uast.Subquery[int](nested))
+comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
 ```
 Output:
 ```text
-NOT EXISTS (SELECT * FROM "bans" WHERE "bans"."user_id" = "users"."id")
+NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ```
 
 ### NotILike

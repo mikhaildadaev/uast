@@ -312,7 +312,7 @@ Output:
 
 ## Constant
 ### ConstBoolFalse
-Returns a constant boolean `FALSE` expression. Useful as a default placeholder or for constructing logical expressions without value binding.
+Returns a constant boolean `FALSE` expression.
 ```go
 constant := uast.ConstBoolFalse()
 ```
@@ -332,7 +332,7 @@ TRUE
 ```
 
 ### ConstFloat32One
-Returns a constant `float32` value of `1.0`. Optimized for internal comparisons and arithmetic where a unit value is required without binding a placeholder.
+Returns a constant `float32` value of `1.0`. 
 ```go
 constant := uast.ConstFloat32One()
 ```
@@ -1454,14 +1454,14 @@ DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 #### NTile
 Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
 ```go
-function := uast.NTile(4).Over(
+function := uast.NTile(2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
 Output:
 ```text
-NTILE(4) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### PercentRank

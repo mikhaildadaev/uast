@@ -105,13 +105,13 @@ func Test_Core_Comparison(t *testing.T) {
 					IsNull(Test.String),
 					Less(Test.Number, Value(2)),
 					LessEqual(Test.Number, Value(2)),
-					Like(Test.String, Value("%@gmail.com")),
+					Like(Test.String, Value("%ivan%")),
 					NotBetween(Test.Number, Value(0), Value(2)),
 					NotEqual(Test.Number, Value(2)),
 					NotExists(Subquery[int](NewSelect(ConstIntOne()).From(Users.Table))),
 					NotILike(Test.String, Value("%ivan%")),
 					NotIn(Test.String, Array("active", "pending")),
-					NotLike(Test.String, Value("%@gmail.com")),
+					NotLike(Test.String, Value("%ivan%")),
 				))
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -714,7 +714,7 @@ func Test_Core_Subquery(t *testing.T) {
 }
 func Test_Core_Value(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		var data string = "hello@world.com"
+		var data string = "ivan"
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID.As("id")).

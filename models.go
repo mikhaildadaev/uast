@@ -65,6 +65,7 @@ var Test = struct {
 	CreateAt *exprColumn[time.Time]
 	Date     *exprColumn[time.Time]
 	ID       *exprColumn[int64]
+	Json     *exprColumn[string]
 	Name     *exprColumn[string]
 	Number   *exprColumn[int]
 	String   *exprColumn[string]
@@ -128,6 +129,7 @@ func init() {
 	Test.CreateAt = Column[time.Time](Test.Table.aliasName, "createat")
 	Test.Date = Column[time.Time](Test.Table.aliasName, "date")
 	Test.ID = Column[int64](Test.Table.aliasName, "id")
+	Test.Json = Column[string](Test.Table.aliasName, "json")
 	Test.Name = Column[string](Test.Table.aliasName, "name")
 	Test.Number = Column[int](Test.Table.aliasName, "number")
 	Test.String = Column[string](Test.Table.aliasName, "string")

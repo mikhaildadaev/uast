@@ -299,14 +299,14 @@ func Test_Core_Function(t *testing.T) {
 			Week(Test.CreateAt).As("datetime_week"),
 			Year(Test.CreateAt).As("datetime_year"),
 			// Функции обмена данными
-			JsonArray(Test.Json, Value("test"), Value("test")).As("json_jsonarray"),
+			JsonArray(Test.Json, Value("val1"), Value("val2")).As("json_jsonarray"),
 			JsonArrayAgg(Test.Json).As("json_jsonarrayagg"),
-			JsonContains(Test.Json, Value(`{"theme":"dark"}`)).As("json_jsoncontains"),
-			JsonExtract(Test.Json, JsonGroup(JsonPath(JsonKey("col"), JsonIndex(0), JsonKey("name"))), TypeString).As("json_jsonextract"),
-			JsonObject(JsonPair(JsonKey("users"), Count(Test.Json, false))).As("json_jsonobject"),
+			JsonContains(Test.Json, Value(`{"key":"val"}`)).As("json_jsoncontains"),
+			JsonExtract(Test.Json, JsonGroup(JsonPath(JsonKey("parent"), JsonIndex(0), JsonKey("child"))), TypeString).As("json_jsonextract"),
+			JsonObject(JsonPair(JsonKey("key"), Count(Test.Json, false))).As("json_jsonobject"),
 			JsonObjectAgg(Test.Json, Test.Number).As("json_jsonobjectagg"),
-			JsonRemove(Test.Json, JsonGroup(JsonPath(JsonKey("temp"))), JsonGroup(JsonPath(JsonKey("session")))).As("json_jsonremove"),
-			JsonSet(Test.Json, JsonGroup(JsonPath(JsonKey("temp")), Value(0)), JsonGroup(JsonPath(JsonKey("session")), Value("active"))).As("json_jsonset"),
+			JsonRemove(Test.Json, JsonGroup(JsonPath(JsonKey("key1"))), JsonGroup(JsonPath(JsonKey("key2")))).As("json_jsonremove"),
+			JsonSet(Test.Json, JsonGroup(JsonPath(JsonKey("key1")), Value("val1")), JsonGroup(JsonPath(JsonKey("key2")), Value("val2"))).As("json_jsonset"),
 			JsonType(Test.Json).As("json_jsontype"),
 			// Функции математические
 			Abs(Test.Number).As("math_abs"),
@@ -432,11 +432,11 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "JSON_ARRAY(`t`.`json`, ?, ?)", "FUNCTION JSONARRAY")
 			assertContains(t, sqlSelectQuery, "JSON_ARRAYAGG(`t`.`json`)", "FUNCTION JSONARRAYAGG")
 			assertContains(t, sqlSelectQuery, "JSON_CONTAINS(`t`.`json`, ?)", "FUNCTION JSONCONTAINS")
-			assertContains(t, sqlSelectQuery, "(`t`.`json` ->> '$.col[0].name')", "FUNCTION JSONEXTRACT")
-			assertContains(t, sqlSelectQuery, "JSON_OBJECT('users', COUNT(`t`.`json`))", "FUNCTION JSONOBJECT")
+			assertContains(t, sqlSelectQuery, "(`t`.`json` ->> '$.parent[0].child')", "FUNCTION JSONEXTRACT")
+			assertContains(t, sqlSelectQuery, "JSON_OBJECT('key', COUNT(`t`.`json`))", "FUNCTION JSONOBJECT")
 			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG(`t`.`json`, `t`.`number`)", "FUNCTION JSONOBJECTAGG")
-			assertContains(t, sqlSelectQuery, "JSON_REMOVE(`t`.`json`, '$.temp', '$.session')", "FUNCTION JSONREMOVE")
-			assertContains(t, sqlSelectQuery, "JSON_SET(`t`.`json`, '$.temp', ?, '$.session', ?)", "FUNCTION JSONSET")
+			assertContains(t, sqlSelectQuery, "JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')", "FUNCTION JSONREMOVE")
+			assertContains(t, sqlSelectQuery, "JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)", "FUNCTION JSONSET")
 			assertContains(t, sqlSelectQuery, "JSON_TYPE(`t`.`json`)", "FUNCTION JSONTYPE")
 			// Функции математические
 			assertContains(t, sqlSelectQuery, "ABS(`t`.`number`)", "FUNCTION ABS")
@@ -540,10 +540,10 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `JSON_ARRAY("t"."json", $1, $2)`, "FUNCTION JSONARRAY")
 			assertContains(t, sqlSelectQuery, `JSON_AGG("t"."json")`, "FUNCTION JSONARRAYAGG")
 			assertContains(t, sqlSelectQuery, `("t"."json" @> $1)`, "FUNCTION JSONCONTAINS")
-			assertContains(t, sqlSelectQuery, `("t"."json" #>> '{col,0,name}')`, "FUNCTION JSONEXTRACT")
-			assertContains(t, sqlSelectQuery, `JSON_BUILD_OBJECT('users', COUNT("t"."json"))`, "FUNCTION JSONOBJECT")
+			assertContains(t, sqlSelectQuery, `("t"."json" #>> '{parent,0,child}')`, "FUNCTION JSONEXTRACT")
+			assertContains(t, sqlSelectQuery, `JSON_BUILD_OBJECT('key', COUNT("t"."json"))`, "FUNCTION JSONOBJECT")
 			assertContains(t, sqlSelectQuery, `JSON_OBJECT_AGG("t"."json", "t"."number")`, "FUNCTION JSONOBJECTAGG")
-			assertContains(t, sqlSelectQuery, `("t"."json" - '{temp}' - '{session}')`, "FUNCTION JSONREMOVE")
+			assertContains(t, sqlSelectQuery, `("t"."json" - '{key1}' - '{key2}')`, "FUNCTION JSONREMOVE")
 			//assertContains(t, sqlSelectQuery, `jsonb_set`, "FUNCTION JSONSET")
 			assertContains(t, sqlSelectQuery, `jsonb_typeof("t"."json")`, "FUNCTION JSONTYPE")
 			// Функции математические

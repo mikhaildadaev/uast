@@ -11,42 +11,42 @@ This page covers all configuration options: `Array`, `Binary`, `Comparison`, `Co
 ## Array
 Constructs an array expression for use in SQL queries.
 ```go
-array := uast.Array(1, 2, 3)
+array := uast.Array(0, 1, 2)
 ```
 Output:
 ```text
-ARRAY[1, 2, 3]
+ARRAY[0, 1, 2]
 ```
 
 ## Binary
 ### BitwiseAnd
 Performs a bitwise AND operation between two expressions.
 ```go
-binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0011))
+binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
 Output:
 ```text
-"t"."number" & 3
+"t"."number" & 2
 ```
 
 ### BitwiseOr
 Performs a bitwise OR operation between two expressions.
 ```go
-binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b1100))
+binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
 Output:
 ```text
-"t"."number" | 12
+"t"."number" | 2
 ```
 
 ### BitwiseXor
 Performs a bitwise XOR operation between two expressions.
 ```go
-binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b1111))
+binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
 Output:
 ```text
-"t"."number" ^ 15
+"t"."number" ^ 2
 ```
 
 ### Divide
@@ -133,21 +133,21 @@ Output:
 ### Between
 Checks if the left expression falls within the range defined by `valueStart` and `valueEnd` (inclusive).
 ```go
-comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(18), uast.Value(65))
+comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" BETWEEN 18 AND 65
+"t"."number" BETWEEN 0 AND 2
 ```
 
 ### Equal
 Compares two expressions for equality (`=`).
 ```go
-comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(18))
+comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" = 18
+"t"."number" = 2
 ```
 
 ### Exists
@@ -169,21 +169,21 @@ EXISTS (SELECT * FROM "orders" WHERE "orders"."user_id" = "users"."id")
 ### Greater
 Compares if the left expression is greater than the right expression (`>`).
 ```go
-comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(18))
+comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" > 18
+"t"."number" > 2
 ```
 
 ### GreaterEqual
 Compares if the left expression is greater than or equal to the right expression (`>=`).
 ```go
-comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(18))
+comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" >= 18
+"t"."number" >= 2
 ```
 
 ### ILike
@@ -229,51 +229,51 @@ Output:
 ### Less
 Compares if the left expression is less than the right expression (`<`).
 ```go
-comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(18))
+comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" < 18
+"t"."number" < 2
 ```
 
 ### LessEqual
 Compares if the left expression is less than or equal to the right expression (`<=`).
 ```go
-comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(18))
+comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" <= 18
+"t"."number" <= 2
 ```
 
 ### Like
 Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
 ```go
-comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%@gmail.com"))
+comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output:
 ```text
-"t"."string" LIKE '%@gmail.com'
+"t"."string" LIKE '%ivan%'
 ```
 
 ### NotBetween
 Checks if the left expression falls outside the range defined by `valueStart` and `valueEnd`.
 ```go
-comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(18), uast.Value(65))
+comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" NOT BETWEEN 18 AND 65
+"t"."number" NOT BETWEEN 0 AND 2
 ```
 
 ### NotEqual
 Compares two expressions for inequality (`!=` or `<>`).
 ```go
-comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(18))
+comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-"t"."number" != 18
+"t"."number" != 2
 ```
 
 ### NotExists
@@ -315,11 +315,11 @@ Output:
 ### NotLike
 Performs a negated case-sensitive pattern matching comparison.
 ```go
-comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%@gmail.com"))
+comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output:
 ```text
-"t"."string" NOT LIKE '%@gmail.com'
+"t"."string" NOT LIKE '%ivan%'
 ```
 
 ## Constant
@@ -553,13 +553,13 @@ functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), tru
 ```
 Output MySQL:
 ```text
-GROUP_CONCAT("t"."tag" SEPARATOR ', ')
-GROUP_CONCAT(DISTINCT "t"."tag" SEPARATOR ', ')
+GROUP_CONCAT("t"."string" SEPARATOR ', ')
+GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ', ')
 ```
 Output PostgreSQL:
 ```text
-STRING_AGG("t"."tag", ', ')
-STRING_AGG(DISTINCT "t"."tag", ', ')
+STRING_AGG("t"."string", ', ')
+STRING_AGG(DISTINCT "t"."string", ', ')
 ```
 
 #### Max
@@ -636,14 +636,14 @@ VAR_SAMP(DISTINCT "t"."number")
 #### FirstValue
 Returns the value of the expression from the first row of the window frame. Requires an `OVER` clause with window specification.
 ```go
-function := uast.FirstValue(uast.Column[string]("t", "name")).Over(
+function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
 Output:
 ```text
-FIRST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### Lag
@@ -662,7 +662,7 @@ LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### LastValue
 Returns the value of the expression from the last row of the window frame.
 ```go
-function := uast.LastValue(uast.Column[string]("t", "name")).Over(
+function := uast.LastValue(uast.Column[string]("t", "string")).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Asc(uast.Column[int]("t", "number"))),
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
@@ -670,7 +670,7 @@ function := uast.LastValue(uast.Column[string]("t", "name")).Over(
 ```
 Output:
 ```text
-LAST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 
 #### Lead
@@ -689,7 +689,7 @@ LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### NthValue
 Returns the value of the expression from the `n-th` row of the window frame.
 ```go
-function := uast.NthValue(uast.Column[string]("t", "name"), 2).Over(
+function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
@@ -697,7 +697,7 @@ function := uast.NthValue(uast.Column[string]("t", "name"), 2).Over(
 ```
 Output:
 ```text
-NTH_VALUE("t"."name", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 
 ### Condition
@@ -869,15 +869,15 @@ CURRENT_TIME
 #### DateAdd
 Adds a time/date interval to a datetime expression and returns the resulting datetime.
 ```go
-function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("4 DAY"))
+function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MySQL:
 ```text
-DATE_ADD("t"."createat", INTERVAL 4 DAY)
+DATE_ADD("t"."createat", INTERVAL 2 DAY)
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" + INTERVAL '4 DAY')
+("t"."createat" + INTERVAL '2 DAY')
 ```
 
 #### DateDiff
@@ -897,15 +897,15 @@ DATE_PART('day', "t"."updateat" - "t"."createat")
 #### DateSub
 Subtracts a time/date interval from a datetime expression and returns the resulting datetime.
 ```go
-function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("4 DAY"))
+function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MySQL:
 ```text
-DATE_SUB("t"."createat", INTERVAL 4 DAY)
+DATE_SUB("t"."createat", INTERVAL 2 DAY)
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" - INTERVAL '4 DAY')
+("t"."createat" - INTERVAL '2 DAY')
 ```
 
 #### Day
@@ -1037,15 +1037,15 @@ EXTRACT(SECOND FROM "t"."createat")
 #### TimeAdd
 Adds a time interval to a time/datetime expression and returns the resulting time.
 ```go
-function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("4 HOUR"))
+function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MySQL:
 ```text
-TIME_ADD("t"."createat", '4 HOUR')
+TIME_ADD("t"."createat", '2 HOUR')
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" + INTERVAL '4 HOUR')
+("t"."createat" + INTERVAL '2 HOUR')
 ```
 
 #### TimeDiff
@@ -1065,15 +1065,15 @@ DATE_PART('time', "t"."updateat" - "t"."createat")
 #### TimeSub
 Subtracts a time interval from a time/datetime expression and returns the resulting time.
 ```go
-function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("4 HOUR"))
+function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MySQL:
 ```text
-TIME_SUB("t"."createat", '4 HOUR')
+TIME_SUB("t"."createat", '2 HOUR')
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" - INTERVAL '4 HOUR')
+("t"."createat" - INTERVAL '2 HOUR')
 ```
 
 #### Week
@@ -1331,21 +1331,21 @@ LN("t"."number")
 #### Log
 Returns the logarithm of the expression to the specified base.
 ```go
-function := uast.Log(uast.Column[int]("t", "number"), uast.Value(3))
+function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-LOG(3, "t"."number")
+LOG(2, "t"."number")
 ```
 
 #### Mod
 Returns the remainder (modulo) of the division of the first expression by the second.
 ```go
-function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(3))
+function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-MOD("t"."number", 3)
+MOD("t"."number", 2)
 ```
 
 #### Pi
@@ -1361,11 +1361,11 @@ PI()
 #### Power
 Returns the expression raised to the power of the exponent.
 ```go
-function := uast.Power(uast.Column[int]("t", "number"), uast.Value(3))
+function := uast.Power(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-POWER("t"."number", 3)
+POWER("t"."number", 2)
 ```
 
 #### Rand
@@ -1385,11 +1385,11 @@ RANDOM()
 #### Round
 Rounds the expression to the specified number of decimal places.
 ```go
-function := uast.Round(uast.Column[int]("t", "number"), uast.Value(3))
+function := uast.Round(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output:
 ```text
-ROUND("t"."number", 3)
+ROUND("t"."number", 2)
 ```
 
 #### Sin
@@ -1425,15 +1425,15 @@ TAN("t"."number")
 #### Trunc
 Truncates the numeric expression to the specified number of decimal places (without rounding).
 ```go
-function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(3))
+function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-TRUNCATE("t"."number", 3)
+TRUNCATE("t"."number", 2)
 ```
 Output PostgreSQL:
 ```text
-TRUNC("t"."number", 3)
+TRUNC("t"."number", 2)
 ```
 
 ### Ranking
@@ -1682,12 +1682,12 @@ Combines multiple conditions with a logical `AND`. All conditions must be true f
 ```go
 logical := uast.And(
     uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(18)),
+    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output:
 ```text
-("t"."string" = 'active' AND "t"."number" > 18)
+("t"."string" = 'active' AND "t"."number" > 2)
 ```
 
 ### Or
@@ -1695,12 +1695,12 @@ Combines multiple conditions with a logical `OR`. At least one condition must be
 ```go
 logical := uast.Or(
     uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(18)),
+    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output:
 ```text
-("t"."string" = 'active' OR "t"."number" > 18)
+("t"."string" = 'active' OR "t"."number" > 2)
 ```
 
 ## Order
@@ -1742,7 +1742,7 @@ Output:
 Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`$1`, `?`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data and prevents SQL injection. 
 Supported types: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `string`, `time.Time`.
 ```go
-var data string = "hello@world.com"
+var data string = "ivan"
 value := uast.Value(data)
 ```
 Output MySQL:

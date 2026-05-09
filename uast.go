@@ -28,7 +28,7 @@ type (
 // Приватные константы
 const (
 	uastConstFloat32One    float32 = 1.0
-	uastConstFloat64One    float64 = 1.0
+	uastConstFloat64One    float64 = 1.000000
 	uastConstIntOne        int     = 1
 	uastConstInt8One       int8    = 1
 	uastConstInt16One      int16   = 1

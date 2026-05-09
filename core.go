@@ -491,15 +491,14 @@ func ConstInt64One() *exprConstant[int64] {
 		value: 1,
 	}
 }
-func ConstNullDefault[T typeScalar]() *exprConstant[T] {
-	var zero T
-	return &exprConstant[T]{
-		value: zero,
-	}
-}
 func ConstStringDefault() *exprConstant[string] {
 	return &exprConstant[string]{
 		value: uastConstStringDefault,
+	}
+}
+func ConstStringNull() *exprConstant[string] {
+	return &exprConstant[string]{
+		value: uastConstStringNull,
 	}
 }
 func ConstUintOne() *exprConstant[uint] {

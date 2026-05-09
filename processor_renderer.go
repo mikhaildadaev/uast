@@ -76,7 +76,6 @@ func (baseRenderer *baseRenderer) renderAlias(value string) error {
 func (baseRenderer *baseRenderer) renderConstant(value any) error {
 	switch v := value.(type) {
 	case nil:
-		baseRenderer.contexter.bufferQuery.WriteString(uastConstStringNull)
 		return nil
 	case bool:
 		if v {
@@ -87,12 +86,12 @@ func (baseRenderer *baseRenderer) renderConstant(value any) error {
 		return nil
 	case float32:
 		if v == uastConstFloat32One {
-			baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(float64(v), 'f', -1, 32))
+			baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(float64(v), 'f', 1, 32))
 			return nil
 		}
 	case float64:
 		if v == uastConstFloat64One {
-			baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(v, 'f', -1, 64))
+			baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(v, 'f', 6, 64))
 			return nil
 		}
 	case int:
@@ -121,7 +120,7 @@ func (baseRenderer *baseRenderer) renderConstant(value any) error {
 			return nil
 		}
 	case string:
-		if v == uastConstStringDefault {
+		if v == uastConstStringDefault || v == uastConstStringNull {
 			baseRenderer.contexter.bufferQuery.WriteString(v)
 			return nil
 		}
@@ -166,7 +165,6 @@ func (baseRenderer *baseRenderer) renderName(value string) error {
 func (baseRenderer *baseRenderer) renderLiteral(value any) error {
 	switch v := value.(type) {
 	case nil:
-		baseRenderer.contexter.bufferQuery.WriteString(uastConstStringNull)
 		return nil
 	case bool:
 		if v {
@@ -176,10 +174,10 @@ func (baseRenderer *baseRenderer) renderLiteral(value any) error {
 		baseRenderer.contexter.bufferQuery.WriteString(uastConstStringFalse)
 		return nil
 	case float32:
-		baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(float64(v), 'f', -1, 32))
+		baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(float64(v), 'f', 1, 32))
 		return nil
 	case float64:
-		baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(v, 'f', -1, 64))
+		baseRenderer.contexter.bufferQuery.WriteString(strconv.FormatFloat(v, 'f', 6, 64))
 		return nil
 	case int:
 		baseRenderer.contexter.bufferQuery.WriteString(strconv.Itoa(v))

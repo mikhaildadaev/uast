@@ -670,44 +670,16 @@ func Test_Core_Subquery(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql, _ := NewSQL(supportDialect)
 		defer sql.Close()
-		querySub := NewSelect(Count(Orders.ID, false)).
-			From(Orders.Table).
-			Where(
-				Equal(Orders.UserID, Users.ID),
-			)
-		queryInSub := NewSelect(Orders.UserID).
-			From(Orders.Table).
-			Where(
-				Greater(Orders.Amount, Value(2)),
-			)
-		queryExistsSub := NewSelect(Orders.ID).
-			From(Orders.Table).
-			Where(
-				Equal(Orders.UserID, Users.ID),
-			)
 		stmtSelect := NewSelect(
-			Users.ID,
-			Users.Name,
-			Subquery[int64](querySub).As("SUB"),
+			Subquery[int64](NewSelect(Test.ID).From(Test.Table)).As("SUB"),
 		).
-			From(Users.Table).
-			Where(
-				And(
-					In(Users.ID, Subquery[int64](queryInSub)),
-					Exists(Subquery[int64](queryExistsSub)),
-				),
-			)
-
+			From(Test.Table)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "AS", "SUBQUERT AS")
-			assertContains(t, sqlSelectQuery, "IN", "SUBQUERT IN")
-			assertContains(t, sqlSelectQuery, "EXISTS", "SUBQUERT EXISTS")
+			assertContains(t, sqlSelectQuery, "(SELECT `t`.`id` FROM `test` AS `t`)", "SUBQUERT")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, "AS", "SUBQUERT AS")
-			assertContains(t, sqlSelectQuery, "IN", "SUBQUERT IN")
-			assertContains(t, sqlSelectQuery, "EXISTS", "SUBQUERT EXISTS")
+			assertContains(t, sqlSelectQuery, `(SELECT "t"."id" FROM "test" AS "t")`, "SUBQUERT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

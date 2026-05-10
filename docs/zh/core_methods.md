@@ -14,7 +14,7 @@ Methods available on column expressions.
 ### As
 Assigns an alias to a column expression.
 ```go
-alias := uast.Column[string]("t", "string").As("alias")
+as := uast.Column[string]("t", "string").As("alias")
 ```
 Output:
 ```text
@@ -27,7 +27,7 @@ Methods available on function expressions.
 ### As
 Assigns an alias to a function expression.
 ```go
-alias := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
+as := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
 ```
 Output:
 ```text
@@ -53,7 +53,7 @@ Methods available on subquery expressions.
 ### As
 Assigns an alias to a subquery expression.
 ```go
-alias := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
+as := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
 ```
 Output:
 ```text

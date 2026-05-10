@@ -5,16 +5,13 @@ outline: deep
 # API / Core / Types
 
 ::: info **Info**
-This page covers all 21 data types in `Binary`, `Datetime`, `Numeric`, `String`, `Special` categories. Each type includes a code example and dialect-specific SQL output.
+This page covers all 21 data types in `Binary`, `Datetime`, `Numeric`, `String`, `Special` categories. Each type is demonstrated using `Cast` and includes a code example with dialect-specific SQL output.
 :::
 
-## Data
-...
-
-### Binary
+## Binary
 Binary types store raw byte data. Fixed-length and variable-length binary strings have different representations depending on the SQL dialect.
 
-#### TypeBinary
+### TypeBinary
 Fixed-length binary string.
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
@@ -28,7 +25,7 @@ Output PostgreSQL:
 CAST("t"."number" AS BYTEA)
 ```
 
-#### TypeVarBinary
+### TypeVarBinary
 Variable-length binary string.
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
@@ -42,10 +39,10 @@ Output PostgreSQL:
 CAST("t"."number" AS BYTEA)
 ```
 
-### Datetime
+## Datetime
 Date and time types store temporal values. Some dialects use a single type for multiple temporal representations, while others distinguish between them with specific types.
 
-#### TypeDate
+### TypeDate
 Represents a date value (year, month, day).
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
@@ -55,7 +52,7 @@ Output:
 CAST("t"."number" AS DATE)
 ```
 
-#### TypeDateTime
+### TypeDateTime
 Represents a combined date and time value.
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
@@ -69,7 +66,7 @@ Output PostgreSQL:
 CAST("t"."number" AS TIMESTAMP)
 ```
 
-#### TypeTime
+### TypeTime
 Represents a time value (hour, minute, second).
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
@@ -79,7 +76,7 @@ Output:
 CAST("t"."number" AS TIME)
 ```
 
-#### TypeTimestamp
+### TypeTimestamp
 Represents a timestamp value.
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
@@ -93,10 +90,10 @@ Output PostgreSQL:
 CAST("t"."number" AS TIMESTAMPTZ)
 ```
 
-### Numeric
+## Numeric
 Numeric types store integer and floating-point values. Some dialects use general-purpose numeric types, while others provide a richer set of specific types.
 
-#### TypeBigInt
+### TypeBigInt
 Large integer type.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
@@ -110,7 +107,7 @@ Output PostgreSQL:
 CAST("t"."number" AS BIGINT)
 ```
 
-#### TypeDecimal
+### TypeDecimal
 Fixed-point decimal number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
@@ -120,7 +117,7 @@ Output:
 CAST("t"."number" AS DECIMAL)
 ```
 
-#### TypeDouble
+### TypeDouble
 Double-precision floating-point number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
@@ -134,7 +131,7 @@ Output PostgreSQL:
 CAST("t"."number" AS DOUBLE PRECISION)
 ```
 
-#### TypeFloat
+### TypeFloat
 Single-precision floating-point number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
@@ -148,7 +145,7 @@ Output PostgreSQL:
 CAST("t"."number" AS REAL)
 ```
 
-#### TypeInt
+### TypeInt
 Integer type.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
@@ -162,7 +159,7 @@ Output PostgreSQL:
 CAST("t"."number" AS INTEGER)
 ```
 
-#### TypeSmallInt
+### TypeSmallInt
 Small integer type.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
@@ -176,10 +173,10 @@ Output PostgreSQL:
 CAST("t"."number" AS SMALLINT)
 ```
 
-### String
+## String
 String types store character and text data. Variable-length, fixed-length, and large text types are represented differently across dialects.
 
-#### TypeChar 
+### TypeChar 
 Fixed-length character string.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
@@ -189,7 +186,7 @@ Output:
 CAST("t"."number" AS CHAR)
 ```
 
-#### TypeString
+### TypeString
 Variable-length character string.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
@@ -199,7 +196,7 @@ Output:
 CAST("t"."number" AS VARCHAR)
 ```
 
-#### TypeText
+### TypeText
 Variable-length text string.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
@@ -209,7 +206,7 @@ Output:
 CAST("t"."number" AS TEXT)
 ```
 
-#### TypeVarChar
+### TypeVarChar
 Variable-length character string with specified maximum.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
@@ -219,10 +216,10 @@ Output:
 CAST("t"."number" AS VARCHAR)
 ```
 
-### Special
+## Special
 Special types cover JSON, Boolean, UUID, XML, and Array data. Some dialects use native types, while others rely on compatible alternatives.
 
-#### TypeArray
+### TypeArray
 Represents an array type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
@@ -236,7 +233,7 @@ Output PostgreSQL:
 CAST("t"."number" AS ARRAY)
 ```
 
-#### TypeBoolean
+### TypeBoolean
 Represents a boolean (true/false) type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
@@ -250,7 +247,7 @@ Output PostgreSQL:
 CAST("t"."number" AS BOOLEAN)
 ```
 
-#### TypeJSON
+### TypeJSON
 Represents a JSON data type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
@@ -264,7 +261,7 @@ Output PostgreSQL:
 CAST("t"."number" AS JSONB)
 ```
 
-#### TypeUUID
+### TypeUUID
 Represents a universally unique identifier (UUID).
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
@@ -278,7 +275,7 @@ Output PostgreSQL:
 CAST("t"."number" AS UUID)
 ```
 
-#### TypeXML
+### TypeXML
 Represents an XML data type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)

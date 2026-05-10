@@ -1,11 +1,6 @@
 package uast
 
 // Приватные интерфейсы
-type processor interface {
-	renderer
-	transformer
-	validator
-}
 type renderer interface {
 	elementRenderer
 	componentRenderer
@@ -109,4 +104,11 @@ type statementValidator interface {
 	validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error
 	validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error
 	validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error
+}
+
+// Приватные структуры
+type processor struct {
+	renderer    renderer
+	transformer transformer
+	validator   validator
 }

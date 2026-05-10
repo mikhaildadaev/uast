@@ -89,6 +89,20 @@ export default defineConfig({
                         link: '/en/core_types' 
                       }
                     ] 
+                  },
+                  { 
+                    text: 'SQL', 
+                    collapsed: true,
+                    items: [
+                      { 
+                        text: 'Constructors', 
+                        link: '/en/core_constructors' 
+                      },
+                      { 
+                        text: 'Methods', 
+                        link: '/en/core_methods' 
+                      }
+                    ] 
                   }
                 ] 
               }
@@ -163,7 +177,7 @@ export default defineConfig({
           { 
             text: 'API', 
             link: '/ru/core_constructors' 
-          },
+          }
         ],
         sidebar: [
           {
@@ -201,6 +215,20 @@ export default defineConfig({
                         link: '/ru/core_types' 
                       }
                     ] 
+                  },
+                  { 
+                    text: 'SQL', 
+                    collapsed: true,
+                    items: [
+                      { 
+                        text: 'Конструкторы', 
+                        link: '/ru/core_constructors' 
+                      },
+                      { 
+                        text: 'Методы', 
+                        link: '/ru/core_methods' 
+                      }
+                    ] 
                   }
                 ]
               }
@@ -229,7 +257,7 @@ export default defineConfig({
         footer: {
           message: 'Под лицензией Apache 2.0',
           copyright: '© 2026 Михаил Дадаев'
-        },
+        }
       }
     },
     zh: {
@@ -275,7 +303,7 @@ export default defineConfig({
           { 
             text: 'API', 
             link: '/zh/core_constructors' 
-          },
+          }
         ],
         sidebar: [
           {
@@ -313,6 +341,20 @@ export default defineConfig({
                         link: '/zh/core_types' 
                       }
                     ] 
+                  },
+                  { 
+                    text: 'SQL', 
+                    collapsed: true,
+                    items: [
+                      { 
+                        text: '构造函数', 
+                        link: '/zh/core_constructors' 
+                      },
+                      { 
+                        text: '方法', 
+                        link: '/zh/core_methods' 
+                      }
+                    ] 
                   }
                 ] 
               }
@@ -341,7 +383,7 @@ export default defineConfig({
         footer: {
           message: '根据 Apache 2.0 许可证发布',
           copyright: '© 2026 Mikhail Dadaev'
-        },
+        }
       }
     }
   },

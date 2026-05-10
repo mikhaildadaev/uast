@@ -1191,6 +1191,47 @@ func Trunc[T typeNumeric](numeric ExpressionSafe[T], places ExpressionSafe[T]) *
 	}
 }
 
+// -- Function [ranking] -- //
+func CumeDist() *exprFunction[string, string, float64] {
+	return &exprFunction[string, string, float64]{
+		service: uastFunctionCumeDist,
+		process: uastProcessWindow,
+	}
+}
+func DenseRank() *exprFunction[string, string, int64] {
+	return &exprFunction[string, string, int64]{
+		service: uastFunctionDenseRank,
+		process: uastProcessWindow,
+	}
+}
+func NTile(n int) *exprFunction[int, string, int64] {
+	return &exprFunction[int, string, int64]{
+		left: &exprLiteral[int]{
+			value: n,
+		},
+		service: uastFunctionNTile,
+		process: uastProcessWindow,
+	}
+}
+func PercentRank() *exprFunction[string, string, float64] {
+	return &exprFunction[string, string, float64]{
+		service: uastFunctionPercentRank,
+		process: uastProcessWindow,
+	}
+}
+func Rank() *exprFunction[string, string, int64] {
+	return &exprFunction[string, string, int64]{
+		service: uastFunctionRank,
+		process: uastProcessWindow,
+	}
+}
+func RowNumber() *exprFunction[string, string, int64] {
+	return &exprFunction[string, string, int64]{
+		service: uastFunctionRowNumber,
+		process: uastProcessWindow,
+	}
+}
+
 // -- Function [string] -- //
 func Concat(strs ...ExpressionSafe[string]) *exprFunction[string, string, string] {
 	return &exprFunction[string, string, string]{
@@ -1341,47 +1382,6 @@ func Upper(str ExpressionSafe[string]) *exprFunction[string, string, string] {
 		left:    str,
 		process: uastProcessDirect,
 		service: uastFunctionUpper,
-	}
-}
-
-// -- Function [ranking] -- //
-func CumeDist() *exprFunction[string, string, float64] {
-	return &exprFunction[string, string, float64]{
-		service: uastFunctionCumeDist,
-		process: uastProcessWindow,
-	}
-}
-func DenseRank() *exprFunction[string, string, int64] {
-	return &exprFunction[string, string, int64]{
-		service: uastFunctionDenseRank,
-		process: uastProcessWindow,
-	}
-}
-func NTile(n int) *exprFunction[int, string, int64] {
-	return &exprFunction[int, string, int64]{
-		left: &exprLiteral[int]{
-			value: n,
-		},
-		service: uastFunctionNTile,
-		process: uastProcessWindow,
-	}
-}
-func PercentRank() *exprFunction[string, string, float64] {
-	return &exprFunction[string, string, float64]{
-		service: uastFunctionPercentRank,
-		process: uastProcessWindow,
-	}
-}
-func Rank() *exprFunction[string, string, int64] {
-	return &exprFunction[string, string, int64]{
-		service: uastFunctionRank,
-		process: uastProcessWindow,
-	}
-}
-func RowNumber() *exprFunction[string, string, int64] {
-	return &exprFunction[string, string, int64]{
-		service: uastFunctionRowNumber,
-		process: uastProcessWindow,
 	}
 }
 

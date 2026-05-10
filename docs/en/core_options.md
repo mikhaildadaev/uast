@@ -8,7 +8,7 @@ outline: deep
 This page covers all configuration options: `Array`, `Binary`, `Comparison`, `Constant`, `Function`, `Literal`, `Logical`, `Order`, `Subquery`, `Value`. Each option is shown with a working code example and expected output.
 :::
 
-## Array
+## exprArray
 Constructs an array expression for use in SQL queries.
 ```go
 array := uast.Array(0, 1, 2)
@@ -18,7 +18,7 @@ Output:
 ARRAY[0, 1, 2]
 ```
 
-## Binary
+## exprBinary
 ### BitwiseAnd
 Performs a bitwise AND operation between two expressions.
 ```go
@@ -119,7 +119,7 @@ Output:
 "t"."number" >> 2
 ```
 
-## Column
+## exprColumn
 Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
 ```go
 column := uast.Column[string]("t", "string")
@@ -129,7 +129,7 @@ Output:
 "t"."string"
 ```
 
-## Comparison
+## exprComparison
 ### Between
 Checks if the left expression falls within the range defined by `valueStart` and `valueEnd` (inclusive).
 ```go
@@ -310,7 +310,7 @@ Output:
 "t"."string" NOT LIKE '%ivan%'
 ```
 
-## Constant
+## exprConstant
 ### ConstBoolFalse
 Returns a constant boolean `FALSE` expression.
 ```go
@@ -471,7 +471,7 @@ Output:
 1
 ```
 
-## Function
+## exprFunction
 ### Aggregate
 #### Avg
 Returns the average (arithmetic mean) of all non-NULL values in the expression. If `distinct` is `true`, the average is calculated over distinct values only.
@@ -1721,7 +1721,7 @@ Output:
 UPPER("t"."string")
 ```
 
-## Literal
+## exprLiteral
 Embeds a raw literal value directly into the generated SQL string (not parameterized). Use with caution — values are written as-is. Prefer `Value` for user-supplied data.
 ```go
 literal := uast.Literal("%Y-%m-%d")
@@ -1731,7 +1731,7 @@ Output:
 '%Y-%m-%d'
 ```
 
-## Logical
+## exprLogical
 ### And
 Combines multiple conditions with a logical `AND`. All conditions must be true for the combined expression to be true.
 ```go
@@ -1758,7 +1758,7 @@ Output:
 ("t"."string" = 'active' OR "t"."number" > 2)
 ```
 
-## Order
+## exprOrderBy
 ### Asc
 Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
 ```go
@@ -1779,7 +1779,7 @@ Output:
 "t"."string" DESC
 ```
 
-## Subquery
+## exprSubquery
 Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test")))
@@ -1789,7 +1789,7 @@ Output:
 (SELECT "t"."id" FROM "test" AS "t")
 ```
 
-## Value
+## exprValue
 Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`$1`, `?`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data and prevents SQL injection. 
 Supported types: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `string`, `time.Time`.
 ```go

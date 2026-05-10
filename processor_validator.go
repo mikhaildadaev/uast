@@ -4,52 +4,6 @@ import (
 	"time"
 )
 
-// Приватные интерфейсы
-type validator interface {
-	elementValidator
-	componentValidator
-	statementValidator
-}
-type elementValidator interface {
-	validateAlias(value string) error
-	validateArray(value int) error
-	validateComparison(value transformComparison) error
-	validateFunction(value transformFunction) error
-	validateName(value string) error
-	validateLiteral(value any) error
-	validateOperator(value any) error
-	validateService(value any) error
-	validateSubquery() error
-	validateValue(value any) error
-}
-type componentValidator interface {
-	validateColumn(columns []markColumnable) error
-	validateCommand(command managementService) error
-	validateField(fields []markFieldable) error
-	validateFrom(from SourceBase) error
-	validateGroupBy(groups []markGroupable) error
-	validateHaving(having ExpressionBase) error
-	validateInto(into SourceBase) error
-	validateJoin(joins []*clauseJoin) error
-	validateLimit(limit *clauseLimit) error
-	validateOffset(offset *clauseOffset) error
-	validateOnto(onto SourceBase) error
-	validateOrderBy(orders []markOrderable) error
-	validateReturning(returnings []markReturnable) error
-	validateSet(sets []*clauseSet) error
-	validateSource(source statement) error
-	validateUnions(unions []*clauseUnions) error
-	validateValues(values [][]ExpressionBase) error
-	validateWhere(where ExpressionBase) error
-	validateWith(withs []*clauseWith) error
-}
-type statementValidator interface {
-	validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error
-	validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error
-	validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error
-	validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error
-}
-
 // Приватные структуры
 type baseValidator struct {
 	config    *config

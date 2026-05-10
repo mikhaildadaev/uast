@@ -5,51 +5,6 @@ import (
 	"time"
 )
 
-// Приватные интерфейсы
-type renderer interface {
-	elementRenderer
-	componentRenderer
-	statementRenderer
-}
-type elementRenderer interface {
-	renderAlias(value string) error
-	renderConstant(value any) error
-	renderFunction(value string) error
-	renderName(value string) error
-	renderLiteral(value any) error
-	renderOperator(value any) error
-	renderService(value any) error
-	renderValue(value any) error
-}
-type componentRenderer interface {
-	renderCommand(command managementService) error
-	renderColumn(columns []markColumnable) error
-	renderDistinct(distinct bool) error
-	renderField(fields []markFieldable) error
-	renderFrom(from SourceBase) error
-	renderGroupBy(groups []markGroupable) error
-	renderHaving(having ExpressionBase) error
-	renderInto(into SourceBase) error
-	renderJoin(joins []*clauseJoin) error
-	renderLimit(limit *clauseLimit) error
-	renderOffset(offset *clauseOffset) error
-	renderOnto(onto SourceBase) error
-	renderOrderBy(orders []markOrderable) error
-	renderReturning(returnings []markReturnable) error
-	renderSet(sets []*clauseSet) error
-	renderSource(source statement) error
-	renderUnions(unions []*clauseUnions) error
-	renderValues(values [][]ExpressionBase) error
-	renderWhere(where ExpressionBase) error
-	renderWith(withs []*clauseWith) error
-}
-type statementRenderer interface {
-	renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error
-	renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error
-	renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error
-	renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error
-}
-
 // Приватные структуры
 type baseRenderer struct {
 	config    *config

@@ -1,24 +1,5 @@
 package uast
 
-// Приватные интерфейсы
-type transformer interface {
-	elementTransformer
-	componentTransformer
-	statementTransformer
-}
-type elementTransformer interface {
-	transformComparison() error
-	transformFunction() error
-}
-type componentTransformer interface {
-}
-type statementTransformer interface {
-	transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error
-	transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error
-	transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error
-	transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error
-}
-
 // Приватные структуры
 type baseTransformer struct {
 	config    *config

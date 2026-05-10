@@ -5,7 +5,7 @@ outline: deep
 # API / Core / Types
 
 ::: info **Info**
-This page covers all 21 data types in `Binary`, `Date and time`, `Math`, `String`, `Special` categories. Each type includes a code example and dialect-specific SQL output.
+This page covers all 21 data types in `Binary`, `Datetime`, `Numeric`, `String`, `Special` categories. Each type includes a code example and dialect-specific SQL output.
 :::
 
 ## Data
@@ -42,7 +42,7 @@ Output PostgreSQL:
 CAST("t"."number" AS BYTEA)
 ```
 
-### Date and time
+### Datetime
 Date and time types store temporal values. Some dialects use a single type for multiple temporal representations, while others distinguish between them with specific types.
 
 #### TypeDate

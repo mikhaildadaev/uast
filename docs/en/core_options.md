@@ -5,7 +5,7 @@ outline: deep
 # API / Core / Options
 
 ::: info **Info**
-This page covers all configuration options: `Array`, `Binary`, `Comparison`, `Constant`, `Function`, `Literal`, `Logical`, `Order`, `Subquery`, `Value`. Each option is shown with a working code example and expected output.
+This page covers all configuration options: `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprOrderBy`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
 ## exprArray

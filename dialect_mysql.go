@@ -58,7 +58,7 @@ const (
 const (
 	// Типы бинарные
 	uastMysqlTypeBinary    typeService = "BINARY"
-	uastMysqlTypeVarBinary typeService = "BINARY"
+	uastMysqlTypeVarBinary typeService = "VARBINARY"
 	// Типы даты и времени
 	uastMysqlTypeDate      typeService = "DATE"
 	uastMysqlTypeDateTime  typeService = "DATETIME"
@@ -73,12 +73,12 @@ const (
 	uastMysqlTypeSmallInt typeService = "SIGNED"
 	// Типы строковые
 	uastMysqlTypeChar    typeService = "CHAR"
-	uastMysqlTypeString  typeService = "CHAR"
+	uastMysqlTypeString  typeService = "VARCHAR"
 	uastMysqlTypeText    typeService = "TEXT"
-	uastMysqlTypeVarChar typeService = "CHAR"
+	uastMysqlTypeVarChar typeService = "VARCHAR"
 	// Типы специальные
-	uastMysqlTypeArray   typeService = "TEXT"
-	uastMysqlTypeBoolean typeService = "UNSIGNED"
+	uastMysqlTypeArray   typeService = "JSON"
+	uastMysqlTypeBoolean typeService = "TINYINT(1)"
 	uastMysqlTypeJson    typeService = "JSON"
 	uastMysqlTypeUUID    typeService = "CHAR(36)"
 	uastMysqlTypeXML     typeService = "TEXT"

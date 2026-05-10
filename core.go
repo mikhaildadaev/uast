@@ -46,9 +46,6 @@ const (
 
 // Публичные переменные
 var (
-	DialectDefault = DialectPostgreSQL
-)
-var (
 	ErrDuplicateCTE                       = errors.New("duplicate cte")
 	ErrExcessMaxDepth                     = errors.New("excess max depth")
 	ErrExcessMaxComparison                = errors.New("excess max comparison")
@@ -151,14 +148,6 @@ type ExpressionSafe[T typeScalar] interface {
 	ExpressionBase
 	markPredicable
 	isExpressionSafe(T)
-}
-
-// Публичные структуры
-type SupportDialect struct {
-	config    *config
-	name      string
-	processor processor
-	strateger strateger
 }
 
 // Публичные конструкторы

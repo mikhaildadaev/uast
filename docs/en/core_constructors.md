@@ -15,7 +15,7 @@ stmtDelete := NewDelete(...)
 ```
 Output:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
 ```
 
 ## NewInsert
@@ -25,7 +25,7 @@ stmtInsert := NewInsert(...)
 ```
 Output:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
 ```
 
 ## NewSelect
@@ -35,7 +35,7 @@ stmtSelect := NewSelect(...)
 ```
 Output:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
 ```
 
 ## NewUpdate
@@ -45,5 +45,5 @@ stmtUpdate := NewUpdate(...)
 ```
 Output:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
 ```

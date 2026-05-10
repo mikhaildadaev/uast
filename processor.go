@@ -112,3 +112,14 @@ type processor struct {
 	transformer transformer
 	validator   validator
 }
+
+// Приватные методы
+func (processor processor) createRenderer(config *config, contexter *contexter, strateger strateger) *baseRenderer {
+	return newRenderer(config, contexter, strateger)
+}
+func (processor processor) createTransformer(config *config, contexter *contexter, strateger strateger) *baseTransformer {
+	return newTransformer(config, contexter, strateger)
+}
+func (processor processor) createValidator(config *config, contexter *contexter, strateger strateger) *baseValidator {
+	return newValidator(config, contexter, strateger)
+}

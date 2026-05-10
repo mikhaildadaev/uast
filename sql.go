@@ -31,9 +31,9 @@ func (sql *sql) Build(statement statement) (string, []any, error) {
 		contexter.resetAll()
 		sql.pool.Put(contexter)
 	}()
-	baseRenderer := newRenderer(sql.config, contexter, sql.strateger)
-	baseTransformer := newTransformer(sql.config, contexter, sql.strateger)
-	baseValidator := newValidator(sql.config, contexter, sql.strateger)
+	baseRenderer := sql.processor.createRenderer(sql.config, contexter, sql.strateger)
+	baseTransformer := sql.processor.createTransformer(sql.config, contexter, sql.strateger)
+	baseValidator := sql.processor.createValidator(sql.config, contexter, sql.strateger)
 	if err := statement.validate(baseValidator); err != nil {
 		return "", nil, err
 	}

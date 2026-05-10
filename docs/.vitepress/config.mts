@@ -96,11 +96,11 @@ export default defineConfig({
                     items: [
                       { 
                         text: 'Constructors', 
-                        link: '/en/core_constructors' 
+                        link: '/en/sql_constructors' 
                       },
                       { 
                         text: 'Methods', 
-                        link: '/en/core_methods' 
+                        link: '/en/sql_methods' 
                       }
                     ] 
                   }
@@ -222,11 +222,11 @@ export default defineConfig({
                     items: [
                       { 
                         text: 'Конструкторы', 
-                        link: '/ru/core_constructors' 
+                        link: '/ru/sql_constructors' 
                       },
                       { 
                         text: 'Методы', 
-                        link: '/ru/core_methods' 
+                        link: '/ru/sql_methods' 
                       }
                     ] 
                   }
@@ -348,11 +348,11 @@ export default defineConfig({
                     items: [
                       { 
                         text: '构造函数', 
-                        link: '/zh/core_constructors' 
+                        link: '/zh/sql_constructors' 
                       },
                       { 
                         text: '方法', 
-                        link: '/zh/core_methods' 
+                        link: '/zh/sql_methods' 
                       }
                     ] 
                   }

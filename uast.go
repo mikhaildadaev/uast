@@ -389,11 +389,6 @@ var listSymbolSafeLiteral = [256]bool{
 }
 
 // Приватные интерфейсы
-type processor interface {
-	renderer
-	transformer
-	validator
-}
 type strateger interface {
 	statementRenderer
 	statementTransformer

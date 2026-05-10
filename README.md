@@ -69,19 +69,19 @@ UAST - Universal Abstract SQL Transformer
    - [+] DataType
 # API - Static - DataType [list]
    - [+] TypeBinary
-   - [+] TypeDateTime
-   - [+] TypeInt
+   - [+] TypeDatetime
+   - [+] TypeNumeric
    - [+] TypeString
    - [+] TypeSpecial
 # API - Static - DataType | TypeBinary [data]
    - [+] TypeBinary                                           # BINARY/BYTEA/
    - [+] TypeVarBinary                                        # VARBINARY/BYTEA/
-# API - Static - DataType | TypeDateTime [data]
+# API - Static - DataType | TypeDatetime [data]
    - [+] TypeDate                                             # DATE/DATE/
    - [+] TypeDateTime                                         # DATETIME/TIMESTAMP/
    - [+] TypeTime                                             # TIME/TIME/
    - [+] TypeTimestamp                                        # DATETIME/TIMESTAMP/
-# API - Static - DataType | TypeInt [data]
+# API - Static - DataType | TypeNumeric [data]
    - [+] TypeBigInt                                           # SIGNED/BIGINT/
    - [+] TypeDecimal                                          # DECIMAL/DECIMAL/
    - [+] TypeDouble                                           # DECIMAL/DOUBLE PRECISION/

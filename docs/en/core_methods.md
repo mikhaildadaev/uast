@@ -8,7 +8,7 @@ outline: deep
 This page documents methods available on expressions: `As` for assigning aliases and `Over` for adding window specifications. Each method is shown with a working code example and expected SQL output.
 :::
 
-## Column
+## exprColumn
 Methods available on column expressions.
 
 ### As
@@ -21,7 +21,7 @@ Output:
 "t"."string" AS "alias"
 ```
 
-## Function
+## exprFunction
 Methods available on function expressions.
 
 ### As
@@ -47,7 +47,7 @@ Output:
 AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
-## Subquery
+## exprSubquery
 Methods available on subquery expressions.
 
 ### As

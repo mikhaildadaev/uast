@@ -16,6 +16,7 @@ func NewSQL(currentDialect *SupportDialect) (*sql, error) {
 				return newContext()
 			},
 		},
+		processor: currentDialect.processor,
 		strateger: currentDialect.strateger,
 	}, nil
 }
@@ -47,6 +48,11 @@ func (sql *sql) Build(statement statement) (string, []any, error) {
 func (sql *sql) Close() {
 	sql.pool = nil
 }
+func (sql *sql) SetDialect(dialect *SupportDialect) {
+	sql.config = dialect.config
+	sql.processor = dialect.processor
+	sql.strateger = dialect.strateger
+}
 
 // Приватные интерфейсы
 type statement interface {
@@ -59,5 +65,6 @@ type statement interface {
 type sql struct {
 	config    *config
 	pool      *sync.Pool
+	processor processor
 	strateger strateger
 }

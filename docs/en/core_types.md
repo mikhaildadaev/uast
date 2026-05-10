@@ -250,7 +250,7 @@ Output PostgreSQL:
 CAST("t"."number" AS BOOLEAN)
 ```
 
-#### TypeJson
+#### TypeJSON
 Represents a JSON data type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)

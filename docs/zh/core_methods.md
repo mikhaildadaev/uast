@@ -14,7 +14,7 @@ Methods available on column expressions.
 ### As
 Assigns an alias to a column expression.
 ```go
-as := uast.Column[string]("t", "string").As("alias")
+column := uast.Column[string]("t", "string").As("alias")
 ```
 Output:
 ```text
@@ -27,7 +27,7 @@ Methods available on function expressions.
 ### As
 Assigns an alias to a function expression.
 ```go
-as := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
+function := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
 ```
 Output:
 ```text
@@ -37,7 +37,7 @@ AVG("t"."number") AS "alias"
 ### Over
 Adds a window specification to a function, transforming it into a window function.
 ```go
-over := uast.Avg(uast.Column[int]("t", "number"), false).Over(
+function := uast.Avg(uast.Column[int]("t", "number"), false).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
@@ -53,7 +53,7 @@ Methods available on subquery expressions.
 ### As
 Assigns an alias to a subquery expression.
 ```go
-as := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
 ```
 Output:
 ```text

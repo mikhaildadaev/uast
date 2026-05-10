@@ -75,7 +75,7 @@ UAST - Universal Abstract SQL Transformer
    - [+] TypeSpecial
 # API - Static - DataType | TypeBinary [data]
    - [+] TypeBinary                                           # BINARY/BYTEA/
-   - [+] TypeVarBinary                                        # BINARY/BYTEA/
+   - [+] TypeVarBinary                                        # VARBINARY/BYTEA/
 # API - Static - DataType | TypeDateTime [data]
    - [+] TypeDate                                             # DATE/DATE/
    - [+] TypeDateTime                                         # DATETIME/TIMESTAMP/
@@ -90,12 +90,12 @@ UAST - Universal Abstract SQL Transformer
    - [+] TypeSmallInt                                         # SIGNED/SMALLINT/
 # API - Static - DataType | TypeString [data]
    - [+] TypeChar                                             # CHAR/CHAR/
-   - [+] TypeString                                           # CHAR/VARCHAR/
+   - [+] TypeString                                           # VARCHAR/VARCHAR/
    - [+] TypeText                                             # TEXT/TEXT/
-   - [+] TypeVarChar                                          # CHAR/VARCHAR/
+   - [+] TypeVarChar                                          # VARCHAR/VARCHAR/
 # API - Static - DataType | TypeSpecial [data]
-   - [+] TypeArray                                            # TEXT/ARRAY/
-   - [+] TypeBoolean                                          # UNSIGNED/BOOLEAN/
+   - [+] TypeArray                                            # JSON/ARRAY/
+   - [+] TypeBoolean                                          # TINYINT(1)/BOOLEAN/
    - [+] TypeJson                                             # JSON/JSONB/
    - [+] TypeUUID                                             # CHAR(36)/UUID/
    - [+] TypeXML                                              # TEXT/XML/

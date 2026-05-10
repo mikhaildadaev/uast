@@ -5,7 +5,7 @@ outline: deep
 # API / Core / Types
 
 ::: info **Info**
-This page documents all data types `Binary`, `Date and time`, `Math`, `String`, `Special` with all 21 format types. Each field is shown with a working code example and expected text output.
+This page covers all 21 data types in `Binary`, `Date and time`, `Math`, `String`, `Special` categories. Each type includes a code example and dialect-specific SQL output.
 :::
 
 ## Data
@@ -13,216 +13,272 @@ This page documents all data types `Binary`, `Date and time`, `Math`, `String`, 
 
 ### Binary
 #### TypeBinary
-...
+Fixed-length binary string.
 ```go
-...
+binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS BINARY)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BYTEA)
 ```
 
 #### TypeVarBinary
-...
+Variable-length binary string.
 ```go
-...
+binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS VARBINARY)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BYTEA)
 ```
 
 ### Date and time
 #### TypeDate
-...
+Represents a date value (year, month, day).
 ```go
-...
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
 ```
 Output:
 ```text
-...
+CAST("t"."number" AS DATE)
 ```
 
 #### TypeDateTime
-...
+Represents a combined date and time value.
 ```go
-...
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS DATETIME)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS TIMESTAMP)
 ```
 
 #### TypeTime
-...
+Represents a time value (hour, minute, second).
 ```go
-...
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
 ```
 Output:
 ```text
-...
+CAST("t"."number" AS TIME)
 ```
 
 #### TypeTimestamp
-...
+Represents a timestamp value.
 ```go
-...
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS TIMESTAMP)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS TIMESTAMPTZ)
 ```
 
 ### Math
 #### TypeBigInt
-...
+Large integer type.
 ```go
-...
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
 ```
-Output:
+Output MySQL:
 ```text
-...
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BIGINT)
 ```
 
 #### TypeDecimal
-...
+Fixed-point decimal number.
 ```go
-...
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
 ```
 Output:
 ```text
-...
+CAST("t"."number" AS DECIMAL)
 ```
 
 #### TypeDouble
-...
+Double-precision floating-point number.
 ```go
-...
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS DECIMAL)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS DOUBLE PRECISION)
 ```
 
 #### TypeFloat
-...
+Single-precision floating-point number.
 ```go
-...
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS DECIMAL)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS REAL)
 ```
 
 #### TypeInt
-...
+Integer type.
 ```go
-...
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS INTEGER)
 ```
 
 #### TypeSmallInt
-...
+Small integer type.
 ```go
-...
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
 ```
-Output:
+Output MySQL:
 ```text
-...
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS SMALLINT)
 ```
 
 ### String
 #### TypeChar 
-...
+Fixed-length character string.
 ```go
-...
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
 ```
 Output:
 ```text
-...
+CAST("t"."number" AS CHAR)
 ```
 
 #### TypeString
-...
+Variable-length character string.
 ```go
-...
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
 Output:
 ```text
-...
+CAST("t"."number" AS VARCHAR)
 ```
 
 #### TypeText
-...
+Variable-length text string.
 ```go
-...
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
 ```
 Output:
 ```text
-...
+CAST("t"."number" AS TEXT)
 ```
 
 #### TypeVarChar
-...
+Variable-length character string with specified maximum.
 ```go
-...
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
 ```
 Output:
 ```text
-...
+CAST("t"."number" AS VARCHAR)
 ```
 
 ### Special
 #### TypeArray
-...
+Represents an array type.
 ```go
-...
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS JSON)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS ARRAY)
 ```
 
 #### TypeBoolean
-...
+Represents a boolean (true/false) type.
 ```go
-...
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS TINYINT(1))
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BOOLEAN)
 ```
 
-#### Typetext
-...
+#### TypeJson
+Represents a JSON data type.
 ```go
-...
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS JSON)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS JSONB)
 ```
 
 #### TypeUUID
-...
+Represents a universally unique identifier (UUID).
 ```go
-...
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS CHAR(36))
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS UUID)
 ```
 
 #### TypeXML
-...
+Represents an XML data type.
 ```go
-...
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
 ```
-Output:
+Output Mysql:
 ```text
-...
+CAST("t"."number" AS TEXT)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS XML)
 ```
 

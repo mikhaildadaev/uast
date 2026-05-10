@@ -13,7 +13,7 @@ type (
 // Публичные константы
 const (
 	Author  = "Mikhail Dadaev"
-	Version = "1.26.1"
+	Version = "1.26.11"
 )
 const (
 	// Типы бинарные

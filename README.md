@@ -5,12 +5,12 @@ UAST - Universal Abstract SQL Transformer
 # API - Builder [data]
    - [+] NewBuilder(dialect)
 # API - Builder - Dialect [data]
-   - [+] DialectClickHouse
+   - [-] DialectClickHouse
    - [+] DialectDefault
    - [+] DialectMySQL
-   - [+] DialectMsSQL
+   - [-] DialectMsSQL
    - [+] DialectPostgreSQL
-   - [+] DialectSQLite
+   - [-] DialectSQLite
 # API - Query [data]
    - [+] Build(statement)
 # API - Statement [list]

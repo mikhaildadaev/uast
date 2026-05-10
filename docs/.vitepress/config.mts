@@ -77,6 +77,10 @@ export default defineConfig({
                         link: '/en/core_constructors' 
                       },
                       { 
+                        text: 'Methods', 
+                        link: '/en/core_methods' 
+                      },
+                      { 
                         text: 'Options', 
                         link: '/en/core_options' 
                       },
@@ -185,6 +189,10 @@ export default defineConfig({
                         link: '/ru/core_constructors' 
                       },
                       { 
+                        text: 'Методы', 
+                        link: '/ru/core_methods' 
+                      },
+                      { 
                         text: 'Опции', 
                         link: '/ru/core_options' 
                       },
@@ -291,6 +299,10 @@ export default defineConfig({
                       { 
                         text: '构造函数', 
                         link: '/zh/core_constructors' 
+                      },
+                      { 
+                        text: '方法', 
+                        link: '/zh/core_methods' 
                       },
                       { 
                         text: '选项', 

@@ -5,7 +5,7 @@ outline: deep
 # API / 核心 / 类型
 
 ::: info **关于**
-本页面涵盖了 `Binary`, `Datetime`, `Numeric`, `String`, `Special` 类别中的所有 21 种数据类型。每种类型都使用 `Cast` 进行演示，并包含带有方言特定 SQL 输出的代码示例。
+本页面涵盖了 `Binary`、`Datetime`、`Numeric`、`String`、`Special` 类别中的所有 21 种数据类型。每种类型都使用 `Cast` 进行演示，并包含带有方言特定 SQL 输出的代码示例。
 :::
 
 ## Binary

@@ -1892,7 +1892,11 @@ Concatenates two or more string expressions into a single string. `NULL` argumen
 ```go
 function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
-Output:
+Output MySQL:
+```text
+CONCAT(`t`.`string`, 'old', 'new')
+```
+Output PostgreSQL:
 ```text
 CONCAT("t"."string", 'old', 'new')
 ```
@@ -1902,7 +1906,11 @@ Concatenates two or more string expressions with a specified separator between t
 ```go
 function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
 ```
-Output:
+Output MySQL:
+```text
+CONCAT_WS('_', `t`.`string`, 'old', 'new')
+```
+Output PostgreSQL:
 ```text
 CONCAT_WS('_', "t"."string", 'old', 'new')
 ```
@@ -1912,7 +1920,11 @@ Returns the leftmost `count` characters from a string expression.
 ```go
 function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+LEFT(`t`.`string`, 2)
+```
+Output PostgreSQL:
 ```text
 LEFT("t"."string", 2)
 ```
@@ -1922,7 +1934,11 @@ Converts a string expression to lowercase.
 ```go
 function := uast.Lower(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+LOWER(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 LOWER("t"."string")
 ```
@@ -1932,7 +1948,11 @@ Left-pads a string expression with the specified separator to a total length of 
 ```go
 function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
-Output:
+Output MySQL:
+```text
+LPAD(`t`.`string`, 2, ',')
+```
+Output PostgreSQL:
 ```text
 LPAD("t"."string", 2, ',')
 ```
@@ -1942,7 +1962,11 @@ Removes leading spaces from a string expression.
 ```go
 function := uast.LTrim(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+LTRIM(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 LTRIM("t"."string")
 ```
@@ -1952,7 +1976,11 @@ Repeats a string expression `count` times.
 ```go
 function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+REPEAT(`t`.`string`, 2)
+```
+Output PostgreSQL:
 ```text
 REPEAT("t"."string", 2)
 ```
@@ -1962,7 +1990,11 @@ Replaces all occurrences of a substring in a string with a new substring.
 ```go
 function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
-Output:
+Output MySQL:
+```text
+REPLACE(`t`.`string`, 'old', 'new')
+```
+Output PostgreSQL:
 ```text
 REPLACE("t"."string", 'old', 'new')
 ```
@@ -1972,7 +2004,11 @@ Reverses the characters in a string expression.
 ```go
 function := uast.Reverse(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+REVERSE(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 REVERSE("t"."string")
 ```
@@ -1982,7 +2018,11 @@ Returns the rightmost `count` characters from a string expression.
 ```go
 function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+RIGHT(`t`.`string`, 2)
+```
+Output PostgreSQL:
 ```text
 RIGHT("t"."string", 2)
 ```
@@ -1992,7 +2032,11 @@ Right-pads a string expression with the specified separator to a total length of
 ```go
 function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
-Output:
+Output MySQL:
+```text
+RPAD(`t`.`string`, 2, ',')
+```
+Output PostgreSQL:
 ```text
 RPAD("t"."string", 2, ',')
 ```
@@ -2002,7 +2046,11 @@ Removes trailing spaces from a string expression.
 ```go
 function := uast.RTrim(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+RTRIM(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 RTRIM("t"."string")
 ```
@@ -2012,7 +2060,11 @@ Extracts a substring from a string expression starting at `startPos` (1-based) f
 ```go
 function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+SUBSTRING(`t`.`string`, 0, 2)
+```
+Output PostgreSQL:
 ```text
 SUBSTRING("t"."string", 0, 2)
 ```
@@ -2022,7 +2074,11 @@ Removes both leading and trailing spaces from a string expression.
 ```go
 function := uast.Trim(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+TRIM(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 TRIM("t"."string")
 ```
@@ -2032,7 +2088,11 @@ Converts a string expression to uppercase.
 ```go
 function := uast.Upper(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+UPPER(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 UPPER("t"."string")
 ```

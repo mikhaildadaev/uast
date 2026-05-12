@@ -19,5 +19,5 @@ sql.SetDialect(uast.DialectPostgreSQL)
 ```
 Output:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
 ```

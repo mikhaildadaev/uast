@@ -13,7 +13,11 @@ This page describes how to create a telemetry instance, configure all the settin
 ```go
 ...
 ```
-Output:
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
 ```text
 ...
 ```

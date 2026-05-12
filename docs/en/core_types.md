@@ -16,7 +16,7 @@ Fixed-length binary string.
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS BINARY)
 ```
@@ -30,7 +30,7 @@ Variable-length binary string.
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS VARBINARY)
 ```
@@ -57,7 +57,7 @@ Represents a combined date and time value.
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS DATETIME)
 ```
@@ -81,7 +81,7 @@ Represents a timestamp value.
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS TIMESTAMP)
 ```
@@ -122,7 +122,7 @@ Double-precision floating-point number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS DECIMAL)
 ```
@@ -136,7 +136,7 @@ Single-precision floating-point number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS DECIMAL)
 ```
@@ -150,7 +150,7 @@ Integer type.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS SIGNED)
 ```
@@ -224,7 +224,7 @@ Represents an array type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS JSON)
 ```
@@ -238,7 +238,7 @@ Represents a boolean (true/false) type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS TINYINT(1))
 ```
@@ -252,7 +252,7 @@ Represents a JSON data type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS JSON)
 ```
@@ -266,7 +266,7 @@ Represents a universally unique identifier (UUID).
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS CHAR(36))
 ```
@@ -280,7 +280,7 @@ Represents an XML data type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
 ```
-Output Mysql:
+Output MySQL:
 ```text
 CAST("t"."number" AS TEXT)
 ```

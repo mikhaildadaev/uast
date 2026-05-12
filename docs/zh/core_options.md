@@ -9,6 +9,7 @@ outline: deep
 :::
 
 ## exprArray
+### Array
 Constructs an array expression for use in SQL queries.
 ```go
 array := uast.Array(0, 1, 2)
@@ -160,6 +161,7 @@ Output PostgreSQL:
 ```
 
 ## exprColumn
+### Column
 Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
 ```go
 column := uast.Column[string]("t", "string")
@@ -2098,6 +2100,7 @@ UPPER("t"."string")
 ```
 
 ## exprLiteral
+### Literal
 Embeds a raw literal value directly into the generated SQL string (not parameterized). Use with caution — values are written as-is. Prefer `Value` for user-supplied data.
 ```go
 literal := uast.Literal("%Y-%m-%d")
@@ -2172,6 +2175,7 @@ Output PostgreSQL:
 ```
 
 ## exprSubquery
+### Subquery
 Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test")))
@@ -2186,6 +2190,7 @@ Output PostgreSQL:
 ```
 
 ## exprValue
+### Value
 Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`$1`, `?`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data and prevents SQL injection. 
 Supported types: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `string`, `time.Time`.
 ```go

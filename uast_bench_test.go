@@ -7,7 +7,9 @@ import (
 // Бенчмарки компонентов
 func Benchmark_Select_Multi(b *testing.B) {
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
-		builder, _ := NewSQL(supportDialect)
+		builder := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
 			b.ResetTimer()
@@ -119,7 +121,9 @@ func Benchmark_Select_Multi(b *testing.B) {
 }
 func Benchmark_Select_Single(b *testing.B) {
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
-		builder, _ := NewSQL(supportDialect)
+		builder := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {

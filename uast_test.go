@@ -8,7 +8,9 @@ import (
 // Публичные функции
 func Test_Core_Array(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Array(0, 1, 2)).
 			From(Test.Table)
@@ -24,7 +26,9 @@ func Test_Core_Array(t *testing.T) {
 }
 func Test_Core_Binary(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID).
 			From(Test.Table).
@@ -72,7 +76,9 @@ func Test_Core_Binary(t *testing.T) {
 }
 func Test_Core_Column(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID.As("id")).
 			From(Test.Table)
@@ -88,7 +94,9 @@ func Test_Core_Column(t *testing.T) {
 }
 func Test_Core_Comparison(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID.As("id")).
 			From(Test.Table).
@@ -159,7 +167,9 @@ func Test_Core_Comparison(t *testing.T) {
 }
 func Test_Core_Constant(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID).
 			From(Test.Table).
@@ -226,7 +236,9 @@ func Test_Core_Constant(t *testing.T) {
 }
 func Test_Core_Function(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(
 			// Функции агрегатные
@@ -597,7 +609,9 @@ func Test_Core_Function(t *testing.T) {
 }
 func Test_Core_Literal(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID).
 			From(Test.Table).
@@ -616,7 +630,9 @@ func Test_Core_Literal(t *testing.T) {
 }
 func Test_Core_Logical(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID.As("id")).
 			From(Test.Table).
@@ -646,7 +662,9 @@ func Test_Core_Logical(t *testing.T) {
 }
 func Test_Core_Order(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID.As("id")).
 			From(Test.Table).
@@ -668,7 +686,9 @@ func Test_Core_Order(t *testing.T) {
 }
 func Test_Core_Subquery(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(
 			Subquery[int64](NewSelect(Test.ID).From(Test.Table)).As("SUB"),
@@ -687,7 +707,9 @@ func Test_Core_Subquery(t *testing.T) {
 func Test_Core_Value(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		var data string = "ivan"
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.ID.As("id")).
 			From(Test.Table).
@@ -706,7 +728,9 @@ func Test_Core_Value(t *testing.T) {
 }
 func Test_Delete(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		queryWith := WithN("user_stats", NewSelect(
 			Orders.UserID,
@@ -757,7 +781,9 @@ func Test_Delete(t *testing.T) {
 }
 func Test_Delete_Join(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtDelete := NewDelete(Users.Table).
 			Join(
@@ -781,7 +807,9 @@ func Test_Delete_Join(t *testing.T) {
 }
 func Test_Delete_Returning(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtDelete := NewDelete(Users.Table).
 			Where(Equal(Users.Status, Value("inactive"))).
@@ -804,7 +832,9 @@ func Test_Delete_Returning(t *testing.T) {
 }
 func Test_Delete_Where(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		existsSub := NewSelect(Levels.ID).
 			From(Levels.Table).
@@ -850,7 +880,9 @@ func Test_Delete_Where(t *testing.T) {
 }
 func Test_Delete_With(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		cte := WithN("old_users", NewSelect(Users.ID).
 			From(Users.Table).
@@ -874,7 +906,9 @@ func Test_Delete_With(t *testing.T) {
 }
 func Test_Insert(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		queryWith := WithN("user_stats", NewSelect(
 			Orders.UserID,
@@ -923,7 +957,9 @@ func Test_Insert(t *testing.T) {
 }
 func Test_Select(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		queryWith := WithN("user_stats", NewSelect(
 			Orders.UserID,
@@ -1007,7 +1043,9 @@ func Test_Select(t *testing.T) {
 }
 func Test_Select_Distinct(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect().Distinct().
 			Field(Users.ID.As("user_id")).
@@ -1024,7 +1062,9 @@ func Test_Select_Distinct(t *testing.T) {
 }
 func Test_Select_GroupBy(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(
 			Users.DepartmentID,
@@ -1058,7 +1098,9 @@ func Test_Select_GroupBy(t *testing.T) {
 }
 func Test_Select_Having(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		queryMain := NewSelect(
 			Users.DepartmentID,
@@ -1094,7 +1136,9 @@ func Test_Select_Having(t *testing.T) {
 }
 func Test_Select_Join(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Users.ID.As("user_id")).
 			From(Users.Table).
@@ -1134,7 +1178,9 @@ func Test_Select_Join(t *testing.T) {
 }
 func Test_Select_Limit(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(
 			Users.ID,
@@ -1156,7 +1202,9 @@ func Test_Select_Limit(t *testing.T) {
 }
 func Test_Select_Offset(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Users.ID, Users.Name, Users.Age).
 			From(Users.Table).
@@ -1174,7 +1222,9 @@ func Test_Select_Offset(t *testing.T) {
 }
 func Test_Select_OrderBy(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Users.ID.As("user_id"), Users.Name.As("user_name")).
 			From(Users.Table).
@@ -1196,7 +1246,9 @@ func Test_Select_OrderBy(t *testing.T) {
 }
 func Test_Select_Unions(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		queryUnion := NewSelect(
 			Users.Name.As("person_name"),
@@ -1267,7 +1319,9 @@ func Test_Select_Unions(t *testing.T) {
 }
 func Test_Select_Where(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		existsSub := NewSelect(Levels.ID).
 			From(Levels.Table).
@@ -1314,7 +1368,9 @@ func Test_Select_Where(t *testing.T) {
 }
 func Test_Select_With(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		queryWithN := WithN("WithN", NewSelect(
 			Orders.UserID,
@@ -1440,7 +1496,9 @@ func Test_Select_With(t *testing.T) {
 }
 func Test_Update(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql, _ := NewSQL(supportDialect)
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
 		defer sql.Close()
 		queryWith := WithN("user_stats", NewSelect(
 			Orders.UserID,

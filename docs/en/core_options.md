@@ -1792,7 +1792,11 @@ function := uast.CumeDist().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1805,7 +1809,11 @@ function := uast.DenseRank().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1818,7 +1826,11 @@ function := uast.NTile(2).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1831,7 +1843,11 @@ function := uast.PercentRank().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1844,7 +1860,11 @@ function := uast.Rank().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1857,7 +1877,11 @@ function := uast.RowNumber().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```

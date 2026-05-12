@@ -5,57 +5,73 @@ outline: deep
 # API / Ядро / Методы
 
 ::: info **Информация**
-This page documents methods available on expressions: `As` for assigning aliases and `Over` for adding window specifications. Each method is shown with a working code example and expected SQL output.
+Эта страница документирует методы, доступные для выражений: `As` для назначения псевдонимов и `Over` для добавления оконных спецификаций. Каждый метод показан с рабочим примером кода и ожидаемым выводом SQL.
 :::
 
 ## exprColumn
-Methods available on column expressions.
+Методы, доступные для выражений-колонок.
 
 ### As
-Assigns an alias to a column expression.
+Назначает псевдоним выражению-колонке.
 ```go
 column := uast.Column[string]("t", "string").As("alias")
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` AS `alias`
+```
+Output PostgreSQL:
 ```text
 "t"."string" AS "alias"
 ```
 
 ## exprFunction
-Methods available on function expressions.
+Методы, доступные для выражений-функций.
 
 ### As
-Assigns an alias to a function expression.
+Назначает псевдоним выражению-функции.
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
 ```
-Output:
+Output MySQL:
+```text
+AVG(`t`.`number`) AS `alias`
+```
+Output PostgreSQL:
 ```text
 AVG("t"."number") AS "alias"
 ```
 
 ### Over
-Adds a window specification to a function, transforming it into a window function.
+Добавляет оконную спецификацию к функции, превращая её в оконную функцию.
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 ## exprSubquery
-Methods available on subquery expressions.
+Методы, доступные для выражений-подзапросов.
 
 ### As
-Assigns an alias to a subquery expression.
+Назначает псевдоним выражению-подзапросу.
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
 ```
-Output:
+Output MySQL:
+```text
+(SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
+```
+Output PostgreSQL:
 ```text
 (SELECT "t"."id" FROM "test" AS "t") AS "alias"
 ```

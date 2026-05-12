@@ -595,7 +595,12 @@ Returns the average (arithmetic mean) of all non-NULL values in the expression. 
 function := uast.Avg(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
+```text
+AVG(`t`.`number`)
+AVG(DISTINCT `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 AVG("t"."number")
 AVG(DISTINCT "t"."number")
@@ -607,7 +612,12 @@ Returns the bitwise AND of all bits in the expression. Only meaningful for integ
 function := uast.BitAnd(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
+```text
+BIT_AND(`t`.`number`)
+BIT_AND(DISTINCT `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 BIT_AND("t"."number")
 BIT_AND(DISTINCT "t"."number")
@@ -619,7 +629,12 @@ Returns the bitwise OR of all bits in the expression. Only meaningful for intege
 function := uast.BitOr(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
+```text
+BIT_OR(`t`.`number`)
+BIT_OR(DISTINCT `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 BIT_OR("t"."number")
 BIT_OR(DISTINCT "t"."number")
@@ -631,7 +646,12 @@ Returns the bitwise XOR of all bits in the expression. Only meaningful for integ
 function := uast.BitXor(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
+```text
+BIT_XOR(`t`.`number`)
+BIT_XOR(DISTINCT `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 BIT_XOR("t"."number")
 BIT_XOR(DISTINCT "t"."number")
@@ -643,7 +663,12 @@ Returns the number of rows matching the query, or the number of non-NULL values 
 function := uast.Count(uast.Column[string]("t", "string"), false)
 functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
 ```
-Output:
+Output MySQL:
+```text
+COUNT(`t`.`string`)
+COUNT(DISTINCT `t`.`string`)
+```
+Output PostgreSQL:
 ```text
 COUNT("t"."string")
 COUNT(DISTINCT "t"."string")
@@ -672,7 +697,12 @@ Returns the maximum value of the expression across all rows in the group.
 function := uast.Max(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
+```text
+MAX(`t`.`number`)
+MAX(DISTINCT `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 MAX("t"."number")
 MAX(DISTINCT "t"."number")
@@ -684,7 +714,12 @@ Returns the minimum value of the expression across all rows in the group.
 function := uast.Min(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
+```text
+MIN(`t`.`number`)
+MIN(DISTINCT `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 MIN("t"."number")
 MIN(DISTINCT "t"."number")
@@ -713,7 +748,12 @@ Returns the sum of all values in the expression. If `distinct` is `true`, sums o
 function := uast.Sum(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
 ```
-Output:
+Output MySQL:
+```text
+SUM(`t`.`number`)
+SUM(DISTINCT `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 SUM("t"."number")
 SUM(DISTINCT "t"."number")
@@ -1218,7 +1258,11 @@ function := uast.JsonArray(
     uast.Value("val2"),
 )
 ```
-Output:
+Output MySQL:
+```text
+JSON_ARRAY(`t`.`json`, 'val1', 'val2')
+```
+Output PostgreSQL:
 ```text
 JSON_ARRAY("t"."json", 'val1', 'val2')
 ```

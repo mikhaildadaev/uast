@@ -10,7 +10,7 @@ outline: deep
 
 ## exprArray
 ### Array
-Constructs an array expression for use in SQL queries.
+Создаёт выражение массива для использования в SQL-запросах.
 ```go
 array := uast.Array(0, 1, 2)
 ```
@@ -25,7 +25,7 @@ ARRAY[$1, $2, $3]
 
 ## exprBinary
 ### BitwiseAnd
-Performs a bitwise AND operation between two expressions.
+Выполняет побитовую операцию И между двумя выражениями.
 ```go
 binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
@@ -39,7 +39,7 @@ Output PostgreSQL:
 ```
 
 ### BitwiseOr
-Performs a bitwise OR operation between two expressions.
+Выполняет побитовую операцию ИЛИ между двумя выражениями.
 ```go
 binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
@@ -53,7 +53,7 @@ Output PostgreSQL:
 ```
 
 ### BitwiseXor
-Performs a bitwise XOR operation between two expressions.
+Выполняет побитовую операцию исключающего ИЛИ между двумя выражениями.
 ```go
 binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
@@ -67,7 +67,7 @@ Output PostgreSQL:
 ```
 
 ### Divide
-Divides the left expression by the right expression.
+Делит левое выражение на правое.
 ```go
 binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -81,7 +81,7 @@ Output PostgreSQL:
 ```
 
 ### Minus
-Subtracts the right expression from the left expression.
+Вычитает правое выражение из левого.
 ```go
 binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -95,7 +95,7 @@ Output PostgreSQL:
 ```
 
 ### Modulo
-Returns the remainder of dividing the left expression by the right expression.
+Возвращает остаток от деления левого выражения на правое.
 ```go
 binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -109,7 +109,7 @@ Output PostgreSQL:
 ```
 
 ### Multiply
-Multiplies the left expression by the right expression.
+Умножает левое выражение на правое.
 ```go
 binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -123,7 +123,7 @@ Output PostgreSQL:
 ```
 
 ### Plus
-Adds the left expression to the right expression.
+Складывает левое выражение с правым.
 ```go
 binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -137,7 +137,7 @@ Output PostgreSQL:
 ```
 
 ### ShiftLeft
-Performs a bitwise left shift on the left expression by the number of bits specified in the right expression.
+Выполняет побитовый сдвиг влево левого выражения на количество бит, указанное в правом выражении.
 ```go
 binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -151,7 +151,7 @@ Output PostgreSQL:
 ```
 
 ### ShiftRight
-Performs a bitwise right shift on the left expression by the number of bits specified in the right expression.
+Выполняет побитовый сдвиг вправо левого выражения на количество бит, указанное в правом выражении.
 ```go
 binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -166,7 +166,7 @@ Output PostgreSQL:
 
 ## exprColumn
 ### Column
-Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
+Создаёт ссылку на колонку таблицы, опционально квалифицированную псевдонимом таблицы. Это основной способ ссылаться на колонки базы данных в выражениях.
 ```go
 column := uast.Column[string]("t", "string")
 ```
@@ -181,7 +181,7 @@ Output PostgreSQL:
 
 ## exprComparison
 ### Between
-Checks if the left expression falls within the range defined by `valueStart` and `valueEnd` (inclusive).
+Проверяет, попадает ли левое выражение в диапазон, заданный valueStart и valueEnd (включительно).
 ```go
 comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
@@ -195,7 +195,7 @@ Output PostgreSQL:
 ```
 
 ### Equal
-Compares two expressions for equality (`=`).
+Сравнивает два выражения на равенство (`=`).
 ```go
 comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -209,7 +209,7 @@ Output PostgreSQL:
 ```
 
 ### Exists
-Checks if the subquery returns any rows. Returns `true` if at least one row exists.
+Проверяет, возвращает ли подзапрос какие-либо строки. Возвращает `true` если существует хотя бы одна строка.
 ```go
 comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
 ```
@@ -223,7 +223,7 @@ EXISTS (SELECT 1 FROM "test" AS "t")
 ```
 
 ### Greater
-Compares if the left expression is greater than the right expression (`>`).
+Сравнивает, больше ли левое выражение правого (`>`).
 ```go
 comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -237,7 +237,7 @@ Output PostgreSQL:
 ```
 
 ### GreaterEqual
-Compares if the left expression is greater than or equal to the right expression (`>=`).
+Сравнивает, больше или равно ли левое выражение правому (`>=`).
 ```go
 comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -251,7 +251,7 @@ Output PostgreSQL:
 ```
 
 ### ILike
-Performs a case-insensitive pattern matching comparison. The right expression should contain a pattern with `%` (any sequence) and `_` (single character) wildcards.
+Выполняет регистронезависимое сравнение с шаблоном. Правое выражение должно содержать шаблон с `%` (любая последовательность) и `_` (один символ).
 ```go
 comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -265,7 +265,7 @@ Output PostgreSQL:
 ```
 
 ### In
-Checks if the left expression matches any value contained within the right expression (typically a subquery or array).
+Проверяет, соответствует ли левое выражение любому значению, содержащемуся в правом выражении (обычно подзапрос или массив).
 ```go
 comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
@@ -279,7 +279,7 @@ Output PostgreSQL:
 ```
 
 ### IsNotNull
-Checks if the expression is not `NULL`.
+Проверяет, что выражение не `NULL`.
 ```go
 comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
 ```
@@ -293,7 +293,7 @@ Output PostgreSQL:
 ```
 
 ### IsNull
-Checks if the expression is `NULL`.
+Проверяет, что выражение является `NULL`.
 ```go
 comparison := uast.IsNull(uast.Column[string]("t", "string"))
 ```
@@ -307,7 +307,7 @@ Output PostgreSQL:
 ```
 
 ### Less
-Compares if the left expression is less than the right expression (`<`).
+Сравнивает, меньше ли левое выражение правого (`<`).
 ```go
 comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -321,7 +321,7 @@ Output PostgreSQL:
 ```
 
 ### LessEqual
-Compares if the left expression is less than or equal to the right expression (`<=`).
+Сравнивает, меньше или равно ли левое выражение правому (`<=`).
 ```go
 comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -335,7 +335,7 @@ Output PostgreSQL:
 ```
 
 ### Like
-Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
+Выполняет регистрозависимое сравнение с шаблоном. Правое выражение должно содержать шаблон с `%` и `_`.
 ```go
 comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -349,7 +349,7 @@ Output PostgreSQL:
 ```
 
 ### NotBetween
-Checks if the left expression falls outside the range defined by `valueStart` and `valueEnd`.
+Проверяет, находится ли левое выражение вне диапазона, заданного `valueStart` и `valueEnd`.
 ```go
 comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
@@ -363,7 +363,7 @@ Output PostgreSQL:
 ```
 
 ### NotEqual
-Compares two expressions for inequality (`!=` or `<>`).
+Сравнивает два выражения на неравенство (`!=` or `<>`).
 ```go
 comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -377,7 +377,7 @@ Output PostgreSQL:
 ```
 
 ### NotExists
-Checks if the subquery returns no rows. Returns `true` if the subquery result is empty.
+Проверяет, что подзапрос не возвращает строк. Возвращает `true` если результат подзапроса пуст.
 ```go
 comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
 ```
@@ -391,7 +391,7 @@ NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ```
 
 ### NotILike
-Performs a negated case-insensitive pattern matching comparison.
+Выполняет отрицательное регистронезависимое сравнение с шаблоном.
 ```go
 comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -405,7 +405,7 @@ Output PostgreSQL:
 ```
 
 ### NotIn
-Checks if the left expression does not match any value contained within the right expression.
+Проверяет, что левое выражение не соответствует ни одному значению, содержащемуся в правом выражении.
 ```go
 comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
@@ -419,7 +419,7 @@ Output PostgreSQL:
 ```
 
 ### NotLike
-Performs a negated case-sensitive pattern matching comparison.
+Выполняет отрицательное регистрозависимое сравнение с шаблоном.
 ```go
 comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -434,7 +434,7 @@ Output PostgreSQL:
 
 ## exprConstant
 ### ConstBoolFalse
-Returns a constant boolean `FALSE` expression.
+Возвращает константное булево выражение `FALSE`.
 ```go
 constant := uast.ConstBoolFalse()
 ```
@@ -444,7 +444,7 @@ FALSE
 ```
 
 ### ConstBoolTrue
-Returns a constant boolean `TRUE` expression.
+Возвращает константное булево выражение `TRUE`.
 ```go
 constant := uast.ConstBoolTrue()
 ```
@@ -454,7 +454,7 @@ TRUE
 ```
 
 ### ConstFloat32One
-Returns a constant `float32` value of `1.0`. 
+Возвращает константное значение `float32` равное `1.0`. 
 ```go
 constant := uast.ConstFloat32One()
 ```
@@ -464,7 +464,7 @@ Output:
 ```
 
 ### ConstFloat64One
-Returns a constant `float64` value of `1.000000`.
+Возвращает константное значение `float64` равное `1.000000`.
 ```go
 constant := uast.ConstFloat64One()
 ```
@@ -474,7 +474,7 @@ Output:
 ```
 
 ### ConstIntOne
-Returns a constant `int` value of `1`.
+Возвращает константное значение `int` равное `1`.
 ```go
 constant := uast.ConstIntOne()
 ```
@@ -484,7 +484,7 @@ Output:
 ```
 
 ### ConstInt8One
-Returns a constant `int8` value of `1`.
+Возвращает константное значение `int8` равное `1`.
 ```go
 constant := uast.ConstInt8One()
 ```
@@ -494,7 +494,7 @@ Output:
 ```
 
 ### ConstInt16One
-Returns a constant `int16` value of `1`.
+Возвращает константное значение `int16` равное `1`.
 ```go
 constant := uast.ConstInt16One()
 ```
@@ -504,7 +504,7 @@ Output:
 ```
 
 ### ConstInt32One
-Returns a constant `int32` value of `1`.
+Возвращает константное значение `int32` равное `1`.
 ```go
 constant := uast.ConstInt32One()
 ```
@@ -514,7 +514,7 @@ Output:
 ```
 
 ### ConstInt64One
-Returns a constant `int64` value of `1`.
+Возвращает константное значение `int64` равное `1`.
 ```go
 constant := uast.ConstInt64One()
 ```
@@ -524,7 +524,7 @@ Output:
 ```
 
 ### ConstStringDefault
-Returns a constant `string` value of `DEFAULT`.
+Возвращает константное значение `string` равное `DEFAULT`.
 ```go
 constant := uast.ConstStringDefault()
 ```
@@ -534,7 +534,7 @@ DEFAULT
 ```
 
 ### ConstStringNull
-Returns a constant `string` value of `NULL`.
+Возвращает константное значение `string` равное `NULL`.
 ```go
 constant := uast.ConstStringNull()
 ```
@@ -544,7 +544,7 @@ NULL
 ```
 
 ### ConstUintOne
-Returns a constant `uint` value of `1`.
+Возвращает константное значение `uint` равное `1`.
 ```go
 constant := uast.ConstUintOne()
 ```
@@ -554,7 +554,7 @@ Output:
 ```
 
 ### ConstUint8One
-Returns a constant `uint8` value of `1`.
+Возвращает константное значение `uint8` равное `1`.
 ```go
 constant := uast.ConstUint8One()
 ```
@@ -564,7 +564,7 @@ Output:
 ```
 
 ### ConstUint16One
-Returns a constant `uint16` value of `1`.
+Возвращает константное значение `uint16` равное `1`.
 ```go
 constant := uast.ConstUint16One()
 ```
@@ -574,7 +574,7 @@ Output:
 ```
 
 ### ConstUint32One
-Returns a constant `uint32` value of `1`.
+Возвращает константное значение `uint32` равное `1`.
 ```go
 constant := uast.ConstUint32One()
 ```
@@ -584,7 +584,7 @@ Output:
 ```
 
 ### ConstUint64One
-Returns a constant `uint64` value of `1`.
+Возвращает константное значение `uint64` равное `1`.
 ```go
 constant := uast.ConstUint64One()
 ```
@@ -596,7 +596,7 @@ Output:
 ## exprFunction
 ### Aggregate
 #### Avg
-Returns the average (arithmetic mean) of all non-NULL values in the expression. If `distinct` is `true`, the average is calculated over distinct values only.
+Возвращает среднее арифметическое всех не-NULL значений в выражении. Если distinct `distinct` равен `true`, среднее вычисляется только по уникальным значениям.
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
@@ -613,7 +613,7 @@ AVG(DISTINCT "t"."number")
 ```
 
 #### BitAnd
-Returns the bitwise AND of all bits in the expression. Only meaningful for integer types.
+Возвращает побитовое И всех битов в выражении. Имеет смысл только для целочисленных типов.
 ```go
 function := uast.BitAnd(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
@@ -630,7 +630,7 @@ BIT_AND(DISTINCT "t"."number")
 ```
 
 #### BitOr
-Returns the bitwise OR of all bits in the expression. Only meaningful for integer types.
+Возвращает побитовое ИЛИ всех битов в выражении.
 ```go
 function := uast.BitOr(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
@@ -647,7 +647,7 @@ BIT_OR(DISTINCT "t"."number")
 ```
 
 #### BitXor
-Returns the bitwise XOR of all bits in the expression. Only meaningful for integer types.
+Возвращает побитовое исключающее ИЛИ всех битов в выражении.
 ```go
 function := uast.BitXor(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
@@ -664,7 +664,7 @@ BIT_XOR(DISTINCT "t"."number")
 ```
 
 #### Count
-Returns the number of rows matching the query, or the number of non-NULL values if an expression is provided. When `distinct` is `true`, counts only distinct values.
+Возвращает количество строк, соответствующих запросу, или количество не-NULL значений, если указано выражение. Когда `distinct` равен `true`, подсчитываются только уникальные значения.
 ```go
 function := uast.Count(uast.Column[string]("t", "string"), false)
 functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
@@ -681,7 +681,7 @@ COUNT(DISTINCT "t"."string")
 ```
 
 #### GroupConcat
-Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The `distinct` flag removes duplicates before concatenation.
+Объединяет значения из группы в одну строку, разделённую стандартным разделителем (обычно запятая). Флаг `distinct` удаляет дубликаты перед объединением.
 ```go
 function := uast.GroupConcat(uast.Column[string]("t", "string"), false)
 functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), true)
@@ -698,7 +698,7 @@ STRING_AGG(DISTINCT "t"."string", ', ')
 ```
 
 #### Max
-Returns the maximum value of the expression across all rows in the group.
+Возвращает максимальное значение выражения по всем строкам в группе.
 ```go
 function := uast.Max(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
@@ -715,7 +715,7 @@ MAX(DISTINCT "t"."number")
 ```
 
 #### Min
-Returns the minimum value of the expression across all rows in the group.
+Возвращает минимальное значение выражения по всем строкам в группе.
 ```go
 function := uast.Min(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
@@ -732,7 +732,7 @@ MIN(DISTINCT "t"."number")
 ```
 
 #### StdDev
-Returns the population standard deviation of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
+Возвращает популяционное стандартное отклонение выражения.
 ```go
 function := uast.StdDev(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
@@ -749,7 +749,7 @@ STDDEV_SAMP(DISTINCT "t"."number")
 ```
 
 #### Sum
-Returns the sum of all values in the expression. If `distinct` is `true`, sums only distinct values.
+Возвращает сумму всех значений в выражении. Если `distinct` равен `true`, суммируются только уникальные значения.
 ```go
 function := uast.Sum(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
@@ -766,7 +766,7 @@ SUM(DISTINCT "t"."number")
 ```
 
 #### Variance
-Returns the population variance of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
+Возвращает популяционную дисперсию выражения.
 ```go
 function := uast.Variance(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
@@ -784,7 +784,7 @@ VAR_SAMP(DISTINCT "t"."number")
 
 ### Analytical
 #### FirstValue
-Returns the value of the expression from the first row of the window frame. Requires an `OVER` clause with window specification.
+Возвращает значение выражения из первой строки оконного фрейма. Требует оператор `OVER` с оконной спецификацией.
 ```go
 function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -801,7 +801,7 @@ FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC
 ```
 
 #### Lag
-Returns the value of the expression from a row that is `offset` rows before the current row within the partition.
+Возвращает значение выражения из строки, смещённой на `offset` строк назад от текущей строки в рамках раздела.
 ```go
 function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -818,7 +818,7 @@ LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
 
 #### LastValue
-Returns the value of the expression from the last row of the window frame.
+Возвращает значение выражения из последней строки оконного фрейма.
 ```go
 function := uast.LastValue(uast.Column[string]("t", "string")).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -836,7 +836,7 @@ LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC R
 ```
 
 #### Lead
-Returns the value of the expression from a row that is `offset` rows after the current row within the partition.
+Возвращает значение выражения из строки, смещённой на `offset` строк вперёд от текущей строки в рамках раздела.
 ```go
 function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -853,7 +853,7 @@ LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
 
 #### NthValue
-Returns the value of the expression from the `n-th` row of the window frame.
+Возвращает значение выражения из `n-й` строки оконного фрейма.
 ```go
 function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -872,7 +872,7 @@ NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DES
 
 ### Condition
 #### Case
-Evaluates a list of `WHEN`-`THEN` pairs and returns the `THEN` expression for the first true WHEN. If no condition is true, returns the `ELSE` expression if provided, or `NULL`.
+Вычисляет список пар `WHEN`-`THEN` и возвращает выражение `THEN` для первого истинного WHEN. Если ни одно условие не истинно, возвращает выражение  `ELSE` если оно указано, иначе `NULL`.
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
@@ -893,7 +893,7 @@ CASE WHEN "t"."number" < $1 THEN $2 ELSE $3 END
 ```
 
 #### Coalesce
-Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
+Возвращает первое не-NULL выражение из предоставленного списка. Полезно для указания запасных значений.
 ```go
 function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -907,7 +907,7 @@ COALESCE("t"."createat", "t"."updateat")
 ```
 
 #### Greatest
-Returns the largest value from the provided list of expressions.
+Возвращает наибольшее значение из предоставленного списка выражений.
 ```go
 function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -921,7 +921,7 @@ GREATEST("t"."createat", "t"."updateat")
 ```
 
 #### Least
-Returns the smallest value from the provided list of expressions.
+Возвращает наименьшее значение из предоставленного списка выражений.
 ```go
 function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -935,7 +935,7 @@ LEAST("t"."createat", "t"."updateat")
 ```
 
 #### NullIf
-Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
+Возвращает `NULL` если два выражения равны; иначе возвращает первое выражение.
 ```go
 function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -950,7 +950,7 @@ NULLIF("t"."createat", "t"."updateat")
 
 ### Convert
 #### Cast
-Converts an expression to a specified data type.
+Преобразует выражение к указанному типу данных.
 ```go
 function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
@@ -964,7 +964,7 @@ CAST("t"."number" AS VARCHAR)
 ```
 
 #### CharLength
-Returns the number of characters in a string expression.
+Возвращает количество символов в строковом выражении.
 ```go
 function := uast.CharLength(uast.Column[string]("t", "string"))
 ```
@@ -978,7 +978,7 @@ CHAR_LENGTH("t"."string")
 ```
 
 #### DateFormat
-Formats a datetime expression according to a specified format mask.
+Форматирует выражение даты/времени в соответствии с указанной маской формата.
 ```go
 function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
 ```
@@ -992,7 +992,7 @@ TO_CHAR("t"."createat", '%Y-%m-%d')
 ```
 
 #### Degrees
-Converts an angle from radians to degrees.
+Преобразует угол из радиан в градусы.
 ```go
 function := uast.Degrees(uast.Column[int]("t", "number"))
 ```
@@ -1006,7 +1006,7 @@ DEGREES("t"."number")
 ```
 
 #### Length
-Returns the byte length of a string expression.
+Возвращает длину строкового выражения в байтах.
 ```go
 function := uast.Length(uast.Column[string]("t", "string"))
 ```
@@ -1020,7 +1020,7 @@ LENGTH("t"."string")
 ```
 
 #### Position
-Returns the starting position of the first occurrence of a substring within a string.
+Возвращает начальную позицию первого вхождения подстроки в строку.
 ```go
 function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
 ```
@@ -1034,7 +1034,7 @@ POSITION($1 IN "t"."string")
 ```
 
 #### Radians
-Converts an angle from degrees to radians.
+Преобразует угол из градусов в радианы.
 ```go
 function := uast.Radians(uast.Column[int]("t", "number"))
 ```
@@ -1049,7 +1049,7 @@ RADIANS("t"."number")
 
 ### Date and time
 #### CurDate
-Returns the current date (without time).
+Возвращает текущую дату (без времени).
 ```go
 function := uast.CurDate()
 ```
@@ -1063,7 +1063,7 @@ CURRENT_DATE
 ```
 
 #### CurTime
-Returns the current time (without date).
+Возвращает текущее время (без даты).
 ```go
 function := uast.CurTime()
 ```
@@ -1077,7 +1077,7 @@ CURRENT_TIME
 ```
 
 #### DateAdd
-Adds a time/date interval to a datetime expression and returns the resulting datetime.
+Добавляет интервал даты/времени к выражению даты/времени и возвращает результирующую дату/время.
 ```go
 function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
@@ -1091,7 +1091,7 @@ Output PostgreSQL:
 ```
 
 #### DateDiff
-Returns the difference in days between two datetime expressions (`datetimeEnd` - `datetimeStart`).
+Возвращает разницу в днях между двумя выражениями даты/времени (`datetimeEnd` - `datetimeStart`).
 ```go
 function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
 ```
@@ -1105,7 +1105,7 @@ DATE_PART('day', "t"."updateat" - "t"."createat")
 ```
 
 #### DateSub
-Subtracts a time/date interval from a datetime expression and returns the resulting datetime.
+Вычитает интервал даты/времени из выражения даты/времени и возвращает результирующую дату/время.
 ```go
 function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
@@ -1119,7 +1119,7 @@ Output PostgreSQL:
 ```
 
 #### Day
-Extracts the day of the month (1–31) from a datetime expression.
+Извлекает день месяца (1–31) из выражения даты/времени.
 ```go
 function := uast.Day(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1133,7 +1133,7 @@ EXTRACT(DAY FROM "t"."createat")
 ```
 
 #### DayName
-Returns the name of the weekday (e.g., 'Monday', 'Tuesday') for a given datetime expression.
+Возвращает название дня недели (например, 'Понедельник', 'Вторник') для заданного выражения даты/времени.
 ```go
 function := uast.DayName(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1147,7 +1147,7 @@ TO_CHAR("t"."createat", 'Day')
 ```
 
 #### Hour
-Extracts the hour (0–23) from a datetime expression.
+Извлекает час (0–23) из выражения даты/времени.
 ```go
 function := uast.Hour(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1161,7 +1161,7 @@ EXTRACT(HOUR FROM "t"."createat")
 ```
 
 #### Minute
-Extracts the minute (0–59) from a datetime expression.
+Извлекает минуту (0–59) из выражения даты/времени.
 ```go
 function := uast.Minute(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1175,7 +1175,7 @@ EXTRACT(MINUTE FROM "t"."createat")
 ```
 
 #### Month
-Extracts the month (1–12) from a datetime expression.
+Извлекает месяц (1–12) из выражения даты/времени.
 ```go
 function := uast.Month(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1189,7 +1189,7 @@ EXTRACT(MONTH FROM "t"."createat")
 ```
 
 #### MonthName
-Returns the name of the month (e.g., 'January', 'February') for a given datetime expression.
+Возвращает название месяца (например, 'Январь', 'Февраль') для заданного выражения даты/времени.
 ```go
 function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1203,7 +1203,7 @@ TO_CHAR("t"."createat", 'Month')
 ```
 
 #### Now
-Returns the current date and time.
+Возвращает текущую дату и время.
 ```go
 function := uast.Now()
 ```
@@ -1217,7 +1217,7 @@ CURRENT_TIMESTAMP
 ```
 
 #### Quarter
-Extracts the quarter (1–4) from a datetime expression.
+Извлекает квартал (1–4) из выражения даты/времени.
 ```go
 function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1231,7 +1231,7 @@ EXTRACT(QUARTER FROM "t"."createat")
 ```
 
 #### Second
-Extracts the second (0–59) from a datetime expression.
+Извлекает секунду (0–59) из выражения даты/времени.
 ```go
 function := uast.Second(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1245,7 +1245,7 @@ EXTRACT(SECOND FROM "t"."createat")
 ```
 
 #### TimeAdd
-Adds a time interval to a time/datetime expression and returns the resulting time.
+Добавляет интервал времени к выражению времени/даты/времени и возвращает результирующее время.
 ```go
 function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
@@ -1259,7 +1259,7 @@ Output PostgreSQL:
 ```
 
 #### TimeDiff
-Returns the difference between two time/datetime expressions (`timeEnd` - `timeStart`).
+Возвращает разницу между двумя выражениями времени/даты/времени (`timeEnd` - `timeStart`).
 ```go
 function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
 ```
@@ -1273,7 +1273,7 @@ DATE_PART('time', "t"."updateat" - "t"."createat")
 ```
 
 #### TimeSub
-Subtracts a time interval from a time/datetime expression and returns the resulting time.
+Вычитает интервал времени из выражения времени/даты/времени и возвращает результирующее время.
 ```go
 function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
@@ -1287,7 +1287,7 @@ Output PostgreSQL:
 ```
 
 #### Week
-Extracts the week number (1–53) from a datetime expression.
+Извлекает номер недели (1–53) из выражения даты/времени.
 ```go
 function := uast.Week(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1301,7 +1301,7 @@ EXTRACT(WEEK FROM "t"."createat")
 ```
 
 #### Year
-Extracts the year from a datetime expression.
+Извлекает год из выражения даты/времени.
 ```go
 function := uast.Year(uast.Column[time.Time]("t", "createat"))
 ```
@@ -1316,7 +1316,7 @@ EXTRACT(YEAR FROM "t"."createat")
 
 ### Json
 #### JsonArray
-Creates a JSON array from the given expression and optional additional values.
+Создаёт JSON-массив из заданного выражения и опциональных дополнительных значений.
 ```go
 function := uast.JsonArray(
     uast.Column[string]("t", "json"), 
@@ -1334,7 +1334,7 @@ JSON_ARRAY("t"."json", $1, $2)
 ```
 
 #### JsonArrayAgg
-Aggregates values from a group into a JSON array.
+Агрегирует значения из группы в JSON-массив.
 ```go
 function := uast.JsonArrayAgg(
     uast.Column[string]("t", "json"),
@@ -1350,7 +1350,7 @@ JSON_AGG("t"."json")
 ```
 
 #### JsonContains
-Checks whether a JSON document contains a specified value.
+Проверяет, содержит ли JSON-документ указанное значение.
 ```go
 function := uast.JsonContains(
     uast.Column[string]("t", "json"),
@@ -1367,7 +1367,7 @@ Output PostgreSQL:
 ```
 
 #### JsonExtract
-Extracts a value from a JSON document at the specified path. The `json` parameter is built with JsonPath and optional `JsonKey`/`JsonIndex`.
+Извлекает значение из JSON-документа по указанному пути. Параметр `json` строится с помощью `JsonPath` и опциональных `JsonKey`/`JsonIndex`.
 ```go
 function := JsonExtract(
     uast.Column[string]("t", "json"), 
@@ -1391,7 +1391,7 @@ Output PostgreSQL:
 ```
 
 #### JsonObject
-Builds a JSON object from key-value pairs.
+Создаёт JSON-объект из пар ключ-значение.
 ```go
 function := uast.JsonObject(
     uast.JsonPair(
@@ -1410,7 +1410,7 @@ JSON_BUILD_OBJECT('key', COUNT("t"."json"))
 ```
 
 #### JsonObjectAgg
-Aggregates key-value pairs from a group into a single JSON object.
+Агрегирует пары ключ-значение из группы в один JSON-объект.
 ```go
 function := uast.JsonObjectAgg(
     uast.Column[string]("t", "json"),
@@ -1427,7 +1427,7 @@ JSON_OBJECT_AGG("t"."json", "t"."number")
 ```
 
 #### JsonRemove
-Removes a value from a JSON document at the specified path(s).
+Удаляет значение из JSON-документа по указанному пути(ям).
 ```go
 function := uast.JsonRemove(
     uast.Column[string]("t", "json"),
@@ -1453,7 +1453,7 @@ Output PostgreSQL:
 ```
 
 #### JsonSet
-Sets a value in a JSON document at the specified path(s). Creates the path if it does not exist.
+Устанавливает значение в JSON-документе по указанному пути(ям). Создаёт путь, если он не существует.
 ```go
 function := uast.JsonSet(
     uast.Column[string]("t", "json"),
@@ -1481,7 +1481,7 @@ Output PostgreSQL:
 ```
 
 #### JsonType
-Returns the JSON type of a JSON value (e.g., 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
+Возвращает тип JSON-значения (например, 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
 ```go
 function := uast.JsonType(uast.Column[string]("t", "json"))
 ```
@@ -1496,7 +1496,7 @@ jsonb_typeof("t"."json")
 
 ### Math
 #### Abs
-Returns the absolute (non-negative) value of a numeric expression.
+Возвращает абсолютное (неотрицательное) значение числового выражения.
 ```go
 function := uast.Abs(uast.Column[int]("t", "number"))
 ```
@@ -1510,7 +1510,7 @@ ABS("t"."number")
 ```
 
 #### ACos
-Returns the arc cosine (inverse cosine) of the expression, in radians.
+Возвращает арккосинус (обратный косинус) выражения в радианах.
 ```go
 function := uast.ACos(uast.Column[int]("t", "number"))
 ```
@@ -1524,7 +1524,7 @@ ACOS("t"."number")
 ```
 
 #### ASin
-Returns the arc sine (inverse sine) of the expression, in radians.
+Возвращает арксинус (обратный синус) выражения в радианах.
 ```go
 function := uast.ASin(uast.Column[int]("t", "number"))
 ```
@@ -1538,7 +1538,7 @@ ASIN("t"."number")
 ```
 
 #### ATan
-Returns the arc tangent (inverse tangent) of the expression, in radians.
+Возвращает арктангенс (обратный тангенс) выражения в радианах.
 ```go
 function := uast.ATan(uast.Column[int]("t", "number"))
 ```
@@ -1552,7 +1552,7 @@ ATAN("t"."number")
 ```
 
 #### ATan2
-Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using their signs to determine the quadrant.
+Возвращает арктангенс частного двух аргументов (`y`/`x`), используя их знаки для определения квадранта.
 ```go
 function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
 ```
@@ -1566,7 +1566,7 @@ ATAN2("t"."y", "t"."x")
 ```
 
 #### Cbrt
-Returns the cube root of a numeric expression.
+Возвращает кубический корень числового выражения.
 ```go
 function := uast.Cbrt(uast.Column[int]("t", "number"))
 ```
@@ -1580,7 +1580,7 @@ CBRT("t"."number")
 ```
 
 #### Ceil
-Returns the smallest integer value not less than the argument (rounds up).
+Возвращает наименьшее целое значение, не меньшее аргумента (округление вверх).
 ```go
 function := uast.Ceil(uast.Column[int]("t", "number"))
 ```
@@ -1594,7 +1594,7 @@ CEIL("t"."number")
 ```
 
 #### Cos
-Returns the cosine of the expression, where the expression is in radians.
+Возвращает косинус выражения в радианах.
 ```go
 function := uast.Cos(uast.Column[int]("t", "number"))
 ```
@@ -1608,7 +1608,7 @@ COS("t"."number")
 ```
 
 #### Exp
-Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
+Возвращает число Эйлера `e` (~2.71828) возведённое в степень выражения.
 ```go
 function := uast.Exp(uast.Column[int]("t", "number"))
 ```
@@ -1622,7 +1622,7 @@ EXP("t"."number")
 ```
 
 #### Floor
-Returns the largest integer value not greater than the argument (rounds down).
+Возвращает наибольшее целое значение, не большее аргумента (округление вниз).
 ```go
 function := uast.Floor(uast.Column[int]("t", "number"))
 ```
@@ -1636,7 +1636,7 @@ FLOOR("t"."number")
 ```
 
 #### Ln
-Returns the natural logarithm (base `e`) of the expression.
+Возвращает натуральный логарифм (по основанию `e`) выражения.
 ```go
 function := uast.Ln(uast.Column[int]("t", "number"))
 ```
@@ -1650,7 +1650,7 @@ LN("t"."number")
 ```
 
 #### Log
-Returns the logarithm of the expression to the specified base.
+Возвращает логарифм выражения по указанному основанию.
 ```go
 function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1664,7 +1664,7 @@ LOG("t"."number", $1)
 ```
 
 #### Mod
-Returns the remainder (modulo) of the division of the first expression by the second.
+Возвращает остаток (модуль) от деления первого выражения на второе.
 ```go
 function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1678,7 +1678,7 @@ MOD("t"."number", $1)
 ```
 
 #### Pi
-Returns the mathematical constant `p` (~3.14159).
+Возвращает математическую константу `p` (~3.14159).
 ```go
 function := uast.Pi()
 ```
@@ -1692,7 +1692,7 @@ PI()
 ```
 
 #### Power
-Returns the expression raised to the power of the exponent.
+Возвращает выражение, возведённое в степень экспоненты.
 ```go
 function := uast.Power(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1706,7 +1706,7 @@ POWER("t"."number", $1)
 ```
 
 #### Rand
-Returns a random floating-point value in the range [0, 1].
+Возвращает случайное значение с плавающей запятой в диапазоне [0, 1].
 ```go
 function := uast.Rand()
 ```
@@ -1720,7 +1720,7 @@ RANDOM()
 ```
 
 #### Round
-Rounds the expression to the specified number of decimal places.
+Округляет выражение до указанного количества знаков после запятой.
 ```go
 function := uast.Round(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1734,7 +1734,7 @@ ROUND("t"."number", $1)
 ```
 
 #### Sin
-Returns the sine of the expression, where the expression is in radians.
+Возвращает синус выражения в радианах.
 ```go
 function := uast.Sin(uast.Column[int]("t", "number"))
 ```
@@ -1748,7 +1748,7 @@ SIN("t"."number")
 ```
 
 #### Sqrt
-Returns the square root of the expression.
+Возвращает квадратный корень выражения.
 ```go
 function := uast.Sqrt(uast.Column[int]("t", "number"))
 ```
@@ -1762,7 +1762,7 @@ SQRT("t"."number")
 ```
 
 #### Tan
-Returns the tangent of the expression, where the expression is in radians.
+Возвращает тангенс выражения в радианах.
 ```go
 function := uast.Tan(uast.Column[int]("t", "number"))
 ```
@@ -1776,7 +1776,7 @@ TAN("t"."number")
 ```
 
 #### Trunc
-Truncates the numeric expression to the specified number of decimal places (without rounding).
+Усекает числовое выражение до указанного количества знаков после запятой (без округления).
 ```go
 function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1791,7 +1791,7 @@ TRUNC("t"."number", $1)
 
 ### Ranking
 #### CumeDist
-Returns the cumulative distribution of a value within a partition (the ratio of rows that come before or are peers with the current row). Must be used with an `OVER` clause.
+Возвращает кумулятивное распределение значения в рамках раздела (отношение строк, которые идут до или равны текущей строке). Должна использоваться с оператором `OVER`.
 ```go
 function := uast.CumeDist().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1808,7 +1808,7 @@ CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### DenseRank
-Returns the rank of a row without gaps. Rows with equal values receive the same rank, and the next rank is the immediate next integer. Requires `OVER`.
+Возвращает ранг строки без пропусков. Строки с равными значениями получают одинаковый ранг, а следующий ранг является непосредственно следующим целым числом. Требует `OVER`.
 ```go
 function := uast.DenseRank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1825,7 +1825,7 @@ DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### NTile
-Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
+Делит строки в рамках раздела на `n` приблизительно равных групп и возвращает номер группы (от 1 до `n`) для каждой строки.
 ```go
 function := uast.NTile(2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1842,7 +1842,7 @@ NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### PercentRank
-Returns the percentile rank of a row within a partition (range 0 to 1). Rank of first row is always 0. Requires `OVER`.
+Возвращает процентильный ранг строки в рамках раздела (диапазон от 0 до 1). Ранг первой строки всегда равен 0. Требует `OVER`.
 ```go
 function := uast.PercentRank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1859,7 +1859,7 @@ PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### Rank
-Returns the rank of a row with gaps. Equal values receive the same rank, and the next distinct value skips ahead. Requires `OVER`.
+Возвращает ранг строки с пропусками. Равные значения получают одинаковый ранг, а следующее отличное значение пропускает ранги. Требует `OVER`.
 ```go
 function := uast.Rank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1876,7 +1876,7 @@ RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### RowNumber
-Assigns a unique sequential integer to each row within the partition, starting from 1. Order determines the numbering sequence.
+Присваивает уникальный последовательный номер каждой строке в рамках раздела, начиная с 1. Порядок определяет последовательность нумерации.
 ```go
 function := uast.RowNumber().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1894,7 +1894,7 @@ ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 
 ### String
 #### Concat
-Concatenates two or more string expressions into a single string. `NULL` arguments are treated as empty strings in most dialects.
+Объединяет два или более строковых выражения в одну строку. Аргументы `NULL` рассматриваются как пустые строки в большинстве диалектов.
 ```go
 function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
@@ -1908,7 +1908,7 @@ CONCAT("t"."string", $1, $2)
 ```
 
 #### ConcatWs
-Concatenates two or more string expressions with a specified separator between them. Skips `NULL` arguments.
+Объединяет два или более строковых выражения с указанным разделителем между ними. Пропускает аргументы `NULL`.
 ```go
 function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
 ```
@@ -1922,7 +1922,7 @@ CONCAT_WS($1, "t"."string", $2, $3)
 ```
 
 #### LeftString
-Returns the leftmost `count` characters from a string expression.
+Возвращает крайние слева `count` символов из строкового выражения.
 ```go
 function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
@@ -1936,7 +1936,7 @@ LEFT("t"."string", $1)
 ```
 
 #### Lower
-Converts a string expression to lowercase.
+Преобразует строковое выражение в нижний регистр.
 ```go
 function := uast.Lower(uast.Column[string]("t", "string"))
 ```
@@ -1950,7 +1950,7 @@ LOWER("t"."string")
 ```
 
 #### LPad
-Left-pads a string expression with the specified separator to a total length of `count` characters.
+Дополняет строковое выражение слева указанным разделителем до общей длины `count` символов.
 ```go
 function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
@@ -1964,7 +1964,7 @@ LPAD("t"."string", $1, $2)
 ```
 
 #### LTrim
-Removes leading spaces from a string expression.
+Удаляет начальные пробелы из строкового выражения.
 ```go
 function := uast.LTrim(uast.Column[string]("t", "string"))
 ```
@@ -1978,7 +1978,7 @@ LTRIM("t"."string")
 ```
 
 #### Repeat
-Repeats a string expression `count` times.
+Повторяет строковое выражение `count` раз.
 ```go
 function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
 ```
@@ -1992,7 +1992,7 @@ REPEAT("t"."string", $1)
 ```
 
 #### Replace
-Replaces all occurrences of a substring in a string with a new substring.
+Заменяет все вхождения подстроки в строке на новую подстроку.
 ```go
 function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
@@ -2006,7 +2006,7 @@ REPLACE("t"."string", $1, $2)
 ```
 
 #### Reverse
-Reverses the characters in a string expression.
+Переворачивает символы в строковом выражении.
 ```go
 function := uast.Reverse(uast.Column[string]("t", "string"))
 ```
@@ -2020,7 +2020,7 @@ REVERSE("t"."string")
 ```
 
 #### RightString
-Returns the rightmost `count` characters from a string expression.
+Возвращает крайние справа `count` символов из строкового выражения.
 ```go
 function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
@@ -2034,7 +2034,7 @@ RIGHT("t"."string", $1)
 ```
 
 #### RPad
-Right-pads a string expression with the specified separator to a total length of `count` characters.
+Дополняет строковое выражение справа указанным разделителем до общей длины `count` символов.
 ```go
 function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
@@ -2048,7 +2048,7 @@ RPAD("t"."string", $1, $2)
 ```
 
 #### RTrim
-Removes trailing spaces from a string expression.
+Удаляет конечные пробелы из строкового выражения.
 ```go
 function := uast.RTrim(uast.Column[string]("t", "string"))
 ```
@@ -2062,7 +2062,7 @@ RTRIM("t"."string")
 ```
 
 #### SubString
-Extracts a substring from a string expression starting at `startPos` (1-based) for `lengthStr` characters.
+Извлекает подстроку из строкового выражения, начиная с `startPos` (начиная с 1) длиной `lengthStr` символов.
 ```go
 function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
@@ -2076,7 +2076,7 @@ SUBSTRING("t"."string", $1, $2)
 ```
 
 #### Trim
-Removes both leading and trailing spaces from a string expression.
+Удаляет как начальные, так и конечные пробелы из строкового выражения.
 ```go
 function := uast.Trim(uast.Column[string]("t", "string"))
 ```
@@ -2090,7 +2090,7 @@ TRIM("t"."string")
 ```
 
 #### Upper
-Converts a string expression to uppercase.
+Преобразует строковое выражение в верхний регистр.
 ```go
 function := uast.Upper(uast.Column[string]("t", "string"))
 ```
@@ -2105,7 +2105,7 @@ UPPER("t"."string")
 
 ## exprLiteral
 ### Literal
-Embeds a raw literal value directly into the generated SQL string (not parameterized). Use with caution — values are written as-is. Prefer `Value` for user-supplied data.
+Встраивает необработанное литеральное значение непосредственно в сгенерированную SQL-строку (не параметризуется). Используйте с осторожностью — значения записываются как есть. Предпочитайте `Value` для пользовательских данных.
 ```go
 literal := uast.Literal("%Y-%m-%d")
 ```
@@ -2116,7 +2116,7 @@ Output:
 
 ## exprLogical
 ### And
-Combines multiple conditions with a logical `AND`. All conditions must be true for the combined expression to be true.
+Комбинирует несколько условий логическим `AND`. Все условия должны быть истинными для истинности комбинированного выражения.
 ```go
 logical := uast.And(
     uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
@@ -2133,7 +2133,7 @@ Output PostgreSQL:
 ```
 
 ### Or
-Combines multiple conditions with a logical `OR`. At least one condition must be true for the combined expression to be true.
+Комбинирует несколько условий логическим `OR`. Хотя бы одно условие должно быть истинным для истинности комбинированного выражения.
 ```go
 logical := uast.Or(
     uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
@@ -2151,7 +2151,7 @@ Output PostgreSQL:
 
 ## exprOrderBy
 ### Asc
-Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
+Указывает порядок сортировки по возрастанию (сначала наименьшие, от А до Я). Используется для сортировки строк в запросе или в рамках оконной функции.
 ```go
 order := uast.Asc(uast.Column[string]("t", "string"))
 ```
@@ -2165,7 +2165,7 @@ Output PostgreSQL:
 ```
 
 ### Desc
-Specifies descending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
+Указывает порядок сортировки по убыванию (сначала наибольшие, от Я до А). Используется для сортировки строк в запросе или в рамках оконной функции.
 ```go
 order := uast.Desc(uast.Column[string]("t", "string"))
 ```
@@ -2180,7 +2180,7 @@ Output PostgreSQL:
 
 ## exprSubquery
 ### Subquery
-Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
+Оборачивает оператор `SELECT` как типизированное выражение, которое может использоваться в сравнениях (`In`, `Exists`, `Equal` и т.д.) или как колонка в операторе `SELECT`. Обобщённый параметр `T` указывает скалярный тип единственной колонки, возвращаемой подзапросом.
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test")))
 ```
@@ -2195,8 +2195,7 @@ Output PostgreSQL:
 
 ## exprValue
 ### Value
-Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`?`, `$1`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data and prevents SQL injection. 
-Supported types: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `string`, `time.Time`.
+Оборачивает Go-значение как параметризованное выражение. Значение НЕ вставляется в SQL-строку напрямую — вместо этого генерируется плейсхолдер (`?`, `$1`, и т.д.), а значение добавляется в слайс аргументов, возвращаемый `Build()`. Это безопасный способ передачи пользовательских данных, предотвращающий SQL-инъекции. Поддерживаемые типы: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `string`, `time.Time`.
 ```go
 var data string = "ivan"
 value := uast.Value(data)

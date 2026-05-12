@@ -732,7 +732,7 @@ MIN(DISTINCT "t"."number")
 ```
 
 #### StdDev
-Returns the population standard deviation of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
+Returns the population standard deviation of the expression.
 ```go
 function := uast.StdDev(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
@@ -766,7 +766,7 @@ SUM(DISTINCT "t"."number")
 ```
 
 #### Variance
-Returns the population variance of the expression. Supported mainly by MySQL dialect; check PostgreSQL compatibility.
+Returns the population variance of the expression.
 ```go
 function := uast.Variance(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
@@ -1367,7 +1367,7 @@ Output PostgreSQL:
 ```
 
 #### JsonExtract
-Extracts a value from a JSON document at the specified path. The `json` parameter is built with JsonPath and optional `JsonKey`/`JsonIndex`.
+Extracts a value from a JSON document at the specified path. The `json` parameter is built with `JsonPath` and optional `JsonKey`/`JsonIndex`.
 ```go
 function := JsonExtract(
     uast.Column[string]("t", "json"), 

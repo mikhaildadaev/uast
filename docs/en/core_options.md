@@ -1473,7 +1473,7 @@ function := uast.JsonSet(
 ```
 Output MySQL:
 ```text
-JSON_SET(`t`.`json`, '$.key1', "val1", '$.key2', "val2")
+JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
 ```
 Output PostgreSQL:
 ```text

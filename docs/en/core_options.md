@@ -1494,7 +1494,11 @@ Returns the absolute (non-negative) value of a numeric expression.
 ```go
 function := uast.Abs(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+ABS(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 ABS("t"."number")
 ```
@@ -1504,7 +1508,11 @@ Returns the arc cosine (inverse cosine) of the expression, in radians.
 ```go
 function := uast.ACos(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+ACOS(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 ACOS("t"."number")
 ```
@@ -1514,7 +1522,11 @@ Returns the arc sine (inverse sine) of the expression, in radians.
 ```go
 function := uast.ASin(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+ASIN(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 ASIN("t"."number")
 ```
@@ -1524,7 +1536,11 @@ Returns the arc tangent (inverse tangent) of the expression, in radians.
 ```go
 function := uast.ATan(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+ATAN(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 ATAN("t"."number")
 ```
@@ -1534,7 +1550,11 @@ Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using th
 ```go
 function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
 ```
-Output:
+Output MySQL:
+```text
+ATAN2(`t`.`y`, `t`.`x`)
+```
+Output PostgreSQL:
 ```text
 ATAN2("t"."y", "t"."x")
 ```
@@ -1544,7 +1564,11 @@ Returns the cube root of a numeric expression.
 ```go
 function := uast.Cbrt(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+CBRT(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 CBRT("t"."number")
 ```
@@ -1568,7 +1592,11 @@ Returns the cosine of the expression, where the expression is in radians.
 ```go
 function := uast.Cos(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+COS(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 COS("t"."number")
 ```
@@ -1578,7 +1606,11 @@ Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
 ```go
 function := uast.Exp(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+EXP(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 EXP("t"."number")
 ```
@@ -1588,7 +1620,11 @@ Returns the largest integer value not greater than the argument (rounds down).
 ```go
 function := uast.Floor(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+FLOOR(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 FLOOR("t"."number")
 ```
@@ -1598,7 +1634,11 @@ Returns the natural logarithm (base `e`) of the expression.
 ```go
 function := uast.Ln(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+LN(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 LN("t"."number")
 ```
@@ -1608,7 +1648,11 @@ Returns the logarithm of the expression to the specified base.
 ```go
 function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+LOG(2, `t`.`number`)
+```
+Output PostgreSQL:
 ```text
 LOG(2, "t"."number")
 ```
@@ -1618,7 +1662,11 @@ Returns the remainder (modulo) of the division of the first expression by the se
 ```go
 function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+MOD(`t`.`number`, 2)
+```
+Output PostgreSQL:
 ```text
 MOD("t"."number", 2)
 ```
@@ -1628,7 +1676,11 @@ Returns the mathematical constant `p` (~3.14159).
 ```go
 function := uast.Pi()
 ```
-Output:
+Output MySQL:
+```text
+PI()
+```
+Output PostgreSQL:
 ```text
 PI()
 ```
@@ -1638,7 +1690,11 @@ Returns the expression raised to the power of the exponent.
 ```go
 function := uast.Power(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+POWER(`t`.`number`, 2)
+```
+Output PostgreSQL:
 ```text
 POWER("t"."number", 2)
 ```
@@ -1662,7 +1718,11 @@ Rounds the expression to the specified number of decimal places.
 ```go
 function := uast.Round(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+ROUND(`t`.`number`, 2)
+```
+Output PostgreSQL:
 ```text
 ROUND("t"."number", 2)
 ```
@@ -1672,7 +1732,11 @@ Returns the sine of the expression, where the expression is in radians.
 ```go
 function := uast.Sin(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+SIN(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 SIN("t"."number")
 ```
@@ -1682,7 +1746,11 @@ Returns the square root of the expression.
 ```go
 function := uast.Sqrt(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+SQRT(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 SQRT("t"."number")
 ```
@@ -1692,7 +1760,11 @@ Returns the tangent of the expression, where the expression is in radians.
 ```go
 function := uast.Tan(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+TAN(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 TAN("t"."number")
 ```

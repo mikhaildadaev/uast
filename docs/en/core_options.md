@@ -14,9 +14,13 @@ Constructs an array expression for use in SQL queries.
 ```go
 array := uast.Array(0, 1, 2)
 ```
-Output:
+Output MySQL:
 ```text
-ARRAY[0, 1, 2]
+ARRAY[?, ?, ?]
+```
+Output PostgreSQL:
+```text
+ARRAY[$1, $2, $3]
 ```
 
 ## exprBinary
@@ -27,11 +31,11 @@ binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MySQL:
 ```text
-`t`.`number` & 2
+`t`.`number` & ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" & 2
+"t"."number" & $1
 ```
 
 ### BitwiseOr
@@ -41,11 +45,11 @@ binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MySQL:
 ```text
-`t`.`number` | 2
+`t`.`number` | ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" | 2
+"t"."number" | $1
 ```
 
 ### BitwiseXor
@@ -55,11 +59,11 @@ binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MySQL:
 ```text
-`t`.`number` ^ 2
+`t`.`number` ^ ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" ^ 2
+"t"."number" ^ $1
 ```
 
 ### Divide
@@ -69,11 +73,11 @@ binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` / 2
+`t`.`number` / ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" / 2
+"t"."number" / $1
 ```
 
 ### Minus
@@ -83,11 +87,11 @@ binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` - 2
+`t`.`number` - ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" - 2
+"t"."number" - $1
 ```
 
 ### Modulo
@@ -97,11 +101,11 @@ binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` % 2
+`t`.`number` % ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" % 2
+"t"."number" % $1
 ```
 
 ### Multiply
@@ -111,11 +115,11 @@ binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` * 2
+`t`.`number` * ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" * 2
+"t"."number" * $1
 ```
 
 ### Plus
@@ -125,11 +129,11 @@ binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` + 2
+`t`.`number` + ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" + 2
+"t"."number" + $1
 ```
 
 ### ShiftLeft
@@ -139,11 +143,11 @@ binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` << 2
+`t`.`number` << ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" << 2
+"t"."number" << $1
 ```
 
 ### ShiftRight
@@ -153,11 +157,11 @@ binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` >> 2
+`t`.`number` >> ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" >> 2
+"t"."number" >> $1
 ```
 
 ## exprColumn
@@ -183,11 +187,11 @@ comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.
 ```
 Output MySQL:
 ```text
-`t`.`number` BETWEEN 0 AND 2
+`t`.`number` BETWEEN ? AND ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" BETWEEN 0 AND 2
+"t"."number" BETWEEN $1 AND $2
 ```
 
 ### Equal
@@ -197,11 +201,11 @@ comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` = 2
+`t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" = 2
+"t"."number" = $1
 ```
 
 ### Exists
@@ -225,11 +229,11 @@ comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` > 2
+`t`.`number` > ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" > 2
+"t"."number" > $1
 ```
 
 ### GreaterEqual
@@ -239,11 +243,11 @@ comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` >= 2
+`t`.`number` >= ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" >= 2
+"t"."number" >= $1
 ```
 
 ### ILike
@@ -253,11 +257,11 @@ comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"
 ```
 Output MySQL:
 ```text
-`t`.`string` ILIKE '%ivan%'
+`t`.`string` ILIKE ?
 ```
 Output PostgreSQL:
 ```text
-"t"."string" ILIKE '%ivan%'
+"t"."string" ILIKE $1
 ```
 
 ### In
@@ -267,11 +271,11 @@ comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "
 ```
 Output MySQL:
 ```text
-`t`.`string` IN ('active', 'pending')
+`t`.`string` IN (?, ?)
 ```
 Output PostgreSQL:
 ```text
-"t"."string" IN ('active', 'pending')
+"t"."string" IN ($1, $2)
 ```
 
 ### IsNotNull
@@ -309,11 +313,11 @@ comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` < 2
+`t`.`number` < ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" < 2
+"t"."number" < $1
 ```
 
 ### LessEqual
@@ -323,11 +327,11 @@ comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` <= 2
+`t`.`number` <= ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" <= 2
+"t"."number" <= $1
 ```
 
 ### Like
@@ -337,11 +341,11 @@ comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%")
 ```
 Output MySQL:
 ```text
-`t`.`string` LIKE '%ivan%'
+`t`.`string` LIKE ?
 ```
 Output PostgreSQL:
 ```text
-"t"."string" LIKE '%ivan%'
+"t"."string" LIKE $1
 ```
 
 ### NotBetween
@@ -351,11 +355,11 @@ comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), ua
 ```
 Output MySQL:
 ```text
-`t`.`number` NOT BETWEEN 0 AND 2
+`t`.`number` NOT BETWEEN ? AND ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" NOT BETWEEN 0 AND 2
+"t"."number" NOT BETWEEN $1 AND $2
 ```
 
 ### NotEqual
@@ -365,11 +369,11 @@ comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-`t`.`number` != 2
+`t`.`number` != ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" != 2
+"t"."number" != $1
 ```
 
 ### NotExists
@@ -393,11 +397,11 @@ comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%iva
 ```
 Output MySQL:
 ```text
-`t`.`string` NOT ILIKE '%ivan%'
+`t`.`string` NOT ILIKE ?
 ```
 Output PostgreSQL:
 ```text
-"t"."string" NOT ILIKE '%ivan%'
+"t"."string" NOT ILIKE $1
 ```
 
 ### NotIn
@@ -407,11 +411,11 @@ comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active"
 ```
 Output MySQL:
 ```text
-`t`.`string` NOT IN ('active', 'pending')
+`t`.`string` NOT IN (?, ?)
 ```
 Output PostgreSQL:
 ```text
-"t"."string" NOT IN ('active', 'pending')
+"t"."string" NOT IN ($1, $2)
 ```
 
 ### NotLike
@@ -421,11 +425,11 @@ comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan
 ```
 Output MySQL:
 ```text
-`t`.`string` NOT LIKE '%ivan%'
+`t`.`string` NOT LIKE ?
 ```
 Output PostgreSQL:
 ```text
-"t"."string" NOT LIKE '%ivan%'
+"t"."string" NOT LIKE $1
 ```
 
 ## exprConstant
@@ -684,13 +688,13 @@ functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), tru
 ```
 Output MySQL:
 ```text
-GROUP_CONCAT(`t`.`string` SEPARATOR ', ')
-GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ', ')
+GROUP_CONCAT(`t`.`string` SEPARATOR ',')
+GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ',')
 ```
 Output PostgreSQL:
 ```text
-STRING_AGG("t"."string", ', ')
-STRING_AGG(DISTINCT "t"."string", ', ')
+STRING_AGG("t"."string", ',')
+STRING_AGG(DISTINCT "t"."string", ',')
 ```
 
 #### Max
@@ -881,11 +885,11 @@ function := uast.Case(pairs, elseExpr)
 ```
 Output MySQL:
 ```text
-CASE WHEN `t`.`number` < 2 THEN 'old' ELSE 'new' END
+CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
 ```
 Output PostgreSQL:
 ```text
-CASE WHEN "t"."number" < 2 THEN 'old' ELSE 'new' END
+CASE WHEN "t"."number" < $1 THEN $2 ELSE $3 END
 ```
 
 #### Coalesce
@@ -1022,11 +1026,11 @@ function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
 ```
 Output MySQL:
 ```text
-POSITION('old' IN `t`.`string`)
+POSITION(? IN `t`.`string`)
 ```
 Output PostgreSQL:
 ```text
-POSITION('old' IN "t"."string")
+POSITION($1 IN "t"."string")
 ```
 
 #### Radians
@@ -1322,11 +1326,11 @@ function := uast.JsonArray(
 ```
 Output MySQL:
 ```text
-JSON_ARRAY(`t`.`json`, 'val1', 'val2')
+JSON_ARRAY(`t`.`json`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-JSON_ARRAY("t"."json", 'val1', 'val2')
+JSON_ARRAY("t"."json", $1, $2)
 ```
 
 #### JsonArrayAgg
@@ -1652,11 +1656,11 @@ function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-LOG(2, `t`.`number`)
+LOG(`t`.`number`, ?)
 ```
 Output PostgreSQL:
 ```text
-LOG(2, "t"."number")
+LOG("t"."number", $1)
 ```
 
 #### Mod
@@ -1666,11 +1670,11 @@ function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-MOD(`t`.`number`, 2)
+MOD(`t`.`number`, ?)
 ```
 Output PostgreSQL:
 ```text
-MOD("t"."number", 2)
+MOD("t"."number", $1)
 ```
 
 #### Pi
@@ -1694,11 +1698,11 @@ function := uast.Power(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-POWER(`t`.`number`, 2)
+POWER(`t`.`number`, ?)
 ```
 Output PostgreSQL:
 ```text
-POWER("t"."number", 2)
+POWER("t"."number", $1)
 ```
 
 #### Rand
@@ -1722,11 +1726,11 @@ function := uast.Round(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-ROUND(`t`.`number`, 2)
+ROUND(`t`.`number`, ?)
 ```
 Output PostgreSQL:
 ```text
-ROUND("t"."number", 2)
+ROUND("t"."number", $1)
 ```
 
 #### Sin
@@ -1778,11 +1782,11 @@ function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-TRUNCATE(`t`.`number`, 2)
+TRUNCATE(`t`.`number`, ?)
 ```
 Output PostgreSQL:
 ```text
-TRUNC("t"."number", 2)
+TRUNC("t"."number", $1)
 ```
 
 ### Ranking
@@ -1896,11 +1900,11 @@ function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), u
 ```
 Output MySQL:
 ```text
-CONCAT(`t`.`string`, 'old', 'new')
+CONCAT(`t`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-CONCAT("t"."string", 'old', 'new')
+CONCAT("t"."string", $1, $2)
 ```
 
 #### ConcatWs
@@ -1910,11 +1914,11 @@ function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), u
 ```
 Output MySQL:
 ```text
-CONCAT_WS('_', `t`.`string`, 'old', 'new')
+CONCAT_WS(?, `t`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-CONCAT_WS('_', "t"."string", 'old', 'new')
+CONCAT_WS($1, "t"."string", $2, $3)
 ```
 
 #### LeftString
@@ -1924,11 +1928,11 @@ function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-LEFT(`t`.`string`, 2)
+LEFT(`t`.`string`, ?)
 ```
 Output PostgreSQL:
 ```text
-LEFT("t"."string", 2)
+LEFT("t"."string", $1)
 ```
 
 #### Lower
@@ -1952,11 +1956,11 @@ function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Va
 ```
 Output MySQL:
 ```text
-LPAD(`t`.`string`, 2, ',')
+LPAD(`t`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-LPAD("t"."string", 2, ',')
+LPAD("t"."string", $1, $2)
 ```
 
 #### LTrim
@@ -1980,11 +1984,11 @@ function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-REPEAT(`t`.`string`, 2)
+REPEAT(`t`.`string`, ?)
 ```
 Output PostgreSQL:
 ```text
-REPEAT("t"."string", 2)
+REPEAT("t"."string", $1)
 ```
 
 #### Replace
@@ -1994,11 +1998,11 @@ function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), 
 ```
 Output MySQL:
 ```text
-REPLACE(`t`.`string`, 'old', 'new')
+REPLACE(`t`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-REPLACE("t"."string", 'old', 'new')
+REPLACE("t"."string", $1, $2)
 ```
 
 #### Reverse
@@ -2022,11 +2026,11 @@ function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-RIGHT(`t`.`string`, 2)
+RIGHT(`t`.`string`, ?)
 ```
 Output PostgreSQL:
 ```text
-RIGHT("t"."string", 2)
+RIGHT("t"."string", $1)
 ```
 
 #### RPad
@@ -2036,11 +2040,11 @@ function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Va
 ```
 Output MySQL:
 ```text
-RPAD(`t`.`string`, 2, ',')
+RPAD(`t`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-RPAD("t"."string", 2, ',')
+RPAD("t"."string", $1, $2)
 ```
 
 #### RTrim
@@ -2064,11 +2068,11 @@ function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), ua
 ```
 Output MySQL:
 ```text
-SUBSTRING(`t`.`string`, 0, 2)
+SUBSTRING(`t`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-SUBSTRING("t"."string", 0, 2)
+SUBSTRING("t"."string", $1, $2)
 ```
 
 #### Trim
@@ -2121,11 +2125,11 @@ logical := uast.And(
 ```
 Output MySQL:
 ```text
-(`t`.`string` = 'active' AND `t`.`number` > 2)
+(`t`.`string` = ? AND `t`.`number` > ?)
 ```
 Output PostgreSQL:
 ```text
-("t"."string" = 'active' AND "t"."number" > 2)
+("t"."string" = $1 AND "t"."number" > $2)
 ```
 
 ### Or
@@ -2138,11 +2142,11 @@ logical := uast.Or(
 ```
 Output MySQL:
 ```text
-(`t`.`string` = 'active' OR `t`.`number` > 2)
+(`t`.`string` = ? OR `t`.`number` > ?)
 ```
 Output PostgreSQL:
 ```text
-("t"."string" = 'active' OR "t"."number" > 2)
+("t"."string" = $1 OR "t"."number" > $2)
 ```
 
 ## exprOrderBy

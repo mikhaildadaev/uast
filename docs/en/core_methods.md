@@ -16,7 +16,11 @@ Assigns an alias to a column expression.
 ```go
 column := uast.Column[string]("t", "string").As("alias")
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` AS `alias`
+```
+Output PostgreSQL:
 ```text
 "t"."string" AS "alias"
 ```
@@ -29,7 +33,11 @@ Assigns an alias to a function expression.
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
 ```
-Output:
+Output MySQL:
+```text
+AVG(`t`.`number`) AS `alias`
+```
+Output PostgreSQL:
 ```text
 AVG("t"."number") AS "alias"
 ```
@@ -42,7 +50,11 @@ function := uast.Avg(uast.Column[int]("t", "number"), false).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -55,7 +67,11 @@ Assigns an alias to a subquery expression.
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
 ```
-Output:
+Output MySQL:
+```text
+(SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
+```
+Output PostgreSQL:
 ```text
 (SELECT "t"."id" FROM "test" AS "t") AS "alias"
 ```

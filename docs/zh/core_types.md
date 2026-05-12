@@ -18,7 +18,7 @@ binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS BINARY)
+CAST(`t`.`number` AS BINARY)
 ```
 Output PostgreSQL:
 ```text
@@ -32,7 +32,7 @@ binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS VARBINARY)
+CAST(`t`.`number` AS VARBINARY)
 ```
 Output PostgreSQL:
 ```text
@@ -47,7 +47,11 @@ CAST("t"."number" AS BYTEA)
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
 ```
-Output:
+Output MySQL:
+```text
+CAST(`t`.`number` AS DATE)
+```
+Output PostgreSQL:
 ```text
 CAST("t"."number" AS DATE)
 ```
@@ -59,7 +63,7 @@ datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS DATETIME)
+CAST(`t`.`number` AS DATETIME)
 ```
 Output PostgreSQL:
 ```text
@@ -71,7 +75,11 @@ CAST("t"."number" AS TIMESTAMP)
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
 ```
-Output:
+Output MySQL:
+```text
+CAST(`t`.`number` AS TIME)
+```
+Output PostgreSQL:
 ```text
 CAST("t"."number" AS TIME)
 ```
@@ -83,7 +91,7 @@ datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS TIMESTAMP)
+CAST(`t`.`number` AS TIMESTAMP)
 ```
 Output PostgreSQL:
 ```text
@@ -100,7 +108,7 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS SIGNED)
+CAST(`t`.`number` AS SIGNED)
 ```
 Output PostgreSQL:
 ```text
@@ -112,7 +120,11 @@ CAST("t"."number" AS BIGINT)
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
 ```
-Output:
+Output MySQL:
+```text
+CAST(`t`.`number` AS DECIMAL)
+```
+Output PostgreSQL:
 ```text
 CAST("t"."number" AS DECIMAL)
 ```
@@ -124,7 +136,7 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS DECIMAL)
+CAST(`t`.`number` AS DECIMAL)
 ```
 Output PostgreSQL:
 ```text
@@ -138,7 +150,7 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS DECIMAL)
+CAST(`t`.`number` AS DECIMAL)
 ```
 Output PostgreSQL:
 ```text
@@ -152,7 +164,7 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS SIGNED)
+CAST(`t`.`number` AS SIGNED)
 ```
 Output PostgreSQL:
 ```text
@@ -166,7 +178,7 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS SIGNED)
+CAST(`t`.`number` AS SIGNED)
 ```
 Output PostgreSQL:
 ```text
@@ -181,7 +193,11 @@ CAST("t"."number" AS SMALLINT)
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
 ```
-Output:
+Output MySQL:
+```text
+CAST(`t`.`number` AS CHAR)
+```
+Output PostgreSQL:
 ```text
 CAST("t"."number" AS CHAR)
 ```
@@ -191,7 +207,11 @@ CAST("t"."number" AS CHAR)
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
-Output:
+Output MySQL:
+```text
+CAST(`t`.`number` AS VARCHAR)
+```
+Output PostgreSQL:
 ```text
 CAST("t"."number" AS VARCHAR)
 ```
@@ -201,7 +221,11 @@ CAST("t"."number" AS VARCHAR)
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
 ```
-Output:
+Output MySQL:
+```text
+CAST(`t`.`number` AS TEXT)
+```
+Output PostgreSQL:
 ```text
 CAST("t"."number" AS TEXT)
 ```
@@ -211,7 +235,11 @@ CAST("t"."number" AS TEXT)
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
 ```
-Output:
+Output MySQL:
+```text
+CAST(`t`.`number` AS VARCHAR)
+```
+Output PostgreSQL:
 ```text
 CAST("t"."number" AS VARCHAR)
 ```
@@ -226,7 +254,7 @@ special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS JSON)
+CAST(`t`.`number` AS JSON)
 ```
 Output PostgreSQL:
 ```text
@@ -240,7 +268,7 @@ special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS TINYINT(1))
+CAST(`t`.`number` AS TINYINT(1))
 ```
 Output PostgreSQL:
 ```text
@@ -254,7 +282,7 @@ special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS JSON)
+CAST(`t`.`number` AS JSON)
 ```
 Output PostgreSQL:
 ```text
@@ -268,7 +296,7 @@ special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS CHAR(36))
+CAST(`t`.`number` AS CHAR(36))
 ```
 Output PostgreSQL:
 ```text
@@ -282,7 +310,7 @@ special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS TEXT)
+CAST(`t`.`number` AS TEXT)
 ```
 Output PostgreSQL:
 ```text

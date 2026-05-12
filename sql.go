@@ -5,20 +5,32 @@ import (
 )
 
 // Публичные конструкторы
-func NewSQL(currentDialect *SupportDialect) (*sql, error) {
-	if currentDialect == nil {
-		return nil, ErrInvalidDialect
-	}
-	return &sql{
-		config: currentDialect.config,
+func NewSQL(options ...SQLOption) *sql {
+	sql := &sql{
+		config: DialectDefault.config,
 		pool: &sync.Pool{
 			New: func() any {
 				return newContext()
 			},
 		},
-		processor: currentDialect.processor,
-		strateger: currentDialect.strateger,
-	}, nil
+		processor: DialectDefault.processor,
+		strateger: DialectDefault.strateger,
+	}
+	for _, opt := range options {
+		opt(sql)
+	}
+	return sql
+}
+
+// Публичные функции
+func WithDialect(dialect *SupportDialect) SQLOption {
+	return func(sql *sql) {
+		if dialect != nil {
+			sql.config = dialect.config
+			sql.processor = dialect.processor
+			sql.strateger = dialect.strateger
+		}
+	}
 }
 
 // Публичные методы
@@ -68,3 +80,4 @@ type sql struct {
 	processor processor
 	strateger strateger
 }
+type SQLOption func(*sql)

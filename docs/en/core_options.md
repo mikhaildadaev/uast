@@ -785,7 +785,11 @@ function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output PostgreSQL:
 ```text
 FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -798,7 +802,11 @@ function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
     uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+```
+Output PostgreSQL:
 ```text
 LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
@@ -812,7 +820,11 @@ function := uast.LastValue(uast.Column[string]("t", "string")).Over(
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
-Output:
+Output MySQL:
+```text
+LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+```
+Output PostgreSQL:
 ```text
 LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
@@ -825,7 +837,11 @@ function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
     uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
 )
 ```
-Output:
+Output MySQL:
+```text
+LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+```
+Output PostgreSQL:
 ```text
 LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
@@ -839,7 +855,11 @@ function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
 ```
-Output:
+Output MySQL:
+```text
+NTH_VALUE(`t`.`string`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+```
+Output PostgreSQL:
 ```text
 NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
@@ -1900,7 +1920,11 @@ logical := uast.And(
     uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
 )
 ```
-Output:
+Output MySQL:
+```text
+(`t`.`string` = 'active' AND `t`.`number` > 2)
+```
+Output PostgreSQL:
 ```text
 ("t"."string" = 'active' AND "t"."number" > 2)
 ```
@@ -1913,7 +1937,11 @@ logical := uast.Or(
     uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
 )
 ```
-Output:
+Output MySQL:
+```text
+(`t`.`string` = 'active' OR `t`.`number` > 2)
+```
+Output PostgreSQL:
 ```text
 ("t"."string" = 'active' OR "t"."number" > 2)
 ```
@@ -1924,7 +1952,11 @@ Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows i
 ```go
 order := uast.Asc(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` ASC
+```
+Output PostgreSQL:
 ```text
 "t"."string" ASC
 ```
@@ -1934,7 +1966,11 @@ Specifies descending sort order (largest first, Z-to-A). Used for sorting rows i
 ```go
 order := uast.Desc(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` DESC
+```
+Output PostgreSQL:
 ```text
 "t"."string" DESC
 ```
@@ -1944,7 +1980,11 @@ Wraps a `SELECT` statement as a typed expression that can be used in comparisons
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test")))
 ```
-Output:
+Output MySQL:
+```text
+(SELECT `t`.`id` FROM `test` AS `t`)
+```
+Output PostgreSQL:
 ```text
 (SELECT "t"."id" FROM "test" AS "t")
 ```

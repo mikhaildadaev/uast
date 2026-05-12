@@ -19,7 +19,6 @@ sql := uast.NewSQL(
 )
 defer sql.Close()
 mysqlQuery, mysqlArgs, _ := sql.Build(stmt)
-...
 sql.SetDialect(uast.DialectPostgreSQL)
 pgQuery, pgArgs, _ := sql.Build(stmt)
 ```

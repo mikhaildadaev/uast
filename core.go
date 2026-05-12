@@ -617,8 +617,10 @@ func FirstValue[T typeScalar](expr ExpressionSafe[T]) *exprFunction[T, string, T
 }
 func Lag[T typeScalar](expr ExpressionSafe[T], offset int) *exprFunction[T, int, T] {
 	return &exprFunction[T, int, T]{
-		left:    expr,
-		right:   &exprLiteral[int]{value: offset},
+		left: expr,
+		right: &exprLiteral[int]{
+			value: offset,
+		},
 		service: uastFunctionLag,
 		process: uastProcessWindow,
 	}
@@ -632,16 +634,20 @@ func LastValue[T typeScalar](expr ExpressionSafe[T]) *exprFunction[T, string, T]
 }
 func Lead[T typeScalar](expr ExpressionSafe[T], offset int) *exprFunction[T, int, T] {
 	return &exprFunction[T, int, T]{
-		left:    expr,
-		right:   &exprLiteral[int]{value: offset},
+		left: expr,
+		right: &exprLiteral[int]{
+			value: offset,
+		},
 		service: uastFunctionLead,
 		process: uastProcessWindow,
 	}
 }
 func NthValue[T typeScalar](expr ExpressionSafe[T], n int) *exprFunction[T, int, T] {
 	return &exprFunction[T, int, T]{
-		left:    expr,
-		right:   &exprLiteral[int]{value: n},
+		left: expr,
+		right: &exprLiteral[int]{
+			value: n,
+		},
 		service: uastFunctionNthValue,
 		process: uastProcessWindow,
 	}

@@ -217,7 +217,7 @@ CAST("t"."number" AS VARCHAR)
 ```
 
 ## Special
-Special types cover JSON, Boolean, UUID, XML, and Array data. Some dialects use native types, while others rely on compatible alternatives.
+Special types cover `Array`, `Boolean`, `JSON`, `UUID`, `XML` data. Some dialects use native types, while others rely on compatible alternatives.
 
 ### TypeArray
 Represents an array type.

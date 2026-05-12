@@ -5,375 +5,286 @@ outline: deep
 # API / 核心 / 类型
 
 ::: info **关于**
-本页记录了所有数据类型 `DataLog`、`DataMetric`、`DataTrace` 以及全部 16 种字段类型。每种字段都附有可运行的代码示例和预期的 JSON 输出。
+本页面涵盖了 `Binary`, `Datetime`, `Numeric`, `String`, `Special` 类别中的所有 21 种数据类型。每种类型都使用 `Cast` 进行演示，并包含带有方言特定 SQL 输出的代码示例。
 :::
 
+## Binary
+二进制类型存储原始字节数据。定长和变长二进制字符串根据 SQL 方言有不同的表示形式。
 
-## Data
-一个 API 支持三种信号类型：日志、指标和追踪
-### Log
-人类可读的日志消息
+### TypeBinary
+定长二进制字符串。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog, 
-    ulog.String("message", "user login"),
-)
-telemetry.Sync()
+binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "message":"user login"
-}
+Output MySQL:
+```text
+CAST("t"."number" AS BINARY)
 ```
-### Metric
-机器指标
-```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataMetric,
-    ulog.String("name", "logins"),
-    ulog.Float64("value", 1.0),
-)
-telemetry.Sync()
-```
-Output:
-```json
-{
-    "level":"info",
-    "type":"metric",
-    "name":"logins",
-    "value":1.0
-}
-```
-### Trace
-分布式追踪
-```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataTrace,
-    ulog.String("span_id", "def"),
-    ulog.String("name", "login"),
-    ulog.Int64("duration", 150),
-)
-telemetry.Sync()
-```
-Output:
-```json
-{
-    "level":"info",
-    "type":"trace",
-    "span_id":"def",
-    "name":"login",
-    "duration":150
-}
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BYTEA)
 ```
 
-## Field
-16 个类型安全的字段构造函数。
-### Bool
-Boolean 字段
+### TypeVarBinary
+变长二进制字符串。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Bool("bool", true),
-)
-telemetry.Sync()
+binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "bool":true
-}
+Output MySQL:
+```text
+CAST("t"."number" AS VARBINARY)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BYTEA)
 ```
 
-### Bools
-Boolean 切片
+## Datetime
+日期和时间类型存储时间值。某些方言对多种时间表示使用单一类型，而其他方言则使用特定类型加以区分。
+
+### TypeDate
+表示日期值（年、月、日）。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Bools("bools", []bool{true, false}),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "bools":[true,false]
-}
+```text
+CAST("t"."number" AS DATE)
 ```
 
-### Duration
-Duration 字段
+### TypeDateTime
+表示组合的日期和时间值。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Duration("duration", 5*time.Second),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "duration":"5s"
-}
+Output MySQL:
+```text
+CAST("t"."number" AS DATETIME)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS TIMESTAMP)
 ```
 
-### Durations
-Duration 切片
+### TypeTime
+表示时间值（时、分、秒）。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Durations("durations", []time.Duration{5*time.Second, 10*time.Second}),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "durations":["5s","10s"]
-}
+```text
+CAST("t"."number" AS TIME)
 ```
 
-### Error
-Error 字段
+### TypeTimestamp
+表示时间戳值。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Error(fmt.Errorf("err")),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "error":"err"
-}
+Output MySQL:
+```text
+CAST("t"."number" AS TIMESTAMP)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS TIMESTAMPTZ)
 ```
 
-### Errors
-Errors 切片
+## Numeric
+数值类型存储整数和浮点值。某些方言使用通用数值类型，而其他方言则提供更丰富的特定类型集。
+
+### TypeBigInt
+大整数类型。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Errors([]error{fmt.Errorf("err1"), fmt.Errorf("err2")}),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "errors":["err1","err2"]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BIGINT)
 ```
 
-### Float64
-Float64 字段
+### TypeDecimal
+定点十进制数。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Float64("float64", 3.14159),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "float64":3.14159
-}
+```text
+CAST("t"."number" AS DECIMAL)
 ```
 
-### Floats64
-Float64 切片
+### TypeDouble
+双精度浮点数。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Floats64("floats64", []float64{1.5, 2.5}),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "floats64":[1.5,2.5]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS DECIMAL)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS DOUBLE PRECISION)
 ```
 
-### Int
-Int 字段
+### TypeFloat
+单精度浮点数。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Int("int", 42),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "int":42
-}
+Output MySQL:
+```text
+CAST("t"."number" AS DECIMAL)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS REAL)
 ```
 
-### Ints
-Int 切片
+### TypeInt
+整数类型。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Ints("ints", []int{10, 20, 30}),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "ints":[10,20,30]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS INTEGER)
 ```
 
-### Int64
-Int64 字段
+### TypeSmallInt
+小整数类型。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Int64("int64", 1234567890),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "int64":1234567890
-}
+Output MySQL:
+```text
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS SMALLINT)
 ```
 
-### Ints64
-Int64 切片
+## String
+字符串类型存储字符和文本数据。变长、定长和大文本类型在不同方言中有不同的表示。
+
+### TypeChar 
+定长字符串。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Ints64("ints64", []int64{1234567890, 9876543210}),
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "ints64":[1234567890,9876543210]
-}
+```text
+CAST("t"."number" AS CHAR)
 ```
 
-### String
-String 字段
+### TypeString
+变长字符串。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.String("string", "str"),
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "string":"str"
-}
+```text
+CAST("t"."number" AS VARCHAR)
 ```
 
-### Strings
-String 切片
+### TypeText
+变长文本字符串。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Strings("strings", []string{"str1", "str2", "str3"})
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "strings":["str1","str2","str3"]
-}
+```text
+CAST("t"."number" AS TEXT)
 ```
 
-### Time
-Time 字段
+### TypeVarChar
+指定最大长度的变长字符串。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Time("time", time.Date(2026, 4, 22, 12, 0, 0, 0, time.UTC)),
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "time":"2026-04-22T12:00:00.000000+00:00"
-}
+```text
+CAST("t"."number" AS VARCHAR)
 ```
 
-### Times
-Time 切片
+## Special
+特殊类型涵盖 Array、Boolean、JSON、UUID、XML 数据。某些方言使用原生类型，而其他方言则依赖兼容的替代方案。
+
+### TypeArray
+表示数组类型。
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Times("times", []time.Time{time.Date(2026, 4, 22, 12, 0, 0, 0, time.UTC),time.Date(2025, 4, 22, 12, 0, 0, 0, time.UTC)}),
-)
-telemetry.Sync()
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "times":["2026-04-22T12:00:00.000000+00:00","2025-04-22T12:00:00.000000+00:00"]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS JSON)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS ARRAY)
+```
+
+### TypeBoolean
+表示布尔类型（真/假）。
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS TINYINT(1))
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BOOLEAN)
+```
+
+### TypeJSON
+表示 JSON 数据类型。
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS JSON)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS JSONB)
+```
+
+### TypeUUID
+表示通用唯一标识符（UUID）。
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS CHAR(36))
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS UUID)
+```
+
+### TypeXML
+表示 XML 数据类型。
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS TEXT)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS XML)
 ```

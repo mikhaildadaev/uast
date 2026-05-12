@@ -5,374 +5,286 @@ outline: deep
 # API / Ядро / Типы
 
 ::: info **Информация**
-На этой странице описаны все типы данных `DataLog`, `DataMetric`, `DataTrace` и все 16 типов полей. Каждое поле показано с рабочим примером кода и ожидаемым выводом в JSON.
+Эта страница охватывает все 21 тип данных в категориях `Binary`, `Datetime`, `Numeric`, `String`, `Special` Каждый тип демонстрируется с помощью `Cast` и включает пример кода с диалектно-специфичным выводом SQL.
 :::
 
-## Data
-Один API для трёх типов сигналов: логи, метрики и трейсы
-### Log
-Человекочитаемые сообщения логов
+## Binary
+Бинарные типы хранят необработанные байтовые данные. Строки фиксированной и переменной длины имеют разные представления в зависимости от диалекта SQL.
+
+### TypeBinary
+Бинарная строка фиксированной длины.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog, 
-    ulog.String("message", "user login"),
-)
-telemetry.Sync()
+binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "message":"user login"
-}
+Output MySQL:
+```text
+CAST("t"."number" AS BINARY)
 ```
-### Metric
-Машинные метрики
-```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataMetric,
-    ulog.String("name", "logins"),
-    ulog.Float64("value", 1.0),
-)
-telemetry.Sync()
-```
-Output:
-```json
-{
-    "level":"info",
-    "type":"metric",
-    "name":"logins",
-    "value":1.0
-}
-```
-### Trace
-Распределённые трейсы
-```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataTrace,
-    ulog.String("span_id", "def"),
-    ulog.String("name", "login"),
-    ulog.Int64("duration", 150),
-)
-telemetry.Sync()
-```
-Output:
-```json
-{
-    "level":"info",
-    "type":"trace",
-    "span_id":"def",
-    "name":"login",
-    "duration":150
-}
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BYTEA)
 ```
 
-## Field
-16 типобезопасных конструкторов полей.
-### Bool
-Boolean поле
+### TypeVarBinary
+Бинарная строка переменной длины.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Bool("bool", true),
-)
-telemetry.Sync()
+binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "bool":true
-}
+Output MySQL:
+```text
+CAST("t"."number" AS VARBINARY)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BYTEA)
 ```
 
-### Bools
-Boolean срез
+## Datetime
+Типы даты и времени хранят временные значения. Некоторые диалекты используют один тип для нескольких временных представлений, в то время как другие различают их с помощью специфичных типов.
+
+### TypeDate
+Представляет значение даты (год, месяц, день).
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Bools("bools", []bool{true, false}),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "bools":[true,false]
-}
+```text
+CAST("t"."number" AS DATE)
 ```
 
-### Duration
-Duration поле
+### TypeDateTime
+Представляет комбинированное значение даты и времени.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Duration("duration", 5*time.Second),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "duration":"5s"
-}
+Output MySQL:
+```text
+CAST("t"."number" AS DATETIME)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS TIMESTAMP)
 ```
 
-### Durations
-Duration срез
+### TypeTime
+Представляет значение времени (час, минута, секунда).
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Durations("durations", []time.Duration{5*time.Second, 10*time.Second}),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "durations":["5s","10s"]
-}
+```text
+CAST("t"."number" AS TIME)
 ```
 
-### Error
-Error поле
+### TypeTimestamp
+Представляет значение временной метки.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Error(fmt.Errorf("err")),
-)
-telemetry.Sync()
+datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "error":"err"
-}
+Output MySQL:
+```text
+CAST("t"."number" AS TIMESTAMP)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS TIMESTAMPTZ)
 ```
 
-### Errors
-Error срез
+## Numeric
+Числовые типы хранят целочисленные значения и значения с плавающей запятой. Некоторые диалекты используют универсальные числовые типы, в то время как другие предоставляют более богатый набор специфичных типов.
+
+### TypeBigInt
+Большой целочисленный тип.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Errors([]error{fmt.Errorf("err1"), fmt.Errorf("err2")}),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "errors":["err1","err2"]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BIGINT)
 ```
 
-### Float64
-Float64 поле
+### TypeDecimal
+Десятичное число с фиксированной запятой.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Float64("float64", 3.14159),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "float64":3.14159
-}
+```text
+CAST("t"."number" AS DECIMAL)
 ```
 
-### Floats64
-Float64 срез
+### TypeDouble
+Число с плавающей запятой двойной точности.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Floats64("floats64", []float64{1.5, 2.5}),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "floats64":[1.5,2.5]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS DECIMAL)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS DOUBLE PRECISION)
 ```
 
-### Int
-Int поле
+### TypeFloat
+Число с плавающей запятой одинарной точности.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Int("int", 42),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "int":42
-}
+Output MySQL:
+```text
+CAST("t"."number" AS DECIMAL)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS REAL)
 ```
 
-### Ints
-Int срез
+### TypeInt
+Целочисленный тип.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Ints("ints", []int{10, 20, 30}),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "ints":[10,20,30]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS INTEGER)
 ```
 
-### Int64
-Int64 поле
+### TypeSmallInt
+Малый целочисленный тип.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Int64("int64", 1234567890),
-)
-telemetry.Sync()
+math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "int64":1234567890
-}
+Output MySQL:
+```text
+CAST("t"."number" AS SIGNED)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS SMALLINT)
 ```
 
-### Ints64
-Int64 срез
+## String
+Строковые типы хранят символьные и текстовые данные. Типы переменной длины, фиксированной длины и большие текстовые типы представлены по-разному в разных диалектах.
+
+### TypeChar 
+Символьная строка фиксированной длины.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Ints64("ints64", []int64{1234567890, 9876543210}),
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "ints64":[1234567890,9876543210]
-}
+```text
+CAST("t"."number" AS CHAR)
 ```
 
-### String
-String поле
+### TypeString
+Символьная строка переменной длины.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.String("string", "str"),
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "string":"str"
-}
+```text
+CAST("t"."number" AS VARCHAR)
 ```
 
-### Strings
-String срез
+### TypeText
+Текстовая строка переменной длины.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Strings("strings", []string{"str1", "str2", "str3"})
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "strings":["str1","str2","str3"]
-}
+```text
+CAST("t"."number" AS TEXT)
 ```
 
-### Time
-Time поле
+### TypeVarChar
+Символьная строка переменной длины с указанным максимумом.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Time("time", time.Date(2026, 4, 22, 12, 0, 0, 0, time.UTC)),
-)
-telemetry.Sync()
+str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
 ```
 Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "time":"2026-04-22T12:00:00.000000+00:00"
-}
+```text
+CAST("t"."number" AS VARCHAR)
 ```
 
-### Times
-Time срез
+## Special
+Специальные типы охватывают `Array`, `Boolean`, `JSON`, `UUID`, `XML` данные. Некоторые диалекты используют нативные типы, в то время как другие полагаются на совместимые альтернативы.
+
+### TypeArray
+Представляет тип массива.
 ```go
-telemetry := ulog.NewTelemetry()
-defer telemetry.Close()
-telemetry.Info(ulog.DataLog,
-    ulog.Times("times", []time.Time{time.Date(2026, 4, 22, 12, 0, 0, 0, time.UTC),time.Date(2025, 4, 22, 12, 0, 0, 0, time.UTC)}),
-)
-telemetry.Sync()
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
 ```
-Output:
-```json
-{
-    "level":"info",
-    "type":"log",
-    "times":["2026-04-22T12:00:00.000000+00:00","2025-04-22T12:00:00.000000+00:00"]
-}
+Output MySQL:
+```text
+CAST("t"."number" AS JSON)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS ARRAY)
+```
+
+### TypeBoolean
+Представляет булевый тип (истина/ложь).
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS TINYINT(1))
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS BOOLEAN)
+```
+
+### TypeJSON
+Представляет тип данных JSON.
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS JSON)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS JSONB)
+```
+
+### TypeUUID
+Представляет универсальный уникальный идентификатор (UUID).
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS CHAR(36))
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS UUID)
+```
+
+### TypeXML
+Представляет тип данных XML.
+```go
+special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
+```
+Output MySQL:
+```text
+CAST("t"."number" AS TEXT)
+```
+Output PostgreSQL:
+```text
+CAST("t"."number" AS XML)
 ```

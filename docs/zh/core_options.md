@@ -590,7 +590,7 @@ Output:
 ```
 
 ## exprFunction
-### aggregate
+### Aggregate
 #### Avg
 Returns the average (arithmetic mean) of all non-NULL values in the expression. If `distinct` is `true`, the average is calculated over distinct values only.
 ```go
@@ -778,7 +778,7 @@ VAR_SAMP("t"."number")
 VAR_SAMP(DISTINCT "t"."number")
 ```
 
-### analytical
+### Analytical
 #### FirstValue
 Returns the value of the expression from the first row of the window frame. Requires an `OVER` clause with window specification.
 ```go
@@ -866,7 +866,7 @@ Output PostgreSQL:
 NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 
-### condition
+### Condition
 #### Case
 Evaluates a list of `WHEN`-`THEN` pairs and returns the `THEN` expression for the first true WHEN. If no condition is true, returns the `ELSE` expression if provided, or `NULL`.
 ```go
@@ -944,7 +944,7 @@ Output PostgreSQL:
 NULLIF("t"."createat", "t"."updateat")
 ```
 
-### convert
+### Convert
 #### Cast
 Converts an expression to a specified data type.
 ```go
@@ -1043,7 +1043,7 @@ Output PostgreSQL:
 RADIANS("t"."number")
 ```
 
-### date and time
+### Date and time
 #### CurDate
 Returns the current date (without time).
 ```go
@@ -1310,7 +1310,7 @@ Output PostgreSQL:
 EXTRACT(YEAR FROM "t"."createat")
 ```
 
-### json
+### Json
 #### JsonArray
 Creates a JSON array from the given expression and optional additional values.
 ```go
@@ -1490,7 +1490,7 @@ Output PostgreSQL:
 jsonb_typeof("t"."json")
 ```
 
-### math
+### Math
 #### Abs
 Returns the absolute (non-negative) value of a numeric expression.
 ```go
@@ -1785,7 +1785,7 @@ Output PostgreSQL:
 TRUNC("t"."number", 2)
 ```
 
-### ranking
+### Ranking
 #### CumeDist
 Returns the cumulative distribution of a value within a partition (the ratio of rows that come before or are peers with the current row). Must be used with an `OVER` clause.
 ```go
@@ -1888,7 +1888,7 @@ Output PostgreSQL:
 ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
-### string
+### String
 #### Concat
 Concatenates two or more string expressions into a single string. `NULL` arguments are treated as empty strings in most dialects.
 ```go

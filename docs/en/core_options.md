@@ -24,7 +24,11 @@ Performs a bitwise AND operation between two expressions.
 ```go
 binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` & 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" & 2
 ```
@@ -34,7 +38,11 @@ Performs a bitwise OR operation between two expressions.
 ```go
 binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` | 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" | 2
 ```
@@ -44,7 +52,11 @@ Performs a bitwise XOR operation between two expressions.
 ```go
 binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` ^ 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" ^ 2
 ```
@@ -54,7 +66,11 @@ Divides the left expression by the right expression.
 ```go
 binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` / 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" / 2
 ```
@@ -64,7 +80,11 @@ Subtracts the right expression from the left expression.
 ```go
 binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` - 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" - 2
 ```
@@ -74,7 +94,11 @@ Returns the remainder of dividing the left expression by the right expression.
 ```go
 binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` % 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" % 2
 ```
@@ -84,7 +108,11 @@ Multiplies the left expression by the right expression.
 ```go
 binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` * 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" * 2
 ```
@@ -94,7 +122,11 @@ Adds the left expression to the right expression.
 ```go
 binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` + 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" + 2
 ```
@@ -104,7 +136,11 @@ Performs a bitwise left shift on the left expression by the number of bits speci
 ```go
 binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` << 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" << 2
 ```
@@ -114,7 +150,11 @@ Performs a bitwise right shift on the left expression by the number of bits spec
 ```go
 binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` >> 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" >> 2
 ```
@@ -124,7 +164,11 @@ Creates a reference to a table column, optionally qualified with a table alias. 
 ```go
 column := uast.Column[string]("t", "string")
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string`
+```
+Output PostgreSQL:
 ```text
 "t"."string"
 ```
@@ -135,7 +179,11 @@ Checks if the left expression falls within the range defined by `valueStart` and
 ```go
 comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` BETWEEN 0 AND 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" BETWEEN 0 AND 2
 ```
@@ -145,7 +193,11 @@ Compares two expressions for equality (`=`).
 ```go
 comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` = 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" = 2
 ```
@@ -155,7 +207,11 @@ Checks if the subquery returns any rows. Returns `true` if at least one row exis
 ```go
 comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
 ```
-Output:
+Output MySQL:
+```text
+EXISTS (SELECT 1 FROM `test` AS `t`)
+```
+Output PostgreSQL:
 ```text
 EXISTS (SELECT 1 FROM "test" AS "t")
 ```
@@ -165,7 +221,11 @@ Compares if the left expression is greater than the right expression (`>`).
 ```go
 comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` > 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" > 2
 ```
@@ -175,7 +235,11 @@ Compares if the left expression is greater than or equal to the right expression
 ```go
 comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` >= 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" >= 2
 ```
@@ -185,7 +249,11 @@ Performs a case-insensitive pattern matching comparison. The right expression sh
 ```go
 comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` ILIKE '%ivan%'
+```
+Output PostgreSQL:
 ```text
 "t"."string" ILIKE '%ivan%'
 ```
@@ -195,7 +263,11 @@ Checks if the left expression matches any value contained within the right expre
 ```go
 comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` IN ('active', 'pending')
+```
+Output PostgreSQL:
 ```text
 "t"."string" IN ('active', 'pending')
 ```
@@ -205,7 +277,11 @@ Checks if the expression is not `NULL`.
 ```go
 comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` IS NOT NULL
+```
+Output PostgreSQL:
 ```text
 "t"."string" IS NOT NULL
 ```
@@ -215,7 +291,11 @@ Checks if the expression is `NULL`.
 ```go
 comparison := uast.IsNull(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` IS NULL
+```
+Output PostgreSQL:
 ```text
 "t"."string" IS NULL
 ```
@@ -225,7 +305,11 @@ Compares if the left expression is less than the right expression (`<`).
 ```go
 comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` < 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" < 2
 ```
@@ -235,7 +319,11 @@ Compares if the left expression is less than or equal to the right expression (`
 ```go
 comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` <= 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" <= 2
 ```
@@ -245,7 +333,11 @@ Performs a case-sensitive pattern matching comparison. The right expression shou
 ```go
 comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` LIKE '%ivan%'
+```
+Output PostgreSQL:
 ```text
 "t"."string" LIKE '%ivan%'
 ```
@@ -255,7 +347,11 @@ Checks if the left expression falls outside the range defined by `valueStart` an
 ```go
 comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` NOT BETWEEN 0 AND 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" NOT BETWEEN 0 AND 2
 ```
@@ -265,7 +361,11 @@ Compares two expressions for inequality (`!=` or `<>`).
 ```go
 comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`number` != 2
+```
+Output PostgreSQL:
 ```text
 "t"."number" != 2
 ```
@@ -275,7 +375,11 @@ Checks if the subquery returns no rows. Returns `true` if the subquery result is
 ```go
 comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
 ```
-Output:
+Output MySQL:
+```text
+NOT EXISTS (SELECT 1 FROM `test` AS `t`)
+```
+Output PostgreSQL:
 ```text
 NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ```
@@ -285,7 +389,11 @@ Performs a negated case-insensitive pattern matching comparison.
 ```go
 comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` NOT ILIKE '%ivan%'
+```
+Output PostgreSQL:
 ```text
 "t"."string" NOT ILIKE '%ivan%'
 ```
@@ -295,7 +403,11 @@ Checks if the left expression does not match any value contained within the righ
 ```go
 comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` NOT IN ('active', 'pending')
+```
+Output PostgreSQL:
 ```text
 "t"."string" NOT IN ('active', 'pending')
 ```
@@ -305,7 +417,11 @@ Performs a negated case-sensitive pattern matching comparison.
 ```go
 comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
-Output:
+Output MySQL:
+```text
+`t`.`string` NOT LIKE '%ivan%'
+```
+Output PostgreSQL:
 ```text
 "t"."string" NOT LIKE '%ivan%'
 ```
@@ -541,8 +657,8 @@ functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), tru
 ```
 Output MySQL:
 ```text
-GROUP_CONCAT("t"."string" SEPARATOR ', ')
-GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ', ')
+GROUP_CONCAT(`t`.`string` SEPARATOR ', ')
+GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ', ')
 ```
 Output PostgreSQL:
 ```text
@@ -582,8 +698,8 @@ functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
 ```
 Output MySQL:
 ```text
-STDDEV("t"."number")
-STDDEV(DISTINCT "t"."number")
+STDDEV(`t`.`number`)
+STDDEV(DISTINCT `t`.`number`)
 ```
 Output PostgreSQL:
 ```text
@@ -611,7 +727,7 @@ functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
 ```
 Output MySQL:
 ```text
-VARIANCE("t"."number")
+VARIANCE(`t`.`number`)
 VARIANCE(DISTINCT "t"."number")
 ```
 Output PostgreSQL:
@@ -754,7 +870,7 @@ function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
 Output MySQL:
 ```text
-CAST("t"."number" AS CHAR)
+CAST(`t`.`number` AS CHAR)
 ```
 Output PostgreSQL:
 ```text
@@ -778,7 +894,7 @@ function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value(
 ```
 Output MySQL:
 ```text
-DATE_FORMAT("t"."createat", '%Y-%m-%d')
+DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
 ```
 Output PostgreSQL:
 ```text
@@ -861,7 +977,7 @@ function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 
 ```
 Output MySQL:
 ```text
-DATE_ADD("t"."createat", INTERVAL 2 DAY)
+DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
 ```
 Output PostgreSQL:
 ```text
@@ -875,7 +991,7 @@ function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[t
 ```
 Output MySQL:
 ```text
-DATEDIFF("t"."updateat", "t"."createat")
+DATEDIFF(`t`.`updateat`, `t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -889,7 +1005,7 @@ function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 
 ```
 Output MySQL:
 ```text
-DATE_SUB("t"."createat", INTERVAL 2 DAY)
+DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
 ```
 Output PostgreSQL:
 ```text
@@ -903,7 +1019,7 @@ function := uast.Day(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-DAY("t"."createat")
+DAY(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -917,7 +1033,7 @@ function := uast.DayName(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-DAYNAME("t"."createat")
+DAYNAME(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -931,7 +1047,7 @@ function := uast.Hour(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-HOUR("t"."createat")
+HOUR(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -945,7 +1061,7 @@ function := uast.Minute(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-MINUTE("t"."createat")
+MINUTE(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -959,7 +1075,7 @@ function := uast.Month(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-MONTH("t"."createat")
+MONTH(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -973,7 +1089,7 @@ function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-MONTHNAME("t"."createat")
+MONTHNAME(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -1001,7 +1117,7 @@ function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-QUARTER("t"."createat")
+QUARTER(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -1015,7 +1131,7 @@ function := uast.Second(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-SECOND("t"."createat")
+SECOND(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -1029,7 +1145,7 @@ function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 
 ```
 Output MySQL:
 ```text
-TIME_ADD("t"."createat", '2 HOUR')
+TIME_ADD(`t`.`createat`, '2 HOUR')
 ```
 Output PostgreSQL:
 ```text
@@ -1043,7 +1159,7 @@ function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[t
 ```
 Output MySQL:
 ```text
-TIMEDIFF("t"."updateat", "t"."createat")
+TIMEDIFF(`t`.`updateat`, `t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -1057,7 +1173,7 @@ function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 
 ```
 Output MySQL:
 ```text
-TIME_SUB("t"."createat", '2 HOUR')
+TIME_SUB(`t`.`createat`, '2 HOUR')
 ```
 Output PostgreSQL:
 ```text
@@ -1071,7 +1187,7 @@ function := uast.Week(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-WEEK("t"."createat")
+WEEK(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -1085,7 +1201,7 @@ function := uast.Year(uast.Column[time.Time]("t", "createat"))
 ```
 Output MySQL:
 ```text
-YEAR("t"."createat")
+YEAR(`t`.`createat`)
 ```
 Output PostgreSQL:
 ```text
@@ -1116,7 +1232,7 @@ function := uast.JsonArrayAgg(
 ```
 Output MySQL:
 ```text
-JSON_ARRAYAGG("t"."json")
+JSON_ARRAYAGG(`t`.`json`)
 ```
 Output PostgreSQL:
 ```text
@@ -1176,7 +1292,7 @@ function := uast.JsonObject(
 ```
 Output MySQL:
 ```text
-JSON_OBJECT('key', COUNT("t"."json"))
+JSON_OBJECT('key', COUNT(`t`.`json`))
 ```
 Output PostgreSQL:
 ```text
@@ -1193,7 +1309,7 @@ function := uast.JsonObjectAgg(
 ```
 Output MySQL:
 ```text
-JSON_OBJECTAGG("t"."json", "t"."number")
+JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
 ```
 Output PostgreSQL:
 ```text
@@ -1219,7 +1335,7 @@ function := uast.JsonRemove(
 ```
 Output MySQL:
 ```text
-JSON_REMOVE("t"."json", '$.key1', '$.key2')
+JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
 ```
 Output PostgreSQL:
 ```text
@@ -1247,7 +1363,7 @@ function := uast.JsonSet(
 ```
 Output MySQL:
 ```text
-JSON_SET("t"."json", '$.key1', "val1", '$.key2', "val2")
+JSON_SET(`t`.`json`, '$.key1', "val1", '$.key2', "val2")
 ```
 Output PostgreSQL:
 ```text
@@ -1261,7 +1377,7 @@ function := uast.JsonType(uast.Column[string]("t", "json"))
 ```
 Output MySQL:
 ```text
-JSON_TYPE("t"."json")
+JSON_TYPE(`t`.`json`)
 ```
 Output PostgreSQL:
 ```text
@@ -1336,7 +1452,7 @@ function := uast.Ceil(uast.Column[int]("t", "number"))
 ```
 Output MySQL:
 ```text
-CEILING("t"."number")
+CEILING(`t`.`number`)
 ```
 Output PostgreSQL:
 ```text
@@ -1484,7 +1600,7 @@ function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
 ```
 Output MySQL:
 ```text
-TRUNCATE("t"."number", 2)
+TRUNCATE(`t`.`number`, 2)
 ```
 Output PostgreSQL:
 ```text

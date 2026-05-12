@@ -877,7 +877,11 @@ pairs := uast.CaseIf(
 elseExpr := uast.CaseElse(uast.Value("new"))
 function := uast.Case(pairs, elseExpr)
 ```
-Output:
+Output MySQL:
+```text
+CASE WHEN `t`.`number` < 2 THEN 'old' ELSE 'new' END
+```
+Output PostgreSQL:
 ```text
 CASE WHEN "t"."number" < 2 THEN 'old' ELSE 'new' END
 ```
@@ -887,7 +891,11 @@ Returns the first non-NULL expression from the provided list. Useful for providi
 ```go
 function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
-Output:
+Output MySQL:
+```text
+COALESCE(`t`.`createat`, `t`.`updateat`)
+```
+Output PostgreSQL:
 ```text
 COALESCE("t"."createat", "t"."updateat")
 ```
@@ -897,7 +905,11 @@ Returns the largest value from the provided list of expressions.
 ```go
 function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
-Output:
+Output MySQL:
+```text
+GREATEST(`t`.`createat`, `t`.`updateat`)
+```
+Output PostgreSQL:
 ```text
 GREATEST("t"."createat", "t"."updateat")
 ```
@@ -907,7 +919,11 @@ Returns the smallest value from the provided list of expressions.
 ```go
 function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
-Output:
+Output MySQL:
+```text
+LEAST(`t`.`createat`, `t`.`updateat`)
+```
+Output PostgreSQL:
 ```text
 LEAST("t"."createat", "t"."updateat")
 ```
@@ -917,7 +933,11 @@ Returns `NULL` if the two expressions are equal; otherwise returns the first exp
 ```go
 function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
-Output:
+Output MySQL:
+```text
+NULLIF(`t`.`createat`, `t`.`updateat`)
+```
+Output PostgreSQL:
 ```text
 NULLIF("t"."createat", "t"."updateat")
 ```
@@ -942,7 +962,11 @@ Returns the number of characters in a string expression.
 ```go
 function := uast.CharLength(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+CHAR_LENGTH(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 CHAR_LENGTH("t"."string")
 ```
@@ -966,7 +990,11 @@ Converts an angle from radians to degrees.
 ```go
 function := uast.Degrees(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+DEGREES(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 DEGREES("t"."number")
 ```
@@ -976,7 +1004,11 @@ Returns the byte length of a string expression.
 ```go
 function := uast.Length(uast.Column[string]("t", "string"))
 ```
-Output:
+Output MySQL:
+```text
+LENGTH(`t`.`string`)
+```
+Output PostgreSQL:
 ```text
 LENGTH("t"."string")
 ```
@@ -986,7 +1018,11 @@ Returns the starting position of the first occurrence of a substring within a st
 ```go
 function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
 ```
-Output:
+Output MySQL:
+```text
+POSITION('old' IN `t`.`string`)
+```
+Output PostgreSQL:
 ```text
 POSITION('old' IN "t"."string")
 ```
@@ -996,7 +1032,11 @@ Converts an angle from degrees to radians.
 ```go
 function := uast.Radians(uast.Column[int]("t", "number"))
 ```
-Output:
+Output MySQL:
+```text
+RADIANS(`t`.`number`)
+```
+Output PostgreSQL:
 ```text
 RADIANS("t"."number")
 ```

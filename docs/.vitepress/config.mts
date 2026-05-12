@@ -101,6 +101,10 @@ export default defineConfig({
                       { 
                         text: 'Methods', 
                         link: '/en/sql_methods' 
+                      },
+                      { 
+                        text: 'Options', 
+                        link: '/en/sql_options' 
                       }
                     ] 
                   }
@@ -227,6 +231,10 @@ export default defineConfig({
                       { 
                         text: 'Методы', 
                         link: '/ru/sql_methods' 
+                      },
+                      { 
+                        text: 'Опции', 
+                        link: '/ru/sql_options' 
                       }
                     ] 
                   }
@@ -353,6 +361,10 @@ export default defineConfig({
                       { 
                         text: '方法', 
                         link: '/zh/sql_methods' 
+                      },
+                      { 
+                        text: '选项', 
+                        link: '/zh/sql_options' 
                       }
                     ] 
                   }

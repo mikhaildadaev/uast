@@ -11,39 +11,55 @@ outline: deep
 ## NewDelete
 Создаёт новый экземпляр DELETE-оператора
 ```go
-stmtDelete := NewDelete(...)
+statement := NewDelete(...)
 ```
-Output:
+Output MySQL:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
+```
+Output PostgreSQL:
+```text
+...
 ```
 
 ## NewInsert
 Создаёт новый экземпляр INSERT-оператора
 ```go
-stmtInsert := NewInsert(...)
+statement := NewInsert(...)
 ```
-Output:
+Output MySQL:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
+```
+Output PostgreSQL:
+```text
+...
 ```
 
 ## NewSelect
 Создаёт новый экземпляр SELECT-оператора
 ```go
-stmtSelect := NewSelect(...)
+statement := NewSelect(...)
 ```
-Output:
+Output MySQL:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
+```
+Output PostgreSQL:
+```text
+...
 ```
 
 ## NewUpdate
 Создаёт новый экземпляр UPDATE-оператора
 ```go
-stmtUpdate := NewUpdate(...)
+statement := NewUpdate(...)
 ```
-Output:
+Output MySQL:
 ```text
-{"level":"info","type":"log","message":"text","node_id":"123-abc","trace_id":"abc-123"}
+...
+```
+Output PostgreSQL:
+```text
+...
 ```

@@ -596,7 +596,7 @@ Output:
 ## exprFunction
 ### Aggregate
 #### Avg
-Возвращает среднее арифметическое всех не-NULL значений в выражении. Если distinct `distinct` равен `true`, среднее вычисляется только по уникальным значениям.
+Возвращает среднее арифметическое всех не-NULL значений в выражении. Если `distinct` равен `true`, среднее вычисляется только по уникальным значениям.
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)

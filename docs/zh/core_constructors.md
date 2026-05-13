@@ -11,7 +11,7 @@ outline: deep
 ## NewDelete
 创建一个新的 DELETE 语句实例
 ```go
-stmtDelete := NewDelete(...)
+statement := NewDelete(...)
 ```
 Output:
 ```text
@@ -21,7 +21,7 @@ Output:
 ## NewInsert
 创建一个新的 INSERT 语句实例
 ```go
-stmtInsert := NewInsert(...)
+statement := NewInsert(...)
 ```
 Output:
 ```text
@@ -31,7 +31,7 @@ Output:
 ## NewSelect
 创建一个新的 SELECT 语句实例
 ```go
-stmtSelect := NewSelect(...)
+statement := NewSelect(...)
 ```
 Output:
 ```text
@@ -41,7 +41,7 @@ Output:
 ## NewUpdate
 创建一个新的 UPDATE 语句实例
 ```go
-stmtUpdate := NewUpdate(...)
+statement := NewUpdate(...)
 ```
 Output:
 ```text

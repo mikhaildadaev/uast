@@ -11,9 +11,13 @@ This page describes how to create a telemetry instance, configure all the settin
 ## NewDelete
 Сreates a new DELETE statement instance
 ```go
-stmtDelete := NewDelete(...)
+statement := NewDelete(...)
 ```
-Output:
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
 ```text
 ...
 ```
@@ -21,9 +25,13 @@ Output:
 ## NewInsert
 Сreates a new INSERT statement instance
 ```go
-stmtInsert := NewInsert(...)
+statement := NewInsert(...)
 ```
-Output:
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
 ```text
 ...
 ```
@@ -31,9 +39,13 @@ Output:
 ## NewSelect
 Сreates a new SELECT statement instance
 ```go
-stmtSelect := NewSelect(...)
+statement := NewSelect(...)
 ```
-Output:
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
 ```text
 ...
 ```
@@ -41,9 +53,13 @@ Output:
 ## NewUpdate
 Сreates a new UPDATE statement instance
 ```go
-stmtUpdate := NewUpdate(...)
+statement := NewUpdate(...)
 ```
-Output:
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
 ```text
 ...
 ```

@@ -74,10 +74,7 @@ SELECT "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
 ```go
 statement := uast.NewUpdate(uast.Table("test")).
     Set(
-        Assign(
-            uast.Column[string]("test", "string"), 
-            uast.Value("active"),
-        ),
+        Pair(uast.Column[string]("test", "string"), uast.Value("active")),
     ).
     Where(
         uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),

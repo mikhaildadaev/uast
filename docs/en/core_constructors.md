@@ -74,10 +74,7 @@ Creates a new UPDATE statement instance. Accepts a table source and returns a st
 ```go
 statement := uast.NewUpdate(uast.Table("test")).
     Set(
-        Assign(
-            uast.Column[string]("test", "string"), 
-            uast.Value("active"),
-        ),
+        Pair(uast.Column[string]("test", "string"), uast.Value("active")),
     ).
     Where(
         uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),

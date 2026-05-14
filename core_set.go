@@ -1,5 +1,13 @@
 package uast
 
+// Публичные функции
+func Assign(column markColumnable, value ExpressionBase) *clauseSet {
+	return &clauseSet{
+		column: column,
+		value:  value,
+	}
+}
+
 // Приватные структуры
 type clauseSet struct {
 	column markColumnable

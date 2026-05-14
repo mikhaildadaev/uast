@@ -31,7 +31,7 @@ type componentRenderer interface {
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderReturning(returnings []markReturnable) error
-	renderSet(sets []*clauseSet) error
+	renderSet(sets []*clausePair) error
 	renderSource(source statement) error
 	renderUnions(unions []*clauseUnions) error
 	renderValues(values [][]ExpressionBase) error
@@ -92,7 +92,7 @@ type componentValidator interface {
 	validateOnto(onto SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validateReturning(returnings []markReturnable) error
-	validateSet(sets []*clauseSet) error
+	validateSet(sets []*clausePair) error
 	validateSource(source statement) error
 	validateUnions(unions []*clauseUnions) error
 	validateValues(values [][]ExpressionBase) error

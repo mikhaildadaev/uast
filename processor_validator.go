@@ -455,7 +455,7 @@ func (baseValidator *baseValidator) validateReturning(returnings []markReturnabl
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateSet(sets []*clauseSet) error {
+func (baseValidator *baseValidator) validateSet(sets []*clausePair) error {
 	if sets == nil {
 		return ErrInvalidStatementSet
 	}

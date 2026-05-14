@@ -883,17 +883,19 @@ func Test_Insert(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtInsert := NewInsert(Test.String, Test.Number).
-			Into(Test.Table)
-			//Values(
-			//	Value("ivan"),
-			//	Value(2),
-			//)
+			Into(Test.Table).
+			Values(
+				Row(
+					Value("ivan"),
+					Value(2),
+				),
+			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMySQL:
-			//assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
+			assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
 		case DialectPostgreSQL:
-			//assertContains(t, sqlInsertQuery, `INSERT`, "INSERT")
+			assertContains(t, sqlInsertQuery, `INSERT`, "INSERT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})

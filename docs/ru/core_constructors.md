@@ -26,7 +26,7 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ## NewInsert
-Создаёт новый экземпляр оператора INSERT. Принимает колонки и возвращает оператор, который может быть настроен с помощью `Into`, `Returning`, `Source`, `Values`, `With`.
+Создаёт новый экземпляр оператора INSERT. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Into`, `Returning`, `Source`, `Values`, `With`.
 ```go
 statement := uast.NewInsert(uast.Table("test")).
     Column(
@@ -50,7 +50,7 @@ INSERT INTO "test" ("test"."string", "test"."number") VALUES ($1, $2)
 ```
 
 ## NewSelect
-Создаёт новый экземпляр оператора SELECT. Принимает поля и возвращает оператор, который может быть настроен с помощью `Distinct`, `From`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
+Создаёт новый экземпляр оператора SELECT. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Distinct`, `From`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
 ```go
 statement := uast.NewSelect(uast.Table("test")).
     Field(

@@ -26,7 +26,7 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ## NewInsert
-创建一个新的 INSERT 语句实例。接受列，返回一个可使用 `Into`、`Returning`、`Source`、`Values`、`With`进行配置的语句。
+创建一个新的 INSERT 语句实例。接受表源并返回一个可使用 `Into`、`Returning`、`Source`、`Values`、`With`进行配置的语句。
 ```go
 statement := uast.NewInsert(uast.Table("test")).
     Column(
@@ -70,7 +70,7 @@ SELECT "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ## NewUpdate
-创建一个新的 UPDATE 语句实例。接受一个表源，返回一个可使用 `Join`、`Returning`、`Set`、`Where`、`With` 进行配置的语句。
+创建一个新的 UPDATE 语句实例。接受表源并返回一个可使用 `Join`、`Returning`、`Set`、`Where`、`With` 进行配置的语句。
 ```go
 statement := uast.NewUpdate(uast.Table("test")).
     Set(

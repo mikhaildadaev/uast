@@ -882,47 +882,18 @@ func Test_Insert(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		queryWith := WithN("user_stats", NewSelect(
-			Orders.UserID,
-			Count(Orders.ID, false).As("order_count"),
-		).
-			From(Orders.Table).
-			Where(
-				Greater(Orders.Amount, Value(2)),
-			).
-			GroupBy(Orders.UserID),
-			"user_id", "order_count",
-		)
-		stmtInsert := NewInsert(Users.Name, Users.Age).
-			Into(Users.Table).
-			Source(NewSelect(Value("Test User"), Value(2)).
-				Where(
-					Exists(Subquery[int64](NewSelect(Stats.UserID).
-						From(CTE("user_stats", "us")).
-						Where(
-							Greater(Stats.OrderCount, Value(2)),
-						),
-					)),
-				),
-			).
-			Returning(
-				Users.ID.As("user_id"),
-				Users.Name.As("user_name"),
-			).
-			With(queryWith)
+		stmtInsert := NewInsert(Test.String, Test.Number).
+			Into(Test.Table)
+			//Values(
+			//	Value("ivan"),
+			//	Value(2),
+			//)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMySQL:
 			//assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
-			//assertContains(t, sqlInsertQuery, "INTO", "INTO")
-			//assertContains(t, sqlInsertQuery, "SOURCE", "SOURCE")
-			//assertContains(t, sqlInsertQuery, "WITH", "WITH")
 		case DialectPostgreSQL:
-			//assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
-			//assertContains(t, sqlInsertQuery, "INTO", "INTO")
-			//assertContains(t, sqlInsertQuery, "RETURNING", "RETURNING")
-			//assertContains(t, sqlInsertQuery, "SOURCE", "SOURCE")
-			//assertContains(t, sqlInsertQuery, "WITH", "WITH")
+			//assertContains(t, sqlInsertQuery, `INSERT`, "INSERT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -1130,7 +1101,7 @@ func Test_Select_Offset(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "OFFSET ?", "OFFSET")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, "OFFSET $1", "OFFSET")
+			assertContains(t, sqlSelectQuery, `OFFSET $1`, "OFFSET")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1226,10 +1197,10 @@ func Test_Select_Unions(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "EXCEPT", "UNION EXCEPT")
 			assertContains(t, sqlSelectQuery, "INTERSECT", "UNION INTERSECT")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, "UNION", "UNION")
-			assertContains(t, sqlSelectQuery, "UNION ALL", "UNION ALL")
-			assertContains(t, sqlSelectQuery, "EXCEPT", "UNION EXCEPT")
-			assertContains(t, sqlSelectQuery, "INTERSECT", "UNION INTERSECT")
+			assertContains(t, sqlSelectQuery, `UNION`, "UNION")
+			assertContains(t, sqlSelectQuery, `UNION ALL`, "UNION ALL")
+			assertContains(t, sqlSelectQuery, `EXCEPT`, "UNION EXCEPT")
+			assertContains(t, sqlSelectQuery, `INTERSECT`, "UNION INTERSECT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

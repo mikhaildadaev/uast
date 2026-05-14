@@ -157,16 +157,16 @@ func NewDelete(from SourceBase) *stmtDelete {
 		from:    from,
 	}
 }
-func NewInsert(columns ...markColumnable) *stmtInsert {
+func NewInsert(into SourceBase) *stmtInsert {
 	return &stmtInsert{
 		command: uastManagementInsert,
-		column:  columns,
+		into:    into,
 	}
 }
-func NewSelect(fields ...markFieldable) *stmtSelect {
+func NewSelect(from SourceBase) *stmtSelect {
 	return &stmtSelect{
 		command: uastManagementSelect,
-		field:   fields,
+		from:    from,
 	}
 }
 func NewUpdate(onto SourceBase) *stmtUpdate {

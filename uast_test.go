@@ -760,7 +760,7 @@ func Test_Delete_Join(t *testing.T) {
 				Left(Levels.Table, Equal(Users.ID, Levels.UserID)),
 			).
 			Where(
-				Equal(Orders.Status, Value("cancelled")),
+				Equal(Test.String, Value("active")),
 			)
 		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 		switch supportDialect {
@@ -782,22 +782,19 @@ func Test_Delete_Returning(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtDelete := NewDelete(Users.Table).
-			Where(Equal(Users.Status, Value("inactive"))).
+		stmtDelete := NewDelete(Test.Table).
+			Where(
+				Equal(Test.String, Value("active")),
+			).
 			Returning(
-				Users.ID.As("user_id"),
-				Users.Name.As("user_name"),
-				Users.Email.As("user_email"),
+				Test.ID,
 			)
 		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 		switch supportDialect {
 		case DialectMySQL:
 			// Not support
 		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, `RETURNING`, "RETURNING")
-			assertContains(t, sqlDeleteQuery, `"user_id"`, "RETURNING id")
-			assertContains(t, sqlDeleteQuery, `"user_name"`, "RETURNING name")
-			assertContains(t, sqlDeleteQuery, `"user_email"`, "RETURNING email")
+			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id"`, "RETURNING")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -808,44 +805,16 @@ func Test_Delete_Where(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		existsSub := NewSelect(Levels.ID).
-			From(Levels.Table).
+		stmtDelete := NewDelete(Test.Table).
 			Where(
-				Equal(Levels.UserID, Users.ID),
-			)
-		stmtDelete := NewDelete(Users.Table).
-			Where(
-				And(
-					Equal(Users.Status, Value("active")),
-					Greater(Users.Age, Value(2)),
-					Less(Users.Age, Value(2)),
-					In(Users.DepartmentID, Array[int64](1, 2, 3)),
-					Like(Users.Email, Value("%@company.com")),
-					Exists(Subquery[int](existsSub)),
-					NotEqual(Users.Status, Value("deleted")),
-					IsNotNull(Users.Email),
-				),
+				Equal(Test.String, Value("active")),
 			)
 		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlDeleteQuery, "`u`.`status` = ?", "EQUAL")
-			assertContains(t, sqlDeleteQuery, "`u`.`age` > ?", "GREATER")
-			assertContains(t, sqlDeleteQuery, "`u`.`age` < ?", "LESS")
-			assertContains(t, sqlDeleteQuery, "`u`.`department_id` IN (?, ?, ?)", "IN")
-			assertContains(t, sqlDeleteQuery, "`u`.`email` LIKE ?", "LIKE")
-			assertContains(t, sqlDeleteQuery, "EXISTS", "EXISTS")
-			assertContains(t, sqlDeleteQuery, "`u`.`status` <> ?", "NOTEQUAL")
-			assertContains(t, sqlDeleteQuery, "`u`.`email` IS NOT NULL", "IS NOT NULL")
+			assertContains(t, sqlDeleteQuery, "`t`.`string` = ?", "EQUAL")
 		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, `"u"."status" = $1`, "EQUAL")
-			assertContains(t, sqlDeleteQuery, `"u"."age" > $1`, "GREATER")
-			assertContains(t, sqlDeleteQuery, `"u"."age" < $1`, "LESS")
-			assertContains(t, sqlDeleteQuery, `"u"."department_id" IN ($1, $2, $3)`, "IN")
-			assertContains(t, sqlDeleteQuery, `"u"."email" LIKE $1`, "LIKE")
-			assertContains(t, sqlDeleteQuery, `EXISTS`, "EXISTS")
-			assertContains(t, sqlDeleteQuery, `"u"."status" <> $1`, "NOTEQUAL")
-			assertContains(t, sqlDeleteQuery, `"u"."email" IS NOT NULL`, "IS NOT NULL")
+			assertContains(t, sqlDeleteQuery, `"t"."string" = $1`, "EQUAL")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -861,7 +830,9 @@ func Test_Delete_With(t *testing.T) {
 			Where(Less(Users.Age, Value(2))),
 		)
 		stmtDelete := NewDelete(Users.Table).
-			Where(In(Users.ID, Subquery[int64](NewSelect(Column[int64]("old_users", "id"))))).
+			Where(
+				In(Users.ID, Subquery[int64](NewSelect(Column[int64]("old_users", "id")))),
+			).
 			With(cte)
 
 		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)

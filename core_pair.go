@@ -1,7 +1,7 @@
 package uast
 
 // Публичные функции
-func Assign(column markColumnable, value ExpressionBase) *clausePair {
+func Pair(column markColumnable, value ExpressionBase) *clausePair {
 	return &clausePair{
 		column: column,
 		value:  value,

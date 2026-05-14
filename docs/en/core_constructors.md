@@ -12,15 +12,17 @@ This page covers the four statement constructors: `NewDelete`, `NewInsert`, `New
 Creates a new DELETE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Where`, `With`.
 ```go
 statement := uast.NewDelete(uast.Table("test")).
-    Where(uast.Equal(uast.Column[string]("test", "status"), uast.Value("active")))
+    Where(
+        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+    )
 ```
 Output MySQL:
 ```text
-DELETE FROM `test` WHERE `test`.`status` = ?
+DELETE FROM `test` WHERE `test`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-DELETE FROM "test" WHERE "test"."status" = $1
+DELETE FROM "test" WHERE "test"."string" = $1
 ```
 
 ## NewInsert
@@ -42,31 +44,40 @@ INSERT INTO "test" ("test"."name", "test"."age") VALUES ($1, $2)
 ## NewSelect
 Creates a new SELECT statement instance. Accepts fields and returns a statement that can be configured with `Distinct`, `From`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
 ```go
-statement := uast.NewSelect(uast.Column[string]("test", "email")).
+statement := uast.NewSelect(uast.Column[string]("test", "string")).
     From(uast.Table("test")).
-    Where(uast.Equal(uast.Column[string]("test", "status"), uast.Value("active")))
+    Where(
+        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+    )
 ```
 Output MySQL:
 ```text
-SELECT `test`.`email` FROM `test` WHERE `test`.`status` = ?
+SELECT `test`.`email` FROM `test` WHERE `test`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "test"."email" FROM "test" WHERE "test"."status" = $1
+SELECT "test"."email" FROM "test" WHERE "test"."string" = $1
 ```
 
 ## NewUpdate
 Creates a new UPDATE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go
 statement := uast.NewUpdate(uast.Table("test")).
-    Set(uast.Set(uast.Column[string]("test", "status"), uast.Value("active"))).
-    Where(uast.Equal(uast.Column[int]("test", "id"), uast.Value(2)))
+    Set(
+        Assign(
+            uast.Column[string]("test", "string"), 
+            uast.Value("active"),
+        ),
+    ).
+    Where(
+        uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+    )
 ```
 Output MySQL:
 ```text
-UPDATE `test` SET `test`.`status` = ? WHERE `test`.`id` = ?
+UPDATE `test` SET `test`.`string` = ? WHERE `test`.`id` = ?
 ```
 Output PostgreSQL:
 ```text
-UPDATE "test" SET "test"."status" = $1 WHERE "test"."id" = $2
+UPDATE "test" SET "test"."string" = $1 WHERE "test"."id" = $2
 ```

@@ -16,7 +16,7 @@ func Benchmark_Select_Multi(b *testing.B) {
 			b.RunParallel(func(pb *testing.PB) {
 				i := 0
 				for pb.Next() {
-					stmtSelect := NewSelect(Users.ID).From(Users.Table).Where(Equal(Users.Age, Value(i%1000)))
+					stmtSelect := NewSelect(Users.Table).Field(Users.ID).Where(Equal(Users.Age, Value(i%1000)))
 					_, _, err := builder.Build(stmtSelect)
 					if err != nil {
 						b.Errorf("Build failed: %v", err)
@@ -30,39 +30,39 @@ func Benchmark_Select_Multi(b *testing.B) {
 			b.RunParallel(func(pb *testing.PB) {
 				i := 0
 				for pb.Next() {
-					querySub := NewSelect(Count(Orders.ID, false)).
-						From(Orders.Table).
+					querySub := NewSelect(Orders.Table).
+						Field(Count(Orders.ID, false)).
 						Where(
 							Equal(Orders.UserID, Users.ID),
 						)
-					queryInSub := NewSelect(Orders.UserID.As("uid")).
-						From(Orders.Table).
+					queryInSub := NewSelect(Orders.Table).
+						Field(Orders.UserID.As("uid")).
 						Where(
 							Greater(Orders.Amount, Value(10)),
 						)
-					queryExistsSub := NewSelect(Levels.ID).
-						From(Levels.Table).
+					queryExistsSub := NewSelect(Levels.Table).
+						Field(Levels.ID).
 						Where(
 							And(
 								Equal(Levels.UserID, Users.ID),
 								Equal(Levels.Status, Value("active")),
 							),
 						)
-					stmtSelect := NewSelect(
-						Users.ID.As("user_id"),
-						Users.Name.As("user_name"),
-						Users.Email.As("user_email"),
-						Users.Age.As("user_age"),
-						Users.Status.As("user_status"),
-						Subquery[int](querySub).As("order_count"),
-						Subquery[int](NewSelect(Sum(Orders.Amount, false)).
-							From(Orders.Table).
-							Where(
-								Equal(Orders.UserID, Users.ID),
-							),
-						).As("total_spent"),
-					).
-						From(Users.Table).
+					stmtSelect := NewSelect(Users.Table).
+						Field(
+							Users.ID.As("user_id"),
+							Users.Name.As("user_name"),
+							Users.Email.As("user_email"),
+							Users.Age.As("user_age"),
+							Users.Status.As("user_status"),
+							Subquery[int](querySub).As("order_count"),
+							Subquery[int](NewSelect(Orders.Table).
+								Field(Sum(Orders.Amount, false)).
+								Where(
+									Equal(Orders.UserID, Users.ID),
+								),
+							).As("total_spent"),
+						).
 						Join(
 							Inner(Levels.Table, Equal(Users.ID, Levels.UserID)),
 							Left(Categories.Table, Equal(Categories.Type, Users.Status)),
@@ -72,8 +72,8 @@ func Benchmark_Select_Multi(b *testing.B) {
 							Greater(Users.Age, Value(18)),
 							In(Users.ID, Subquery[int64](queryInSub)),
 							Exists(Subquery[int](queryExistsSub)),
-							NotExists(Subquery[int](NewSelect(ConstIntOne()).
-								From(Users.Table).
+							NotExists(Subquery[int](NewSelect(Users.Table).
+								Field(ConstIntOne()).
 								Where(
 									And(
 										Equal(Users.ID, Users.ID), IsNull(Users.Email),
@@ -90,19 +90,19 @@ func Benchmark_Select_Multi(b *testing.B) {
 						).
 						Having(
 							And(
-								Greater(Subquery[int64](NewSelect(Count(Orders.ID, false)).
-									From(Orders.Table).
+								Greater(Subquery[int64](NewSelect(Orders.Table).
+									Field(Count(Orders.ID, false)).
 									Where(Equal(Orders.UserID, Users.ID)),
 								), Value(int64(0))),
-								Greater(Subquery[int64](NewSelect(Sum(Orders.Amount, false)).
-									From(Orders.Table).
+								Greater(Subquery[int64](NewSelect(Orders.Table).
+									Field(Sum(Orders.Amount, false)).
 									Where(Equal(Orders.UserID, Users.ID)),
 								), Value(int64(100))),
 							),
 						).
 						OrderBy(
-							Desc(Subquery[int](NewSelect(Sum(Orders.Amount, false)).
-								From(Orders.Table).
+							Desc(Subquery[int](NewSelect(Orders.Table).
+								Field(Sum(Orders.Amount, false)).
 								Where(Equal(Orders.UserID, Users.ID)),
 							)),
 							Asc(Users.Name),
@@ -127,45 +127,47 @@ func Benchmark_Select_Single(b *testing.B) {
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				stmtSelect := NewSelect(Users.ID).From(Users.Table).Where(Equal(Users.Age, Value(i%1000)))
+				stmtSelect := NewSelect(Users.Table).
+					Field(Users.ID).
+					Where(Equal(Users.Age, Value(i%1000)))
 				builder.Build(stmtSelect)
 			}
 		})
 		b.Run("Complex", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				querySub := NewSelect(Count(Orders.ID, false)).
-					From(Orders.Table).
+				querySub := NewSelect(Orders.Table).
+					Field(Count(Orders.ID, false)).
 					Where(
 						Equal(Orders.UserID, Users.ID),
 					)
-				queryInSub := NewSelect(Orders.UserID.As("uid")).
-					From(Orders.Table).
+				queryInSub := NewSelect(Orders.Table).
+					Field(Orders.UserID.As("uid")).
 					Where(
 						Greater(Orders.Amount, Value(10)),
 					)
-				queryExistsSub := NewSelect(Levels.ID).
-					From(Levels.Table).
+				queryExistsSub := NewSelect(Levels.Table).
+					Field(Levels.ID).
 					Where(
 						And(
 							Equal(Levels.UserID, Users.ID),
 							Equal(Levels.Status, Value("active")),
 						),
 					)
-				stmtSelect := NewSelect(
-					Users.ID.As("user_id"),
-					Users.Name.As("user_name"),
-					Users.Email.As("user_email"),
-					Users.Age.As("user_age"),
-					Users.Status.As("user_status"),
-					Subquery[int](querySub).As("order_count"),
-					Subquery[int](NewSelect(Sum(Orders.Amount, false)).
-						From(Orders.Table).
-						Where(
-							Equal(Orders.UserID, Users.ID),
-						),
-					).As("total_spent"),
-				).
-					From(Users.Table).
+				stmtSelect := NewSelect(Users.Table).
+					Field(
+						Users.ID.As("user_id"),
+						Users.Name.As("user_name"),
+						Users.Email.As("user_email"),
+						Users.Age.As("user_age"),
+						Users.Status.As("user_status"),
+						Subquery[int](querySub).As("order_count"),
+						Subquery[int](NewSelect(Orders.Table).
+							Field(Sum(Orders.Amount, false)).
+							Where(
+								Equal(Orders.UserID, Users.ID),
+							),
+						).As("total_spent"),
+					).
 					Join(
 						Inner(Levels.Table, Equal(Users.ID, Levels.UserID)),
 						Left(Categories.Table, Equal(Categories.Type, Users.Status)),
@@ -175,8 +177,8 @@ func Benchmark_Select_Single(b *testing.B) {
 						Greater(Users.Age, Value(18)),
 						In(Users.ID, Subquery[int64](queryInSub)),
 						Exists(Subquery[int](queryExistsSub)),
-						NotExists(Subquery[int](NewSelect(ConstIntOne()).
-							From(Users.Table).
+						NotExists(Subquery[int](NewSelect(Users.Table).
+							Field(ConstIntOne()).
 							Where(
 								And(
 									Equal(Users.ID, Users.ID), IsNull(Users.Email),
@@ -193,19 +195,19 @@ func Benchmark_Select_Single(b *testing.B) {
 					).
 					Having(
 						And(
-							Greater(Subquery[int64](NewSelect(Count(Orders.ID, false)).
-								From(Orders.Table).
+							Greater(Subquery[int64](NewSelect(Orders.Table).
+								Field(Count(Orders.ID, false)).
 								Where(Equal(Orders.UserID, Users.ID)),
 							), Value(int64(0))),
-							Greater(Subquery[int64](NewSelect(Sum(Orders.Amount, false)).
-								From(Orders.Table).
+							Greater(Subquery[int64](NewSelect(Orders.Table).
+								Field(Sum(Orders.Amount, false)).
 								Where(Equal(Orders.UserID, Users.ID)),
 							), Value(int64(100))),
 						),
 					).
 					OrderBy(
-						Desc(Subquery[int](NewSelect(Sum(Orders.Amount, false)).
-							From(Orders.Table).
+						Desc(Subquery[int](NewSelect(Orders.Table).
+							Field(Sum(Orders.Amount, false)).
 							Where(Equal(Orders.UserID, Users.ID)),
 						)),
 						Asc(Users.Name),

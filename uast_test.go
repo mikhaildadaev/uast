@@ -12,8 +12,10 @@ func Test_Core_Array(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Array(0, 1, 2)).
-			From(Test.Table)
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Array(0, 1, 2),
+			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -30,8 +32,10 @@ func Test_Core_Binary(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Test.ID,
+			).
 			Where(
 				And(
 					Equal(Test.Number, BitwiseAnd(Test.Number, Value(0b0010))),
@@ -80,8 +84,8 @@ func Test_Core_Column(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID.As("id")).
-			From(Test.Table)
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID.As("id"))
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -98,13 +102,13 @@ func Test_Core_Comparison(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID.As("id")).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID.As("id")).
 			Where(
 				And(
 					Between(Test.Number, Value(0), Value(2)),
 					Equal(Test.Number, Value(2)),
-					Exists(Subquery[int](NewSelect(ConstIntOne()).From(Test.Table))),
+					Exists(Subquery[int](NewSelect(Test.Table).Field(ConstIntOne()))),
 					Greater(Test.Number, Value(2)),
 					GreaterEqual(Test.Number, Value(2)),
 					ILike(Test.String, Value("%ivan%")),
@@ -116,7 +120,7 @@ func Test_Core_Comparison(t *testing.T) {
 					Like(Test.String, Value("%ivan%")),
 					NotBetween(Test.Number, Value(0), Value(2)),
 					NotEqual(Test.Number, Value(2)),
-					NotExists(Subquery[int](NewSelect(ConstIntOne()).From(Test.Table))),
+					NotExists(Subquery[int](NewSelect(Test.Table).Field(ConstIntOne()))),
 					NotILike(Test.String, Value("%ivan%")),
 					NotIn(Test.String, Array("active", "pending")),
 					NotLike(Test.String, Value("%ivan%")),
@@ -171,8 +175,8 @@ func Test_Core_Constant(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID).
 			Where(
 				And(
 					Equal(ConstBoolFalse(), ConstBoolFalse()),
@@ -240,151 +244,151 @@ func Test_Core_Function(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			// Функции агрегатные
-			Avg(Test.Number, false).As("aggregate_avg"),
-			BitAnd(Test.Number, false).As("aggregate_bitand"),
-			BitOr(Test.Number, false).As("aggregate_bitor"),
-			BitXor(Test.Number, false).As("aggregate_bitxor"),
-			Count(Test.String, false).As("aggregate_count"),
-			GroupConcat(Test.String, false).As("aggregate_groupconcat"),
-			Max(Test.Number, false).As("aggregate_max"),
-			Min(Test.Number, false).As("aggregate_min"),
-			StdDev(Test.Number, false).As("aggregate_stddev"),
-			Sum(Test.Number, false).As("aggregate_sum"),
-			Variance(Test.Number, false).As("aggregate_variance"),
-			// Функции аналитические
-			FirstValue(Test.Name).Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-			).As("analytical_firstvalue"),
-			Lag(Test.Number, 2).Over(
-				PartitionBy(Test.ID),
-				OrderBy(Asc(Test.Date)),
-			).As("analytical_lag"),
-			LastValue(Test.Name).Over(
-				PartitionBy(Test.ID),
-				OrderBy(Asc(Test.Number)),
-				RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
-			).As("analytical_lastvalue"),
-			Lead(Test.Number, 2).Over(
-				PartitionBy(Test.ID),
-				OrderBy(Asc(Test.Date)),
-			).As("analytical_lead"),
-			NthValue(Test.Name, 2).Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-				RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
-			).As("analytical_nthvalue"),
-			// Функции условий
-			Case(CaseIf(CasePair(Less(Test.Number, Value(2)), Value("old"))), CaseElse(Value("new"))).As("condition_case"),
-			Coalesce(Test.CreateAt, Test.UpdateAt).As("condition_coalesce"),
-			Greatest(Test.CreateAt, Test.UpdateAt).As("condition_greatest"),
-			Least(Test.CreateAt, Test.UpdateAt).As("condition_least"),
-			NullIf(Test.CreateAt, Test.UpdateAt).As("condition_if"),
-			// Функции конвертации
-			Cast(Test.Number, TypeString).As("convert_cast"),
-			CharLength(Test.String).As("convert_length"),
-			DateFormat(Test.CreateAt, Literal("%Y-%m-%d")).As("convert_dateformat"),
-			Degrees(Test.Number).As("convert_degrees"),
-			Length(Test.String).As("convert_length"),
-			Position(Test.String, Value("old")).As("convert_position"),
-			Radians(Test.Number).As("convert_radians"),
-			// Функции даты и времени
-			CurDate().As("datetime_curdate"),
-			CurTime().As("datetime_curtime"),
-			DateAdd(Test.CreateAt, Literal("2 DAY")).As("datetime_dateadd"),
-			DateDiff(Test.UpdateAt, Test.CreateAt).As("datetime_datediff"),
-			DateSub(Test.CreateAt, Literal("2 DAY")).As("datetime_datesub"),
-			Day(Test.CreateAt).As("datetime_day"),
-			DayName(Test.CreateAt).As("datetime_dayname"),
-			Hour(Test.CreateAt).As("datetime_hour"),
-			Minute(Test.CreateAt).As("datetime_minute"),
-			Month(Test.CreateAt).As("datetime_month"),
-			MonthName(Test.CreateAt).As("datetime_monthname"),
-			Now().As("datetime_now"),
-			Quarter(Test.CreateAt).As("datetime_quarter"),
-			Second(Test.CreateAt).As("datetime_second"),
-			TimeAdd(Test.CreateAt, Literal("2 HOUR")).As("datetime_timeadd"),
-			TimeDiff(Test.UpdateAt, Test.CreateAt).As("datetime_timediff"),
-			TimeSub(Test.CreateAt, Literal("2 HOUR")).As("datetime_timesub"),
-			Week(Test.CreateAt).As("datetime_week"),
-			Year(Test.CreateAt).As("datetime_year"),
-			// Функции обмена данными
-			JsonArray(Test.Json, Value("val1"), Value("val2")).As("json_jsonarray"),
-			JsonArrayAgg(Test.Json).As("json_jsonarrayagg"),
-			JsonContains(Test.Json, Value(`{"key":"val"}`)).As("json_jsoncontains"),
-			JsonExtract(Test.Json, JsonGroup(JsonPath(JsonKey("parent"), JsonIndex(0), JsonKey("child"))), TypeString).As("json_jsonextract"),
-			JsonObject(JsonPair(JsonKey("key"), Count(Test.Json, false))).As("json_jsonobject"),
-			JsonObjectAgg(Test.Json, Test.Number).As("json_jsonobjectagg"),
-			JsonRemove(Test.Json, JsonGroup(JsonPath(JsonKey("key1"))), JsonGroup(JsonPath(JsonKey("key2")))).As("json_jsonremove"),
-			JsonSet(Test.Json, JsonGroup(JsonPath(JsonKey("key1")), Value("val1")), JsonGroup(JsonPath(JsonKey("key2")), Value("val2"))).As("json_jsonset"),
-			JsonType(Test.Json).As("json_jsontype"),
-			// Функции математические
-			Abs(Test.Number).As("math_abs"),
-			ACos(Test.Number).As("math_acos"),
-			ASin(Test.Number).As("math_asin"),
-			ATan(Test.Number).As("math_atan"),
-			ATan2(Test.Y, Test.X).As("math_atan2"),
-			Cbrt(Test.Number).As("math_cbrt"),
-			Ceil(Test.Number).As("math_ceil"),
-			Cos(Test.Number).As("math_cos"),
-			Exp(Test.Number).As("math_exp"),
-			Floor(Test.Number).As("math_floor"),
-			Ln(Test.Number).As("math_ln"),
-			Log(Test.Number, Value(2)).As("math_log"),
-			Mod(Test.Number, Value(2)).As("math_mod"),
-			Pi().As("math_pi"),
-			Power(Test.Number, Value(2)).As("math_power"),
-			Rand().As("math_rand"),
-			Round(Test.Number, Value(2)).As("math_round"),
-			Sin(Test.Number).As("math_sin"),
-			Sqrt(Test.Number).As("math_sqrt"),
-			Tan(Test.Number).As("math_tan"),
-			Trunc(Test.Number, Value(2)).As("math_trunc"),
-			// Функции ранжирующие
-			CumeDist().Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-			).As("ranking_cumedist"),
-			DenseRank().Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-			).As("ranking_denserank"),
-			NTile(2).Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-			).As("ranking_ntile"),
-			PercentRank().Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-			).As("ranking_percentrank"),
-			Rank().Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-			).As("ranking_rank"),
-			RowNumber().Over(
-				PartitionBy(Test.ID),
-				OrderBy(Desc(Test.Number)),
-			).As("ranking_rownumber"),
-			// Функции строковые
-			Concat(Test.String, Value("old"), Value("new")).As("string_concat"),
-			ConcatWs(Value("_"), Test.String, Value("old"), Value("new")).As("string_concatws"),
-			LeftString(Test.String, Value(2)).As("string_lstr"),
-			Lower(Test.String).As("string_lower"),
-			LPad(Test.String, Value(2), Value(",")).As("string_lpad"),
-			LTrim(Test.String).As("string_ltrim"),
-			Repeat(Test.String, Value(2)).As("string_repeat"),
-			Replace(Test.String, Value("old"), Value("new")).As("string_replace"),
-			Reverse(Test.String).As("string_reverse"),
-			RightString(Test.String, Value(2)).As("string_rstr"),
-			RPad(Test.String, Value(2), Value(",")).As("string_rpad"),
-			RTrim(Test.String).As("string_rtrim"),
-			SubString(Test.String, Value(0), Value(2)).As("string_substring"),
-			Trim(Test.String).As("string_trim"),
-			Upper(Test.String).As("string_upper"),
-		).
-			From(Test.Table)
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				// Функции агрегатные
+				Avg(Test.Number, false).As("aggregate_avg"),
+				BitAnd(Test.Number, false).As("aggregate_bitand"),
+				BitOr(Test.Number, false).As("aggregate_bitor"),
+				BitXor(Test.Number, false).As("aggregate_bitxor"),
+				Count(Test.String, false).As("aggregate_count"),
+				GroupConcat(Test.String, false).As("aggregate_groupconcat"),
+				Max(Test.Number, false).As("aggregate_max"),
+				Min(Test.Number, false).As("aggregate_min"),
+				StdDev(Test.Number, false).As("aggregate_stddev"),
+				Sum(Test.Number, false).As("aggregate_sum"),
+				Variance(Test.Number, false).As("aggregate_variance"),
+				// Функции аналитические
+				FirstValue(Test.Name).Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+				).As("analytical_firstvalue"),
+				Lag(Test.Number, 2).Over(
+					PartitionBy(Test.ID),
+					OrderBy(Asc(Test.Date)),
+				).As("analytical_lag"),
+				LastValue(Test.Name).Over(
+					PartitionBy(Test.ID),
+					OrderBy(Asc(Test.Number)),
+					RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
+				).As("analytical_lastvalue"),
+				Lead(Test.Number, 2).Over(
+					PartitionBy(Test.ID),
+					OrderBy(Asc(Test.Date)),
+				).As("analytical_lead"),
+				NthValue(Test.Name, 2).Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+					RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
+				).As("analytical_nthvalue"),
+				// Функции условий
+				Case(CaseIf(CasePair(Less(Test.Number, Value(2)), Value("old"))), CaseElse(Value("new"))).As("condition_case"),
+				Coalesce(Test.CreateAt, Test.UpdateAt).As("condition_coalesce"),
+				Greatest(Test.CreateAt, Test.UpdateAt).As("condition_greatest"),
+				Least(Test.CreateAt, Test.UpdateAt).As("condition_least"),
+				NullIf(Test.CreateAt, Test.UpdateAt).As("condition_if"),
+				// Функции конвертации
+				Cast(Test.Number, TypeString).As("convert_cast"),
+				CharLength(Test.String).As("convert_length"),
+				DateFormat(Test.CreateAt, Literal("%Y-%m-%d")).As("convert_dateformat"),
+				Degrees(Test.Number).As("convert_degrees"),
+				Length(Test.String).As("convert_length"),
+				Position(Test.String, Value("old")).As("convert_position"),
+				Radians(Test.Number).As("convert_radians"),
+				// Функции даты и времени
+				CurDate().As("datetime_curdate"),
+				CurTime().As("datetime_curtime"),
+				DateAdd(Test.CreateAt, Literal("2 DAY")).As("datetime_dateadd"),
+				DateDiff(Test.UpdateAt, Test.CreateAt).As("datetime_datediff"),
+				DateSub(Test.CreateAt, Literal("2 DAY")).As("datetime_datesub"),
+				Day(Test.CreateAt).As("datetime_day"),
+				DayName(Test.CreateAt).As("datetime_dayname"),
+				Hour(Test.CreateAt).As("datetime_hour"),
+				Minute(Test.CreateAt).As("datetime_minute"),
+				Month(Test.CreateAt).As("datetime_month"),
+				MonthName(Test.CreateAt).As("datetime_monthname"),
+				Now().As("datetime_now"),
+				Quarter(Test.CreateAt).As("datetime_quarter"),
+				Second(Test.CreateAt).As("datetime_second"),
+				TimeAdd(Test.CreateAt, Literal("2 HOUR")).As("datetime_timeadd"),
+				TimeDiff(Test.UpdateAt, Test.CreateAt).As("datetime_timediff"),
+				TimeSub(Test.CreateAt, Literal("2 HOUR")).As("datetime_timesub"),
+				Week(Test.CreateAt).As("datetime_week"),
+				Year(Test.CreateAt).As("datetime_year"),
+				// Функции обмена данными
+				JsonArray(Test.Json, Value("val1"), Value("val2")).As("json_jsonarray"),
+				JsonArrayAgg(Test.Json).As("json_jsonarrayagg"),
+				JsonContains(Test.Json, Value(`{"key":"val"}`)).As("json_jsoncontains"),
+				JsonExtract(Test.Json, JsonGroup(JsonPath(JsonKey("parent"), JsonIndex(0), JsonKey("child"))), TypeString).As("json_jsonextract"),
+				JsonObject(JsonPair(JsonKey("key"), Count(Test.Json, false))).As("json_jsonobject"),
+				JsonObjectAgg(Test.Json, Test.Number).As("json_jsonobjectagg"),
+				JsonRemove(Test.Json, JsonGroup(JsonPath(JsonKey("key1"))), JsonGroup(JsonPath(JsonKey("key2")))).As("json_jsonremove"),
+				JsonSet(Test.Json, JsonGroup(JsonPath(JsonKey("key1")), Value("val1")), JsonGroup(JsonPath(JsonKey("key2")), Value("val2"))).As("json_jsonset"),
+				JsonType(Test.Json).As("json_jsontype"),
+				// Функции математические
+				Abs(Test.Number).As("math_abs"),
+				ACos(Test.Number).As("math_acos"),
+				ASin(Test.Number).As("math_asin"),
+				ATan(Test.Number).As("math_atan"),
+				ATan2(Test.Y, Test.X).As("math_atan2"),
+				Cbrt(Test.Number).As("math_cbrt"),
+				Ceil(Test.Number).As("math_ceil"),
+				Cos(Test.Number).As("math_cos"),
+				Exp(Test.Number).As("math_exp"),
+				Floor(Test.Number).As("math_floor"),
+				Ln(Test.Number).As("math_ln"),
+				Log(Test.Number, Value(2)).As("math_log"),
+				Mod(Test.Number, Value(2)).As("math_mod"),
+				Pi().As("math_pi"),
+				Power(Test.Number, Value(2)).As("math_power"),
+				Rand().As("math_rand"),
+				Round(Test.Number, Value(2)).As("math_round"),
+				Sin(Test.Number).As("math_sin"),
+				Sqrt(Test.Number).As("math_sqrt"),
+				Tan(Test.Number).As("math_tan"),
+				Trunc(Test.Number, Value(2)).As("math_trunc"),
+				// Функции ранжирующие
+				CumeDist().Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+				).As("ranking_cumedist"),
+				DenseRank().Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+				).As("ranking_denserank"),
+				NTile(2).Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+				).As("ranking_ntile"),
+				PercentRank().Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+				).As("ranking_percentrank"),
+				Rank().Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+				).As("ranking_rank"),
+				RowNumber().Over(
+					PartitionBy(Test.ID),
+					OrderBy(Desc(Test.Number)),
+				).As("ranking_rownumber"),
+				// Функции строковые
+				Concat(Test.String, Value("old"), Value("new")).As("string_concat"),
+				ConcatWs(Value("_"), Test.String, Value("old"), Value("new")).As("string_concatws"),
+				LeftString(Test.String, Value(2)).As("string_lstr"),
+				Lower(Test.String).As("string_lower"),
+				LPad(Test.String, Value(2), Value(",")).As("string_lpad"),
+				LTrim(Test.String).As("string_ltrim"),
+				Repeat(Test.String, Value(2)).As("string_repeat"),
+				Replace(Test.String, Value("old"), Value("new")).As("string_replace"),
+				Reverse(Test.String).As("string_reverse"),
+				RightString(Test.String, Value(2)).As("string_rstr"),
+				RPad(Test.String, Value(2), Value(",")).As("string_rpad"),
+				RTrim(Test.String).As("string_rtrim"),
+				SubString(Test.String, Value(0), Value(2)).As("string_substring"),
+				Trim(Test.String).As("string_trim"),
+				Upper(Test.String).As("string_upper"),
+			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -613,8 +617,8 @@ func Test_Core_Literal(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID).
 			Where(
 				Equal(DateFormat(Test.CreateAt, Literal("%Y-%m-%d")), Value("2026-01-01")),
 			)
@@ -634,8 +638,8 @@ func Test_Core_Logical(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID.As("id")).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID.As("id")).
 			Where(
 				And(
 					And(
@@ -666,8 +670,8 @@ func Test_Core_Order(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID.As("id")).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID.As("id")).
 			OrderBy(
 				Asc(Test.String),
 				Desc(Test.String),
@@ -690,10 +694,8 @@ func Test_Core_Subquery(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			Subquery[int64](NewSelect(Test.ID).From(Test.Table)).As("SUB"),
-		).
-			From(Test.Table)
+		stmtSelect := NewSelect(Test.Table).
+			Field(Subquery[int64](NewSelect(Test.Table).Field(Test.ID)).As("SUB"))
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -711,8 +713,8 @@ func Test_Core_Value(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.ID.As("id")).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID.As("id")).
 			Where(
 				Equal(Test.String, Value(data)),
 			)
@@ -825,13 +827,15 @@ func Test_Delete_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		cte := WithN("old_users", NewSelect(Users.ID).
-			From(Users.Table).
-			Where(Less(Users.Age, Value(2))),
+		cte := WithN("old_users", NewSelect(Users.Table).
+			Field(Users.ID).
+			Where(
+				Less(Users.Age, Value(2)),
+			),
 		)
 		stmtDelete := NewDelete(Users.Table).
 			Where(
-				In(Users.ID, Subquery[int64](NewSelect(Column[int64]("old_users", "id")))),
+				In(Users.ID, Subquery[int64](NewSelect(Users.Table).Field(Column[int64]("old_users", "id")))),
 			).
 			With(cte)
 
@@ -853,8 +857,8 @@ func Test_Insert(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtInsert := NewInsert(Test.String, Test.Number).
-			Into(Test.Table).
+		stmtInsert := NewInsert(Test.Table).
+			Column(Test.String, Test.Number).
 			Values(
 				Row(
 					Value("ivan"),
@@ -879,8 +883,8 @@ func Test_Select(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.String).
-			From(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.String).
 			Where(
 				Equal(Test.String, Value("active")),
 			)
@@ -902,9 +906,8 @@ func Test_Select_Distinct(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect().Distinct().
-			Field(Users.ID.As("user_id")).
-			From(Users.Table)
+		stmtSelect := NewSelect(Users.Table).Distinct().
+			Field(Users.ID.As("user_id"))
 		sqlSelectQuery, _, _ := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -921,16 +924,16 @@ func Test_Select_GroupBy(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			Users.DepartmentID,
-			Users.Status,
-			Count(Users.ID, false).As("user_count"),
-			Sum(Users.Age, false).As("total_age"),
-			Avg(Users.Age, false).As("avg_age"),
-			Min(Users.Age, false).As("min_age"),
-			Max(Users.Age, false).As("max_age"),
-		).
-			From(Users.Table).
+		stmtSelect := NewSelect(Users.Table).
+			Field(
+				Users.DepartmentID,
+				Users.Status,
+				Count(Users.ID, false).As("user_count"),
+				Sum(Users.Age, false).As("total_age"),
+				Avg(Users.Age, false).As("avg_age"),
+				Min(Users.Age, false).As("min_age"),
+				Max(Users.Age, false).As("max_age"),
+			).
 			Where(
 				And(
 					GreaterEqual(Users.Age, Value(2)),
@@ -959,13 +962,13 @@ func Test_Select_Having(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		queryMain := NewSelect(
-			Users.DepartmentID,
-			Count(Users.ID, false).As("user_count"),
-			Sum(Users.Age, false).As("total_age"),
-			Avg(Users.Age, false).As("avg_age"),
-		).
-			From(Users.Table).
+		queryMain := NewSelect(Users.Table).
+			Field(
+				Users.DepartmentID,
+				Count(Users.ID, false).As("user_count"),
+				Sum(Users.Age, false).As("total_age"),
+				Avg(Users.Age, false).As("avg_age"),
+			).
 			GroupBy(Users.DepartmentID).
 			Having(
 				And(
@@ -999,8 +1002,8 @@ func Test_Select_Join(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Users.ID.As("user_id")).
-			From(Users.Table).
+		stmtSelect := NewSelect(Users.Table).
+			Field(Users.ID.As("user_id")).
 			Join(
 				Cross(Orders.Table),
 				Full(Orders.Table, Equal(Users.ID, Orders.UserID)),
@@ -1043,13 +1046,15 @@ func Test_Select_Limit(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(
-			Users.ID,
-			Users.Name,
-			Users.Age,
-		).
-			From(Users.Table).
-			Where(Equal(Users.Status, Value("active"))).
+		stmtSelect := NewSelect(Users.Table).
+			Field(
+				Users.ID,
+				Users.Name,
+				Users.Age,
+			).
+			Where(
+				Equal(Users.Status, Value("active")),
+			).
 			Limit(10)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1067,9 +1072,15 @@ func Test_Select_Offset(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Users.ID, Users.Name, Users.Age).
-			From(Users.Table).
-			Where(Equal(Users.Status, Value("active"))).
+		stmtSelect := NewSelect(Users.Table).
+			Field(
+				Users.ID,
+				Users.Name,
+				Users.Age,
+			).
+			Where(
+				Equal(Users.Status, Value("active")),
+			).
 			Offset(20)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1087,8 +1098,11 @@ func Test_Select_OrderBy(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Users.ID.As("user_id"), Users.Name.As("user_name")).
-			From(Users.Table).
+		stmtSelect := NewSelect(Users.Table).
+			Field(
+				Users.ID.As("user_id"),
+				Users.Name.As("user_name"),
+			).
 			OrderBy(
 				Asc(Users.Name),
 				Desc(Users.ID),
@@ -1113,48 +1127,48 @@ func Test_Select_Unions(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		queryUnion := NewSelect(
-			Users.Name.As("person_name"),
-			Users.Email.As("contact_email"),
-		).
-			From(Users.Table).
+		queryUnion := NewSelect(Users.Table).
+			Field(
+				Users.Name.As("person_name"),
+				Users.Email.As("contact_email"),
+			).
 			Where(
 				And(
 					Equal(Users.Status, Value("active")),
 					Like(Users.Email, Value("%@domain.ltd")),
 				),
 			)
-		queryUnionAll := NewSelect(
-			Products.Name.As("person_name"),
-			Products.Name.As("contact_email"),
-		).
-			From(Products.Table).
+		queryUnionAll := NewSelect(Products.Table).
+			Field(
+				Products.Name.As("person_name"),
+				Products.Name.As("contact_email"),
+			).
 			Where(
 				Greater(Products.Count, Value(2)),
 			)
-		queryUnionExcept := NewSelect(
-			Categories.Name.As("person_name"),
-			Categories.Type.As("contact_email"),
-		).
-			From(Categories.Table).
+		queryUnionExcept := NewSelect(Categories.Table).
+			Field(
+				Categories.Name.As("person_name"),
+				Categories.Type.As("contact_email"),
+			).
 			Where(
 				In(Categories.Type, Array("premium", "standard", "basic")),
 			)
-		queryUnionIntersect := NewSelect(
-			Departments.Name.As("person_name"),
-			Departments.Name.As("contact_email"),
-		).
-			From(Departments.Table).
+		queryUnionIntersect := NewSelect(Departments.Table).
+			Field(
+				Departments.Name.As("person_name"),
+				Departments.Name.As("contact_email"),
+			).
 			Where(
 				IsNull(Departments.ParentID),
 			)
-		stmtSelect := NewSelect(
-			Users.ID.As("entity_id"),
-			Users.Name.As("entity_name"),
-			Users.Email.As("entity_email"),
-			Users.Status.As("entity_status"),
-		).
-			From(Users.Table).
+		stmtSelect := NewSelect(Users.Table).
+			Field(
+				Users.ID.As("entity_id"),
+				Users.Name.As("entity_name"),
+				Users.Email.As("entity_email"),
+				Users.Status.As("entity_status"),
+			).
 			Where(
 				Equal(Users.Status, Value("active")),
 			).
@@ -1186,13 +1200,13 @@ func Test_Select_Where(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		existsSub := NewSelect(Levels.ID).
-			From(Levels.Table).
+		existsSub := NewSelect(Levels.Table).
+			Field(Levels.ID).
 			Where(
 				Equal(Levels.UserID, Users.ID),
 			)
-		stmtSelect := NewSelect(Users.ID).
-			From(Users.Table).
+		stmtSelect := NewSelect(Users.Table).
+			Field(Users.ID).
 			Where(
 				And(
 					Equal(Users.Status, Value("active")),
@@ -1237,46 +1251,48 @@ func Test_Select_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		queryWithN := WithN("WithN", NewSelect(
-			Orders.UserID,
-			Count(Orders.ID, false).As("order_count"),
-			Sum(Orders.Amount, false).As("total_spent"),
-		).
-			From(Orders.Table).
-			Where(Greater(Orders.Amount, Value(2))).
+		queryWithN := WithN("WithN", NewSelect(Orders.Table).
+			Field(
+				Orders.UserID,
+				Count(Orders.ID, false).As("order_count"),
+				Sum(Orders.Amount, false).As("total_spent"),
+			).
+			Where(
+				Greater(Orders.Amount, Value(2)),
+			).
 			GroupBy(Orders.UserID),
 			"user_id", "order_count", "total_spent",
 		)
-		queryWithR := WithR("WithR", NewSelect(
-			Departments.ID,
-			Departments.Name,
-			Departments.ParentID,
-		).
-			From(Departments.Table).
+		queryWithR := WithR("WithR", NewSelect(Departments.Table).
+			Field(
+				Departments.ID,
+				Departments.Name,
+				Departments.ParentID,
+			).
 			Where(IsNull(Departments.ParentID)).
 			Unions(
-				UnionAll(NewSelect(
-					Departments.ID,
-					Departments.Name,
-					Departments.ParentID,
-				).
-					From(Departments.Table).
+				UnionAll(NewSelect(Departments.Table).
+					Field(
+						Departments.ID,
+						Departments.Name,
+						Departments.ParentID,
+					).
 					Join(Inner(CTE("WithR", "dh"), Equal(Departments.ParentID, Departments.ID)))),
 			),
 			"dept_id", "dept_name", "parent_id",
 		)
-		stmtSelect := NewSelect(
-			Users.ID.As("user_id"),
-			Users.Name.As("user_name"),
-			Users.Email.As("email"),
-			Users.Age.As("age"),
-			Users.Status.As("status"),
-			Stats.OrderCount.As("premium_order_count"),
-			Stats.TotalSpent.As("total_premium_spent"),
-			Categories.Name.As("fav_category"),
-			Levels.Status.As("user_level_status"),
-		).
-			From(Users.Table).
+		stmtSelect := NewSelect(Users.Table).
+			Field(
+				Users.ID.As("user_id"),
+				Users.Name.As("user_name"),
+				Users.Email.As("email"),
+				Users.Age.As("age"),
+				Users.Status.As("status"),
+				Stats.OrderCount.As("premium_order_count"),
+				Stats.TotalSpent.As("total_premium_spent"),
+				Categories.Name.As("fav_category"),
+				Levels.Status.As("user_level_status"),
+			).
 			Join(
 				Inner(CTE("WithN", "us"), Equal(Users.ID, Stats.UserID)),
 				Left(Levels.Table,
@@ -1287,13 +1303,13 @@ func Test_Select_With(t *testing.T) {
 				),
 				Left(CTE("WithR", "dh"), Equal(Users.ID, Column[int64]("dh", "dept_id"))),
 				Left(Categories.Table, Equal(Categories.Type, Users.Status)),
-				Left(Query(NewSelect(
-					Categories.ID,
-					Categories.Name,
-					Count(Products.ID, false).As("product_count"),
-					Sum(Products.Count, false).As("total_inventory"),
-				).
-					From(Categories.Table).
+				Left(Query(NewSelect(Categories.Table).
+					Field(
+						Categories.ID,
+						Categories.Name,
+						Count(Products.ID, false).As("product_count"),
+						Sum(Products.Count, false).As("total_inventory"),
+					).
 					Join(
 						Inner(Products.Table, Equal(Categories.ID, Products.ID)),
 					).

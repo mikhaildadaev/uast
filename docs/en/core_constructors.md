@@ -18,27 +18,30 @@ statement := uast.NewDelete(uast.Table("test")).
 ```
 Output MySQL:
 ```text
-DELETE FROM `test` WHERE `test`.`string` = ?
+DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-DELETE FROM "test" WHERE "test"."string" = $1
+DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ## NewInsert
 Creates a new INSERT statement instance. Accepts columns and returns a statement that can be configured with `Into`, `Returning`, `Source`, `Values`, `With`.
 ```go
-statement := uast.NewInsert(uast.Column[string]("test", "name"), uast.Column[int]("test", "age")).
+statement := uast.NewInsert(uast.Column[string]("test", "string"), uast.Column[int]("test", "number")).
     Into(uast.Table("test")).
-    Values(uast.Value("ivan"), uast.Value(2))
+    Values(
+        uast.Value("ivan"), 
+        uast.Value(2),
+    )
 ```
 Output MySQL:
 ```text
-INSERT INTO `test` (`test`.`name`, `test`.`age`) VALUES (?, ?)
+INSERT INTO `test` (`test`.`string`, `test`.`number`) VALUES (?, ?)
 ```
 Output PostgreSQL:
 ```text
-INSERT INTO "test" ("test"."name", "test"."age") VALUES ($1, $2)
+INSERT INTO "test" ("test"."string", "test"."number") VALUES ($1, $2)
 ```
 
 ## NewSelect
@@ -52,11 +55,11 @@ statement := uast.NewSelect(uast.Column[string]("test", "string")).
 ```
 Output MySQL:
 ```text
-SELECT `test`.`email` FROM `test` WHERE `test`.`string` = ?
+SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "test"."email" FROM "test" WHERE "test"."string" = $1
+SELECT "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ## NewUpdate
@@ -75,9 +78,9 @@ statement := uast.NewUpdate(uast.Table("test")).
 ```
 Output MySQL:
 ```text
-UPDATE `test` SET `test`.`string` = ? WHERE `test`.`id` = ?
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-UPDATE "test" SET "test"."string" = $1 WHERE "test"."id" = $2
+UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 ```

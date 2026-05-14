@@ -28,8 +28,11 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ## NewInsert
 创建一个新的 INSERT 语句实例。接受列，返回一个可使用 `Into`、`Returning`、`Source`、`Values`、`With`进行配置的语句。
 ```go
-statement := uast.NewInsert(uast.Column[string]("test", "string"), uast.Column[int]("test", "number")).
-    Into(uast.Table("test")).
+statement := uast.NewInsert(uast.Table("test")).
+    Column(
+        uast.Column[string]("test", "string"), 
+        uast.Column[int]("test", "number"),
+    ).
     Values(
         uast.Row(
             uast.Value("ivan"), 
@@ -49,8 +52,10 @@ INSERT INTO "test" ("test"."string", "test"."number") VALUES ($1, $2)
 ## NewSelect
 创建一个新的 SELECT 语句实例。接受字段，返回一个可使用 `Distinct`、`From`、`GroupBy`、`Having`、`Join`、`Limit`、`Offset`、`OrderBy`、`Unions`、`Where`、`With` 进行配置的语句。
 ```go
-statement := uast.NewSelect(uast.Column[string]("test", "string")).
-    From(uast.Table("test")).
+statement := uast.NewSelect(uast.Table("test")).
+    Field(
+        uast.Column[string]("test", "string"),
+    ).
     Where(
         uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
     )

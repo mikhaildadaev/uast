@@ -1383,10 +1383,7 @@ func Test_Update(t *testing.T) {
 		defer sql.Close()
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
-				Assign(
-					Test.String,
-					Value("active"),
-				),
+				Pair(Test.String, Value("active")),
 			).
 			Where(
 				Equal(Test.Number, Value(2)),

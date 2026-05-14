@@ -894,8 +894,10 @@ func Test_Insert(t *testing.T) {
 		switch supportDialect {
 		case DialectMySQL:
 			assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
+			assertContains(t, sqlInsertQuery, "INTO", "INTO")
 		case DialectPostgreSQL:
 			assertContains(t, sqlInsertQuery, `INSERT`, "INSERT")
+			assertContains(t, sqlInsertQuery, `INTO`, "INTO")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})

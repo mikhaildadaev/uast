@@ -31,8 +31,10 @@ Creates a new INSERT statement instance. Accepts columns and returns a statement
 statement := uast.NewInsert(uast.Column[string]("test", "string"), uast.Column[int]("test", "number")).
     Into(uast.Table("test")).
     Values(
-        uast.Value("ivan"), 
-        uast.Value(2),
+        uast.Row(
+            uast.Value("ivan"), 
+            uast.Value(2),
+        ),
     )
 ```
 Output MySQL:

@@ -922,7 +922,8 @@ func Test_Select_Distinct(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).Distinct().
+		stmtSelect := NewSelect(Test.Table).
+			Distinct().
 			Field(
 				Test.ID,
 			)
@@ -973,7 +974,9 @@ func Test_Select_Having(t *testing.T) {
 				Test.String,
 				Count(Test.ID, false).As("count"),
 			).
-			GroupBy(Test.String).
+			GroupBy(
+				Test.String,
+			).
 			Having(
 				Greater(Count(Test.ID, false), Value[int64](2)),
 			)

@@ -1,12 +1,12 @@
 package uast
 
 // Публичные методы
-func (stmtUpdate *stmtUpdate) Onto(onto SourceBase) *stmtUpdate {
-	stmtUpdate.onto = onto
-	return stmtUpdate
-}
 func (stmtUpdate *stmtUpdate) Join(joins ...*clauseJoin) *stmtUpdate {
 	stmtUpdate.join = joins
+	return stmtUpdate
+}
+func (stmtUpdate *stmtUpdate) Onto(onto SourceBase) *stmtUpdate {
+	stmtUpdate.onto = onto
 	return stmtUpdate
 }
 func (stmtUpdate *stmtUpdate) Returning(returnings ...markReturnable) *stmtUpdate {

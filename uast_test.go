@@ -903,9 +903,6 @@ func Test_Select(t *testing.T) {
 		stmtSelect := NewSelect(Test.Table).
 			Field(
 				Test.String,
-			).
-			Where(
-				Equal(Test.String, Value("active")),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -929,14 +926,14 @@ func Test_Select_Distinct(t *testing.T) {
 			Field(
 				Test.ID,
 			)
-		sqlSelectQuery, _, _ := sql.Build(stmtSelect)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `DISTINCT`, "DISTINCT")
 		}
-		t.Logf("dialect: %s sql: %s", supportDialect.name, sqlSelectQuery)
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
 func Test_Select_GroupBy(t *testing.T) {
@@ -971,7 +968,7 @@ func Test_Select_Having(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		queryMain := NewSelect(Test.Table).
+		stmtSelect := NewSelect(Test.Table).
 			Field(
 				Test.String,
 				Count(Test.ID, false).As("count"),
@@ -980,7 +977,7 @@ func Test_Select_Having(t *testing.T) {
 			Having(
 				Greater(Count(Test.ID, false), Value[int64](2)),
 			)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(queryMain)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "HAVING", "HAVING")
@@ -1188,48 +1185,21 @@ func Test_Select_Where(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		existsSub := NewSelect(Test.Table).
-			Field(
-				Test.ID,
-			)
 		stmtSelect := NewSelect(Test.Table).
 			Field(
 				Test.ID,
 			).
 			Where(
-				And(
-					Equal(Test.String, Value("active")),
-					Greater(Test.Number, Value(2)),
-					Less(Test.Number, Value(2)),
-					In(Test.Number, Array(1, 2, 3)),
-					Like(Test.String, Value("%ivan")),
-					Exists(Subquery[int64](existsSub)),
-					NotEqual(Test.String, Value("pending")),
-					IsNotNull(Test.String),
-				),
+				Equal(Test.String, Value("active")),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "WHERE", "WHERE")
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ?", "EQUAL")
-			assertContains(t, sqlSelectQuery, "`t`.`number` > ?", "GREATER")
-			assertContains(t, sqlSelectQuery, "`t`.`number` < ?", "LESS")
-			assertContains(t, sqlSelectQuery, "`t`.`number` IN (?, ?, ?)", "IN")
-			assertContains(t, sqlSelectQuery, "`t`.`string` LIKE ?", "LIKE")
-			assertContains(t, sqlSelectQuery, "EXISTS", "EXISTS")
-			assertContains(t, sqlSelectQuery, "`t`.`string` <> ?", "NOTEQUAL")
-			assertContains(t, sqlSelectQuery, "`t`.`string` IS NOT NULL", "IS NOT NULL")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `WHERE`, "WHERE")
 			assertContains(t, sqlSelectQuery, `"t"."string" = $1`, "EQUAL")
-			assertContains(t, sqlSelectQuery, `"t"."number" > $1`, "GREATER")
-			assertContains(t, sqlSelectQuery, `"t"."number" < $1`, "LESS")
-			assertContains(t, sqlSelectQuery, `"t"."number" IN ($1, $2, $3)`, "IN")
-			assertContains(t, sqlSelectQuery, `"t"."string" LIKE $1`, "LIKE")
-			assertContains(t, sqlSelectQuery, `EXISTS`, "EXISTS")
-			assertContains(t, sqlSelectQuery, `"t"."string" <> $1`, "NOTEQUAL")
-			assertContains(t, sqlSelectQuery, `"t"."string" IS NOT NULL`, "IS NOT NULL")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

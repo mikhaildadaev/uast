@@ -75,6 +75,28 @@ var Test = struct {
 }{
 	Table: NewTable("test", "t"),
 }
+var Test1 = struct {
+	Table  *TableSource
+	Date   *exprColumn[time.Time]
+	ID     *exprColumn[int64]
+	Json   *exprColumn[string]
+	Number *exprColumn[int]
+	String *exprColumn[string]
+	Time   *exprColumn[time.Time]
+}{
+	Table: NewTable("test1", "t1"),
+}
+var Test2 = struct {
+	Table  *TableSource
+	Date   *exprColumn[time.Time]
+	ID     *exprColumn[int64]
+	Json   *exprColumn[string]
+	Number *exprColumn[int]
+	String *exprColumn[string]
+	Time   *exprColumn[time.Time]
+}{
+	Table: NewTable("test2", "t2"),
+}
 var Users = struct {
 	Table        *TableSource
 	Age          *exprColumn[int]
@@ -136,6 +158,20 @@ func init() {
 	Test.UpdateAt = Column[time.Time](Test.Table.aliasName, "updateat")
 	Test.X = Column[int](Test.Table.aliasName, "x")
 	Test.Y = Column[int](Test.Table.aliasName, "y")
+	// Test1
+	Test1.Date = Column[time.Time](Test1.Table.aliasName, "date")
+	Test1.ID = Column[int64](Test1.Table.aliasName, "id")
+	Test1.Json = Column[string](Test1.Table.aliasName, "json")
+	Test1.Number = Column[int](Test1.Table.aliasName, "number")
+	Test1.String = Column[string](Test1.Table.aliasName, "string")
+	Test1.Time = Column[time.Time](Test1.Table.aliasName, "time")
+	// Test2
+	Test2.Date = Column[time.Time](Test2.Table.aliasName, "date")
+	Test2.ID = Column[int64](Test2.Table.aliasName, "id")
+	Test2.Json = Column[string](Test2.Table.aliasName, "json")
+	Test2.Number = Column[int](Test2.Table.aliasName, "number")
+	Test2.String = Column[string](Test2.Table.aliasName, "string")
+	Test2.Time = Column[time.Time](Test2.Table.aliasName, "time")
 	// Users
 	Users.Age = Column[int](Users.Table.aliasName, "age")
 	Users.CreateAt = Column[time.Time](Users.Table.aliasName, "createat")

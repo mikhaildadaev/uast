@@ -756,11 +756,10 @@ func Test_Delete_Join(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Стандартизировать
 		stmtDelete := NewDelete(Test.Table).
 			Join(
-				Inner(Orders.Table, Equal(Test.ID, Orders.UserID)),
-				Left(Levels.Table, Equal(Test.ID, Levels.UserID)),
+				Inner(Test1.Table, Equal(Test1.ID, Test.ID)),
+				Left(Test2.Table, Equal(Test2.ID, Test.ID)),
 			).
 			Where(
 				Equal(Test.String, Value("active")),
@@ -773,8 +772,8 @@ func Test_Delete_Join(t *testing.T) {
 			assertContains(t, sqlDeleteQuery, "LEFT JOIN", "LEFT JOIN")
 		case DialectPostgreSQL:
 			assertContains(t, sqlDeleteQuery, `USING`, "USING")
-			assertContains(t, sqlDeleteQuery, `"orders" AS "o", "level" AS "l"`, "LIST")
-			assertContains(t, sqlDeleteQuery, `"t"."id" = "o"."user_id" AND "t"."id" = "l"."user_id"`, "CONDITION")
+			assertContains(t, sqlDeleteQuery, `"test1" AS "t1", "test2" AS "t2"`, "LIST")
+			assertContains(t, sqlDeleteQuery, `"t1"."id" = "t"."id" AND "t2"."id" = "t"."id"`, "CONDITION")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})

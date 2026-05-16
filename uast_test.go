@@ -756,6 +756,7 @@ func Test_Delete_Join(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
+		// Стандартизировать
 		stmtDelete := NewDelete(Test.Table).
 			Join(
 				Inner(Orders.Table, Equal(Test.ID, Orders.UserID)),
@@ -923,6 +924,7 @@ func Test_Select_GroupBy(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
+		// Стандартизировать
 		stmtSelect := NewSelect(Users.Table).
 			Field(
 				Users.DepartmentID,
@@ -961,6 +963,7 @@ func Test_Select_Having(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
+		// Стандартизировать
 		queryMain := NewSelect(Users.Table).
 			Field(
 				Users.DepartmentID,
@@ -1001,6 +1004,7 @@ func Test_Select_Join(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
+		// Стандартизировать
 		stmtSelect := NewSelect(Users.Table).
 			Field(Users.ID.As("user_id")).
 			Join(
@@ -1045,14 +1049,12 @@ func Test_Select_Limit(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Users.Table).
+		stmtSelect := NewSelect(Test.Table).
 			Field(
-				Users.ID,
-				Users.Name,
-				Users.Age,
+				Test.ID,
 			).
 			Where(
-				Equal(Users.Status, Value("active")),
+				Equal(Test.String, Value("active")),
 			).
 			Limit(10)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
@@ -1123,6 +1125,7 @@ func Test_Select_Unions(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
+		// Стандартизировать
 		queryUnion := NewSelect(Users.Table).
 			Field(
 				Users.Name.As("person_name"),
@@ -1206,9 +1209,9 @@ func Test_Select_Where(t *testing.T) {
 					Greater(Test.Number, Value(2)),
 					Less(Test.Number, Value(2)),
 					In(Test.Number, Array(1, 2, 3)),
-					Like(Test.String, Value("%@company.com")),
+					Like(Test.String, Value("%ivan")),
 					Exists(Subquery[int64](existsSub)),
-					NotEqual(Test.String, Value("deleted")),
+					NotEqual(Test.String, Value("pending")),
 					IsNotNull(Test.String),
 				),
 			)
@@ -1244,6 +1247,7 @@ func Test_Select_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
+		// Стандартизировать
 		queryWithN := WithN("WithN", NewSelect(Orders.Table).
 			Field(
 				Orders.UserID,

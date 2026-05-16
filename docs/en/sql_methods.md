@@ -160,9 +160,10 @@ Output PostgreSQL:
 ### Distinct
 Adds the DISTINCT modifier to remove duplicate rows from the result set.
 ```go
-stmtSelect := NewSelect(Test.Table).Distinct().
+stmtSelect := NewSelect(uast.Table("test")).
+    Distinct().
 	Field(
-		Test.ID,
+		uast.Column[int64]("test", "id"),
 	)
 ```
 Output MySQL:
@@ -177,13 +178,13 @@ SELECT DISTINCT "t"."id" FROM "test" AS "t"
 ### Field
 Specifies the fields to select. Accepts columns, functions, subqueries, and aliases.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
     Field(
-	    Test.String,
-		Count(Test.ID, false).As("count"),
+	    uast.Column[string]("test", "string"),
+		uast.Count(uast.Column[int64]("test", "id"), false).As("count"),
 	).
 	GroupBy(
-		Test.String,
+		uast.Column[string]("test", "string"),
 	)
 ```
 Output MySQL:
@@ -198,13 +199,13 @@ SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t".
 ### GroupBy
 Adds a GROUP BY clause to group rows by specified columns or expressions.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.String,
-		Count(Test.ID, false).As("count"),
+		uast.Column[string]("test", "string"),
+		uast.Count(uast.Column[int64]("test", "id"), false).As("count"),
 	).
 	GroupBy(
-		Test.String,
+		uast.Column[string]("test", "string"),
 	)
 ```
 Output MySQL:
@@ -219,14 +220,16 @@ SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t".
 ### Having
 Adds a HAVING clause to filter groups. Used with GROUP BY to filter aggregated results.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.String,
-		Count(Test.ID, false).As("count"),
+		uast.Column[string]("test", "string"),
+		uast.Count(uast.Column[int64]("test", "id"), false).As("count"),
 	).
-	GroupBy(Test.String).
+	GroupBy(
+        uast.Column[string]("test", "string"),
+    ).
 	Having(
-		Greater(Count(Test.ID, false), Value[int64](2)),
+		uast.Greater(uast.Count(uast.Column[int64]("test", "id"), false), uast.Value[int64](2)),
 	)
 ```
 Output MySQL:
@@ -241,19 +244,19 @@ SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t".
 ### Join
 Adds JOIN clauses to combine rows from multiple tables. Supports all 8 join types.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
+		uast.Column[int64]("test", "id"),
 	).
 	Join(
-		Cross(Test1.Table),
-		Full(Test1.Table, Equal(Test1.ID, Test.ID)),
-		FullOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
-		Inner(Test1.Table, Equal(Test1.ID, Test.ID)),
-		Left(Test1.Table, Equal(Test1.ID, Test.ID)),
-		LeftOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
-		Right(Test1.Table, Equal(Test1.ID, Test.ID)),
-		RightOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
+		uast.Cross(uast.Table("test1")),
+		uast.Full(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+		uast.FullOuter(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+		uast.Inner(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+		uast.Left(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+		uast.LeftOuter(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+		uast.Right(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+		uast.RightOuter(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
 	)
 ```
 Output MySQL:
@@ -268,9 +271,9 @@ SELECT "t"."id" FROM "test" AS "t" CROSS JOIN "test1" AS "t1" FULL JOIN "test1" 
 ### Limit
 Limits the number of rows returned by the query.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
+		uast.Column[int64]("test", "id"),
 	).
 	Limit(10)
 ```
@@ -286,9 +289,9 @@ SELECT "t"."id" FROM "test" AS "t" LIMIT $1
 ### Offset
 Skips a specified number of rows before returning results. Used for pagination with Limit.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
+		uast.Column[int64]("test", "id"),
 	).
 	Offset(20)
 ```
@@ -304,13 +307,13 @@ SELECT "t"."id" FROM "test" AS "t" OFFSET $1
 ### OrderBy
 Adds an ORDER BY clause to sort results by specified columns or expressions in ascending or descending order.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
+		uast.Column[int64]("test", "id"),
 	).
 	OrderBy(
-		Asc(Test.String),
-		Desc(Test.ID),
+		uast.Asc(uast.Column[string]("test", "string")),
+		uast.Desc(uast.Column[int64]("test", "id")),
 	)
 ```
 Output MySQL:
@@ -339,12 +342,12 @@ Output PostgreSQL:
 ### Where
 Adds a WHERE clause to filter rows before grouping or aggregation.
 ```go
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
+		uast.Column[int64]("test", "id"),
 	).
 	Where(
-		Equal(Test.String, Value("active")),
+		uast.Equal(uast.Column[string]("test", "string"), Value("active")),
 	)
 ```
 Output MySQL:

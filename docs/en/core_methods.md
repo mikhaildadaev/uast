@@ -9,8 +9,6 @@ This page documents methods available on expressions: `As` for assigning aliases
 :::
 
 ## exprColumn
-Methods available on column expressions.
-
 ### As
 Assigns an alias to a column expression.
 ```go
@@ -26,8 +24,6 @@ Output PostgreSQL:
 ```
 
 ## exprFunction
-Methods available on function expressions.
-
 ### As
 Assigns an alias to a function expression.
 ```go
@@ -60,8 +56,6 @@ AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 ## exprSubquery
-Methods available on subquery expressions.
-
 ### As
 Assigns an alias to a subquery expression.
 ```go

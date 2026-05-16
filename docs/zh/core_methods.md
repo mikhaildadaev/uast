@@ -9,8 +9,6 @@ outline: deep
 :::
 
 ## exprColumn
-可用于列表达式的方法。
-
 ### As
 为列表达式分配别名。
 ```go
@@ -26,8 +24,6 @@ Output PostgreSQL:
 ```
 
 ## exprFunction
-可用于函数表达式的方法。
-
 ### As
 为函数表达式分配别名。
 ```go
@@ -60,8 +56,6 @@ AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 ## exprSubquery
-可用于子查询表达式的方法。
-
 ### As
 为子查询表达式分配别名。
 ```go

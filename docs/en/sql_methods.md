@@ -12,64 +12,98 @@ This page documents methods available on statement instances: `Delete`, `Insert`
 ### Join
 Adds JOIN clauses to the DELETE statement. Supports INNER, LEFT, RIGHT, FULL, CROSS and their OUTER variants.
 ```go
-...
+stmt := uast.NewDelete(uast.Table("test")).
+    Join(
+        uast.Inner(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+        uast.Left(uast.Table("test2"), uast.Equal(uast.Column[int64]("test2", "id"), uast.Column[int64]("test", "id"))),
+    ).
+    Where(
+        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+    )
 ```
 Output MySQL:
 ```text
-...
+DELETE `t` FROM `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` LEFT JOIN `test2` AS `t2` ON `t2`.`id` = `t`.`id` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-...
+DELETE FROM "test" AS "t" USING "test1" AS "t1", "test2" AS "t2" WHERE "t1"."id" = "t"."id" AND "t2"."id" = "t"."id" AND "t"."string" = $1
 ```
 
 ### Returning
 Adds a RETURNING clause to return deleted rows. Supported by PostgreSQL. MySQL does not support this clause natively.
 ```go
-...
+stmt := uast.NewDelete(uast.Table("test")).
+    Where(
+        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+    ).
+    Returning(
+        uast.Column[int64]("test", "id"),
+    )
 ```
 Output MySQL:
 ```text
-...
+
 ```
 Output PostgreSQL:
 ```text
-...
+DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id"
 ```
 
 ### Where
 Adds a WHERE clause to filter rows for deletion. Accepts comparison expressions, logical operators, and subqueries.
 ```go
-...
+stmt := uast.NewDelete(uast.Table("test")).
+    Where(
+        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+    )
 ```
 Output MySQL:
 ```text
-...
+DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-...
+DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ### With
 Adds a Common Table Expression (CTE) to the DELETE statement using `WithN` (non-recursive) or `WithR` (recursive).
 ```go
-...
+cte := uast.WithN("old_data", uast.NewSelect(uast.Table("test")).
+    Field(
+        uast.Column[int64]("test", "id"),
+    ).
+    Where(
+        uast.Equal(uast.Column[string]("test", "string"), uast.Value("old")),
+    ),
+)
+stmt := uast.NewDelete(uast.Table("test")).
+    Where(
+        uast.In(uast.Column[int64]("test", "id"), uast.Subquery[int64](uast.NewSelect(uast.Table("test")).Field(uast.Column[int64]("old_data", "id")))),
+    ).
+    With(cte)
 ```
 Output MySQL:
 ```text
-...
+WITH old_data AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) DELETE FROM `test` AS `t` WHERE `t`.`id` IN (SELECT `old_data`.`id` FROM `test` AS `t`)
 ```
 Output PostgreSQL:
 ```text
-...
+WITH old_data AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1) DELETE FROM "test" AS "t" WHERE "t"."id" IN (SELECT "old_data"."id" FROM "test" AS "t")
 ```
 
 ## stmtInsert
 ### Returning
 Adds a RETURNING clause to return inserted rows. Supported by PostgreSQL. MySQL does not support this clause natively.
 ```go
-...
+stmt := uast.NewInsert(uast.Table("test")).
+    Values(
+        uast.Pair(uast.Column[string]("test", "string"), uast.Value("ivan")),
+    ).
+    Returning(
+        uast.Column[int64]("test", "id"),
+    )
 ```
 Output MySQL:
 ```text

@@ -12,7 +12,7 @@ This page documents methods available on statement instances: `Delete`, `Insert`
 ### Join
 Adds JOIN clauses to the DELETE statement. Supports INNER, LEFT, RIGHT, FULL, CROSS and their OUTER variants.
 ```go
-stmt := uast.NewDelete(uast.Table("test")).
+stmtDelete := uast.NewDelete(uast.Table("test")).
     Join(
         uast.Inner(uast.Table("test1"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
         uast.Left(uast.Table("test2"), uast.Equal(uast.Column[int64]("test2", "id"), uast.Column[int64]("test", "id"))),
@@ -33,7 +33,7 @@ DELETE FROM "test" AS "t" USING "test1" AS "t1", "test2" AS "t2" WHERE "t1"."id"
 ### Returning
 Adds a RETURNING clause to return deleted rows. Supported by PostgreSQL. MySQL does not support this clause natively.
 ```go
-stmt := uast.NewDelete(uast.Table("test")).
+stmtDelete := uast.NewDelete(uast.Table("test")).
     Where(
         uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
     ).
@@ -53,7 +53,7 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id"
 ### Where
 Adds a WHERE clause to filter rows for deletion. Accepts comparison expressions, logical operators, and subqueries.
 ```go
-stmt := uast.NewDelete(uast.Table("test")).
+stmtDelete := uast.NewDelete(uast.Table("test")).
     Where(
         uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
     )
@@ -78,7 +78,7 @@ cte := uast.WithN("old_data", uast.NewSelect(uast.Table("test")).
         uast.Equal(uast.Column[string]("test", "string"), uast.Value("old")),
     ),
 )
-stmt := uast.NewDelete(uast.Table("test")).
+stmtDelete := uast.NewDelete(uast.Table("test")).
     Where(
         uast.In(uast.Column[int64]("test", "id"), uast.Subquery[int64](uast.NewSelect(uast.Table("test")).Field(uast.Column[int64]("old_data", "id")))),
     ).
@@ -97,7 +97,7 @@ WITH old_data AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1) DE
 ### Returning
 Adds a RETURNING clause to return inserted rows. Supported by PostgreSQL. MySQL does not support this clause natively.
 ```go
-stmt := uast.NewInsert(uast.Table("test")).
+stmtInsert := uast.NewInsert(uast.Table("test")).
     Values(
         uast.Pair(uast.Column[string]("test", "string"), uast.Value("ivan")),
     ).
@@ -160,113 +160,166 @@ Output PostgreSQL:
 ### Distinct
 Adds the DISTINCT modifier to remove duplicate rows from the result set.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).Distinct().
+	Field(
+		Test.ID,
+	)
 ```
 Output MySQL:
 ```text
-...
+SELECT DISTINCT `t`.`id` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT DISTINCT "t"."id" FROM "test" AS "t"
 ```
 
 ### Field
 Specifies the fields to select. Accepts columns, functions, subqueries, and aliases.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+    Field(
+	    Test.String,
+		Count(Test.ID, false).As("count"),
+	).
+	GroupBy(
+		Test.String,
+	)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string`
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string"
 ```
 
 ### GroupBy
 Adds a GROUP BY clause to group rows by specified columns or expressions.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.String,
+		Count(Test.ID, false).As("count"),
+	).
+	GroupBy(
+		Test.String,
+	)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string`
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string"
 ```
 
 ### Having
 Adds a HAVING clause to filter groups. Used with GROUP BY to filter aggregated results.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.String,
+		Count(Test.ID, false).As("count"),
+	).
+	GroupBy(Test.String).
+	Having(
+		Greater(Count(Test.ID, false), Value[int64](2)),
+	)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > $1
 ```
 
 ### Join
 Adds JOIN clauses to combine rows from multiple tables. Supports all 8 join types.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.ID,
+	).
+	Join(
+		Cross(Test1.Table),
+		Full(Test1.Table, Equal(Test1.ID, Test.ID)),
+		FullOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
+		Inner(Test1.Table, Equal(Test1.ID, Test.ID)),
+		Left(Test1.Table, Equal(Test1.ID, Test.ID)),
+		LeftOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
+		Right(Test1.Table, Equal(Test1.ID, Test.ID)),
+		RightOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
+	)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`id` FROM `test` AS `t` CROSS JOIN `test1` AS `t1` FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."id" FROM "test" AS "t" CROSS JOIN "test1" AS "t1" FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 
 ### Limit
 Limits the number of rows returned by the query.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.ID,
+	).
+	Limit(10)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`id` FROM `test` AS `t` LIMIT ?
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."id" FROM "test" AS "t" LIMIT $1
 ```
 
 ### Offset
 Skips a specified number of rows before returning results. Used for pagination with Limit.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.ID,
+	).
+	Offset(20)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`id` FROM `test` AS `t` OFFSET ?
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."id" FROM "test" AS "t" OFFSET $1
 ```
 
 ### OrderBy
 Adds an ORDER BY clause to sort results by specified columns or expressions in ascending or descending order.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.ID,
+	).
+	OrderBy(
+		Asc(Test.String),
+		Desc(Test.ID),
+	)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`string` ASC, `t`.`id` DESC
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string" ASC, "t"."id" DESC
 ```
 
 ### Unions
@@ -286,15 +339,21 @@ Output PostgreSQL:
 ### Where
 Adds a WHERE clause to filter rows before grouping or aggregation.
 ```go
-...
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.ID,
+	).
+	Where(
+		Equal(Test.String, Value("active")),
+	)
 ```
 Output MySQL:
 ```text
-...
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-...
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ### With

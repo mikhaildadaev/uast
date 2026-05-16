@@ -9,8 +9,6 @@ This page covers all 21 data types in `Binary`, `Datetime`, `Numeric`, `String`,
 :::
 
 ## Binary
-Binary types store raw byte data. Fixed-length and variable-length binary strings have different representations depending on the SQL dialect.
-
 ### TypeBinary
 Fixed-length binary string.
 ```go
@@ -40,8 +38,6 @@ CAST("t"."number" AS BYTEA)
 ```
 
 ## Datetime
-Date and time types store temporal values. Some dialects use a single type for multiple temporal representations, while others distinguish between them with specific types.
-
 ### TypeDate
 Represents a date value (year, month, day).
 ```go
@@ -99,8 +95,6 @@ CAST("t"."number" AS TIMESTAMPTZ)
 ```
 
 ## Numeric
-Numeric types store integer and floating-point values. Some dialects use general-purpose numeric types, while others provide a richer set of specific types.
-
 ### TypeBigInt
 Large integer type.
 ```go
@@ -186,8 +180,6 @@ CAST("t"."number" AS SMALLINT)
 ```
 
 ## String
-String types store character and text data. Variable-length, fixed-length, and large text types are represented differently across dialects.
-
 ### TypeChar 
 Fixed-length character string.
 ```go
@@ -245,8 +237,6 @@ CAST("t"."number" AS VARCHAR)
 ```
 
 ## Special
-Special types cover `Array`, `Boolean`, `JSON`, `UUID`, `XML` data. Some dialects use native types, while others rely on compatible alternatives.
-
 ### TypeArray
 Represents an array type.
 ```go

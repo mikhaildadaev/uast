@@ -9,8 +9,6 @@ outline: deep
 :::
 
 ## Binary
-二进制类型存储原始字节数据。定长和变长二进制字符串根据 SQL 方言有不同的表示形式。
-
 ### TypeBinary
 定长二进制字符串。
 ```go
@@ -40,8 +38,6 @@ CAST("t"."number" AS BYTEA)
 ```
 
 ## Datetime
-日期和时间类型存储时间值。某些方言对多种时间表示使用单一类型，而其他方言则使用特定类型加以区分。
-
 ### TypeDate
 表示日期值（年、月、日）。
 ```go
@@ -99,8 +95,6 @@ CAST("t"."number" AS TIMESTAMPTZ)
 ```
 
 ## Numeric
-数值类型存储整数和浮点值。某些方言使用通用数值类型，而其他方言则提供更丰富的特定类型集。
-
 ### TypeBigInt
 大整数类型。
 ```go
@@ -186,8 +180,6 @@ CAST("t"."number" AS SMALLINT)
 ```
 
 ## String
-字符串类型存储字符和文本数据。变长、定长和大文本类型在不同方言中有不同的表示。
-
 ### TypeChar 
 定长字符串。
 ```go
@@ -245,8 +237,6 @@ CAST("t"."number" AS VARCHAR)
 ```
 
 ## Special
-特殊类型涵盖 Array、Boolean、JSON、UUID、XML 数据。某些方言使用原生类型，而其他方言则依赖兼容的替代方案。
-
 ### TypeArray
 表示数组类型。
 ```go

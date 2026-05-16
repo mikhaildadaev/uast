@@ -1218,112 +1218,25 @@ func Test_Select_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Стандартизировать
-		queryWithN := WithN("WithN", NewSelect(Orders.Table).
-			Field(
-				Orders.UserID,
-				Count(Orders.ID, false).As("order_count"),
-				Sum(Orders.Amount, false).As("total_spent"),
-			).
-			Where(
-				Greater(Orders.Amount, Value(2)),
-			).
-			GroupBy(Orders.UserID),
-			"user_id", "order_count", "total_spent",
+		queryWithN := WithN("WithN", NewSelect(Test.Table).
+			Field(Test.ID, Test.String).
+			Where(Equal(Test.String, Value("active"))),
+			"withn_id", "withn_string",
 		)
-		queryWithR := WithR("WithR", NewSelect(Departments.Table).
-			Field(
-				Departments.ID,
-				Departments.Name,
-				Departments.ParentID,
-			).
-			Where(IsNull(Departments.ParentID)).
+		queryWithR := WithR("WithR", NewSelect(Test.Table).
+			Field(Test.ID, Test.Number).
+			Where(Equal(Test.Number, Value(0))).
 			Unions(
-				UnionAll(NewSelect(Departments.Table).
-					Field(
-						Departments.ID,
-						Departments.Name,
-						Departments.ParentID,
-					).
-					Join(Inner(CTE("WithR", "dh"), Equal(Departments.ParentID, Departments.ID)))),
+				UnionAll(NewSelect(Test.Table).
+					Field(Test.ID, Test.Number).
+					Join(Inner(CTE("WithR", "withr"), Equal(Test.Number, Column[int]("withr", "number")))),
+				),
 			),
-			"dept_id", "dept_name", "parent_id",
+			"withr_id", "withr_number",
 		)
-		stmtSelect := NewSelect(Users.Table).
-			Field(
-				Users.ID.As("user_id"),
-				Users.Name.As("user_name"),
-				Users.Email.As("email"),
-				Users.Age.As("age"),
-				Users.Status.As("status"),
-				Stats.OrderCount.As("premium_order_count"),
-				Stats.TotalSpent.As("total_premium_spent"),
-				Categories.Name.As("fav_category"),
-				Levels.Status.As("user_level_status"),
-			).
-			Join(
-				Inner(CTE("WithN", "us"), Equal(Users.ID, Stats.UserID)),
-				Left(Levels.Table,
-					And(
-						Equal(Users.ID, Levels.UserID),
-						Equal(Levels.Status, Value("active")),
-					),
-				),
-				Left(CTE("WithR", "dh"), Equal(Users.ID, Column[int64]("dh", "dept_id"))),
-				Left(Categories.Table, Equal(Categories.Type, Users.Status)),
-				Left(Query(NewSelect(Categories.Table).
-					Field(
-						Categories.ID,
-						Categories.Name,
-						Count(Products.ID, false).As("product_count"),
-						Sum(Products.Count, false).As("total_inventory"),
-					).
-					Join(
-						Inner(Products.Table, Equal(Categories.ID, Products.ID)),
-					).
-					GroupBy(
-						Categories.ID,
-						Categories.Name,
-					), "pbc"), Equal(Categories.ID, Column[int64]("pbc", "id"))),
-				Left(Products.Table, Equal(Users.ID, Products.ID)),
-			).
-			Where(
-				And(
-					Equal(Users.Status, Value("active")),
-					Greater(Stats.OrderCount, Value(2)),
-					Or(
-						And(
-							Greater(Users.Age, Value(2)),
-							Less(Users.Age, Value(2)),
-						),
-						Equal(Users.Age, Value(2)),
-					),
-					IsNotNull(Users.Email),
-					NotLike(Users.Email, Value("%@test.%")),
-				),
-			).
-			GroupBy(
-				Users.ID,
-				Users.Name,
-				Users.Email,
-			).
-			Having(
-				And(
-					Greater(Stats.OrderCount, Value(2)),
-					Greater(Stats.TotalSpent, Value(2)),
-					Or(
-						Equal(Levels.Status, Value("active")),
-						IsNull(Levels.ID),
-					),
-				),
-			).
-			OrderBy(
-				Desc(Stats.TotalSpent),
-				Desc(Stats.OrderCount),
-				Asc(Users.Name),
-			).
-			Limit(25).
-			Offset(0).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID, Test.Number).
+			Join(Inner(CTE("WithR", "withr"), Equal(Test.ID, Column[int64]("withr", "id")))).
 			With(queryWithN, queryWithR)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {

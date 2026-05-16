@@ -85,7 +85,9 @@ func Test_Core_Column(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID.As("id"))
+			Field(
+				Test.ID,
+			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -103,7 +105,9 @@ func Test_Core_Comparison(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID.As("id")).
+			Field(
+				Test.ID,
+			).
 			Where(
 				And(
 					Between(Test.Number, Value(0), Value(2)),
@@ -176,7 +180,9 @@ func Test_Core_Constant(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID).
+			Field(
+				Test.ID,
+			).
 			Where(
 				And(
 					Equal(ConstBoolFalse(), ConstBoolFalse()),
@@ -618,7 +624,9 @@ func Test_Core_Literal(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID).
+			Field(
+				Test.ID,
+			).
 			Where(
 				Equal(DateFormat(Test.CreateAt, Literal("%Y-%m-%d")), Value("2026-01-01")),
 			)
@@ -639,7 +647,9 @@ func Test_Core_Logical(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID.As("id")).
+			Field(
+				Test.ID,
+			).
 			Where(
 				And(
 					And(
@@ -671,7 +681,9 @@ func Test_Core_Order(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID.As("id")).
+			Field(
+				Test.ID,
+			).
 			OrderBy(
 				Asc(Test.String),
 				Desc(Test.String),
@@ -695,7 +707,9 @@ func Test_Core_Subquery(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Subquery[int64](NewSelect(Test.Table).Field(Test.ID)).As("SUB"))
+			Field(
+				Subquery[int64](NewSelect(Test.Table).Field(Test.ID)).As("SUB"),
+			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -714,7 +728,9 @@ func Test_Core_Value(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID.As("id")).
+			Field(
+				Test.ID,
+			).
 			Where(
 				Equal(Test.String, Value(data)),
 			)
@@ -828,7 +844,9 @@ func Test_Delete_With(t *testing.T) {
 		)
 		defer sql.Close()
 		cte := WithN("old_data", NewSelect(Test.Table).
-			Field(Test.ID).
+			Field(
+				Test.ID,
+			).
 			Where(
 				Equal(Test.String, Value("old")),
 			),
@@ -883,7 +901,9 @@ func Test_Select(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.String).
+			Field(
+				Test.String,
+			).
 			Where(
 				Equal(Test.String, Value("active")),
 			)
@@ -906,7 +926,9 @@ func Test_Select_Distinct(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).Distinct().
-			Field(Test.ID.As("id"))
+			Field(
+				Test.ID,
+			)
 		sqlSelectQuery, _, _ := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
@@ -977,7 +999,9 @@ func Test_Select_Join(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID.As("id")).
+			Field(
+				Test.ID,
+			).
 			Join(
 				Cross(Test1.Table),
 				Full(Test1.Table, Equal(Test1.ID, Test.ID)),
@@ -1024,9 +1048,6 @@ func Test_Select_Limit(t *testing.T) {
 			Field(
 				Test.ID,
 			).
-			Where(
-				Equal(Test.String, Value("active")),
-			).
 			Limit(10)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1048,9 +1069,6 @@ func Test_Select_Offset(t *testing.T) {
 			Field(
 				Test.ID,
 			).
-			Where(
-				Equal(Test.String, Value("active")),
-			).
 			Offset(20)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1070,7 +1088,7 @@ func Test_Select_OrderBy(t *testing.T) {
 		defer sql.Close()
 		stmtSelect := NewSelect(Test.Table).
 			Field(
-				Test.ID.As("id"),
+				Test.ID,
 			).
 			OrderBy(
 				Asc(Test.String),
@@ -1171,9 +1189,13 @@ func Test_Select_Where(t *testing.T) {
 		)
 		defer sql.Close()
 		existsSub := NewSelect(Test.Table).
-			Field(Test.ID)
+			Field(
+				Test.ID,
+			)
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID).
+			Field(
+				Test.ID,
+			).
 			Where(
 				And(
 					Equal(Test.String, Value("active")),
@@ -1219,13 +1241,23 @@ func Test_Select_With(t *testing.T) {
 		)
 		defer sql.Close()
 		queryWithN := WithN("WithN", NewSelect(Test.Table).
-			Field(Test.ID, Test.String).
-			Where(Equal(Test.String, Value("active"))),
+			Field(
+				Test.ID,
+				Test.String,
+			).
+			Where(
+				Equal(Test.String, Value("active")),
+			),
 			"withn_id", "withn_string",
 		)
 		queryWithR := WithR("WithR", NewSelect(Test.Table).
-			Field(Test.ID, Test.Number).
-			Where(Equal(Test.Number, Value(0))).
+			Field(
+				Test.ID,
+				Test.Number,
+			).
+			Where(
+				Equal(Test.Number, Value(0)),
+			).
 			Unions(
 				UnionAll(NewSelect(Test.Table).
 					Field(Test.ID, Test.Number).
@@ -1235,8 +1267,13 @@ func Test_Select_With(t *testing.T) {
 			"withr_id", "withr_number",
 		)
 		stmtSelect := NewSelect(Test.Table).
-			Field(Test.ID, Test.Number).
-			Join(Inner(CTE("WithR", "withr"), Equal(Test.ID, Column[int64]("withr", "id")))).
+			Field(
+				Test.ID,
+				Test.Number,
+			).
+			Join(
+				Inner(CTE("WithR", "withr"), Equal(Test.ID, Column[int64]("withr", "id"))),
+			).
 			With(queryWithN, queryWithR)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {

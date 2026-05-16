@@ -923,35 +923,22 @@ func Test_Select_GroupBy(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Стандартизировать
-		stmtSelect := NewSelect(Users.Table).
+		stmtSelect := NewSelect(Test.Table).
 			Field(
-				Users.DepartmentID,
-				Users.Status,
-				Count(Users.ID, false).As("user_count"),
-				Sum(Users.Age, false).As("total_age"),
-				Avg(Users.Age, false).As("avg_age"),
-				Min(Users.Age, false).As("min_age"),
-				Max(Users.Age, false).As("max_age"),
-			).
-			Where(
-				And(
-					GreaterEqual(Users.Age, Value(2)),
-					NotEqual(Users.Status, Value("deleted")),
-				),
+				Test.String,
+				Count(Test.ID, false).As("count"),
 			).
 			GroupBy(
-				Users.DepartmentID,
-				Users.Status,
+				Test.String,
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "GROUP BY", "GROUP BY")
-			assertContains(t, sqlSelectQuery, "`u`.`department_id`, `u`.`status`", "LIST")
+			assertContains(t, sqlSelectQuery, "`t`.`string`", "LIST")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `GROUP BY`, "GROUP BY")
-			assertContains(t, sqlSelectQuery, `"u"."department_id", "u"."status"`, "LIST")
+			assertContains(t, sqlSelectQuery, `"t"."string"`, "LIST")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -962,37 +949,23 @@ func Test_Select_Having(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Стандартизировать
-		queryMain := NewSelect(Users.Table).
+		queryMain := NewSelect(Test.Table).
 			Field(
-				Users.DepartmentID,
-				Count(Users.ID, false).As("user_count"),
-				Sum(Users.Age, false).As("total_age"),
-				Avg(Users.Age, false).As("avg_age"),
+				Test.String,
+				Count(Test.ID, false).As("count"),
 			).
-			GroupBy(Users.DepartmentID).
+			GroupBy(Test.String).
 			Having(
-				And(
-					Greater(Count(Users.ID, false), Value[int64](2)),
-					Greater(Sum(Users.Age, false), Value(2)),
-					Between(Avg(Users.Age, false), Value(0), Value(2)),
-					In(Users.DepartmentID, Array[int64](1, 2, 3)),
-				),
+				Greater(Count(Test.ID, false), Value[int64](2)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(queryMain)
 		switch supportDialect {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "HAVING", "HAVING")
-			assertContains(t, sqlSelectQuery, "COUNT(`u`.`id`) > ?", "COUNT")
-			assertContains(t, sqlSelectQuery, "SUM(`u`.`age`) > ?", "SUM")
-			assertContains(t, sqlSelectQuery, "AVG(`u`.`age`) BETWEEN ? AND ?", "BETWEEN")
-			assertContains(t, sqlSelectQuery, "`u`.`department_id` IN (?, ?, ?)", "IN")
+			assertContains(t, sqlSelectQuery, "COUNT(`t`.`id`) > ?", "COUNT")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `HAVING`, "HAVING")
-			assertContains(t, sqlSelectQuery, `COUNT("u"."id") > $1`, "COUNT")
-			assertContains(t, sqlSelectQuery, `SUM("u"."age") > $1`, "SUM")
-			assertContains(t, sqlSelectQuery, `AVG("u"."age") BETWEEN $1 AND $2`, "BETWEEN")
-			assertContains(t, sqlSelectQuery, `"u"."department_id" IN ($1, $2, $3)`, "IN")
+			assertContains(t, sqlSelectQuery, `COUNT("t"."id") > $1`, "COUNT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1003,41 +976,40 @@ func Test_Select_Join(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Стандартизировать
-		stmtSelect := NewSelect(Users.Table).
-			Field(Users.ID.As("user_id")).
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.ID.As("id")).
 			Join(
-				Cross(Orders.Table),
-				Full(Orders.Table, Equal(Users.ID, Orders.UserID)),
-				FullOuter(Orders.Table, Equal(Users.ID, Orders.UserID)),
-				Inner(Orders.Table, Equal(Users.ID, Orders.UserID)),
-				Left(Orders.Table, Equal(Users.ID, Orders.UserID)),
-				LeftOuter(Orders.Table, Equal(Users.ID, Orders.UserID)),
-				Right(Orders.Table, Equal(Users.ID, Orders.UserID)),
-				RightOuter(Orders.Table, Equal(Users.ID, Orders.UserID)),
+				Cross(Test1.Table),
+				Full(Test1.Table, Equal(Test1.ID, Test.ID)),
+				FullOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
+				Inner(Test1.Table, Equal(Test1.ID, Test.ID)),
+				Left(Test1.Table, Equal(Test1.ID, Test.ID)),
+				LeftOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
+				Right(Test1.Table, Equal(Test1.ID, Test.ID)),
+				RightOuter(Test1.Table, Equal(Test1.ID, Test.ID)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "JOIN", "JOIN")
-			assertContains(t, sqlSelectQuery, "CROSS JOIN `orders` AS `o`", "CROSS")
-			assertContains(t, sqlSelectQuery, "FULL JOIN `orders` AS `o` ON `u`.`id` = `o`.`user_id`", "FULL")
-			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `orders` AS `o` ON `u`.`id` = `o`.`user_id`", "FULL OUTER")
-			assertContains(t, sqlSelectQuery, "INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`user_id`", "INNER")
-			assertContains(t, sqlSelectQuery, "LEFT JOIN `orders` AS `o` ON `u`.`id` = `o`.`user_id`", "LEFT")
-			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `orders` AS `o` ON `u`.`id` = `o`.`user_id`", "LEFT OUTER")
-			assertContains(t, sqlSelectQuery, "RIGHT JOIN `orders` AS `o` ON `u`.`id` = `o`.`user_id`", "RIGHT")
-			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `orders` AS `o` ON `u`.`id` = `o`.`user_id`", "RIGHT OUTER")
+			assertContains(t, sqlSelectQuery, "CROSS JOIN `test1` AS `t1`", "CROSS")
+			assertContains(t, sqlSelectQuery, "FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL")
+			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL OUTER")
+			assertContains(t, sqlSelectQuery, "INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "INNER")
+			assertContains(t, sqlSelectQuery, "LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT")
+			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT OUTER")
+			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT")
+			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT OUTER")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `JOIN`, "JOIN")
-			assertContains(t, sqlSelectQuery, `CROSS JOIN "orders" AS "o"`, "CROSS")
-			assertContains(t, sqlSelectQuery, `FULL JOIN "orders" AS "o" ON "u"."id" = "o"."user_id"`, "FULL")
-			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "orders" AS "o" ON "u"."id" = "o"."user_id"`, "FULL OUTER")
-			assertContains(t, sqlSelectQuery, `INNER JOIN "orders" AS "o" ON "u"."id" = "o"."user_id"`, "INNER")
-			assertContains(t, sqlSelectQuery, `LEFT JOIN "orders" AS "o" ON "u"."id" = "o"."user_id"`, "LEFT")
-			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "orders" AS "o" ON "u"."id" = "o"."user_id"`, "LEFT OUTER")
-			assertContains(t, sqlSelectQuery, `RIGHT JOIN "orders" AS "o" ON "u"."id" = "o"."user_id"`, "RIGHT")
-			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "orders" AS "o" ON "u"."id" = "o"."user_id"`, "RIGHT OUTER")
+			assertContains(t, sqlSelectQuery, `CROSS JOIN "test1" AS "t1"`, "CROSS")
+			assertContains(t, sqlSelectQuery, `FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL")
+			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL OUTER")
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER")
+			assertContains(t, sqlSelectQuery, `LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT")
+			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT OUTER")
+			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT")
+			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT OUTER")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

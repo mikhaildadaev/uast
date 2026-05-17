@@ -43,7 +43,7 @@ stmtDelete := uast.NewDelete(uast.NewTable("test").As("t")).
 ```
 Output MySQL:
 ```text
-
+// Not supported
 ```
 Output PostgreSQL:
 ```text

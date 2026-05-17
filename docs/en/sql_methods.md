@@ -432,15 +432,24 @@ WITH "cte_nr" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS 
 ### Join
 Adds JOIN clauses to the UPDATE statement for updating rows based on related table data.
 ```go
-...
+stmtUpdate := NewUpdate(uast.Table("test")).
+	Set(
+		uast.Pair(uast.Column[string]("test", "string"), uast.Value("active")),
+	).
+	Join(
+		uast.Inner(uast.Column[string]("test1", "string"), uast.Equal(uast.Column[int64]("test1", "id"), uast.Column[int64]("test", "id"))),
+	).
+	Where(
+		uast.Equal(uast.Column[string]("test1", "string"), uast.Value("active")),
+	)
 ```
 Output MySQL:
 ```text
-...
+UPDATE `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` SET `t`.`string` = ? WHERE `t1`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-...
+UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" SET "t"."string" = $1 WHERE "t1"."string" = $2
 ```
 
 ### Returning
@@ -509,13 +518,30 @@ UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 ### With
 Adds a Common Table Expression (CTE) to the UPDATE statement.
 ```go
-...
+stmtWithN := WithN("cte_nr", NewSelect(Test.Table).
+	Field(
+		Test.ID,
+	).
+	Where(
+		Equal(Test.String, Value("pending")),
+	),
+)
+stmtUpdate := NewUpdate(Test.Table).
+	Set(
+		Pair(Test.String, Value("active")),
+	).
+	Where(
+		In(Test.ID, Subquery[int64](NewSelect(Test.Table).Field(Column[int64]("cte_nr", "id")))),
+	).
+	With(
+		stmtWithN,
+	)
 ```
 Output MySQL:
 ```text
-...
+WITH `cte_nr` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `cte_nr`.`id` FROM `test` AS `t`)
 ```
 Output PostgreSQL:
 ```text
-...
+WITH "cte_nr" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1) UPDATE "test" AS "t" SET "t"."string" = $2 WHERE "t"."id" IN (SELECT "cte_nr"."id" FROM "test" AS "t")
 ```

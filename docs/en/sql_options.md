@@ -11,9 +11,13 @@ This page covers all configuration options: `Dialect`. Each option is shown with
 ## WithDialect/SetDialect
 `WithDialect` sets the dialect at creation time. `SetDialect` switches the dialect of an existing instance at runtime without recreating the connection pool.
 ```go
-stmt := uast.NewSelect(uast.Column[string]("t", "name")).
-    From(uast.Table("test")).
-    Where(uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)))
+stmt := uast.NewSelect(uast.Column[string]("t", "string")).
+    From(
+        uast.NewTable("test").As("t"),
+    ).
+    Where(
+        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
+    )
 sql := uast.NewSQL(
     uast.WithDialect(uast.DialectMySQL)
 )
@@ -24,9 +28,9 @@ pgsqlQuery, pgsqlArgs, _ := sql.Build(stmt)
 ```
 Output MySQL:
 ```text
-SELECT `t`.`name` FROM `test` AS `t` WHERE `t`.`id` = ?
+SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."name" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
 ```

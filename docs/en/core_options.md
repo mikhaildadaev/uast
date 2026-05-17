@@ -211,7 +211,7 @@ Output PostgreSQL:
 ### Exists
 Checks if the subquery returns any rows. Returns `true` if at least one row exists.
 ```go
-comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
+comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
 ```
 Output MySQL:
 ```text
@@ -379,7 +379,7 @@ Output PostgreSQL:
 ### NotExists
 Checks if the subquery returns no rows. Returns `true` if the subquery result is empty.
 ```go
-comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.Table("test"))))
+comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
 ```
 Output MySQL:
 ```text
@@ -2182,7 +2182,7 @@ Output PostgreSQL:
 ### Subquery
 Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test")))
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test").As("t")))
 ```
 Output MySQL:
 ```text

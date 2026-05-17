@@ -11,9 +11,9 @@ This page covers the four statement constructors: `NewDelete`, `NewInsert`, `New
 ## NewDelete
 Creates a new DELETE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Where`, `With`.
 ```go
-statement := uast.NewDelete(uast.Table("test")).
+statement := uast.NewDelete(uast.NewTable("test").As("t")).
     Where(
-        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
 ```
 Output MySQL:
@@ -28,10 +28,10 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ## NewInsert
 Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Into`, `Returning`, `Source`, `Values`, `With`.
 ```go
-statement := uast.NewInsert(uast.Table("test")).
+statement := uast.NewInsert(uast.NewTable("test").As("t")).
     Column(
-        uast.Column[string]("test", "string"), 
-        uast.Column[int]("test", "number"),
+        uast.Column[string]("t", "string"), 
+        uast.Column[int]("t", "number"),
     ).
     Values(
         uast.Row(
@@ -42,22 +42,22 @@ statement := uast.NewInsert(uast.Table("test")).
 ```
 Output MySQL:
 ```text
-INSERT INTO `test` (`test`.`string`, `test`.`number`) VALUES (?, ?)
+INSERT INTO `test` AS `t` (`t`.`string`, `t`.`number`) VALUES (?, ?)
 ```
 Output PostgreSQL:
 ```text
-INSERT INTO "test" ("test"."string", "test"."number") VALUES ($1, $2)
+INSERT INTO "test" AS "t" ("t"."string", "t"."number") VALUES ($1, $2)
 ```
 
 ## NewSelect
 Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `From`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
 ```go
-statement := uast.NewSelect(uast.Table("test")).
+statement := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("test", "string"),
+        uast.Column[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
 ```
 Output MySQL:
@@ -72,12 +72,12 @@ SELECT "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
 ## NewUpdate
 Creates a new UPDATE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go
-statement := uast.NewUpdate(uast.Table("test")).
+statement := uast.NewUpdate(uast.NewTable("test").As("t")).
     Set(
-        Pair(uast.Column[string]("test", "string"), uast.Value("active")),
+        Pair(uast.Column[string]("t", "t"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+        uast.Equal(uast.Column[int]("t", "t"), uast.Value(2)),
     )
 ```
 Output MySQL:

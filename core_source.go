@@ -15,16 +15,16 @@ type SourceBase interface {
 
 // Публичные структуры
 type CteSource struct {
-	cteName   string
 	aliasName string
+	cteName   string
 }
 type TableSource struct {
-	tableName string
 	aliasName string
+	tableName string
 }
 type QuerySource struct {
-	statement statement
 	aliasName string
+	statement statement
 }
 
 // Публичные конструкторы

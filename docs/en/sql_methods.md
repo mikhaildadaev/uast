@@ -70,7 +70,7 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ### With
 Adds a Common Table Expression (CTE) to the DELETE statement using `WithN` (non-recursive) or `WithR` (recursive).
 ```go
-cte := uast.WithN("old_data", uast.NewSelect(uast.Table("test")).
+stmtWith := uast.WithN("cte_nr", uast.NewSelect(uast.Table("test")).
     Field(
         uast.Column[int64]("test", "id"),
     ).
@@ -80,17 +80,19 @@ cte := uast.WithN("old_data", uast.NewSelect(uast.Table("test")).
 )
 stmtDelete := uast.NewDelete(uast.Table("test")).
     Where(
-        uast.In(uast.Column[int64]("test", "id"), uast.Subquery[int64](uast.NewSelect(uast.Table("test")).Field(uast.Column[int64]("old_data", "id")))),
+        uast.In(uast.Column[int64]("test", "id"), uast.Subquery[int64](uast.NewSelect(uast.Table("test")).Field(uast.Column[int64]("cte_nr", "id")))),
     ).
-    With(cte)
+    With(
+		stmtWith,
+	)
 ```
 Output MySQL:
 ```text
-WITH old_data AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) DELETE FROM `test` AS `t` WHERE `t`.`id` IN (SELECT `old_data`.`id` FROM `test` AS `t`)
+WITH cte_nr AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) DELETE FROM `test` AS `t` WHERE `t`.`id` IN (SELECT `cte_nr`.`id` FROM `test` AS `t`)
 ```
 Output PostgreSQL:
 ```text
-WITH old_data AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1) DELETE FROM "test" AS "t" WHERE "t"."id" IN (SELECT "old_data"."id" FROM "test" AS "t")
+WITH cte_nr AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1) DELETE FROM "test" AS "t" WHERE "t"."id" IN (SELECT "cte_nr"."id" FROM "test" AS "t")
 ```
 
 ## stmtInsert
@@ -312,17 +314,16 @@ stmtSelect := NewSelect(uast.Table("test")).
 		uast.Column[int64]("test", "id"),
 	).
 	OrderBy(
-		uast.Asc(uast.Column[string]("test", "string")),
-		uast.Desc(uast.Column[int64]("test", "id")),
+		uast.Column[string]("test", "string"),
 	)
 ```
 Output MySQL:
 ```text
-SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`string` ASC, `t`.`id` DESC
+SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`string`
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string" ASC, "t"."id" DESC
+SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string"
 ```
 
 ### Unions
@@ -362,15 +363,33 @@ SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1
 ### With
 Adds a Common Table Expression (CTE) to the SELECT statement.
 ```go
-...
+stmtWith := WithN("cte_nr", NewSelect(Test.Table).
+	Field(
+		Test.ID,
+		Test.String,
+	).
+	Where(
+		Equal(Test.String, Value("active")),
+	),
+	"id", "string",
+)
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.ID,
+		Test.Number,
+	).
+	Join(
+		Inner(CTE("cte_nr", "ctenr"), Equal(Test.ID, Column[int64]("ctenr", "id"))),
+	).
+	With(stmtWith)
 ```
 Output MySQL:
 ```text
-...
+WITH `cte_nr` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?) SELECT `t`.`id`, `t`.`number` FROM `test` AS `t` INNER JOIN `cte_nr` AS `ctenr` ON `t`.`id` = `ctenr`.`id`
 ```
 Output PostgreSQL:
 ```text
-...
+WITH "cte_nr" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1) SELECT "t"."id", "t"."number" FROM "test" AS "t" INNER JOIN "cte_nr" AS "ctenr" ON "t"."id" = "ctenr"."id"
 ```
 
 ## stmtUpdate

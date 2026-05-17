@@ -16,7 +16,7 @@ func Benchmark_Select_Multi(b *testing.B) {
 			b.RunParallel(func(pb *testing.PB) {
 				i := 0
 				for pb.Next() {
-					stmtSelect := NewSelect(Users.Table).Field(Users.ID).Where(Equal(Users.Age, Value(i%1000)))
+					stmtSelect := NewSelect(Users.Table).Field(Users.Column.ID).Where(Equal(Users.Column.Age, Value(i%1000)))
 					_, _, err := builder.Build(stmtSelect)
 					if err != nil {
 						b.Errorf("Build failed: %v", err)
@@ -31,82 +31,82 @@ func Benchmark_Select_Multi(b *testing.B) {
 				i := 0
 				for pb.Next() {
 					querySub := NewSelect(Orders.Table).
-						Field(Count(Orders.ID, false)).
+						Field(Count(Orders.Column.ID, false)).
 						Where(
-							Equal(Orders.UserID, Users.ID),
+							Equal(Orders.Column.UserID, Users.Column.ID),
 						)
 					queryInSub := NewSelect(Orders.Table).
-						Field(Orders.UserID.As("uid")).
+						Field(Orders.Column.UserID.As("uid")).
 						Where(
-							Greater(Orders.Amount, Value(10)),
+							Greater(Orders.Column.Amount, Value(10)),
 						)
 					queryExistsSub := NewSelect(Levels.Table).
-						Field(Levels.ID).
+						Field(Levels.Column.ID).
 						Where(
 							And(
-								Equal(Levels.UserID, Users.ID),
-								Equal(Levels.Status, Value("active")),
+								Equal(Levels.Column.UserID, Users.Column.ID),
+								Equal(Levels.Column.Status, Value("active")),
 							),
 						)
 					stmtSelect := NewSelect(Users.Table).
 						Field(
-							Users.ID.As("user_id"),
-							Users.Name.As("user_name"),
-							Users.Email.As("user_email"),
-							Users.Age.As("user_age"),
-							Users.Status.As("user_status"),
+							Users.Column.ID.As("user_id"),
+							Users.Column.Name.As("user_name"),
+							Users.Column.Email.As("user_email"),
+							Users.Column.Age.As("user_age"),
+							Users.Column.Status.As("user_status"),
 							Subquery[int](querySub).As("order_count"),
 							Subquery[int](NewSelect(Orders.Table).
-								Field(Sum(Orders.Amount, false)).
+								Field(Sum(Orders.Column.Amount, false)).
 								Where(
-									Equal(Orders.UserID, Users.ID),
+									Equal(Orders.Column.UserID, Users.Column.ID),
 								),
 							).As("total_spent"),
 						).
 						Join(
-							Inner(Levels.Table, Equal(Users.ID, Levels.UserID)),
-							Left(Categories.Table, Equal(Categories.Type, Users.Status)),
+							Inner(Levels.Table, Equal(Users.Column.ID, Levels.Column.UserID)),
+							Left(Categories.Table, Equal(Categories.Column.Type, Users.Column.Status)),
 						).
 						Where(And(
-							Equal(Users.Status, Value("active")),
-							Greater(Users.Age, Value(18)),
-							In(Users.ID, Subquery[int64](queryInSub)),
+							Equal(Users.Column.Status, Value("active")),
+							Greater(Users.Column.Age, Value(18)),
+							In(Users.Column.ID, Subquery[int64](queryInSub)),
 							Exists(Subquery[int](queryExistsSub)),
 							NotExists(Subquery[int](NewSelect(Users.Table).
 								Field(ConstIntOne()).
 								Where(
 									And(
-										Equal(Users.ID, Users.ID), IsNull(Users.Email),
+										Equal(Users.Column.ID, Users.Column.ID), IsNull(Users.Column.Email),
 									),
 								),
 							)),
 						)).
 						GroupBy(
-							Users.ID,
-							Users.Name,
-							Users.Email,
-							Users.Age,
-							Users.Status,
+							Users.Column.ID,
+							Users.Column.Name,
+							Users.Column.Email,
+							Users.Column.Age,
+							Users.Column.Status,
 						).
 						Having(
 							And(
 								Greater(Subquery[int64](NewSelect(Orders.Table).
-									Field(Count(Orders.ID, false)).
-									Where(Equal(Orders.UserID, Users.ID)),
+									Field(Count(Orders.Column.ID, false)).
+									Where(Equal(Orders.Column.UserID, Users.Column.ID)),
 								), Value(int64(0))),
 								Greater(Subquery[int64](NewSelect(Orders.Table).
-									Field(Sum(Orders.Amount, false)).
-									Where(Equal(Orders.UserID, Users.ID)),
+									Field(Sum(Orders.Column.Amount, false)).
+									Where(Equal(Orders.Column.UserID, Users.Column.ID)),
 								), Value(int64(100))),
 							),
 						).
 						OrderBy(
 							Desc(Subquery[int](NewSelect(Orders.Table).
-								Field(Sum(Orders.Amount, false)).
-								Where(Equal(Orders.UserID, Users.ID)),
+								Field(Sum(Orders.Column.Amount, false)).
+								Where(Equal(Orders.Column.UserID, Users.Column.ID)),
 							)),
-							Asc(Users.Name),
-							Asc(Users.Age),
+							Asc(Users.Column.Name),
+							Asc(Users.Column.Age),
 						).
 						Limit(48)
 					_, _, err := builder.Build(stmtSelect)
@@ -128,90 +128,90 @@ func Benchmark_Select_Single(b *testing.B) {
 		b.Run("Simple", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				stmtSelect := NewSelect(Users.Table).
-					Field(Users.ID).
-					Where(Equal(Users.Age, Value(i%1000)))
+					Field(Users.Column.ID).
+					Where(Equal(Users.Column.Age, Value(i%1000)))
 				builder.Build(stmtSelect)
 			}
 		})
 		b.Run("Complex", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				querySub := NewSelect(Orders.Table).
-					Field(Count(Orders.ID, false)).
+					Field(Count(Orders.Column.ID, false)).
 					Where(
-						Equal(Orders.UserID, Users.ID),
+						Equal(Orders.Column.UserID, Users.Column.ID),
 					)
 				queryInSub := NewSelect(Orders.Table).
-					Field(Orders.UserID.As("uid")).
+					Field(Orders.Column.UserID.As("uid")).
 					Where(
-						Greater(Orders.Amount, Value(10)),
+						Greater(Orders.Column.Amount, Value(10)),
 					)
 				queryExistsSub := NewSelect(Levels.Table).
-					Field(Levels.ID).
+					Field(Levels.Column.ID).
 					Where(
 						And(
-							Equal(Levels.UserID, Users.ID),
-							Equal(Levels.Status, Value("active")),
+							Equal(Levels.Column.UserID, Users.Column.ID),
+							Equal(Levels.Column.Status, Value("active")),
 						),
 					)
 				stmtSelect := NewSelect(Users.Table).
 					Field(
-						Users.ID.As("user_id"),
-						Users.Name.As("user_name"),
-						Users.Email.As("user_email"),
-						Users.Age.As("user_age"),
-						Users.Status.As("user_status"),
+						Users.Column.ID.As("user_id"),
+						Users.Column.Name.As("user_name"),
+						Users.Column.Email.As("user_email"),
+						Users.Column.Age.As("user_age"),
+						Users.Column.Status.As("user_status"),
 						Subquery[int](querySub).As("order_count"),
 						Subquery[int](NewSelect(Orders.Table).
-							Field(Sum(Orders.Amount, false)).
+							Field(Sum(Orders.Column.Amount, false)).
 							Where(
-								Equal(Orders.UserID, Users.ID),
+								Equal(Orders.Column.UserID, Users.Column.ID),
 							),
 						).As("total_spent"),
 					).
 					Join(
-						Inner(Levels.Table, Equal(Users.ID, Levels.UserID)),
-						Left(Categories.Table, Equal(Categories.Type, Users.Status)),
+						Inner(Levels.Table, Equal(Users.Column.ID, Levels.Column.UserID)),
+						Left(Categories.Table, Equal(Categories.Column.Type, Users.Column.Status)),
 					).
 					Where(And(
-						Equal(Users.Status, Value("active")),
-						Greater(Users.Age, Value(18)),
-						In(Users.ID, Subquery[int64](queryInSub)),
+						Equal(Users.Column.Status, Value("active")),
+						Greater(Users.Column.Age, Value(18)),
+						In(Users.Column.ID, Subquery[int64](queryInSub)),
 						Exists(Subquery[int](queryExistsSub)),
 						NotExists(Subquery[int](NewSelect(Users.Table).
 							Field(ConstIntOne()).
 							Where(
 								And(
-									Equal(Users.ID, Users.ID), IsNull(Users.Email),
+									Equal(Users.Column.ID, Users.Column.ID), IsNull(Users.Column.Email),
 								),
 							),
 						)),
 					)).
 					GroupBy(
-						Users.ID,
-						Users.Name,
-						Users.Email,
-						Users.Age,
-						Users.Status,
+						Users.Column.ID,
+						Users.Column.Name,
+						Users.Column.Email,
+						Users.Column.Age,
+						Users.Column.Status,
 					).
 					Having(
 						And(
 							Greater(Subquery[int64](NewSelect(Orders.Table).
-								Field(Count(Orders.ID, false)).
-								Where(Equal(Orders.UserID, Users.ID)),
+								Field(Count(Orders.Column.ID, false)).
+								Where(Equal(Orders.Column.UserID, Users.Column.ID)),
 							), Value(int64(0))),
 							Greater(Subquery[int64](NewSelect(Orders.Table).
-								Field(Sum(Orders.Amount, false)).
-								Where(Equal(Orders.UserID, Users.ID)),
+								Field(Sum(Orders.Column.Amount, false)).
+								Where(Equal(Orders.Column.UserID, Users.Column.ID)),
 							), Value(int64(100))),
 						),
 					).
 					OrderBy(
 						Desc(Subquery[int](NewSelect(Orders.Table).
-							Field(Sum(Orders.Amount, false)).
-							Where(Equal(Orders.UserID, Users.ID)),
+							Field(Sum(Orders.Column.Amount, false)).
+							Where(Equal(Orders.Column.UserID, Users.Column.ID)),
 						)),
-						Asc(Users.Name),
-						Asc(Users.Age),
+						Asc(Users.Column.Name),
+						Asc(Users.Column.Age),
 					).
 					Limit(48)
 				builder.Build(stmtSelect)

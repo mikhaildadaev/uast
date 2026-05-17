@@ -1120,7 +1120,7 @@ func Test_Select_Unions(t *testing.T) {
 				),
 			),
 		)
-		queryUnion := NewSelect(Test.Table).
+		stmtUnion := NewSelect(Test.Table).
 			Field(
 				Test.String,
 			)
@@ -1129,10 +1129,10 @@ func Test_Select_Unions(t *testing.T) {
 				Test.String,
 			).
 			Unions(
-				Union(queryUnion),
-				UnionAll(queryUnion),
-				UnionExcept(queryUnion),
-				UnionIntersect(queryUnion),
+				Union(stmtUnion),
+				UnionAll(stmtUnion),
+				UnionExcept(stmtUnion),
+				UnionIntersect(stmtUnion),
 			).
 			With(
 				stmtWith,

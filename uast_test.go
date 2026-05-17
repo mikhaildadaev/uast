@@ -842,7 +842,7 @@ func Test_Delete_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtWith := WithN("cte_nr", NewSelect(Test.Table).
+		stmtWithN := WithN("cte_nr", NewSelect(Test.Table).
 			Field(
 				Test.ID,
 			).
@@ -855,7 +855,7 @@ func Test_Delete_With(t *testing.T) {
 				In(Test.ID, Subquery[int64](NewSelect(Test.Table).Field(Column[int64]("cte_nr", "id")))),
 			).
 			With(
-				stmtWith,
+				stmtWithN,
 			)
 		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 		switch supportDialect {
@@ -1102,7 +1102,7 @@ func Test_Select_Unions(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtWith := WithR("cte_re", NewSelect(Test.Table).
+		stmtWithR := WithR("cte_re", NewSelect(Test.Table).
 			Field(
 				Test.ID,
 			).
@@ -1135,7 +1135,7 @@ func Test_Select_Unions(t *testing.T) {
 				UnionIntersect(stmtUnion),
 			).
 			With(
-				stmtWith,
+				stmtWithR,
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1184,7 +1184,7 @@ func Test_Select_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtWith := WithN("cte_nr", NewSelect(Test.Table).
+		stmtWithN := WithN("cte_nr", NewSelect(Test.Table).
 			Field(
 				Test.ID,
 				Test.String,
@@ -1203,7 +1203,7 @@ func Test_Select_With(t *testing.T) {
 				Inner(CTE("cte_nr", "ctenr"), Equal(Test.ID, Column[int64]("ctenr", "id"))),
 			).
 			With(
-				stmtWith,
+				stmtWithN,
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {

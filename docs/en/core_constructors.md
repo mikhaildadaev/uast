@@ -26,7 +26,7 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 
 ## NewInsert
-Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Into`, `Returning`, `Source`, `Values`, `With`.
+Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source`, `Values`, `With`.
 ```go
 statement := uast.NewInsert(uast.NewTable("test").As("t")).
     Column(
@@ -50,7 +50,7 @@ INSERT INTO "test" AS "t" ("t"."string", "t"."number") VALUES ($1, $2)
 ```
 
 ## NewSelect
-Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `From`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
+Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
 ```go
 statement := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(

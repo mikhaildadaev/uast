@@ -1209,7 +1209,7 @@ func Test_Select_Unions(t *testing.T) {
 						Test.ID,
 					).
 					Join(
-						Inner(CTE("cte_re", "ctere"), Equal(Test.ID, Column[int64]("ctere", "id"))),
+						Inner(NewCTE("cte_re", "ctere"), Equal(Test.ID, Column[int64]("ctere", "id"))),
 					),
 				),
 			),
@@ -1294,7 +1294,7 @@ func Test_Select_With(t *testing.T) {
 				Test.Number,
 			).
 			Join(
-				Inner(CTE("cte_nr", "ctenr"), Equal(Test.ID, Column[int64]("ctenr", "id"))),
+				Inner(NewCTE("cte_nr", "ctenr"), Equal(Test.ID, Column[int64]("ctenr", "id"))),
 			).
 			With(
 				stmtWithN,

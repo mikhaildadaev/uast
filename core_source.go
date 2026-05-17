@@ -1,5 +1,10 @@
 package uast
 
+import (
+	"strconv"
+	"sync/atomic"
+)
+
 // Публичные интерфейсы
 type SourceBase interface {
 	Alias() string
@@ -23,33 +28,31 @@ type QuerySource struct {
 }
 
 // Публичные конструкторы
-func NewTable(tableName, tableAlias string) *TableSource {
-	if tableAlias == "" {
-		tableAlias = tableName
+func NewCTE(name string, alias string) *CteSource {
+	if alias == "" {
+		alias = name
 	}
-	return &TableSource{
-		tableName: tableName,
-		aliasName: tableAlias,
-	}
-}
-
-// Публичные функции
-func CTE(cteName string, aliasName string) SourceBase {
 	return &CteSource{
-		aliasName: aliasName,
-		cteName:   cteName,
+		aliasName: alias,
+		cteName:   name,
 	}
 }
-func Query(statement statement, aliasName string) SourceBase {
+func NewQuery(statement statement, alias string) *QuerySource {
+	if alias == "" {
+		alias = "query_" + strconv.FormatInt(queryCounter.Add(1), 10)
+	}
 	return &QuerySource{
-		aliasName: aliasName,
+		aliasName: alias,
 		statement: statement,
 	}
 }
-func Table(tableName, aliasName string) SourceBase {
+func NewTable(name, alias string) *TableSource {
+	if alias == "" {
+		alias = name
+	}
 	return &TableSource{
-		aliasName: aliasName,
-		tableName: tableName,
+		aliasName: alias,
+		tableName: name,
 	}
 }
 
@@ -72,6 +75,9 @@ func (querySource *QuerySource) Alias() string {
 	}
 	return querySource.aliasName
 }
+
+// Приватные переменные
+var queryCounter atomic.Int64
 
 // Приватные методы
 func (cteSource *CteSource) isSourceBase() {}

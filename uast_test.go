@@ -757,11 +757,9 @@ func Test_Delete(t *testing.T) {
 		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlDeleteQuery, "DELETE", "DELETE")
-			assertContains(t, sqlDeleteQuery, "FROM", "FROM")
+			assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t`", "DELETE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, `DELETE`, "DELETE")
-			assertContains(t, sqlDeleteQuery, `FROM`, "FROM")
+			assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t"`, "DELETE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -884,11 +882,9 @@ func Test_Insert(t *testing.T) {
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
-			assertContains(t, sqlInsertQuery, "INTO", "INTO")
+			assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t`", "INSERT")
 		case DialectPostgreSQL:
-			assertContains(t, sqlInsertQuery, `INSERT`, "INSERT")
-			assertContains(t, sqlInsertQuery, `INTO`, "INTO")
+			assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t"`, "INSERT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -1006,11 +1002,9 @@ func Test_Select(t *testing.T) {
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "SELECT", "SELECT")
-			assertContains(t, sqlSelectQuery, "FROM", "FROM")
+			assertContains(t, sqlSelectQuery, "SELECT `t`.`string` FROM `test` AS `t`", "SELECT")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `SELECT`, "SELECT")
-			assertContains(t, sqlSelectQuery, `FROM`, "FROM")
+			assertContains(t, sqlSelectQuery, `SELECT "t"."string" FROM "test" AS "t"`, "SELECT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1331,11 +1325,9 @@ func Test_Update(t *testing.T) {
 		sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlUpdateQuery, "UPDATE", "UPDATE")
-			assertContains(t, sqlUpdateQuery, "SET", "SET")
+			assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t`", "UPDATE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlUpdateQuery, `UPDATE`, "UPDATE")
-			assertContains(t, sqlUpdateQuery, `SET`, "SET")
+			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t"`, "UPDATE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})
@@ -1346,22 +1338,20 @@ func Test_Update_Join(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Изменить реализацию
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
 				Pair(Test.String, Value("active")),
 			).
-			Where(
-				Equal(Test.Number, Value(2)),
-			)
+			Join(
+				Inner(Test1.Table, Equal(Test1.ID, Test.ID)),
+			).
+			Where(Equal(Test1.String, Value("active")))
 		sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlUpdateQuery, "UPDATE", "UPDATE")
-			assertContains(t, sqlUpdateQuery, "SET", "SET")
+			assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "UPDATE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlUpdateQuery, `UPDATE`, "UPDATE")
-			assertContains(t, sqlUpdateQuery, `SET`, "SET")
+			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "UPDATE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})
@@ -1444,22 +1434,30 @@ func Test_Update_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Изменить реализацию
+		stmtWithN := WithN("cte_nr", NewSelect(Test.Table).
+			Field(
+				Test.ID,
+			).
+			Where(
+				Equal(Test.String, Value("pending")),
+			),
+		)
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
 				Pair(Test.String, Value("active")),
 			).
 			Where(
-				Equal(Test.Number, Value(2)),
+				In(Test.ID, Subquery[int64](NewSelect(Test.Table).Field(Column[int64]("cte_nr", "id")))),
+			).
+			With(
+				stmtWithN,
 			)
 		sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlUpdateQuery, "UPDATE", "UPDATE")
-			assertContains(t, sqlUpdateQuery, "SET", "SET")
+			assertContains(t, sqlUpdateQuery, "WITH `cte_nr`", "WITH")
 		case DialectPostgreSQL:
-			assertContains(t, sqlUpdateQuery, `UPDATE`, "UPDATE")
-			assertContains(t, sqlUpdateQuery, `SET`, "SET")
+			assertContains(t, sqlUpdateQuery, `WITH "cte_nr"`, "WITH")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})

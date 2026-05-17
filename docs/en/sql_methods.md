@@ -70,7 +70,7 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ### With
 Adds a Common Table Expression (CTE) to the DELETE statement using `WithN` (non-recursive) or `WithR` (recursive).
 ```go
-stmtWith := uast.WithN("cte_nr", uast.NewSelect(uast.Table("test")).
+stmtWithN := uast.WithN("cte_nr", uast.NewSelect(uast.Table("test")).
     Field(
         uast.Column[int64]("test", "id"),
     ).
@@ -83,7 +83,7 @@ stmtDelete := uast.NewDelete(uast.Table("test")).
         uast.In(uast.Column[int64]("test", "id"), uast.Subquery[int64](uast.NewSelect(uast.Table("test")).Field(uast.Column[int64]("cte_nr", "id")))),
     ).
     With(
-		stmtWith,
+		stmtWithN,
 	)
 ```
 Output MySQL:
@@ -329,7 +329,7 @@ SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string"
 ### Unions
 Combines results from multiple SELECT statements using UNION, UNION ALL, EXCEPT, or INTERSECT.
 ```go
-stmtWith := WithR("cte_re", NewSelect(Test.Table).
+stmtWithR := WithR("cte_re", NewSelect(Test.Table).
 	Field(
 		Test.ID,
 	).
@@ -362,7 +362,7 @@ stmtSelect := NewSelect(Test.Table).
 		UnionIntersect(stmtUnion),
 	).
 	With(
-		stmtWith,
+		stmtWithR,
 	)
 ```
 Output MySQL:
@@ -397,7 +397,7 @@ SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1
 ### With
 Adds a Common Table Expression (CTE) to the SELECT statement.
 ```go
-stmtWith := WithN("cte_nr", NewSelect(Test.Table).
+stmtWithN := WithN("cte_nr", NewSelect(Test.Table).
 	Field(
 		Test.ID,
 		Test.String,
@@ -415,7 +415,7 @@ stmtSelect := NewSelect(Test.Table).
 	Join(
 		Inner(CTE("cte_nr", "ctenr"), Equal(Test.ID, Column[int64]("ctenr", "id"))),
 	).
-	With(stmtWith)
+	With(stmtWithN)
 ```
 Output MySQL:
 ```text

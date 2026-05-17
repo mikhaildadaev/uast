@@ -329,37 +329,37 @@ SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string"
 ### Unions
 Combines results from multiple SELECT statements using UNION, UNION ALL, EXCEPT, or INTERSECT.
 ```go
-stmtWithR := WithR("cte_re", NewSelect(Test.Table).
+stmtWithR := WithR("cte_re", NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
+		uast.Column[int64]("test", "id"),
 	).
 	Where(
-		Equal(Test.Number, Value(0)),
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(0)),
 	).
 	Unions(
-		UnionAll(NewSelect(Test.Table).
+		uast.UnionAll(uast.NewSelect(uast.Table("test")).
 			Field(
-				Test.ID,
+				uast.Column[int64]("test", "id"),
 			).
 			Join(
-				Inner(CTE("cte_re", "ctere"), Equal(Test.ID, Column[int64]("ctere", "id"))),
+				uast.Inner(uast.CTE("cte_re", "ctere"), uast.Equal(uast.Column[int64]("test", "id"), uast.Column[int64]("ctere", "id"))),
 			),
 		),
 	),
 )
-stmtUnion := NewSelect(Test.Table).
+stmtUnion := NewSelect(uast.Table("test")).
 	Field(
-		Test.String,
+		uast.Column[string]("test", "string"),
 	)
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.String,
+		uast.Column[string]("test", "string"),
 	).
 	Unions(
-		Union(stmtUnion),
-		UnionAll(stmtUnion),
-		UnionExcept(stmtUnion),
-		UnionIntersect(stmtUnion),
+		uast.Union(stmtUnion),
+		uast.UnionAll(stmtUnion),
+		uast.UnionExcept(stmtUnion),
+		uast.UnionIntersect(stmtUnion),
 	).
 	With(
 		stmtWithR,
@@ -382,7 +382,7 @@ stmtSelect := NewSelect(uast.Table("test")).
 		uast.Column[int64]("test", "id"),
 	).
 	Where(
-		uast.Equal(uast.Column[string]("test", "string"), Value("active")),
+		uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
 	)
 ```
 Output MySQL:
@@ -397,25 +397,27 @@ SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1
 ### With
 Adds a Common Table Expression (CTE) to the SELECT statement.
 ```go
-stmtWithN := WithN("cte_nr", NewSelect(Test.Table).
+stmtWithN := WithN("cte_nr", NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
-		Test.String,
+		uast.Column[int64]("test", "id"),
+		uast.Column[string]("test", "string"),
 	).
 	Where(
-		Equal(Test.String, Value("active")),
+		uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
 	),
 	"id", "string",
 )
-stmtSelect := NewSelect(Test.Table).
+stmtSelect := NewSelect(uast.Table("test")).
 	Field(
-		Test.ID,
-		Test.Number,
+		uast.Column[int64]("test", "id"),
+		uast.Column[int]("test", "number"),
 	).
 	Join(
-		Inner(CTE("cte_nr", "ctenr"), Equal(Test.ID, Column[int64]("ctenr", "id"))),
+		uast.Inner(uast.CTE("cte_nr", "ctenr"), uast.Equal(uast.Column[int64]("test", "id"), uast.Column[int64]("ctenr", "id"))),
 	).
-	With(stmtWithN)
+	With(
+		stmtWithN,
+	)
 ```
 Output MySQL:
 ```text
@@ -444,43 +446,64 @@ Output PostgreSQL:
 ### Returning
 Adds a RETURNING clause to return updated rows. Supported by PostgreSQL.
 ```go
-...
+stmtUpdate := NewUpdate(uast.Table("test")).
+	Set(
+		uast.Pair(uast.Column[string]("test", "string"), uast.Value("active")),
+	).
+	Where(
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+	).
+	Returning(
+		uast.Column[int64]("test", "id"),
+	)
 ```
 Output MySQL:
 ```text
-...
+
 ```
 Output PostgreSQL:
 ```text
-...
+UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"."id"
 ```
 
 ### Set
 Specifies columns and their new values using `Pair` to associate columns with values. Supports multiple pairs for updating multiple columns.
 ```go
-...
+stmtUpdate := NewUpdate(uast.Table("test")).
+	Set(
+		uast.Pair(uast.Column[string]("test", "string"), uast.Value("active")),
+	).
+	Where(
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
 ```
 Output MySQL:
 ```text
-...
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-...
+UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 ```
 
 ### Where
 Adds a WHERE clause to filter rows for updating.
 ```go
-...
+stmtUpdate := NewUpdate(uast.Table("test")).
+	Set(
+		uast.Pair(uast.Column[string]("test", "string"), uast.Value("active")),
+	).
+	Where(
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
 ```
 Output MySQL:
 ```text
-...
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-...
+UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 ```
 
 ### With

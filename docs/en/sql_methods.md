@@ -109,7 +109,7 @@ stmtInsert := uast.NewInsert(uast.Table("test")).
 ```
 Output MySQL:
 ```text
-...
+// Not supported
 ```
 Output PostgreSQL:
 ```text
@@ -459,7 +459,7 @@ stmtUpdate := NewUpdate(uast.Table("test")).
 ```
 Output MySQL:
 ```text
-
+// Not supported
 ```
 Output PostgreSQL:
 ```text

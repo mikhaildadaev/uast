@@ -329,15 +329,49 @@ SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string"
 ### Unions
 Combines results from multiple SELECT statements using UNION, UNION ALL, EXCEPT, or INTERSECT.
 ```go
-...
+stmtWith := WithR("cte_re", NewSelect(Test.Table).
+	Field(
+		Test.ID,
+	).
+	Where(
+		Equal(Test.Number, Value(0)),
+	).
+	Unions(
+		UnionAll(NewSelect(Test.Table).
+			Field(
+				Test.ID,
+			).
+			Join(
+				Inner(CTE("cte_re", "ctere"), Equal(Test.ID, Column[int64]("ctere", "id"))),
+			),
+		),
+	),
+)
+stmtUnion := NewSelect(Test.Table).
+	Field(
+		Test.String,
+	)
+stmtSelect := NewSelect(Test.Table).
+	Field(
+		Test.String,
+	).
+	Unions(
+		Union(stmtUnion),
+		UnionAll(stmtUnion),
+		UnionExcept(stmtUnion),
+		UnionIntersect(stmtUnion),
+	).
+	With(
+		stmtWith,
+	)
 ```
 Output MySQL:
 ```text
-...
+WITH RECURSIVE `cte_re` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ? UNION ALL SELECT `t`.`id` FROM `test` AS `t` INNER JOIN `cte_re` AS `ctere` ON `t`.`id` = `ctere`.`id`) SELECT `t`.`string` FROM `test` AS `t` UNION SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `t`.`string` FROM `test` AS `t` EXCEPT SELECT `t`.`string` FROM `test` AS `t` INTERSECT SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-...
+WITH RECURSIVE "cte_re" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1 UNION ALL SELECT "t"."id" FROM "test" AS "t" INNER JOIN "cte_re" AS "ctere" ON "t"."id" = "ctere"."id") SELECT "t"."string" FROM "test" AS "t" UNION SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "t"."string" FROM "test" AS "t" EXCEPT SELECT "t"."string" FROM "test" AS "t" INTERSECT SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### Where

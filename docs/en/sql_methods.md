@@ -434,7 +434,7 @@ Adds JOIN clauses to the UPDATE statement for updating rows based on related tab
 ```go
 stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	Set(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("active")),
+		uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
 	).
 	Join(
 		uast.Inner(uast.Column[string]("t1", "string"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
@@ -457,7 +457,7 @@ Adds a RETURNING clause to return updated rows. Supported by PostgreSQL.
 ```go
 stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	Set(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("active")),
+		uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
 	).
 	Where(
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
@@ -480,7 +480,7 @@ Specifies columns and their new values using `Pair` to associate columns with va
 ```go
 stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	Set(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("active")),
+		uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
 	).
 	Where(
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
@@ -500,7 +500,7 @@ Adds a WHERE clause to filter rows for updating.
 ```go
 stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	Set(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("active")),
+		uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
 	).
 	Where(
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
@@ -528,7 +528,7 @@ stmtWithN := WithN("cte_nr", NewSelect(uast.NewTable("test").As("t")).
 )
 stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	Set(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("active")),
+		uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
 	).
 	Where(
 		uast.In(uast.Column[int64]("t", "id"), Subquery[int64](NewSelect(uast.NewTable("test").As("t")).Field(Column[int64]("cte_nr", "id")))),

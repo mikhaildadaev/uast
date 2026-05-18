@@ -1,6 +1,12 @@
 package uast
 
 // Публичные функции
+func Assign(column markColumnable, value ExpressionBase) *clauseAssign {
+	return &clauseAssign{
+		column: column,
+		value:  value,
+	}
+}
 func Pair(column markColumnable, value ExpressionBase) *clausePair {
 	return &clausePair{
 		column: column,
@@ -9,19 +15,41 @@ func Pair(column markColumnable, value ExpressionBase) *clausePair {
 }
 
 // Приватные структуры
+type clauseAssign struct {
+	column markColumnable
+	value  ExpressionBase
+}
 type clausePair struct {
 	column markColumnable
 	value  ExpressionBase
 }
 
 // Приватные методы
-func (clausePair *clausePair) render(baseRenderer *baseRenderer) error {
-	if err := clausePair.column.render(baseRenderer); err != nil {
+func (clauseAssign *clauseAssign) render(baseRenderer *baseRenderer) error {
+	if err := clauseAssign.column.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderOperator(uastComparisonEqual)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
+	if err := clauseAssign.value.render(baseRenderer); err != nil {
+		return err
+	}
+	return nil
+}
+func (clauseAssign *clauseAssign) validate(baseValidator *baseValidator) error {
+	if clauseAssign.column == nil || clauseAssign.value == nil {
+		return ErrInvalidStatementSet
+	}
+	if err := clauseAssign.column.validate(baseValidator); err != nil {
+		return err
+	}
+	if err := clauseAssign.value.validate(baseValidator); err != nil {
+		return err
+	}
+	return nil
+}
+func (clausePair *clausePair) render(baseRenderer *baseRenderer) error {
 	if err := clausePair.value.render(baseRenderer); err != nil {
 		return err
 	}
@@ -29,7 +57,7 @@ func (clausePair *clausePair) render(baseRenderer *baseRenderer) error {
 }
 func (clausePair *clausePair) validate(baseValidator *baseValidator) error {
 	if clausePair.column == nil || clausePair.value == nil {
-		return ErrInvalidStatementSet
+		return ErrInvalidStatementValues
 	}
 	if err := clausePair.column.validate(baseValidator); err != nil {
 		return err

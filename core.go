@@ -76,6 +76,7 @@ var (
 	ErrInvalidStatementSet                = errors.New("invalid statement set")
 	ErrInvalidStatementTarget             = errors.New("invalid statement target")
 	ErrInvalidStatementUnions             = errors.New("invalid statement unions")
+	ErrInvalidStatementValues             = errors.New("invalid statement values")
 	ErrInvalidStatementWith               = errors.New("invalid statement with")
 	ErrInvalidAlias                       = errors.New("invalid alias")
 	ErrInvalidArray                       = errors.New("invalid array")

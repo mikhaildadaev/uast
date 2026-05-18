@@ -1317,7 +1317,7 @@ func Test_Update(t *testing.T) {
 		defer sql.Close()
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
-				Pair(Test.Column.String, Value("active")),
+				Assign(Test.Column.String, Value("active")),
 			).
 			Where(
 				Equal(Test.Column.Number, Value(2)),
@@ -1340,7 +1340,7 @@ func Test_Update_Join(t *testing.T) {
 		defer sql.Close()
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
-				Pair(Test.Column.String, Value("active")),
+				Assign(Test.Column.String, Value("active")),
 			).
 			Join(
 				Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
@@ -1364,7 +1364,7 @@ func Test_Update_Returning(t *testing.T) {
 		defer sql.Close()
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
-				Pair(Test.Column.String, Value("active")),
+				Assign(Test.Column.String, Value("active")),
 			).
 			Where(
 				Equal(Test.Column.Number, Value(2)),
@@ -1390,7 +1390,7 @@ func Test_Update_Set(t *testing.T) {
 		defer sql.Close()
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
-				Pair(Test.Column.String, Value("active")),
+				Assign(Test.Column.String, Value("active")),
 			).
 			Where(
 				Equal(Test.Column.Number, Value(2)),
@@ -1413,7 +1413,7 @@ func Test_Update_Where(t *testing.T) {
 		defer sql.Close()
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
-				Pair(Test.Column.String, Value("active")),
+				Assign(Test.Column.String, Value("active")),
 			).
 			Where(
 				Equal(Test.Column.Number, Value(2)),
@@ -1444,7 +1444,7 @@ func Test_Update_With(t *testing.T) {
 		)
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
-				Pair(Test.Column.String, Value("active")),
+				Assign(Test.Column.String, Value("active")),
 			).
 			Where(
 				In(Test.Column.ID, Subquery[int64](NewSelect(Test.Table).Field(Column[int64]("cte_nr", "id")))),

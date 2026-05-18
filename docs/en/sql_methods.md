@@ -114,7 +114,7 @@ Output MySQL:
 ```
 Output PostgreSQL:
 ```text
-...
+INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) RETURNING "t"."id"
 ```
 
 ### Source
@@ -510,7 +510,7 @@ UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"
 ```
 
 ### Set
-Specifies columns and their new values using `Pair` to associate columns with values. Supports multiple pairs for updating multiple columns.
+Specifies columns and their new values using `Assign` to associate columns with values. Supports multiple pairs for updating multiple columns.
 ```go
 stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	Set(

@@ -3,6 +3,7 @@ package uast
 // Приватные интерфейсы
 type markExpressable interface {
 	ExpressionBase
+	isColumnable()
 	isFieldable()
 }
 type markGroupable interface {
@@ -128,6 +129,7 @@ type exprValue[T typeScalar] struct {
 // Приватные методы
 func (exprAlias *exprAlias[T]) isExpressionBase()  {}
 func (exprAlias *exprAlias[T]) isExpressionSafe(T) {}
+func (exprAlias *exprAlias[T]) isColumnable()      {}
 func (exprAlias *exprAlias[T]) isFieldable()       {}
 func (exprAlias *exprAlias[T]) isPredicable()      {}
 func (exprAlias *exprAlias[T]) isReturnable()      {}
@@ -193,6 +195,7 @@ func (exprArray *exprArray[T]) validate(baseValidator *baseValidator) error {
 }
 func (exprBinary *exprBinary[T]) isExpressionBase()  {}
 func (exprBinary *exprBinary[T]) isExpressionSafe(T) {}
+func (exprBinary *exprBinary[T]) isColumnable()      {}
 func (exprBinary *exprBinary[T]) isFieldable()       {}
 func (exprBinary *exprBinary[T]) isPredicable()      {}
 func (exprBinary *exprBinary[T]) isReturnable()      {}

@@ -966,8 +966,8 @@ func Test_Insert_With(t *testing.T) {
 		defer sql.Close()
 		stmtWithN := WithN("cte_nr", NewSelect(Test1.Table).
 			Field(
+				Test1.Column.ID,
 				Test1.Column.String,
-				Test1.Column.Number,
 			).
 			Where(
 				Equal(Test1.Column.String, Value("active")),
@@ -976,10 +976,15 @@ func Test_Insert_With(t *testing.T) {
 		)
 		stmtInsert := NewInsert(Test.Table).
 			Source(
-				NewSelect(Test.Table).
-					Field(Column[string]("cte_nr", "string"), Column[int]("cte_nr", "number")),
+				NewSelect(NewCTE("cte_nr", "ctenr")).
+					Field(
+						Column[int64]("cte_nr", "id"),
+						Column[string]("cte_nr", "string"),
+					),
 			).
-			With(stmtWithN)
+			With(
+				stmtWithN,
+			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMySQL:

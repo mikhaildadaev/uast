@@ -1,11 +1,7 @@
 package uast
 
 // Приватные интерфейсы
-type markColumnable interface {
-	ExpressionBase
-	isColumnable()
-}
-type markFieldable interface {
+type markExpressable interface {
 	ExpressionBase
 	isFieldable()
 }

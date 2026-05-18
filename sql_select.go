@@ -5,7 +5,7 @@ func (stmtSelect *stmtSelect) Distinct() *stmtSelect {
 	stmtSelect.distinct = true
 	return stmtSelect
 }
-func (stmtSelect *stmtSelect) Field(fields ...markFieldable) *stmtSelect {
+func (stmtSelect *stmtSelect) Field(fields ...markExpressable) *stmtSelect {
 	stmtSelect.field = fields
 	return stmtSelect
 }
@@ -54,7 +54,7 @@ func (stmtSelect *stmtSelect) With(withs ...*clauseWith) *stmtSelect {
 type stmtSelect struct {
 	command  managementService
 	distinct bool
-	field    []markFieldable
+	field    []markExpressable
 	from     SourceBase
 	groupBy  []markGroupable
 	having   markPredicable

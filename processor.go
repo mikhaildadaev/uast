@@ -18,9 +18,9 @@ type elementRenderer interface {
 }
 type componentRenderer interface {
 	renderCommand(command managementService) error
-	renderColumn(columns []markColumnable) error
+	renderColumn(columns []markExpressable) error
 	renderDistinct(distinct bool) error
-	renderField(fields []markFieldable) error
+	renderField(fields []markExpressable) error
 	renderFrom(from SourceBase) error
 	renderGroupBy(groups []markGroupable) error
 	renderHaving(having ExpressionBase) error
@@ -79,9 +79,9 @@ type elementValidator interface {
 	validateValue(value any) error
 }
 type componentValidator interface {
-	validateColumn(columns []markColumnable) error
+	validateColumn(columns []markExpressable) error
 	validateCommand(command managementService) error
-	validateField(fields []markFieldable) error
+	validateField(fields []markExpressable) error
 	validateFrom(from SourceBase) error
 	validateGroupBy(groups []markGroupable) error
 	validateHaving(having ExpressionBase) error

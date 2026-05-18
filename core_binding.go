@@ -1,13 +1,13 @@
 package uast
 
 // Публичные функции
-func Assign(column markColumnable, value ExpressionBase) *clauseAssign {
+func Assign(column markExpressable, value ExpressionBase) *clauseAssign {
 	return &clauseAssign{
 		column: column,
 		value:  value,
 	}
 }
-func Pair(column markColumnable, value ExpressionBase) *clausePair {
+func Pair(column markExpressable, value ExpressionBase) *clausePair {
 	return &clausePair{
 		column: column,
 		value:  value,
@@ -16,11 +16,11 @@ func Pair(column markColumnable, value ExpressionBase) *clausePair {
 
 // Приватные структуры
 type clauseAssign struct {
-	column markColumnable
+	column markExpressable
 	value  ExpressionBase
 }
 type clausePair struct {
-	column markColumnable
+	column markExpressable
 	value  ExpressionBase
 }
 

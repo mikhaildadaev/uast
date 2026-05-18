@@ -872,12 +872,9 @@ func Test_Insert(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtInsert := NewInsert(Test.Table).
-			Column(Test.Column.String, Test.Column.Number).
 			Values(
-				Row(
-					Value("ivan"),
-					Value(2),
-				),
+				Pair(Test.Column.String, Value("ivan")),
+				Pair(Test.Column.Number, Value(2)),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
@@ -897,12 +894,9 @@ func Test_Insert_Returning(t *testing.T) {
 		defer sql.Close()
 		// Изменить реализацию
 		stmtInsert := NewInsert(Test.Table).
-			Column(Test.Column.String, Test.Column.Number).
 			Values(
-				Row(
-					Value("ivan"),
-					Value(2),
-				),
+				Pair(Test.Column.String, Value("ivan")),
+				Pair(Test.Column.Number, Value(2)),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
@@ -922,12 +916,9 @@ func Test_Insert_Source(t *testing.T) {
 		defer sql.Close()
 		// Изменить реализацию
 		stmtInsert := NewInsert(Test.Table).
-			Column(Test.Column.String, Test.Column.Number).
 			Values(
-				Row(
-					Value("ivan"),
-					Value(2),
-				),
+				Pair(Test.Column.String, Value("ivan")),
+				Pair(Test.Column.Number, Value(2)),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
@@ -947,12 +938,9 @@ func Test_Insert_Values(t *testing.T) {
 		defer sql.Close()
 		// Изменить реализацию
 		stmtInsert := NewInsert(Test.Table).
-			Column(Test.Column.String, Test.Column.Number).
 			Values(
-				Row(
-					Value("ivan"),
-					Value(2),
-				),
+				Pair(Test.Column.String, Value("ivan")),
+				Pair(Test.Column.Number, Value(2)),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
@@ -972,12 +960,9 @@ func Test_Insert_With(t *testing.T) {
 		defer sql.Close()
 		// Изменить реализацию
 		stmtInsert := NewInsert(Test.Table).
-			Column(Test.Column.String, Test.Column.Number).
 			Values(
-				Row(
-					Value("ivan"),
-					Value(2),
-				),
+				Pair(Test.Column.String, Value("ivan")),
+				Pair(Test.Column.Number, Value(2)),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {

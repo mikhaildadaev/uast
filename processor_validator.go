@@ -329,7 +329,7 @@ func (baseValidator *baseValidator) validateValue(value any) error {
 	}
 	return ErrUnsupportValue
 }
-func (baseValidator *baseValidator) validateColumn(columns []markColumnable) error {
+func (baseValidator *baseValidator) validateColumn(columns []markExpressable) error {
 	if columns == nil {
 		return nil
 	}
@@ -343,7 +343,7 @@ func (baseValidator *baseValidator) validateColumn(columns []markColumnable) err
 func (baseValidator *baseValidator) validateCommand(command managementService) error {
 	return nil
 }
-func (baseValidator *baseValidator) validateField(fields []markFieldable) error {
+func (baseValidator *baseValidator) validateField(fields []markExpressable) error {
 	if fields == nil {
 		return ErrInvalidStatementField
 	}

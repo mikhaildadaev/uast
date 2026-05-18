@@ -1,10 +1,6 @@
 package uast
 
 // Публичные методы
-func (stmtInsert *stmtInsert) Column(columns ...markColumnable) *stmtInsert {
-	stmtInsert.column = columns
-	return stmtInsert
-}
 func (stmtInsert *stmtInsert) Into(into SourceBase) *stmtInsert {
 	stmtInsert.into = into
 	return stmtInsert
@@ -13,12 +9,20 @@ func (stmtInsert *stmtInsert) Returning(returnings ...markReturnable) *stmtInser
 	stmtInsert.returning = returnings
 	return stmtInsert
 }
-func (stmtInsert *stmtInsert) Source(source statement) *stmtInsert {
+func (stmtInsert *stmtInsert) Source(source *stmtSelect) *stmtInsert {
 	stmtInsert.source = source
+	stmtInsert.column = source.field
 	return stmtInsert
 }
-func (stmtInsert *stmtInsert) Values(values ...[]ExpressionBase) *stmtInsert {
-	stmtInsert.values = values
+func (stmtInsert *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {
+	columns := make([]markExpressable, len(pairs))
+	values := make([]ExpressionBase, len(pairs))
+	for i, pair := range pairs {
+		columns[i] = pair.column
+		values[i] = pair.value
+	}
+	stmtInsert.column = columns
+	stmtInsert.values = [][]ExpressionBase{values}
 	return stmtInsert
 }
 func (stmtInsert *stmtInsert) With(with ...*clauseWith) *stmtInsert {
@@ -29,7 +33,7 @@ func (stmtInsert *stmtInsert) With(with ...*clauseWith) *stmtInsert {
 // Приватные структуры
 type stmtInsert struct {
 	command   managementService
-	column    []markColumnable
+	column    []markExpressable
 	into      SourceBase
 	source    statement
 	returning []markReturnable

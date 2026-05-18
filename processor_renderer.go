@@ -245,7 +245,7 @@ func (baseRenderer *baseRenderer) renderDistinct(distinct bool) error {
 	}
 	return nil
 }
-func (baseRenderer *baseRenderer) renderColumn(columns []markColumnable) error {
+func (baseRenderer *baseRenderer) renderColumn(columns []markExpressable) error {
 	if columns == nil {
 		return nil
 	}
@@ -263,7 +263,7 @@ func (baseRenderer *baseRenderer) renderColumn(columns []markColumnable) error {
 	baseRenderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (baseRenderer *baseRenderer) renderField(fields []markFieldable) error {
+func (baseRenderer *baseRenderer) renderField(fields []markExpressable) error {
 	if fields == nil {
 		return nil
 	}

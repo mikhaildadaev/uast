@@ -102,6 +102,7 @@ Adds a RETURNING clause to return inserted rows. Supported by PostgreSQL. MySQL 
 stmtInsert := uast.NewInsert(uast.NewTable("test").As("t")).
     Values(
         uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
     ).
     Returning(
         uast.Column[int64]("t", "id"),
@@ -119,43 +120,76 @@ Output PostgreSQL:
 ### Source
 Specifies a subquery as the data source for INSERT. Used for `INSERT ... SELECT` statements. When using `Source`, columns are inferred from the subquery fields.
 ```go
-...
+stmtInsert := NewInsert(uast.NewTable("test").As("t")).
+	Source(uast.NewSelect(uast.NewTable("test1").As("t1")).
+		Field(
+			uast.Column[string]("t1", "string"),
+			uast.Column[int]("t1", "number"),
+		).
+		Where(
+			uast.Equal(uast.Column[string]("t1", "string"), uast.Value("active")),
+		),
+	)
 ```
 Output MySQL:
 ```text
-...
+INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t1`.`string`, `t1`.`number` FROM `test1` AS `t1` WHERE `t1`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-...
+INSERT INTO "test" AS "t" ("string", "number") SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = $1
 ```
 
 ### Values
 Specifies values for insertion using `Pair` to associate columns with values. Columns are automatically inferred from the pairs.
 ```go
-...
+stmtInsert := NewInsert(uast.NewTable("test").As("t")).
+    Values(
+        uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+    ).
 ```
 Output MySQL:
 ```text
-...
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
 Output PostgreSQL:
 ```text
-...
+INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
 ```
 
 ### With
 Adds a Common Table Expression (CTE) to the INSERT statement.
 ```go
-...
+stmtWithN := WithN("cte_nr", NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+		uast.Column[string]("t", "string"),
+	).
+	Where(
+		uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+	),
+	"id", "string",
+)
+stmtInsert := NewInsert(uast.NewTable("test").As("t")).
+	Source(
+		NewSelect(NewCTE("cte_nr", "ctenr")).
+			Field(
+				uast.Column[int64]("ctenr", "id"),
+				uast.Column[string]("ctenr", "string"),
+			),
+	).
+	With(
+		stmtWithN,
+	)
 ```
 Output MySQL:
 ```text
-...
+WITH `cte_nr` (`id`, `string`) AS (SELECT `t1`.`id`, `t1`.`string` FROM `test1` AS `t1` WHERE `t1`.`string` = ?) INSERT INTO `test` AS `t` (`id`, `string`) SELECT `cte_nr`.`id`, `cte_nr`.`string` FROM `cte_nr` AS `ctenr`
 ```
 Output PostgreSQL:
 ```text
-...
+WITH "cte_nr" ("id", "string") AS (SELECT "t1"."id", "t1"."string" FROM "test1" AS "t1" WHERE "t1"."string" = $1) INSERT INTO "test" AS "t" ("id", "string") SELECT "cte_nr"."id", "cte_nr"."string" FROM "cte_nr" AS "ctenr"
 ```
 
 ## stmtSelect

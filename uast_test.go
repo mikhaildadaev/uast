@@ -3,7 +3,53 @@ package uast
 import (
 	"regexp"
 	"testing"
+	"time"
 )
+
+// Публичные переменные
+var Test = struct {
+	Column struct {
+		CreateAt *exprColumn[time.Time]
+		Date     *exprColumn[time.Time]
+		ID       *exprColumn[int64]
+		Json     *exprColumn[string]
+		Name     *exprColumn[string]
+		Number   *exprColumn[int]
+		String   *exprColumn[string]
+		UpdateAt *exprColumn[time.Time]
+		X        *exprColumn[int]
+		Y        *exprColumn[int]
+	}
+	Table *TableSource
+}{
+	Table: NewTable("test", "t"),
+}
+var Test1 = struct {
+	Column struct {
+		Date   *exprColumn[time.Time]
+		ID     *exprColumn[int64]
+		Json   *exprColumn[string]
+		Number *exprColumn[int]
+		String *exprColumn[string]
+		Time   *exprColumn[time.Time]
+	}
+	Table *TableSource
+}{
+	Table: NewTable("test1", "t1"),
+}
+var Test2 = struct {
+	Column struct {
+		Date   *exprColumn[time.Time]
+		ID     *exprColumn[int64]
+		Json   *exprColumn[string]
+		Number *exprColumn[int]
+		String *exprColumn[string]
+		Time   *exprColumn[time.Time]
+	}
+	Table *TableSource
+}{
+	Table: NewTable("test2", "t2"),
+}
 
 // Публичные функции
 func Test_Core_Array(t *testing.T) {
@@ -1483,6 +1529,33 @@ func assertContains(t *testing.T, str, substr string, message string) {
 	if !matched {
 		t.Errorf("Req: [%s] / Pat: [%s]\n", message, substr)
 	}
+}
+func init() {
+	// Test
+	Test.Column.CreateAt = Column[time.Time](Test.Table.aliasName, "createat")
+	Test.Column.Date = Column[time.Time](Test.Table.aliasName, "date")
+	Test.Column.ID = Column[int64](Test.Table.aliasName, "id")
+	Test.Column.Json = Column[string](Test.Table.aliasName, "json")
+	Test.Column.Name = Column[string](Test.Table.aliasName, "name")
+	Test.Column.Number = Column[int](Test.Table.aliasName, "number")
+	Test.Column.String = Column[string](Test.Table.aliasName, "string")
+	Test.Column.UpdateAt = Column[time.Time](Test.Table.aliasName, "updateat")
+	Test.Column.X = Column[int](Test.Table.aliasName, "x")
+	Test.Column.Y = Column[int](Test.Table.aliasName, "y")
+	// Test1
+	Test1.Column.Date = Column[time.Time](Test1.Table.aliasName, "date")
+	Test1.Column.ID = Column[int64](Test1.Table.aliasName, "id")
+	Test1.Column.Json = Column[string](Test1.Table.aliasName, "json")
+	Test1.Column.Number = Column[int](Test1.Table.aliasName, "number")
+	Test1.Column.String = Column[string](Test1.Table.aliasName, "string")
+	Test1.Column.Time = Column[time.Time](Test1.Table.aliasName, "time")
+	// Test2
+	Test2.Column.Date = Column[time.Time](Test2.Table.aliasName, "date")
+	Test2.Column.ID = Column[int64](Test2.Table.aliasName, "id")
+	Test2.Column.Json = Column[string](Test2.Table.aliasName, "json")
+	Test2.Column.Number = Column[int](Test2.Table.aliasName, "number")
+	Test2.Column.String = Column[string](Test2.Table.aliasName, "string")
+	Test2.Column.Time = Column[time.Time](Test2.Table.aliasName, "time")
 }
 func testAllDialects(t *testing.T, testFunc func(t *testing.T, supportDialect *SupportDialect)) {
 	for _, supportDialect := range listSupportDialects {

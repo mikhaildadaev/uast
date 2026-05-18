@@ -847,6 +847,7 @@ func Test_Delete_With(t *testing.T) {
 			Where(
 				Equal(Test.Column.String, Value("old")),
 			),
+			"id",
 		)
 		stmtDelete := NewDelete(Test.Table).
 			Where(
@@ -916,18 +917,22 @@ func Test_Insert_Source(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Изменить реализацию
 		stmtInsert := NewInsert(Test.Table).
-			Values(
-				Pair(Test.Column.String, Value("ivan")),
-				Pair(Test.Column.Number, Value(2)),
+			Source(NewSelect(Test1.Table).
+				Field(
+					Test1.Column.String,
+					Test1.Column.Number,
+				).
+				Where(
+					Equal(Test1.Column.String, Value("active")),
+				),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
+			assertContains(t, sqlInsertQuery, "SELECT `t1`.`string`, `t1`.`number` FROM `test1` AS `t1` WHERE `t1`.`string` = ?", "SOURCE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlInsertQuery, `INSERT`, "INSERT")
+			assertContains(t, sqlInsertQuery, `SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = $1`, "SOURCE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -959,18 +964,28 @@ func Test_Insert_With(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		// Изменить реализацию
+		stmtWithN := WithN("cte_nr", NewSelect(Test1.Table).
+			Field(
+				Test1.Column.String,
+				Test1.Column.Number,
+			).
+			Where(
+				Equal(Test1.Column.String, Value("active")),
+			),
+			"id", "string",
+		)
 		stmtInsert := NewInsert(Test.Table).
-			Values(
-				Pair(Test.Column.String, Value("ivan")),
-				Pair(Test.Column.Number, Value(2)),
-			)
+			Source(
+				NewSelect(Test.Table).
+					Field(Column[string]("cte_nr", "string"), Column[int]("cte_nr", "number")),
+			).
+			With(stmtWithN)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlInsertQuery, "INSERT", "INSERT")
+			assertContains(t, sqlInsertQuery, "WITH `cte_nr`", "WITH")
 		case DialectPostgreSQL:
-			assertContains(t, sqlInsertQuery, `INSERT`, "INSERT")
+			assertContains(t, sqlInsertQuery, `WITH "cte_nr"`, "WITH")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -1427,6 +1442,7 @@ func Test_Update_With(t *testing.T) {
 			Where(
 				Equal(Test.Column.String, Value("pending")),
 			),
+			"id",
 		)
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(

@@ -1,5 +1,7 @@
 package uast
 
+import "time"
+
 // Публичные методы
 func (stmtInsert *stmtInsert) Into(into SourceBase) *stmtInsert {
 	stmtInsert.into = into
@@ -10,8 +12,43 @@ func (stmtInsert *stmtInsert) Returning(returnings ...markReturnable) *stmtInser
 	return stmtInsert
 }
 func (stmtInsert *stmtInsert) Source(source *stmtSelect) *stmtInsert {
+	columns := make([]markExpressable, len(source.field))
+	for i, field := range source.field {
+		switch column := field.(type) {
+		case *ColumnExpr[string]:
+			columns[i] = &exprPair[string]{name: column.name}
+		case *ColumnExpr[int]:
+			columns[i] = &exprPair[int]{name: column.name}
+		case *ColumnExpr[int8]:
+			columns[i] = &exprPair[int8]{name: column.name}
+		case *ColumnExpr[int16]:
+			columns[i] = &exprPair[int16]{name: column.name}
+		case *ColumnExpr[int32]:
+			columns[i] = &exprPair[int32]{name: column.name}
+		case *ColumnExpr[int64]:
+			columns[i] = &exprPair[int64]{name: column.name}
+		case *ColumnExpr[float32]:
+			columns[i] = &exprPair[float32]{name: column.name}
+		case *ColumnExpr[float64]:
+			columns[i] = &exprPair[float64]{name: column.name}
+		case *ColumnExpr[bool]:
+			columns[i] = &exprPair[bool]{name: column.name}
+		case *ColumnExpr[time.Time]:
+			columns[i] = &exprPair[time.Time]{name: column.name}
+		case *ColumnExpr[uint]:
+			columns[i] = &exprPair[uint]{name: column.name}
+		case *ColumnExpr[uint8]:
+			columns[i] = &exprPair[uint8]{name: column.name}
+		case *ColumnExpr[uint16]:
+			columns[i] = &exprPair[uint16]{name: column.name}
+		case *ColumnExpr[uint32]:
+			columns[i] = &exprPair[uint32]{name: column.name}
+		case *ColumnExpr[uint64]:
+			columns[i] = &exprPair[uint64]{name: column.name}
+		}
+	}
+	stmtInsert.column = columns
 	stmtInsert.source = source
-	stmtInsert.column = source.field
 	return stmtInsert
 }
 func (stmtInsert *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {

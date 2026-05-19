@@ -49,18 +49,15 @@ Creates a new SELECT statement instance. Accepts a table source and returns a st
 statement := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
         uast.Column[string]("t", "string"),
-    ).
-    Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?
+SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
+SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ## NewUpdate

@@ -9,16 +9,16 @@ import (
 // Публичные переменные
 var Test = struct {
 	Column struct {
-		CreateAt *exprColumn[time.Time]
-		Date     *exprColumn[time.Time]
-		ID       *exprColumn[int64]
-		Json     *exprColumn[string]
-		Name     *exprColumn[string]
-		Number   *exprColumn[int]
-		String   *exprColumn[string]
-		UpdateAt *exprColumn[time.Time]
-		X        *exprColumn[int]
-		Y        *exprColumn[int]
+		CreateAt *ColumnExpr[time.Time]
+		Date     *ColumnExpr[time.Time]
+		ID       *ColumnExpr[int64]
+		Json     *ColumnExpr[string]
+		Name     *ColumnExpr[string]
+		Number   *ColumnExpr[int]
+		String   *ColumnExpr[string]
+		UpdateAt *ColumnExpr[time.Time]
+		X        *ColumnExpr[int]
+		Y        *ColumnExpr[int]
 	}
 	Table *TableSource
 }{
@@ -26,12 +26,12 @@ var Test = struct {
 }
 var Test1 = struct {
 	Column struct {
-		Date   *exprColumn[time.Time]
-		ID     *exprColumn[int64]
-		Json   *exprColumn[string]
-		Number *exprColumn[int]
-		String *exprColumn[string]
-		Time   *exprColumn[time.Time]
+		Date   *ColumnExpr[time.Time]
+		ID     *ColumnExpr[int64]
+		Json   *ColumnExpr[string]
+		Number *ColumnExpr[int]
+		String *ColumnExpr[string]
+		Time   *ColumnExpr[time.Time]
 	}
 	Table *TableSource
 }{
@@ -39,12 +39,12 @@ var Test1 = struct {
 }
 var Test2 = struct {
 	Column struct {
-		Date   *exprColumn[time.Time]
-		ID     *exprColumn[int64]
-		Json   *exprColumn[string]
-		Number *exprColumn[int]
-		String *exprColumn[string]
-		Time   *exprColumn[time.Time]
+		Date   *ColumnExpr[time.Time]
+		ID     *ColumnExpr[int64]
+		Json   *ColumnExpr[string]
+		Number *ColumnExpr[int]
+		String *ColumnExpr[string]
+		Time   *ColumnExpr[time.Time]
 	}
 	Table *TableSource
 }{

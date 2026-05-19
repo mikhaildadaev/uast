@@ -7,25 +7,16 @@ import (
 
 // Публичные интерфейсы
 type SourceBase interface {
-	Alias() string
+	alias() string
 	isSourceBase()
 	render(baseRenderer *baseRenderer) error
 	validate(baseValidator *baseValidator) error
 }
 
 // Публичные структуры
-type CteSource struct {
-	aliasName string
-	cteName   string
-}
-type TableSource struct {
-	aliasName string
-	tableName string
-}
-type QuerySource struct {
-	aliasName string
-	statement statement
-}
+type CteSource = sourceCte
+type TableSource = sourceTable
+type QuerySource = sourceQuery
 
 // Публичные конструкторы
 func NewCTE(name string, alias string) *CteSource {
@@ -56,89 +47,101 @@ func NewTable(name, alias string) *TableSource {
 	}
 }
 
-// Публичные методы
-func (cteSource *CteSource) Alias() string {
-	if cteSource == nil {
-		return ""
-	}
-	return cteSource.aliasName
-}
-func (tableSource *TableSource) Alias() string {
-	if tableSource == nil {
-		return ""
-	}
-	return tableSource.aliasName
-}
-func (querySource *QuerySource) Alias() string {
-	if querySource == nil {
-		return ""
-	}
-	return querySource.aliasName
-}
-
 // Приватные переменные
 var queryCounter atomic.Int64
 
+// Приватные структуры
+type sourceCte struct {
+	aliasName string
+	cteName   string
+}
+type sourceTable struct {
+	aliasName string
+	tableName string
+}
+type sourceQuery struct {
+	aliasName string
+	statement statement
+}
+
 // Приватные методы
-func (cteSource *CteSource) isSourceBase() {}
-func (cteSource *CteSource) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderName(cteSource.cteName)
-	if cteSource.aliasName != "" {
+func (sourceCte *sourceCte) alias() string {
+	if sourceCte == nil {
+		return ""
+	}
+	return sourceCte.aliasName
+}
+func (sourceCte *sourceCte) isSourceBase() {}
+func (sourceCte *sourceCte) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderName(sourceCte.cteName)
+	if sourceCte.aliasName != "" {
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
 		baseRenderer.renderService(uastModifierAs)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderAlias(cteSource.aliasName)
+		baseRenderer.renderAlias(sourceCte.aliasName)
 	}
 	return nil
 }
-func (cteSource *CteSource) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(cteSource.cteName); err != nil {
+func (sourceCte *sourceCte) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(sourceCte.cteName); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(cteSource.aliasName); err != nil {
+	if err := baseValidator.validateAlias(sourceCte.aliasName); err != nil {
 		return err
 	}
 	return nil
 }
-func (tableSource *TableSource) isSourceBase() {}
-func (tableSource *TableSource) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderName(tableSource.tableName)
+func (sourceTable *sourceTable) alias() string {
+	if sourceTable == nil {
+		return ""
+	}
+	return sourceTable.aliasName
+}
+func (sourceTable *sourceTable) isSourceBase() {}
+func (sourceTable *sourceTable) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderName(sourceTable.tableName)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(uastModifierAs)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(tableSource.aliasName)
+	baseRenderer.renderAlias(sourceTable.aliasName)
 	return nil
 }
-func (tableSource *TableSource) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(tableSource.tableName); err != nil {
+func (sourceTable *sourceTable) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(sourceTable.tableName); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(tableSource.aliasName); err != nil {
+	if err := baseValidator.validateAlias(sourceTable.aliasName); err != nil {
 		return err
 	}
 	return nil
 }
-func (querySource *QuerySource) isSourceBase() {}
-func (querySource *QuerySource) render(baseRenderer *baseRenderer) error {
+func (sourceQuery *sourceQuery) alias() string {
+	if sourceQuery == nil {
+		return ""
+	}
+	return sourceQuery.aliasName
+}
+func (sourceQuery *sourceQuery) isSourceBase() {}
+func (sourceQuery *sourceQuery) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeParenLeft)
-	if err := querySource.statement.render(baseRenderer); err != nil {
+	if err := sourceQuery.statement.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeParenRight)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(uastModifierAs)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(querySource.aliasName)
+	baseRenderer.renderAlias(sourceQuery.aliasName)
 	return nil
 }
-func (querySource *QuerySource) validate(baseValidator *baseValidator) error {
-	if querySource.statement == nil {
+func (sourceQuery *sourceQuery) validate(baseValidator *baseValidator) error {
+	if sourceQuery.statement == nil {
 		return ErrInvalidSubquery
 	}
-	if err := querySource.statement.validate(baseValidator); err != nil {
+	if err := sourceQuery.statement.validate(baseValidator); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(querySource.aliasName); err != nil {
+	if err := baseValidator.validateAlias(sourceQuery.aliasName); err != nil {
 		return err
 	}
 	return nil

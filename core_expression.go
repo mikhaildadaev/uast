@@ -1,5 +1,21 @@
 package uast
 
+// Публичные интерфейсы
+type ExpressionBase interface {
+	isExpressionBase()
+	render(baseRenderer *baseRenderer) error
+	validate(baseValidator *baseValidator) error
+}
+type ExpressionSafe[T typeScalar] interface {
+	ExpressionBase
+	markPredicable
+	isExpressionSafe(T)
+}
+
+// Публичные структуры
+type AliasExpr[T typeScalar] = exprAlias[T]
+type ColumnExpr[T typeScalar] = exprColumn[T]
+
 // Приватные интерфейсы
 type markExpressable interface {
 	ExpressionBase

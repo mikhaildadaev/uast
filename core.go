@@ -139,18 +139,6 @@ var (
 	ErrUntransformType                    = errors.New("untransform type")
 )
 
-// Публичные интерфейсы
-type ExpressionBase interface {
-	isExpressionBase()
-	render(baseRenderer *baseRenderer) error
-	validate(baseValidator *baseValidator) error
-}
-type ExpressionSafe[T typeScalar] interface {
-	ExpressionBase
-	markPredicable
-	isExpressionSafe(T)
-}
-
 // Публичные конструкторы
 func NewDelete(from SourceBase) *stmtDelete {
 	return &stmtDelete{

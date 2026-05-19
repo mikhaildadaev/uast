@@ -288,9 +288,9 @@ func ShiftRight[T typeScalar](left, right ExpressionSafe[T]) ExpressionSafe[T] {
 }
 
 // -- Column -- //
-func Column[T typeScalar](tableAlias, columnName string) *exprColumn[T] {
+func Column[T typeScalar](tableAlias, name string) *exprColumn[T] {
 	return &exprColumn[T]{
-		columnName: columnName,
+		name:       name,
 		tableAlias: tableAlias,
 	}
 }

@@ -1,16 +1,17 @@
 package uast
 
 // Публичные функции
-func Assign(column markExpressable, value ExpressionBase) *clauseAssign {
+func Assign[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clauseAssign {
 	return &clauseAssign{
 		column: column,
 		value:  value,
 	}
 }
-func Pair(column markExpressable, value ExpressionBase) *clausePair {
+func Pair[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clausePair {
 	return &clausePair{
-		column: column,
-		value:  value,
+		column: &exprPair[T]{
+			name: column.name},
+		value: value,
 	}
 }
 

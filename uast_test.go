@@ -926,9 +926,9 @@ func Test_Insert(t *testing.T) {
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMySQL:
-			//assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
+			assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
 		case DialectPostgreSQL:
-			//assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
+			assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})

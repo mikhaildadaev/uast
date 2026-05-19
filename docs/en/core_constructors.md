@@ -29,24 +29,18 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source`, `Values`, `With`.
 ```go
 statement := uast.NewInsert(uast.NewTable("test").As("t")).
-    Column(
-        uast.Column[string]("t", "string"), 
-        uast.Column[int]("t", "number"),
-    ).
     Values(
-        uast.Row(
-            uast.Value("ivan"), 
-            uast.Value(2),
-        ),
+        uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+        uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
     )
 ```
 Output MySQL:
 ```text
-INSERT INTO `test` AS `t` (`t`.`string`, `t`.`number`) VALUES (?, ?)
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
 Output PostgreSQL:
 ```text
-INSERT INTO "test" AS "t" ("t"."string", "t"."number") VALUES ($1, $2)
+INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
 ```
 
 ## NewSelect
@@ -74,10 +68,10 @@ Creates a new UPDATE statement instance. Accepts a table source and returns a st
 ```go
 statement := uast.NewUpdate(uast.NewTable("test").As("t")).
     Set(
-        Pair(uast.Column[string]("t", "t"), uast.Value("active")),
+        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "t"), uast.Value(2)),
+        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
     )
 ```
 Output MySQL:

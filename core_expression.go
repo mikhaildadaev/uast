@@ -20,7 +20,7 @@ type ColumnExpr[T typeScalar] = exprColumn[T]
 type markExpressable interface {
 	ExpressionBase
 	isColumnable()
-	isPairable()
+	isFieldable()
 }
 type markGroupable interface {
 	ExpressionBase
@@ -149,7 +149,7 @@ type exprValue[T typeScalar] struct {
 func (exprAlias *exprAlias[T]) isExpressionBase()  {}
 func (exprAlias *exprAlias[T]) isExpressionSafe(T) {}
 func (exprAlias *exprAlias[T]) isColumnable()      {}
-func (exprAlias *exprAlias[T]) isPairable()        {}
+func (exprAlias *exprAlias[T]) isFieldable()       {}
 func (exprAlias *exprAlias[T]) isPredicable()      {}
 func (exprAlias *exprAlias[T]) isReturnable()      {}
 func (exprAlias *exprAlias[T]) render(baseRenderer *baseRenderer) error {
@@ -176,9 +176,9 @@ func (exprAlias *exprAlias[T]) validate(baseValidator *baseValidator) error {
 func (exprArray *exprArray[T]) isExpressionBase()  {}
 func (exprArray *exprArray[T]) isExpressionSafe(T) {}
 func (exprArray *exprArray[T]) isColumnable()      {}
+func (exprArray *exprArray[T]) isFieldable()       {}
 func (exprArray *exprArray[T]) isGroupable()       {}
 func (exprArray *exprArray[T]) isOrderable()       {}
-func (exprArray *exprArray[T]) isPairable()        {}
 func (exprArray *exprArray[T]) isPredicable()      {}
 func (exprArray *exprArray[T]) isReturnable()      {}
 func (exprArray *exprArray[T]) render(baseRenderer *baseRenderer) error {
@@ -215,7 +215,7 @@ func (exprArray *exprArray[T]) validate(baseValidator *baseValidator) error {
 func (exprBinary *exprBinary[T]) isExpressionBase()  {}
 func (exprBinary *exprBinary[T]) isExpressionSafe(T) {}
 func (exprBinary *exprBinary[T]) isColumnable()      {}
-func (exprBinary *exprBinary[T]) isPairable()        {}
+func (exprBinary *exprBinary[T]) isFieldable()       {}
 func (exprBinary *exprBinary[T]) isPredicable()      {}
 func (exprBinary *exprBinary[T]) isReturnable()      {}
 func (exprBinary *exprBinary[T]) render(baseRenderer *baseRenderer) error {
@@ -239,9 +239,9 @@ func (exprBinary *exprBinary[T]) validate(baseValidator *baseValidator) error {
 func (exprColumn *exprColumn[T]) isExpressionBase()  {}
 func (exprColumn *exprColumn[T]) isExpressionSafe(T) {}
 func (exprColumn *exprColumn[T]) isColumnable()      {}
+func (exprColumn *exprColumn[T]) isFieldable()       {}
 func (exprColumn *exprColumn[T]) isGroupable()       {}
 func (exprColumn *exprColumn[T]) isOrderable()       {}
-func (exprColumn *exprColumn[T]) isPairable()        {}
 func (exprColumn *exprColumn[T]) isPredicable()      {}
 func (exprColumn *exprColumn[T]) isReturnable()      {}
 func (exprColumn *exprColumn[T]) render(baseRenderer *baseRenderer) error {
@@ -382,9 +382,9 @@ func (exprComposite *exprComposite[T]) validate(baseValidator *baseValidator) er
 func (exprConstant *exprConstant[T]) isExpressionBase()  {}
 func (exprConstant *exprConstant[T]) isExpressionSafe(T) {}
 func (exprConstant *exprConstant[T]) isColumnable()      {}
+func (exprConstant *exprConstant[T]) isFieldable()       {}
 func (exprConstant *exprConstant[T]) isGroupable()       {}
 func (exprConstant *exprConstant[T]) isOrderable()       {}
-func (exprConstant *exprConstant[T]) isPairable()        {}
 func (exprConstant *exprConstant[T]) isPredicable()      {}
 func (exprConstant *exprConstant[T]) isReturnable()      {}
 func (exprConstant *exprConstant[T]) render(baseRenderer *baseRenderer) error {
@@ -400,9 +400,9 @@ func (exprConstant *exprConstant[T]) validate(baseValidator *baseValidator) erro
 func (exprFunction *exprFunction[InLT, InRT, T]) isExpressionBase()  {}
 func (exprFunction *exprFunction[InLT, InRT, T]) isExpressionSafe(T) {}
 func (exprFunction *exprFunction[InLT, InRT, T]) isColumnable()      {}
+func (exprFunction *exprFunction[InLT, InRT, T]) isFieldable()       {}
 func (exprFunction *exprFunction[InLT, InRT, T]) isGroupable()       {}
 func (exprFunction *exprFunction[InLT, InRT, T]) isOrderable()       {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isPairable()        {}
 func (exprFunction *exprFunction[InLT, InRT, T]) isPredicable()      {}
 func (exprFunction *exprFunction[InLT, InRT, T]) isReturnable()      {}
 func (exprFunction *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRenderer) error {
@@ -698,9 +698,9 @@ func (exprJson *exprJson) validate(baseValidator *baseValidator) error {
 func (exprLiteral *exprLiteral[T]) isExpressionBase()  {}
 func (exprLiteral *exprLiteral[T]) isExpressionSafe(T) {}
 func (exprLiteral *exprLiteral[T]) isColumnable()      {}
+func (exprLiteral *exprLiteral[T]) isFieldable()       {}
 func (exprLiteral *exprLiteral[T]) isGroupable()       {}
 func (exprLiteral *exprLiteral[T]) isOrderable()       {}
-func (exprLiteral *exprLiteral[T]) isPairable()        {}
 func (exprLiteral *exprLiteral[T]) isPredicable()      {}
 func (exprLiteral *exprLiteral[T]) isReturnable()      {}
 func (exprLiteral *exprLiteral[T]) render(baseRenderer *baseRenderer) error {
@@ -785,9 +785,9 @@ func (exprOrderBy *exprOrderBy) validate(baseValidator *baseValidator) error {
 func (exprPair *exprPair[T]) isExpressionBase()  {}
 func (exprPair *exprPair[T]) isExpressionSafe(T) {}
 func (exprPair *exprPair[T]) isColumnable()      {}
+func (exprPair *exprPair[T]) isFieldable()       {}
 func (exprPair *exprPair[T]) isGroupable()       {}
 func (exprPair *exprPair[T]) isOrderable()       {}
-func (exprPair *exprPair[T]) isPairable()        {}
 func (exprPair *exprPair[T]) isPredicable()      {}
 func (exprPair *exprPair[T]) isReturnable()      {}
 func (exprPair *exprPair[T]) render(baseRenderer *baseRenderer) error {
@@ -816,9 +816,9 @@ func (exprService *exprService[T]) validate(baseValidator *baseValidator) error 
 func (exprSubquery *exprSubquery[T]) isExpressionBase()  {}
 func (exprSubquery *exprSubquery[T]) isExpressionSafe(T) {}
 func (exprSubquery *exprSubquery[T]) isColumnable()      {}
+func (exprSubquery *exprSubquery[T]) isFieldable()       {}
 func (exprSubquery *exprSubquery[T]) isGroupable()       {}
 func (exprSubquery *exprSubquery[T]) isOrderable()       {}
-func (exprSubquery *exprSubquery[T]) isPairable()        {}
 func (exprSubquery *exprSubquery[T]) isPredicable()      {}
 func (exprSubquery *exprSubquery[T]) isReturnable()      {}
 func (exprSubquery *exprSubquery[T]) render(baseRenderer *baseRenderer) error {
@@ -841,9 +841,9 @@ func (exprSubquery *exprSubquery[T]) validate(baseValidator *baseValidator) erro
 func (exprValue *exprValue[T]) isExpressionBase()  {}
 func (exprValue *exprValue[T]) isExpressionSafe(T) {}
 func (exprValue *exprValue[T]) isColumnable()      {}
+func (exprValue *exprValue[T]) isFieldable()       {}
 func (exprValue *exprValue[T]) isGroupable()       {}
 func (exprValue *exprValue[T]) isOrderable()       {}
-func (exprValue *exprValue[T]) isPairable()        {}
 func (exprValue *exprValue[T]) isPredicable()      {}
 func (exprValue *exprValue[T]) isReturnable()      {}
 func (exprValue *exprValue[T]) render(baseRenderer *baseRenderer) error {

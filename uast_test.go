@@ -743,7 +743,7 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `POSITION(? IN "t"."string")`, "FUNCTION POSITION")
 			assertContains(t, sqlSelectQuery, `RADIANS("t"."number")`, "FUNCTION RADIANS")
 			// Функции даты и времени
-			assertContains(t, sqlSelectQuery, `datetime('now')`, "FUNCTION CURDATE")
+			assertContains(t, sqlSelectQuery, `date('now')`, "FUNCTION CURDATE")
 			assertContains(t, sqlSelectQuery, `time('now')`, "FUNCTION CURTIME")
 			assertContains(t, sqlSelectQuery, `datetime("t"."createat", '+2 DAY')`, "FUNCTION DATEADD")
 			assertContains(t, sqlSelectQuery, `DATEDIFF("t"."updateat", "t"."createat")`, "FUNCTION DATEDIFF")

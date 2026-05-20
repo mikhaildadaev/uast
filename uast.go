@@ -1,8 +1,16 @@
-// Copyright (c) 2026 Mikhail Dadaev
-// All rights reserved.
+// Copyright [2026] [Mikhail Dadaev]
 //
-// This source code is licensed under the MIT License found in the
-// LICENSE file in the root directory of this source tree.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package uast
 
@@ -368,7 +376,7 @@ var listFunctionServices = []functionService{
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
 var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierBetween, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierInterval, uastModifierOn, uastModifierOver, uastModifierRecursive, uastModifierSeparator, uastModifierThen, uastModifierWhen}
-var listSupportDialects = []*SupportDialect{DialectMySQL, DialectPostgreSQL}
+var listSupportDialects = []*SupportDialect{DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,
 	'0': true, '1': true, '2': true, '3': true, '4': true, '5': true, '6': true, '7': true, '8': true, '9': true,

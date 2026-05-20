@@ -4,13 +4,14 @@ package uast
 var (
 	// Диалект по умолчанию
 	DialectDefault = DialectPostgreSQL
+	// Cовместимые с MariaDB
+	DialectDoltDB      = DialectMariaDB
+	DialectSingleStore = DialectMariaDB
 	// Cовместимые с MySQL
 	DialectAuroraMySQL = DialectMySQL
 	DialectAzureMySQL  = DialectMySQL
-	DialectDoltDB      = DialectMySQL
 	DialectGoogleMySQL = DialectMySQL
 	DialectPlanetScale = DialectMySQL
-	DialectSingleStore = DialectMySQL
 	DialectTiDB        = DialectMySQL
 	// Cовместимые с PostgreSQL
 	DialectAlloyDB          = DialectPostgreSQL

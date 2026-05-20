@@ -14,6 +14,10 @@ Adds a CROSS JOIN to the statement. Returns the Cartesian product of both tables
 ```go
 join := Cross(Test1.Table)
 ```
+Output MariaDB:
+```text
+CROSS JOIN `test1` AS `t1`
+```
 Output MySQL:
 ```text
 CROSS JOIN `test1` AS `t1`
@@ -31,6 +35,10 @@ CROSS JOIN "test1" AS "t1"
 Adds a FULL JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
 join := Full(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MariaDB:
+```text
+FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
 ```
 Output MySQL:
 ```text
@@ -50,6 +58,10 @@ Adds a FULL OUTER JOIN to the statement. Returns all rows from both tables, with
 ```go
 join := FullOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
+Output MariaDB:
+```text
+FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
 Output MySQL:
 ```text
 FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
@@ -67,6 +79,10 @@ FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 Adds an INNER JOIN to the statement. Returns rows that have matching values in both tables.
 ```go
 join := Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MariaDB:
+```text
+INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
 ```
 Output MySQL:
 ```text
@@ -86,6 +102,10 @@ Adds a LEFT JOIN to the statement. Returns all rows from the left table, and mat
 ```go
 join := Left(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
+Output MariaDB:
+```text
+LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
 Output MySQL:
 ```text
 LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
@@ -103,6 +123,10 @@ LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 Adds a LEFT OUTER JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
 join := LeftOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MariaDB:
+```text
+LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
 ```
 Output MySQL:
 ```text
@@ -122,6 +146,10 @@ Adds a RIGHT JOIN to the statement. Returns all rows from the right table, and m
 ```go
 join := Right(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
+Output MariaDB:
+```text
+RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
 Output MySQL:
 ```text
 RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
@@ -139,6 +167,10 @@ Output SQLite:
 Adds a RIGHT OUTER JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
 join := RightOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MariaDB:
+```text
+RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
 ```
 Output MySQL:
 ```text
@@ -171,6 +203,10 @@ Constructs an array expression for use in SQL queries.
 ```go
 array := uast.Array(0, 1, 2)
 ```
+Output MariaDB:
+```text
+ARRAY[?, ?, ?]
+```
 Output MySQL:
 ```text
 ARRAY[?, ?, ?]
@@ -190,6 +226,10 @@ Performs a bitwise AND operation between two expressions.
 ```go
 binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
+Output MariaDB:
+```text
+`t`.`number` & ?
+```
 Output MySQL:
 ```text
 `t`.`number` & ?
@@ -207,6 +247,10 @@ Output SQLite:
 Performs a bitwise OR operation between two expressions.
 ```go
 binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
+```
+Output MariaDB:
+```text
+`t`.`number` | ?
 ```
 Output MySQL:
 ```text
@@ -226,6 +270,10 @@ Performs a bitwise XOR operation between two expressions.
 ```go
 binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
+Output MariaDB:
+```text
+`t`.`number` ^ ?
+```
 Output MySQL:
 ```text
 `t`.`number` ^ ?
@@ -243,6 +291,10 @@ Output SQLite:
 Divides the left expression by the right expression.
 ```go
 binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` / ?
 ```
 Output MySQL:
 ```text
@@ -262,6 +314,10 @@ Subtracts the right expression from the left expression.
 ```go
 binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+`t`.`number` - ?
+```
 Output MySQL:
 ```text
 `t`.`number` - ?
@@ -279,6 +335,10 @@ Output SQLite:
 Returns the remainder of dividing the left expression by the right expression.
 ```go
 binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` % ?
 ```
 Output MySQL:
 ```text
@@ -298,6 +358,10 @@ Multiplies the left expression by the right expression.
 ```go
 binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+`t`.`number` * ?
+```
 Output MySQL:
 ```text
 `t`.`number` * ?
@@ -315,6 +379,10 @@ Output SQLite:
 Adds the left expression to the right expression.
 ```go
 binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` + ?
 ```
 Output MySQL:
 ```text
@@ -334,6 +402,10 @@ Performs a bitwise left shift on the left expression by the number of bits speci
 ```go
 binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+`t`.`number` << ?
+```
 Output MySQL:
 ```text
 `t`.`number` << ?
@@ -351,6 +423,10 @@ Output SQLite:
 Performs a bitwise right shift on the left expression by the number of bits specified in the right expression.
 ```go
 binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` >> ?
 ```
 Output MySQL:
 ```text
@@ -371,6 +447,10 @@ Creates a reference to a table column, optionally qualified with a table alias. 
 ```go
 column := uast.Column[string]("t", "string")
 ```
+Output MariaDB:
+```text
+`t`.`string`
+```
 Output MySQL:
 ```text
 `t`.`string`
@@ -390,6 +470,10 @@ Checks if the left expression falls within the range defined by `valueStart` and
 ```go
 comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
+Output MariaDB:
+```text
+`t`.`number` BETWEEN ? AND ?
+```
 Output MySQL:
 ```text
 `t`.`number` BETWEEN ? AND ?
@@ -407,6 +491,10 @@ Output SQLite:
 Compares two expressions for equality (`=`).
 ```go
 comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` = ?
 ```
 Output MySQL:
 ```text
@@ -426,6 +514,10 @@ Checks if the subquery returns any rows. Returns `true` if at least one row exis
 ```go
 comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
 ```
+Output MariaDB:
+```text
+EXISTS (SELECT 1 FROM `test` AS `t`)
+```
 Output MySQL:
 ```text
 EXISTS (SELECT 1 FROM `test` AS `t`)
@@ -443,6 +535,10 @@ EXISTS (SELECT 1 FROM "test" AS "t")
 Compares if the left expression is greater than the right expression (`>`).
 ```go
 comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` > ?
 ```
 Output MySQL:
 ```text
@@ -462,6 +558,10 @@ Compares if the left expression is greater than or equal to the right expression
 ```go
 comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+`t`.`number` >= ?
+```
 Output MySQL:
 ```text
 `t`.`number` >= ?
@@ -479,6 +579,10 @@ Output SQLite:
 Performs a case-insensitive pattern matching comparison. The right expression should contain a pattern with `%` (any sequence) and `_` (single character) wildcards.
 ```go
 comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+```
+Output MariaDB:
+```text
+LOWER(`t`.`string`) LIKE LOWER(?)
 ```
 Output MySQL:
 ```text
@@ -498,6 +602,10 @@ Checks if the left expression matches any value contained within the right expre
 ```go
 comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
+Output MariaDB:
+```text
+`t`.`string` IN (?, ?)
+```
 Output MySQL:
 ```text
 `t`.`string` IN (?, ?)
@@ -515,6 +623,10 @@ Output SQLite:
 Checks if the expression is not `NULL`.
 ```go
 comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+`t`.`string` IS NOT NULL
 ```
 Output MySQL:
 ```text
@@ -534,6 +646,10 @@ Checks if the expression is `NULL`.
 ```go
 comparison := uast.IsNull(uast.Column[string]("t", "string"))
 ```
+Output MariaDB:
+```text
+`t`.`string` IS NULL
+```
 Output MySQL:
 ```text
 `t`.`string` IS NULL
@@ -551,6 +667,10 @@ Output SQLite:
 Compares if the left expression is less than the right expression (`<`).
 ```go
 comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` < ?
 ```
 Output MySQL:
 ```text
@@ -570,6 +690,10 @@ Compares if the left expression is less than or equal to the right expression (`
 ```go
 comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+`t`.`number` <= ?
+```
 Output MySQL:
 ```text
 `t`.`number` <= ?
@@ -587,6 +711,10 @@ Output SQLite:
 Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
 ```go
 comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+```
+Output MariaDB:
+```text
+`t`.`string` LIKE ?
 ```
 Output MySQL:
 ```text
@@ -606,6 +734,10 @@ Checks if the left expression falls outside the range defined by `valueStart` an
 ```go
 comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
+Output MariaDB:
+```text
+`t`.`number` NOT BETWEEN ? AND ?
+```
 Output MySQL:
 ```text
 `t`.`number` NOT BETWEEN ? AND ?
@@ -623,6 +755,10 @@ Output SQLite:
 Compares two expressions for inequality (`!=` or `<>`).
 ```go
 comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+`t`.`number` != ?
 ```
 Output MySQL:
 ```text
@@ -642,6 +778,10 @@ Checks if the subquery returns no rows. Returns `true` if the subquery result is
 ```go
 comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
 ```
+Output MariaDB:
+```text
+NOT EXISTS (SELECT 1 FROM `test` AS `t`)
+```
 Output MySQL:
 ```text
 NOT EXISTS (SELECT 1 FROM `test` AS `t`)
@@ -659,6 +799,10 @@ NOT EXISTS (SELECT 1 FROM "test" AS "t")
 Performs a negated case-insensitive pattern matching comparison.
 ```go
 comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+```
+Output MariaDB:
+```text
+LOWER(`t`.`string`) NOT LIKE LOWER(?)
 ```
 Output MySQL:
 ```text
@@ -678,6 +822,10 @@ Checks if the left expression does not match any value contained within the righ
 ```go
 comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
+Output MariaDB:
+```text
+`t`.`string` NOT IN (?, ?)
+```
 Output MySQL:
 ```text
 `t`.`string` NOT IN (?, ?)
@@ -695,6 +843,10 @@ Output SQLite:
 Performs a negated case-sensitive pattern matching comparison.
 ```go
 comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+```
+Output MariaDB:
+```text
+`t`.`string` NOT LIKE ?
 ```
 Output MySQL:
 ```text
@@ -2803,6 +2955,10 @@ logical := uast.And(
     uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
 )
 ```
+Output MariaDB:
+```text
+(`t`.`string` = ? AND `t`.`number` > ?)
+```
 Output MySQL:
 ```text
 (`t`.`string` = ? AND `t`.`number` > ?)
@@ -2824,6 +2980,10 @@ logical := uast.Or(
     uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
 )
 ```
+Output MariaDB:
+```text
+(`t`.`string` = ? OR `t`.`number` > ?)
+```
 Output MySQL:
 ```text
 (`t`.`string` = ? OR `t`.`number` > ?)
@@ -2843,6 +3003,10 @@ Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows i
 ```go
 order := uast.Asc(uast.Column[string]("t", "string"))
 ```
+Output MariaDB:
+```text
+`t`.`string` ASC
+```
 Output MySQL:
 ```text
 `t`.`string` ASC
@@ -2860,6 +3024,10 @@ Output SQLite:
 Specifies descending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
 ```go
 order := uast.Desc(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+`t`.`string` DESC
 ```
 Output MySQL:
 ```text
@@ -2879,6 +3047,10 @@ Output SQLite:
 Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test").As("t")))
+```
+Output MariaDB:
+```text
+(SELECT `t`.`id` FROM `test` AS `t`)
 ```
 Output MySQL:
 ```text
@@ -2900,6 +3072,10 @@ Supported types: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`,
 ```go
 var data string = "ivan"
 value := uast.Value(data)
+```
+Output MariaDB:
+```text
+?
 ```
 Output MySQL:
 ```text

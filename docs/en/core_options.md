@@ -1030,6 +1030,11 @@ Returns the average (arithmetic mean) of all non-NULL values in the expression. 
 function := uast.Avg(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
 ```
+Output MariaDB:
+```text
+AVG(`t`.`number`)
+AVG(DISTINCT `t`.`number`)
+```
 Output MySQL:
 ```text
 AVG(`t`.`number`)
@@ -1051,6 +1056,11 @@ Returns the bitwise AND of all bits in the expression. Only meaningful for integ
 ```go
 function := uast.BitAnd(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
+```
+Output MariaDB:
+```text
+BIT_AND(`t`.`number`)
+BIT_AND(DISTINCT `t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -1074,6 +1084,11 @@ Returns the bitwise OR of all bits in the expression. Only meaningful for intege
 function := uast.BitOr(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
 ```
+Output MariaDB:
+```text
+BIT_OR(`t`.`number`)
+BIT_OR(DISTINCT `t`.`number`)
+```
 Output MySQL:
 ```text
 BIT_OR(`t`.`number`)
@@ -1095,6 +1110,11 @@ Returns the bitwise XOR of all bits in the expression. Only meaningful for integ
 ```go
 function := uast.BitXor(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
+```
+Output MariaDB:
+```text
+BIT_XOR(`t`.`number`)
+BIT_XOR(DISTINCT `t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -1118,6 +1138,11 @@ Returns the number of rows matching the query, or the number of non-NULL values 
 function := uast.Count(uast.Column[string]("t", "string"), false)
 functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
 ```
+Output MariaDB:
+```text
+COUNT(`t`.`string`)
+COUNT(DISTINCT `t`.`string`)
+```
 Output MySQL:
 ```text
 COUNT(`t`.`string`)
@@ -1139,6 +1164,11 @@ Concatenates values from a group into a single string, separated by a default de
 ```go
 function := uast.GroupConcat(uast.Column[string]("t", "string"), false)
 functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), true)
+```
+Output MariaDB:
+```text
+GROUP_CONCAT(`t`.`string` SEPARATOR ',')
+GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ',')
 ```
 Output MySQL:
 ```text
@@ -1162,6 +1192,11 @@ Returns the maximum value of the expression across all rows in the group.
 function := uast.Max(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
 ```
+Output MariaDB:
+```text
+MAX(`t`.`number`)
+MAX(DISTINCT `t`.`number`)
+```
 Output MySQL:
 ```text
 MAX(`t`.`number`)
@@ -1183,6 +1218,11 @@ Returns the minimum value of the expression across all rows in the group.
 ```go
 function := uast.Min(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
+```
+Output MariaDB:
+```text
+MIN(`t`.`number`)
+MIN(DISTINCT `t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -1206,6 +1246,11 @@ Returns the population standard deviation of the expression.
 function := uast.StdDev(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
 ```
+Output MariaDB:
+```text
+STDDEV(`t`.`number`)
+STDDEV(DISTINCT `t`.`number`)
+```
 Output MySQL:
 ```text
 STDDEV(`t`.`number`)
@@ -1228,6 +1273,11 @@ Returns the sum of all values in the expression. If `distinct` is `true`, sums o
 function := uast.Sum(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
 ```
+Output MariaDB:
+```text
+SUM(`t`.`number`)
+SUM(DISTINCT `t`.`number`)
+```
 Output MySQL:
 ```text
 SUM(`t`.`number`)
@@ -1249,6 +1299,11 @@ Returns the population variance of the expression.
 ```go
 function := uast.Variance(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
+```
+Output MariaDB:
+```text
+VARIANCE(`t`.`number`)
+VARIANCE(DISTINCT "t"."number")
 ```
 Output MySQL:
 ```text
@@ -1275,6 +1330,10 @@ function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
+Output MariaDB:
+```text
+FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
 Output MySQL:
 ```text
 FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -1295,6 +1354,10 @@ function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
 )
+```
+Output MariaDB:
+```text
+LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
 ```
 Output MySQL:
 ```text
@@ -1318,6 +1381,10 @@ function := uast.LastValue(uast.Column[string]("t", "string")).Over(
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
+Output MariaDB:
+```text
+LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+```
 Output MySQL:
 ```text
 LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
@@ -1338,6 +1405,10 @@ function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
 )
+```
+Output MariaDB:
+```text
+LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
 ```
 Output MySQL:
 ```text
@@ -1360,6 +1431,10 @@ function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
+```
+Output MariaDB:
+```text
+NTH_VALUE(`t`.`string`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 Output MySQL:
 ```text
@@ -1387,6 +1462,10 @@ pairs := uast.CaseIf(
 elseExpr := uast.CaseElse(uast.Value("new"))
 function := uast.Case(pairs, elseExpr)
 ```
+Output MariaDB:
+```text
+CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
+```
 Output MySQL:
 ```text
 CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
@@ -1404,6 +1483,10 @@ CASE WHEN "t"."number" < ? THEN ? ELSE ? END
 Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
 ```go
 function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+```
+Output MariaDB:
+```text
+COALESCE(`t`.`createat`, `t`.`updateat`)
 ```
 Output MySQL:
 ```text
@@ -1423,6 +1506,10 @@ Returns the largest value from the provided list of expressions.
 ```go
 function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
+Output MariaDB:
+```text
+GREATEST(`t`.`createat`, `t`.`updateat`)
+```
 Output MySQL:
 ```text
 GREATEST(`t`.`createat`, `t`.`updateat`)
@@ -1441,6 +1528,10 @@ Returns the smallest value from the provided list of expressions.
 ```go
 function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
+Output MariaDB:
+```text
+LEAST(`t`.`createat`, `t`.`updateat`)
+```
 Output MySQL:
 ```text
 LEAST(`t`.`createat`, `t`.`updateat`)
@@ -1458,6 +1549,10 @@ LEAST("t"."createat", "t"."updateat")
 Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
 ```go
 function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+```
+Output MariaDB:
+```text
+NULLIF(`t`.`createat`, `t`.`updateat`)
 ```
 Output MySQL:
 ```text
@@ -1478,6 +1573,10 @@ Converts an expression to a specified data type.
 ```go
 function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS CHAR)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS CHAR)
@@ -1495,6 +1594,10 @@ CAST("t"."number" AS TEXT)
 Returns the number of characters in a string expression.
 ```go
 function := uast.CharLength(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+CHAR_LENGTH(`t`.`string`)
 ```
 Output MySQL:
 ```text
@@ -1514,6 +1617,10 @@ Formats a datetime expression according to a specified format mask.
 ```go
 function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
 ```
+Output MariaDB:
+```text
+DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
+```
 Output MySQL:
 ```text
 DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
@@ -1531,6 +1638,10 @@ strftime("t"."createat", '%Y-%m-%d')
 Converts an angle from radians to degrees.
 ```go
 function := uast.Degrees(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+DEGREES(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -1550,6 +1661,10 @@ Returns the byte length of a string expression.
 ```go
 function := uast.Length(uast.Column[string]("t", "string"))
 ```
+Output MariaDB:
+```text
+LENGTH(`t`.`string`)
+```
 Output MySQL:
 ```text
 LENGTH(`t`.`string`)
@@ -1568,6 +1683,10 @@ Returns the starting position of the first occurrence of a substring within a st
 ```go
 function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
 ```
+Output MariaDB:
+```text
+POSITION(? IN `t`.`string`)
+```
 Output MySQL:
 ```text
 POSITION(? IN `t`.`string`)
@@ -1585,6 +1704,10 @@ POSITION(? IN "t"."string")
 Converts an angle from degrees to radians.
 ```go
 function := uast.Radians(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+RADIANS(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -1605,6 +1728,10 @@ Returns the current date (without time).
 ```go
 function := uast.CurDate()
 ```
+Output MariaDB:
+```text
+CURDATE()
+```
 Output MySQL:
 ```text
 CURDATE()
@@ -1622,6 +1749,10 @@ date('now')
 Returns the current time (without date).
 ```go
 function := uast.CurTime()
+```
+Output MariaDB:
+```text
+CURTIME()
 ```
 Output MySQL:
 ```text
@@ -1641,6 +1772,10 @@ Adds a time/date interval to a datetime expression and returns the resulting dat
 ```go
 function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
+Output MariaDB:
+```text
+DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
+```
 Output MySQL:
 ```text
 DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
@@ -1658,6 +1793,10 @@ datetime("t"."createat",  '+2 DAY')
 Returns the difference in days between two datetime expressions (`datetimeEnd` - `datetimeStart`).
 ```go
 function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+```
+Output MariaDB:
+```text
+DATEDIFF(`t`.`updateat`, `t`.`createat`)
 ```
 Output MySQL:
 ```text
@@ -1677,6 +1816,10 @@ Subtracts a time/date interval from a datetime expression and returns the result
 ```go
 function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
+Output MariaDB:
+```text
+DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
+```
 Output MySQL:
 ```text
 DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
@@ -1694,6 +1837,10 @@ datetime("t"."createat", '-2 DAY')
 Extracts the day of the month (1–31) from a datetime expression.
 ```go
 function := uast.Day(uast.Column[time.Time]("t", "createat"))
+```
+Output MariaDB:
+```text
+DAY(`t`.`createat`)
 ```
 Output MySQL:
 ```text
@@ -1713,6 +1860,10 @@ Returns the name of the weekday (e.g., 'Monday', 'Tuesday') for a given datetime
 ```go
 function := uast.DayName(uast.Column[time.Time]("t", "createat"))
 ```
+Output MariaDB:
+```text
+DAYNAME(`t`.`createat`)
+```
 Output MySQL:
 ```text
 DAYNAME(`t`.`createat`)
@@ -1730,6 +1881,10 @@ strftime('%w', "t"."createat")
 Extracts the hour (0–23) from a datetime expression.
 ```go
 function := uast.Hour(uast.Column[time.Time]("t", "createat"))
+```
+Output MariaDB:
+```text
+HOUR(`t`.`createat`)
 ```
 Output MySQL:
 ```text
@@ -1749,6 +1904,10 @@ Extracts the minute (0–59) from a datetime expression.
 ```go
 function := uast.Minute(uast.Column[time.Time]("t", "createat"))
 ```
+Output MariaDB:
+```text
+MINUTE(`t`.`createat`)
+```
 Output MySQL:
 ```text
 MINUTE(`t`.`createat`)
@@ -1766,6 +1925,10 @@ MINUTE("t"."createat")
 Extracts the month (1–12) from a datetime expression.
 ```go
 function := uast.Month(uast.Column[time.Time]("t", "createat"))
+```
+Output MariaDB:
+```text
+MONTH(`t`.`createat`)
 ```
 Output MySQL:
 ```text
@@ -1785,6 +1948,10 @@ Returns the name of the month (e.g., 'January', 'February') for a given datetime
 ```go
 function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
 ```
+Output MariaDB:
+```text
+MONTHNAME(`t`.`createat`)
+```
 Output MySQL:
 ```text
 MONTHNAME(`t`.`createat`)
@@ -1802,6 +1969,10 @@ strftime('%m', "t"."createat")
 Returns the current date and time.
 ```go
 function := uast.Now()
+```
+Output MariaDB:
+```text
+NOW()
 ```
 Output MySQL:
 ```text
@@ -1821,6 +1992,10 @@ Extracts the quarter (1–4) from a datetime expression.
 ```go
 function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
 ```
+Output MariaDB:
+```text
+QUARTER(`t`.`createat`)
+```
 Output MySQL:
 ```text
 QUARTER(`t`.`createat`)
@@ -1838,6 +2013,10 @@ QUARTER("t"."createat")
 Extracts the second (0–59) from a datetime expression.
 ```go
 function := uast.Second(uast.Column[time.Time]("t", "createat"))
+```
+Output MariaDB:
+```text
+SECOND(`t`.`createat`)
 ```
 Output MySQL:
 ```text
@@ -1857,6 +2036,10 @@ Adds a time interval to a time/datetime expression and returns the resulting tim
 ```go
 function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
+Output MariaDB:
+```text
+TIME_ADD(`t`.`createat`, '2 HOUR')
+```
 Output MySQL:
 ```text
 TIME_ADD(`t`.`createat`, '2 HOUR')
@@ -1874,6 +2057,10 @@ time("t"."createat", '+2 HOUR')
 Returns the difference between two time/datetime expressions (`timeEnd` - `timeStart`).
 ```go
 function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+```
+Output MariaDB:
+```text
+TIMEDIFF(`t`.`updateat`, `t`.`createat`)
 ```
 Output MySQL:
 ```text
@@ -1893,6 +2080,10 @@ Subtracts a time interval from a time/datetime expression and returns the result
 ```go
 function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
+Output MariaDB:
+```text
+TIME_SUB(`t`.`createat`, '2 HOUR')
+```
 Output MySQL:
 ```text
 TIME_SUB(`t`.`createat`, '2 HOUR')
@@ -1911,6 +2102,10 @@ Extracts the week number (1–53) from a datetime expression.
 ```go
 function := uast.Week(uast.Column[time.Time]("t", "createat"))
 ```
+Output MariaDB:
+```text
+WEEK(`t`.`createat`)
+```
 Output MySQL:
 ```text
 WEEK(`t`.`createat`)
@@ -1928,6 +2123,10 @@ WEEK("t"."createat")
 Extracts the year from a datetime expression.
 ```go
 function := uast.Year(uast.Column[time.Time]("t", "createat"))
+```
+Output MariaDB:
+```text
+YEAR(`t`.`createat`)
 ```
 Output MySQL:
 ```text
@@ -1952,6 +2151,10 @@ function := uast.JsonArray(
     uast.Value("val2"),
 )
 ```
+Output MariaDB:
+```text
+JSON_ARRAY(`t`.`json`, ?, ?)
+```
 Output MySQL:
 ```text
 JSON_ARRAY(`t`.`json`, ?, ?)
@@ -1971,6 +2174,10 @@ Aggregates values from a group into a JSON array.
 function := uast.JsonArrayAgg(
     uast.Column[string]("t", "json"),
 )
+```
+Output MariaDB:
+```text
+JSON_ARRAYAGG(`t`.`json`)
 ```
 Output MySQL:
 ```text
@@ -1992,6 +2199,10 @@ function := uast.JsonContains(
     uast.Column[string]("t", "json"),
     uast.Value(`{"key":"val"}`),
 )
+```
+Output MariaDB:
+```text
+JSON_CONTAINS(`t`.`json`, '{"key":"val"}')
 ```
 Output MySQL:
 ```text
@@ -2021,6 +2232,10 @@ function := JsonExtract(
     uast.TypeString,
 )
 ```
+Output MariaDB:
+```text
+(`t`.`json` ->> '$.parent[0].child')
+```
 Output MySQL:
 ```text
 (`t`.`json` ->> '$.parent[0].child')
@@ -2044,6 +2259,10 @@ function := uast.JsonObject(
     ),
 )
 ```
+Output MariaDB:
+```text
+JSON_OBJECT('key', COUNT(`t`.`json`))
+```
 Output MySQL:
 ```text
 JSON_OBJECT('key', COUNT(`t`.`json`))
@@ -2064,6 +2283,10 @@ function := uast.JsonObjectAgg(
     uast.Column[string]("t", "json"),
     uast.Column[int]("t", "number"),
 )
+```
+Output MariaDB:
+```text
+JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -2094,6 +2317,10 @@ function := uast.JsonRemove(
         ),
     ),
 )
+```
+Output MariaDB:
+```text
+JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
 ```
 Output MySQL:
 ```text
@@ -2127,6 +2354,10 @@ function := uast.JsonSet(
     ),
 )
 ```
+Output MariaDB:
+```text
+JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
+```
 Output MySQL:
 ```text
 JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
@@ -2144,6 +2375,10 @@ JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)
 Returns the JSON type of a JSON value (e.g., 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
 ```go
 function := uast.JsonType(uast.Column[string]("t", "json"))
+```
+Output MariaDB:
+```text
+JSON_TYPE(`t`.`json`)
 ```
 Output MySQL:
 ```text
@@ -2164,6 +2399,10 @@ Returns the absolute (non-negative) value of a numeric expression.
 ```go
 function := uast.Abs(uast.Column[int]("t", "number"))
 ```
+Output MariaDB:
+```text
+ABS(`t`.`number`)
+```
 Output MySQL:
 ```text
 ABS(`t`.`number`)
@@ -2181,6 +2420,10 @@ ABS("t"."number")
 Returns the arc cosine (inverse cosine) of the expression, in radians.
 ```go
 function := uast.ACos(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+ACOS(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -2200,6 +2443,10 @@ Returns the arc sine (inverse sine) of the expression, in radians.
 ```go
 function := uast.ASin(uast.Column[int]("t", "number"))
 ```
+Output MariaDB:
+```text
+ASIN(`t`.`number`)
+```
 Output MySQL:
 ```text
 ASIN(`t`.`number`)
@@ -2217,6 +2464,10 @@ ASIN("t"."number")
 Returns the arc tangent (inverse tangent) of the expression, in radians.
 ```go
 function := uast.ATan(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+ATAN(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -2236,6 +2487,10 @@ Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using th
 ```go
 function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
 ```
+Output MariaDB:
+```text
+ATAN2(`t`.`y`, `t`.`x`)
+```
 Output MySQL:
 ```text
 ATAN2(`t`.`y`, `t`.`x`)
@@ -2253,6 +2508,10 @@ ATAN2("t"."y", "t"."x")
 Returns the cube root of a numeric expression.
 ```go
 function := uast.Cbrt(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+CBRT(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -2272,6 +2531,10 @@ Returns the smallest integer value not less than the argument (rounds up).
 ```go
 function := uast.Ceil(uast.Column[int]("t", "number"))
 ```
+Output MariaDB:
+```text
+CEILING(`t`.`number`)
+```
 Output MySQL:
 ```text
 CEILING(`t`.`number`)
@@ -2289,6 +2552,10 @@ CEIL("t"."number")
 Returns the cosine of the expression, where the expression is in radians.
 ```go
 function := uast.Cos(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+COS(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -2308,6 +2575,10 @@ Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
 ```go
 function := uast.Exp(uast.Column[int]("t", "number"))
 ```
+Output MariaDB:
+```text
+EXP(`t`.`number`)
+```
 Output MySQL:
 ```text
 EXP(`t`.`number`)
@@ -2325,6 +2596,10 @@ EXP("t"."number")
 Returns the largest integer value not greater than the argument (rounds down).
 ```go
 function := uast.Floor(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+FLOOR(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -2344,6 +2619,10 @@ Returns the natural logarithm (base `e`) of the expression.
 ```go
 function := uast.Ln(uast.Column[int]("t", "number"))
 ```
+Output MariaDB:
+```text
+LN(`t`.`number`)
+```
 Output MySQL:
 ```text
 LN(`t`.`number`)
@@ -2361,6 +2640,10 @@ LN("t"."number")
 Returns the logarithm of the expression to the specified base.
 ```go
 function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+LOG(`t`.`number`, ?)
 ```
 Output MySQL:
 ```text
@@ -2380,6 +2663,10 @@ Returns the remainder (modulo) of the division of the first expression by the se
 ```go
 function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+MOD(`t`.`number`, ?)
+```
 Output MySQL:
 ```text
 MOD(`t`.`number`, ?)
@@ -2397,6 +2684,10 @@ MOD("t"."number", ?)
 Returns the mathematical constant `p` (~3.14159).
 ```go
 function := uast.Pi()
+```
+Output MariaDB:
+```text
+PI()
 ```
 Output MySQL:
 ```text
@@ -2416,6 +2707,10 @@ Returns the expression raised to the power of the exponent.
 ```go
 function := uast.Power(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+POWER(`t`.`number`, ?)
+```
 Output MySQL:
 ```text
 POWER(`t`.`number`, ?)
@@ -2433,6 +2728,10 @@ POWER("t"."number", ?)
 Returns a random floating-point value in the range [0, 1].
 ```go
 function := uast.Rand()
+```
+Output MariaDB:
+```text
+RAND()
 ```
 Output MySQL:
 ```text
@@ -2452,6 +2751,10 @@ Rounds the expression to the specified number of decimal places.
 ```go
 function := uast.Round(uast.Column[int]("t", "number"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+ROUND(`t`.`number`, ?)
+```
 Output MySQL:
 ```text
 ROUND(`t`.`number`, ?)
@@ -2469,6 +2772,10 @@ ROUND("t"."number", ?)
 Returns the sine of the expression, where the expression is in radians.
 ```go
 function := uast.Sin(uast.Column[int]("t", "number"))
+```
+Output MariaDB:
+```text
+SIN(`t`.`number`)
 ```
 Output MySQL:
 ```text
@@ -2488,6 +2795,10 @@ Returns the square root of the expression.
 ```go
 function := uast.Sqrt(uast.Column[int]("t", "number"))
 ```
+Output MariaDB:
+```text
+SQRT(`t`.`number`)
+```
 Output MySQL:
 ```text
 SQRT(`t`.`number`)
@@ -2506,6 +2817,10 @@ Returns the tangent of the expression, where the expression is in radians.
 ```go
 function := uast.Tan(uast.Column[int]("t", "number"))
 ```
+Output MariaDB:
+```text
+TAN(`t`.`number`)
+```
 Output MySQL:
 ```text
 TAN(`t`.`number`)
@@ -2523,6 +2838,10 @@ TAN("t"."number")
 Truncates the numeric expression to the specified number of decimal places (without rounding).
 ```go
 function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
+```
+Output MariaDB:
+```text
+TRUNCATE(`t`.`number`, ?)
 ```
 Output MySQL:
 ```text
@@ -2546,6 +2865,10 @@ function := uast.CumeDist().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
+Output MariaDB:
+```text
+CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
 Output MySQL:
 ```text
 CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -2566,6 +2889,10 @@ function := uast.DenseRank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
+```
+Output MariaDB:
+```text
+DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MySQL:
 ```text
@@ -2588,6 +2915,10 @@ function := uast.NTile(2).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
+Output MariaDB:
+```text
+NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
 Output MySQL:
 ```text
 NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -2608,6 +2939,10 @@ function := uast.PercentRank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
+```
+Output MariaDB:
+```text
+PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MySQL:
 ```text
@@ -2630,6 +2965,10 @@ function := uast.Rank().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
+Output MariaDB:
+```text
+RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
 Output MySQL:
 ```text
 RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -2651,6 +2990,10 @@ function := uast.RowNumber().Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
+Output MariaDB:
+```text
+ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
 Output MySQL:
 ```text
 ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -2670,6 +3013,10 @@ Concatenates two or more string expressions into a single string. `NULL` argumen
 ```go
 function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
+Output MariaDB:
+```text
+CONCAT(`t`.`string`, ?, ?)
+```
 Output MySQL:
 ```text
 CONCAT(`t`.`string`, ?, ?)
@@ -2687,6 +3034,10 @@ CONCAT("t"."string", ?, ?)
 Concatenates two or more string expressions with a specified separator between them. Skips `NULL` arguments.
 ```go
 function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
+```
+Output MariaDB:
+```text
+CONCAT_WS(?, `t`.`string`, ?, ?)
 ```
 Output MySQL:
 ```text
@@ -2706,6 +3057,10 @@ Returns the leftmost `count` characters from a string expression.
 ```go
 function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+LEFT(`t`.`string`, ?)
+```
 Output MySQL:
 ```text
 LEFT(`t`.`string`, ?)
@@ -2723,6 +3078,10 @@ LEFT("t"."string", ?)
 Converts a string expression to lowercase.
 ```go
 function := uast.Lower(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+LOWER(`t`.`string`)
 ```
 Output MySQL:
 ```text
@@ -2742,6 +3101,10 @@ Left-pads a string expression with the specified separator to a total length of 
 ```go
 function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
+Output MariaDB:
+```text
+LPAD(`t`.`string`, ?, ?)
+```
 Output MySQL:
 ```text
 LPAD(`t`.`string`, ?, ?)
@@ -2759,6 +3122,10 @@ LPAD("t"."string", ?, ?)
 Removes leading spaces from a string expression.
 ```go
 function := uast.LTrim(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+LTRIM(`t`.`string`)
 ```
 Output MySQL:
 ```text
@@ -2778,6 +3145,10 @@ Repeats a string expression `count` times.
 ```go
 function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
 ```
+Output MariaDB:
+```text
+REPEAT(`t`.`string`, ?)
+```
 Output MySQL:
 ```text
 REPEAT(`t`.`string`, ?)
@@ -2795,6 +3166,10 @@ REPEAT("t"."string", ?)
 Replaces all occurrences of a substring in a string with a new substring.
 ```go
 function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+```
+Output MariaDB:
+```text
+REPLACE(`t`.`string`, ?, ?)
 ```
 Output MySQL:
 ```text
@@ -2814,6 +3189,10 @@ Reverses the characters in a string expression.
 ```go
 function := uast.Reverse(uast.Column[string]("t", "string"))
 ```
+Output MariaDB:
+```text
+REVERSE(`t`.`string`)
+```
 Output MySQL:
 ```text
 REVERSE(`t`.`string`)
@@ -2831,6 +3210,10 @@ REVERSE("t"."string")
 Returns the rightmost `count` characters from a string expression.
 ```go
 function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
+```
+Output MariaDB:
+```text
+RIGHT(`t`.`string`, ?)
 ```
 Output MySQL:
 ```text
@@ -2850,6 +3233,10 @@ Right-pads a string expression with the specified separator to a total length of
 ```go
 function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
+Output MariaDB:
+```text
+RPAD(`t`.`string`, ?, ?)
+```
 Output MySQL:
 ```text
 RPAD(`t`.`string`, ?, ?)
@@ -2867,6 +3254,10 @@ RPAD("t"."string", ?, ?)
 Removes trailing spaces from a string expression.
 ```go
 function := uast.RTrim(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+RTRIM(`t`.`string`)
 ```
 Output MySQL:
 ```text
@@ -2886,6 +3277,10 @@ Extracts a substring from a string expression starting at `startPos` (1-based) f
 ```go
 function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
+Output MariaDB:
+```text
+SUBSTRING(`t`.`string`, ?, ?)
+```
 Output MySQL:
 ```text
 SUBSTRING(`t`.`string`, ?, ?)
@@ -2904,6 +3299,10 @@ Removes both leading and trailing spaces from a string expression.
 ```go
 function := uast.Trim(uast.Column[string]("t", "string"))
 ```
+Output MariaDB:
+```text
+TRIM(`t`.`string`)
+```
 Output MySQL:
 ```text
 TRIM(`t`.`string`)
@@ -2921,6 +3320,10 @@ TRIM("t"."string")
 Converts a string expression to uppercase.
 ```go
 function := uast.Upper(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+UPPER(`t`.`string`)
 ```
 Output MySQL:
 ```text

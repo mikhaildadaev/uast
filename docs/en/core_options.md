@@ -21,6 +21,7 @@ ARRAY[?, ?, ?]
 Output PostgreSQL:
 ```text
 ARRAY[$1, $2, $3]
+```
 Output SQLite:
 ```text
 ARRAY[?, ?, ?]

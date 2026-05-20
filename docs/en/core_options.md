@@ -1342,7 +1342,7 @@ Output PostgreSQL:
 ```
 Output SQLite:
 ```text
-datetime(`t`.`createat`,  '+2 DAY')
+datetime("t"."createat",  '+2 DAY')
 ```
 
 #### DateDiff
@@ -1594,7 +1594,7 @@ Output PostgreSQL:
 ```
 Output SQLite:
 ```text
-time(`t`.`createat`, '-2 HOUR')
+time("t"."createat", '-2 HOUR')
 ```
 
 #### Week

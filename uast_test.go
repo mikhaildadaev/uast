@@ -821,6 +821,57 @@ func Test_Core_Function(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
+func Test_Core_Join(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Test.Column.ID,
+			).
+			Join(
+				Cross(Test1.Table),
+				Full(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+				FullOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+				Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+				Left(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+				LeftOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+				Right(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+				RightOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "CROSS JOIN `test1` AS `t1`", "CROSS")
+			assertContains(t, sqlSelectQuery, "FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL")
+			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL OUTER")
+			assertContains(t, sqlSelectQuery, "INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "INNER")
+			assertContains(t, sqlSelectQuery, "LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT")
+			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT OUTER")
+			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT")
+			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT OUTER")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `CROSS JOIN "test1" AS "t1"`, "CROSS")
+			assertContains(t, sqlSelectQuery, `FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL")
+			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL OUTER")
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER")
+			assertContains(t, sqlSelectQuery, `LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT")
+			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT OUTER")
+			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT")
+			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT OUTER")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `CROSS JOIN "test1" AS "t1"`, "CROSS")
+			assertContains(t, sqlSelectQuery, `FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL")
+			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL OUTER")
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER")
+			assertContains(t, sqlSelectQuery, `LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT")
+			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT OUTER")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
 func Test_Core_Literal(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
@@ -1005,7 +1056,8 @@ func Test_Delete_Join(t *testing.T) {
 			assertContains(t, sqlDeleteQuery, `USING "test1" AS "t1", "test2" AS "t2"`, "USING LIST")
 			assertContains(t, sqlDeleteQuery, `"t1"."id" = "t"."id" AND "t2"."id" = "t"."id"`, "USING CONDITION")
 		case DialectSQLite:
-			// Дописать ограничения
+			assertContains(t, sqlDeleteQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER JOIN")
+			assertContains(t, sqlDeleteQuery, `LEFT JOIN "test2" AS "t2" ON "t2"."id" = "t"."id"`, "LEFT JOIN")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -1342,37 +1394,16 @@ func Test_Select_Join(t *testing.T) {
 				Test.Column.ID,
 			).
 			Join(
-				Cross(Test1.Table),
-				Full(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				FullOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
 				Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				Left(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				LeftOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				Right(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				RightOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "CROSS JOIN `test1` AS `t1`", "CROSS")
-			assertContains(t, sqlSelectQuery, "FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL")
-			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL OUTER")
 			assertContains(t, sqlSelectQuery, "INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "INNER")
-			assertContains(t, sqlSelectQuery, "LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT")
-			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT OUTER")
-			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT")
-			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT OUTER")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `CROSS JOIN "test1" AS "t1"`, "CROSS")
-			assertContains(t, sqlSelectQuery, `FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL")
-			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL OUTER")
 			assertContains(t, sqlSelectQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER")
-			assertContains(t, sqlSelectQuery, `LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT")
-			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT OUTER")
-			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT")
-			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT OUTER")
 		case DialectSQLite:
-			// Дописать ограничения
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1623,7 +1654,7 @@ func Test_Update_Join(t *testing.T) {
 		case DialectPostgreSQL:
 			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "UPDATE")
 		case DialectSQLite:
-			// Дописать ограничения
+			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "UPDATE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})

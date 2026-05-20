@@ -24,6 +24,10 @@ Output PostgreSQL:
 ```text
 DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ```
+Output SQLite:
+```text
+DELETE FROM "test" AS "t" WHERE "t"."string" = ?
+```
 
 ## NewInsert
 Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source`, `Values`, `With`.
@@ -42,6 +46,10 @@ Output PostgreSQL:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
 ```
+Output SQLite:
+```text
+INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
+```
 
 ## NewSelect
 Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
@@ -56,6 +64,10 @@ Output MySQL:
 SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output PostgreSQL:
+```text
+SELECT "t"."string" FROM "test" AS "t"
+```
+Output SQLite:
 ```text
 SELECT "t"."string" FROM "test" AS "t"
 ```
@@ -78,4 +90,8 @@ UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 Output PostgreSQL:
 ```text
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
+```
+Output SQLite:
+```text
+UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
 ```

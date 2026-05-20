@@ -34,3 +34,7 @@ Output PostgreSQL:
 ```text
 SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
 ```
+Output SQLite:
+```text
+SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
+```

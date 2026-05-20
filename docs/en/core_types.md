@@ -22,6 +22,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS BYTEA)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS BLOB)
+```
 
 ### TypeVarBinary
 Variable-length binary string.
@@ -35,6 +39,10 @@ CAST(`t`.`number` AS VARBINARY)
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS BYTEA)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS BLOB)
 ```
 
 ## Datetime
@@ -51,6 +59,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS DATE)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeDateTime
 Represents a combined date and time value.
@@ -64,6 +76,10 @@ CAST(`t`.`number` AS DATETIME)
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS TIMESTAMP)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
 ```
 
 ### TypeTime
@@ -79,6 +95,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS TIME)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeTimestamp
 Represents a timestamp value.
@@ -92,6 +112,10 @@ CAST(`t`.`number` AS TIMESTAMP)
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS TIMESTAMPTZ)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
 ```
 
 ## Numeric
@@ -108,6 +132,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS BIGINT)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
+```
 
 ### TypeDecimal
 Fixed-point decimal number.
@@ -121,6 +149,10 @@ CAST(`t`.`number` AS DECIMAL)
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS DECIMAL)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS REAL)
 ```
 
 ### TypeDouble
@@ -136,6 +168,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS DOUBLE PRECISION)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS REAL)
+```
 
 ### TypeFloat
 Single-precision floating-point number.
@@ -147,6 +183,10 @@ Output MySQL:
 CAST(`t`.`number` AS DECIMAL)
 ```
 Output PostgreSQL:
+```text
+CAST("t"."number" AS REAL)
+```
+Output SQLite:
 ```text
 CAST("t"."number" AS REAL)
 ```
@@ -164,6 +204,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS INTEGER)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
+```
 
 ### TypeSmallInt
 Small integer type.
@@ -177,6 +221,10 @@ CAST(`t`.`number` AS SIGNED)
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS SMALLINT)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
 ```
 
 ## String
@@ -193,6 +241,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS CHAR)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeString
 Variable-length character string.
@@ -207,6 +259,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS VARCHAR)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeText
 Variable-length text string.
@@ -218,6 +274,10 @@ Output MySQL:
 CAST(`t`.`number` AS TEXT)
 ```
 Output PostgreSQL:
+```text
+CAST("t"."number" AS TEXT)
+```
+Output SQLite:
 ```text
 CAST("t"."number" AS TEXT)
 ```
@@ -235,6 +295,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS VARCHAR)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ## Special
 ### TypeArray
@@ -250,6 +314,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS ARRAY)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeBoolean
 Represents a boolean (true/false) type.
@@ -263,6 +331,10 @@ CAST(`t`.`number` AS TINYINT(1))
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS BOOLEAN)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
 ```
 
 ### TypeJSON
@@ -278,6 +350,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS JSONB)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeUUID
 Represents a universally unique identifier (UUID).
@@ -292,6 +368,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS UUID)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeXML
 Represents an XML data type.
@@ -305,4 +385,8 @@ CAST(`t`.`number` AS TEXT)
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS XML)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
 ```

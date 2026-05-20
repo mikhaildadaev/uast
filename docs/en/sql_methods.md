@@ -29,6 +29,10 @@ Output PostgreSQL:
 ```text
 DELETE FROM "test" AS "t" USING "test1" AS "t1", "test2" AS "t2" WHERE "t1"."id" = "t"."id" AND "t2"."id" = "t"."id" AND "t"."string" = $1
 ```
+Output SQLite:
+```text
+...
+```
 
 ### Returning
 Adds a RETURNING clause to return deleted rows. Supported by PostgreSQL. MySQL does not support this clause natively.
@@ -49,6 +53,10 @@ Output PostgreSQL:
 ```text
 DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id"
 ```
+Output SQLite:
+```text
+DELETE FROM "test" AS "t" WHERE "t"."string" = ? RETURNING "t"."id"
+```
 
 ### Where
 Adds a WHERE clause to filter rows for deletion. Accepts comparison expressions, logical operators, and subqueries.
@@ -65,6 +73,10 @@ DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
 Output PostgreSQL:
 ```text
 DELETE FROM "test" AS "t" WHERE "t"."string" = $1
+```
+Output SQLite:
+```text
+DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ```
 
 ### With
@@ -94,6 +106,10 @@ Output PostgreSQL:
 ```text
 WITH cte_nr AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1) DELETE FROM "test" AS "t" WHERE "t"."id" IN (SELECT "cte_nr"."id" FROM "test" AS "t")
 ```
+Output SQLite:
+```text
+WITH cte_nr AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = ?) DELETE FROM "test" AS "t" WHERE "t"."id" IN (SELECT "cte_nr"."id" FROM "test" AS "t")
+```
 
 ## stmtInsert
 ### Returning
@@ -115,6 +131,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) RETURNING "t"."id"
+```
+Output SQLite:
+```text
+INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) RETURNING "t"."id"
 ```
 
 ### Source
@@ -139,6 +159,10 @@ Output PostgreSQL:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = $1
 ```
+Output SQLite:
+```text
+INSERT INTO "test" AS "t" ("string", "number") SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = ?
+```
 
 ### Values
 Specifies values for insertion using `Pair` to associate columns with values. Columns are automatically inferred from the pairs.
@@ -156,6 +180,10 @@ INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 Output PostgreSQL:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
+```
+Output SQLite:
+```text
+INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
 ```
 
 ### With
@@ -191,6 +219,10 @@ Output PostgreSQL:
 ```text
 WITH "cte_nr" ("id", "string") AS (SELECT "t1"."id", "t1"."string" FROM "test1" AS "t1" WHERE "t1"."string" = $1) INSERT INTO "test" AS "t" ("id", "string") SELECT "cte_nr"."id", "cte_nr"."string" FROM "cte_nr" AS "ctenr"
 ```
+Output SQLite:
+```text
+WITH "cte_nr" ("id", "string") AS (SELECT "t1"."id", "t1"."string" FROM "test1" AS "t1" WHERE "t1"."string" = ?) INSERT INTO "test" AS "t" ("id", "string") SELECT "cte_nr"."id", "cte_nr"."string" FROM "cte_nr" AS "ctenr"
+```
 
 ## stmtSelect
 ### Distinct
@@ -207,6 +239,10 @@ Output MySQL:
 SELECT DISTINCT `t`.`id` FROM `test` AS `t`
 ```
 Output PostgreSQL:
+```text
+SELECT DISTINCT "t"."id" FROM "test" AS "t"
+```
+Output SQLite:
 ```text
 SELECT DISTINCT "t"."id" FROM "test" AS "t"
 ```
@@ -231,6 +267,10 @@ Output PostgreSQL:
 ```text
 SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string"
 ```
+Output SQLite:
+```text
+SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string"
+```
 
 ### GroupBy
 Adds a GROUP BY clause to group rows by specified columns or expressions.
@@ -249,6 +289,10 @@ Output MySQL:
 SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string`
 ```
 Output PostgreSQL:
+```text
+SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string"
+```
+Output SQLite:
 ```text
 SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string"
 ```
@@ -275,6 +319,10 @@ SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.
 Output PostgreSQL:
 ```text
 SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > $1
+```
+Output SQLite:
+```text
+SELECT "t"."string", COUNT("t"."id") AS "count" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > ?
 ```
 
 ### Join
@@ -303,6 +351,10 @@ Output PostgreSQL:
 ```text
 SELECT "t"."id" FROM "test" AS "t" CROSS JOIN "test1" AS "t1" FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
+Output SQLite:
+```text
+...
+```
 
 ### Limit
 Limits the number of rows returned by the query.
@@ -320,6 +372,10 @@ SELECT `t`.`id` FROM `test` AS `t` LIMIT ?
 Output PostgreSQL:
 ```text
 SELECT "t"."id" FROM "test" AS "t" LIMIT $1
+```
+Output SQLite:
+```text
+SELECT "t"."id" FROM "test" AS "t" LIMIT ?
 ```
 
 ### Offset
@@ -339,6 +395,10 @@ Output PostgreSQL:
 ```text
 SELECT "t"."id" FROM "test" AS "t" OFFSET $1
 ```
+Output SQLite:
+```text
+SELECT "t"."id" FROM "test" AS "t" OFFSET ?
+```
 
 ### OrderBy
 Adds an ORDER BY clause to sort results by specified columns or expressions in ascending or descending order.
@@ -356,6 +416,10 @@ Output MySQL:
 SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`string`
 ```
 Output PostgreSQL:
+```text
+SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string"
+```
+Output SQLite:
 ```text
 SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."string"
 ```
@@ -407,6 +471,10 @@ Output PostgreSQL:
 ```text
 WITH RECURSIVE "cte_re" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1 UNION ALL SELECT "t"."id" FROM "test" AS "t" INNER JOIN "cte_re" AS "ctere" ON "t"."id" = "ctere"."id") SELECT "t"."string" FROM "test" AS "t" UNION SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "t"."string" FROM "test" AS "t" EXCEPT SELECT "t"."string" FROM "test" AS "t" INTERSECT SELECT "t"."string" FROM "test" AS "t"
 ```
+Output SQLite:
+```text
+WITH RECURSIVE "cte_re" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ? UNION ALL SELECT "t"."id" FROM "test" AS "t" INNER JOIN "cte_re" AS "ctere" ON "t"."id" = "ctere"."id") SELECT "t"."string" FROM "test" AS "t" UNION SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "t"."string" FROM "test" AS "t" EXCEPT SELECT "t"."string" FROM "test" AS "t" INTERSECT SELECT "t"."string" FROM "test" AS "t"
+```
 
 ### Where
 Adds a WHERE clause to filter rows before grouping or aggregation.
@@ -426,6 +494,10 @@ SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?
 Output PostgreSQL:
 ```text
 SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1
+```
+Output SQLite:
+```text
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = ?
 ```
 
 ### With
@@ -461,6 +533,10 @@ Output PostgreSQL:
 ```text
 WITH "cte_nr" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1) SELECT "t"."id", "t"."number" FROM "test" AS "t" INNER JOIN "cte_nr" AS "ctenr" ON "t"."id" = "ctenr"."id"
 ```
+Output SQLite:
+```text
+WITH "cte_nr" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = ?) SELECT "t"."id", "t"."number" FROM "test" AS "t" INNER JOIN "cte_nr" AS "ctenr" ON "t"."id" = "ctenr"."id"
+```
 
 ## stmtUpdate
 ### Join
@@ -485,6 +561,10 @@ Output PostgreSQL:
 ```text
 UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" SET "t"."string" = $1 WHERE "t1"."string" = $2
 ```
+Output SQLite:
+```text
+...
+```
 
 ### Returning
 Adds a RETURNING clause to return updated rows. Supported by PostgreSQL.
@@ -508,6 +588,10 @@ Output PostgreSQL:
 ```text
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"."id"
 ```
+Output SQLite:
+```text
+UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ? RETURNING "t"."id"
+```
 
 ### Set
 Specifies columns and their new values using `Assign` to associate columns with values. Supports multiple pairs for updating multiple columns.
@@ -528,6 +612,10 @@ Output PostgreSQL:
 ```text
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 ```
+Output SQLite:
+```text
+UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
+```
 
 ### Where
 Adds a WHERE clause to filter rows for updating.
@@ -547,6 +635,10 @@ UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 Output PostgreSQL:
 ```text
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
+```
+Output SQLite:
+```text
+UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
 ```
 
 ### With
@@ -578,4 +670,8 @@ WITH `cte_nr` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) UPD
 Output PostgreSQL:
 ```text
 WITH "cte_nr" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = $1) UPDATE "test" AS "t" SET "t"."string" = $2 WHERE "t"."id" IN (SELECT "cte_nr"."id" FROM "test" AS "t")
+```
+Output SQLite:
+```text
+WITH "cte_nr" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."string" = ?) UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."id" IN (SELECT "cte_nr"."id" FROM "test" AS "t")
 ```

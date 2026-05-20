@@ -68,6 +68,8 @@ func Test_Core_Array(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "ARRAY INT")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `($1, $2, $3)`, "ARRAY INT")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `(?, ?, ?)`, "ARRAY INT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -120,6 +122,17 @@ func Test_Core_Binary(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `"t"."number" + $1`, "BINARY PLUS")
 			assertContains(t, sqlSelectQuery, `"t"."number" << $1`, "BINARY SHIFT LEFT")
 			assertContains(t, sqlSelectQuery, `"t"."number" >> $1`, "BINARY SHIFT RIGHT")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `"t"."number" & ?`, "BINARY BITWISE AND")
+			assertContains(t, sqlSelectQuery, `"t"."number" | ?`, "BINARY BITWISE OR")
+			assertContains(t, sqlSelectQuery, `"t"."number" ^ ?`, "BINARY BITWISE XOR")
+			assertContains(t, sqlSelectQuery, `"t"."number" / ?`, "BINARY DIVIDE")
+			assertContains(t, sqlSelectQuery, `"t"."number" - ?`, "BINARY MINUS")
+			assertContains(t, sqlSelectQuery, `"t"."number" % ?`, "BINARY MODULO")
+			assertContains(t, sqlSelectQuery, `"t"."number" * ?`, "BINARY MULTIPLY")
+			assertContains(t, sqlSelectQuery, `"t"."number" + ?`, "BINARY PLUS")
+			assertContains(t, sqlSelectQuery, `"t"."number" << ?`, "BINARY SHIFT LEFT")
+			assertContains(t, sqlSelectQuery, `"t"."number" >> ?`, "BINARY SHIFT RIGHT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -139,6 +152,8 @@ func Test_Core_Column(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "`t`.`id`", "COLUMN ID")
 		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `"t"."id"`, "COLUMN ID")
+		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `"t"."id"`, "COLUMN ID")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
@@ -215,6 +230,25 @@ func Test_Core_Comparison(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT ILIKE $1`, "COMPARISON NOT ILIKE")
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT IN ($1, $2)`, "COMPARISON NOT IN")
 			assertContains(t, sqlSelectQuery, `"t"."string" NOT LIKE $1`, "COMPARISON NOT LIKE")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `"t"."number" BETWEEN ? AND ?`, "COMPARISON BETWEEN")
+			assertContains(t, sqlSelectQuery, `"t"."number" = ?`, "COMPARISON EQUAL")
+			assertContains(t, sqlSelectQuery, `EXISTS (SELECT 1 FROM "test" AS "t")`, "COMPARISON EXISTS")
+			assertContains(t, sqlSelectQuery, `"t"."number" > ?`, "COMPARISON GREATER")
+			assertContains(t, sqlSelectQuery, `"t"."number" >= ?`, "COMPARISON GREATEREQUAL")
+			assertContains(t, sqlSelectQuery, `LOWER("t"."string") LIKE LOWER(?)`, "COMPARISON ILIKE")
+			assertContains(t, sqlSelectQuery, `"t"."string" IN (?, ?)`, "COMPARISON IN")
+			assertContains(t, sqlSelectQuery, `"t"."string" IS NOT NULL`, "COMPARISON IS NOT NULL")
+			assertContains(t, sqlSelectQuery, `"t"."string" IS NULL`, "COMPARISON IS NULL")
+			assertContains(t, sqlSelectQuery, `"t"."number" < ?`, "COMPARISON LESS")
+			assertContains(t, sqlSelectQuery, `"t"."number" <= ?`, "COMPARISON LESSEQUAL")
+			assertContains(t, sqlSelectQuery, `"t"."string" LIKE ?`, "COMPARISON LIKE")
+			assertContains(t, sqlSelectQuery, `"t"."number" NOT BETWEEN ? AND ?`, "COMPARISON NOT BETWEEN")
+			assertContains(t, sqlSelectQuery, `"t"."number" <> ?`, "COMPARISON NOT EQUAL")
+			assertContains(t, sqlSelectQuery, `NOT EXISTS (SELECT 1 FROM "test" AS "t")`, "COMPARISON NOT EXISTS")
+			assertContains(t, sqlSelectQuery, `LOWER("t"."string") NOT LIKE LOWER(?)`, "COMPARISON NOT ILIKE")
+			assertContains(t, sqlSelectQuery, `"t"."string" NOT IN (?, ?)`, "COMPARISON NOT IN")
+			assertContains(t, sqlSelectQuery, `"t"."string" NOT LIKE ?`, "COMPARISON NOT LIKE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -285,7 +319,23 @@ func Test_Core_Constant(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT16ONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT32ONE")
 			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT64ONE")
-
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `FALSE`, "CONSTANT BOOlFALSE")
+			assertContains(t, sqlSelectQuery, `TRUE`, "CONSTANT BOOlTRUE")
+			assertContains(t, sqlSelectQuery, `1.0`, "CONSTANT FLOAT32ONE")
+			assertContains(t, sqlSelectQuery, `1.000000`, "CONSTANT FLOAT64ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INTONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT8ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT16ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT32ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT INT64ONE")
+			assertContains(t, sqlSelectQuery, `DEFAULT`, "CONSTANT STRINGDEFAULT")
+			assertContains(t, sqlSelectQuery, `NULL`, "CONSTANT NULLSTRINGNULL")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINTONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT8ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT16ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT32ONE")
+			assertContains(t, sqlSelectQuery, `1`, "CONSTANT UINT64ONE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -659,6 +709,114 @@ func Test_Core_Function(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `SUBSTRING("t"."string", $1, $2)`, "FUNCTION SUBSTRING")
 			assertContains(t, sqlSelectQuery, `TRIM("t"."string")`, "FUNCTION TRIM")
 			assertContains(t, sqlSelectQuery, `UPPER("t"."string")`, "FUNCTION UPPER")
+		case DialectSQLite:
+			// Функции агрегатные
+			assertContains(t, sqlSelectQuery, `AVG("t"."number")`, "FUNCTION AVG")
+			assertContains(t, sqlSelectQuery, `BIT_AND("t"."number")`, "FUNCTION BITAND")
+			assertContains(t, sqlSelectQuery, `BIT_OR("t"."number")`, "FUNCTION BITOR")
+			assertContains(t, sqlSelectQuery, `BIT_XOR("t"."number")`, "FUNCTION BITXOR")
+			assertContains(t, sqlSelectQuery, `COUNT("t"."string")`, "FUNCTION COUNT")
+			assertContains(t, sqlSelectQuery, `GROUP_CONCAT("t"."string" SEPARATOR ',')`, "FUNCTION GROUPCONCAT")
+			assertContains(t, sqlSelectQuery, `MAX("t"."number")`, "FUNCTION MAX")
+			assertContains(t, sqlSelectQuery, `MIN("t"."number")`, "FUNCTION MIN")
+			assertContains(t, sqlSelectQuery, `STDEV("t"."number")`, "FUNCTION STDDEV")
+			assertContains(t, sqlSelectQuery, `SUM("t"."number")`, "FUNCTION SUM")
+			assertContains(t, sqlSelectQuery, `VARIANCE("t"."number")`, "FUNCTION VARIANCE")
+			// Функции аналитические
+			assertContains(t, sqlSelectQuery, `FIRST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION FIRSTVALUE")
+			assertContains(t, sqlSelectQuery, `LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)`, "FUNCTION LAG")
+			assertContains(t, sqlSelectQuery, `LAST_VALUE("t"."name") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)`, "FUNCTION LASTVALUE")
+			assertContains(t, sqlSelectQuery, `LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)`, "FUNCTION LEAD")
+			assertContains(t, sqlSelectQuery, `NTH_VALUE("t"."name", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`, "FUNCTION NTHVALUE")
+			// Функции условий
+			assertContains(t, sqlSelectQuery, `CASE WHEN "t"."number" < ? THEN ? ELSE ? END`, "FUNCTION CASE")
+			assertContains(t, sqlSelectQuery, `COALESCE("t"."createat", "t"."updateat")`, "FUNCTION COALESCE")
+			assertContains(t, sqlSelectQuery, `GREATEST("t"."createat", "t"."updateat")`, "FUNCTION GREATEST")
+			assertContains(t, sqlSelectQuery, `LEAST("t"."createat", "t"."updateat")`, "FUNCTION LEAST")
+			assertContains(t, sqlSelectQuery, `NULLIF("t"."createat", "t"."updateat")`, "FUNCTION NULLIF")
+			// Функции конвертации
+			assertContains(t, sqlSelectQuery, `CAST("t"."number" AS TEXT) `, "FUNCTION CAST")
+			assertContains(t, sqlSelectQuery, `CHAR_LENGTH("t"."string")`, "FUNCTION CHARLENGTH")
+			assertContains(t, sqlSelectQuery, `strftime("t"."createat", '%Y-%m-%d')`, "FUNCTION DATEFORMAT")
+			assertContains(t, sqlSelectQuery, `DEGREES("t"."number")`, "FUNCTION DEGREES")
+			assertContains(t, sqlSelectQuery, `LENGTH("t"."string")`, "FUNCTION LENGTH")
+			assertContains(t, sqlSelectQuery, `POSITION(? IN "t"."string")`, "FUNCTION POSITION")
+			assertContains(t, sqlSelectQuery, `RADIANS("t"."number")`, "FUNCTION RADIANS")
+			// Функции даты и времени
+			assertContains(t, sqlSelectQuery, `datetime('now')`, "FUNCTION CURDATE")
+			assertContains(t, sqlSelectQuery, `time('now')`, "FUNCTION CURTIME")
+			assertContains(t, sqlSelectQuery, `datetime("t"."createat", '+2 DAY')`, "FUNCTION DATEADD")
+			assertContains(t, sqlSelectQuery, `DATEDIFF("t"."updateat", "t"."createat")`, "FUNCTION DATEDIFF")
+			assertContains(t, sqlSelectQuery, `datetime("t"."createat", '-2 DAY')`, "FUNCTION DATESUB")
+			assertContains(t, sqlSelectQuery, `DAY("t"."createat")`, "FUNCTION DAY")
+			assertContains(t, sqlSelectQuery, `strftime('%w', "t"."createat")`, "FUNCTION DAYNAME")
+			assertContains(t, sqlSelectQuery, `HOUR("t"."createat")`, "FUNCTION HOUR")
+			assertContains(t, sqlSelectQuery, `MINUTE("t"."createat")`, "FUNCTION MINUTE")
+			assertContains(t, sqlSelectQuery, `MONTH("t"."createat")`, "FUNCTION MONTH")
+			assertContains(t, sqlSelectQuery, `strftime('%m', "t"."createat")`, "FUNCTION MONTHNAME")
+			assertContains(t, sqlSelectQuery, `datetime('now')`, "FUNCTION NOW")
+			assertContains(t, sqlSelectQuery, `QUARTER("t"."createat")`, "FUNCTION QUARTER")
+			assertContains(t, sqlSelectQuery, `SECOND("t"."createat")`, "FUNCTION SECOND")
+			assertContains(t, sqlSelectQuery, `time("t"."createat", '+2 HOUR')`, "FUNCTION TIMEADD")
+			assertContains(t, sqlSelectQuery, `TIMEDIFF("t"."updateat", "t"."createat")`, "FUNCTION TIMEDIFF")
+			assertContains(t, sqlSelectQuery, `time("t"."createat", '-2 HOUR')`, "FUNCTION TIMESUB")
+			assertContains(t, sqlSelectQuery, `WEEK("t"."createat")`, "FUNCTION WEEK")
+			assertContains(t, sqlSelectQuery, `YEAR("t"."createat")`, "FUNCTION YEAR")
+			// Функции обмена данными
+			assertContains(t, sqlSelectQuery, `JSON_ARRAY("t"."json", ?, ?)`, "FUNCTION JSONARRAY")
+			assertContains(t, sqlSelectQuery, `JSON_GROUP_ARRAY("t"."json")`, "FUNCTION JSONARRAYAGG")
+			assertContains(t, sqlSelectQuery, `JSON_CONTAINS("t"."json", ?)`, "FUNCTION JSONCONTAINS")
+			assertContains(t, sqlSelectQuery, `("t"."json" ->> '$.parent[0].child')`, "FUNCTION JSONEXTRACT")
+			assertContains(t, sqlSelectQuery, `JSON_OBJECT('key', COUNT("t"."json"))`, "FUNCTION JSONOBJECT")
+			assertContains(t, sqlSelectQuery, `JSON_GROUP_OBJECT("t"."json", "t"."number")`, "FUNCTION JSONOBJECTAGG")
+			assertContains(t, sqlSelectQuery, `JSON_REMOVE("t"."json", '$.key1', '$.key2')`, "FUNCTION JSONREMOVE")
+			assertContains(t, sqlSelectQuery, `JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)`, "FUNCTION JSONSET")
+			assertContains(t, sqlSelectQuery, `JSON_TYPE("t"."json")`, "FUNCTION JSONTYPE")
+			// Функции математические
+			assertContains(t, sqlSelectQuery, `ABS("t"."number")`, "FUNCTION ABS")
+			assertContains(t, sqlSelectQuery, `ACOS("t"."number")`, "FUNCTION ACOS")
+			assertContains(t, sqlSelectQuery, `ASIN("t"."number")`, "FUNCTION ASIN")
+			assertContains(t, sqlSelectQuery, `ATAN("t"."number")`, "FUNCTION ATAN")
+			assertContains(t, sqlSelectQuery, `ATAN2("t"."y", "t"."x")`, "FUNCTION ATAN2")
+			assertContains(t, sqlSelectQuery, `CBRT("t"."number")`, "FUNCTION CBRT")
+			assertContains(t, sqlSelectQuery, `CEIL("t"."number")`, "FUNCTION CEIL")
+			assertContains(t, sqlSelectQuery, `COS("t"."number")`, "FUNCTION COS")
+			assertContains(t, sqlSelectQuery, `EXP("t"."number")`, "FUNCTION EXP")
+			assertContains(t, sqlSelectQuery, `FLOOR("t"."number")`, "FUNCTION FLOOR")
+			assertContains(t, sqlSelectQuery, `LN("t"."number")`, "FUNCTION LN")
+			assertContains(t, sqlSelectQuery, `LOG("t"."number", ?)`, "FUNCTION LOG")
+			assertContains(t, sqlSelectQuery, `MOD("t"."number", ?)`, "FUNCTION MOD")
+			assertContains(t, sqlSelectQuery, `PI()`, "FUNCTION PI")
+			assertContains(t, sqlSelectQuery, `POWER("t"."number", ?)`, "FUNCTION POWER")
+			assertContains(t, sqlSelectQuery, `RANDOM`, "FUNCTION RAND")
+			assertContains(t, sqlSelectQuery, `ROUND("t"."number", ?)`, "FUNCTION ROUND")
+			assertContains(t, sqlSelectQuery, `SIN("t"."number")`, "FUNCTION SIN")
+			assertContains(t, sqlSelectQuery, `SQRT("t"."number")`, "FUNCTION SQRT")
+			assertContains(t, sqlSelectQuery, `TAN("t"."number")`, "FUNCTION TAN")
+			assertContains(t, sqlSelectQuery, `TRUNC("t"."number", ?)`, "FUNCTION TRUNC")
+			// Функции ранжирующие
+			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION CUMEDIST")
+			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "DFUNCTION ENSERANK")
+			assertContains(t, sqlSelectQuery, `NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION NTILE")
+			assertContains(t, sqlSelectQuery, `PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION PERCENTRANK")
+			assertContains(t, sqlSelectQuery, `RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION RANK")
+			assertContains(t, sqlSelectQuery, `ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION ROWNUMBER")
+			// Функции строковые
+			assertContains(t, sqlSelectQuery, `CONCAT("t"."string", ?, ?)`, "FUNCTION CONCAT")
+			assertContains(t, sqlSelectQuery, `CONCAT_WS(?, "t"."string", ?, ?)`, "FUNCTION CONCATWS")
+			assertContains(t, sqlSelectQuery, `LEFT("t"."string", ?)`, "FUNCTION LEFTSTRING")
+			assertContains(t, sqlSelectQuery, `LOWER("t"."string")`, "FUNCTION LOWER")
+			assertContains(t, sqlSelectQuery, `LPAD("t"."string", ?, ?)`, "FUNCTION LPAD")
+			assertContains(t, sqlSelectQuery, `LTRIM("t"."string")`, "FUNCTION LTRIM")
+			assertContains(t, sqlSelectQuery, `REPEAT("t"."string", ?)`, "FUNCTION REPEAT")
+			assertContains(t, sqlSelectQuery, `REPLACE("t"."string", ?, ?)`, "FUNCTION REPLACE")
+			assertContains(t, sqlSelectQuery, `REVERSE("t"."string")`, "FUNCTION REVERSE")
+			assertContains(t, sqlSelectQuery, `RIGHT("t"."string", ?)`, "FUNCTION RIGHTSTRING")
+			assertContains(t, sqlSelectQuery, `RPAD("t"."string", ?, ?)`, "FUNCTION RPAD")
+			assertContains(t, sqlSelectQuery, `RTRIM("t"."string")`, "FUNCTION RTRIM")
+			assertContains(t, sqlSelectQuery, `SUBSTRING("t"."string", ?, ?)`, "FUNCTION SUBSTRING")
+			assertContains(t, sqlSelectQuery, `TRIM("t"."string")`, "FUNCTION TRIM")
+			assertContains(t, sqlSelectQuery, `UPPER("t"."string")`, "FUNCTION UPPER")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -681,6 +839,8 @@ func Test_Core_Literal(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "'%Y-%m-%d'", "LITERAL STRING")
 		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `'%Y-%m-%d'`, "LITERAL STRING")
+		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `'%Y-%m-%d'`, "LITERAL STRING")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
@@ -716,6 +876,9 @@ func Test_Core_Logical(t *testing.T) {
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `"t"."string" = $1 AND "t"."number" > $2`, "LOGICAL AND")
 			assertContains(t, sqlSelectQuery, `"t"."string" = $1 OR "t"."number" > $2`, "LOGICAL OR")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `"t"."string" = ? AND "t"."number" > ?`, "LOGICAL AND")
+			assertContains(t, sqlSelectQuery, `"t"."string" = ? OR "t"."number" > ?`, "LOGICAL OR")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -742,6 +905,9 @@ func Test_Core_Order(t *testing.T) {
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `"t"."string" ASC`, "ORDER ASC")
 			assertContains(t, sqlSelectQuery, `"t"."string" DESC`, "ORDER DESC")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `"t"."string" ASC`, "ORDER ASC")
+			assertContains(t, sqlSelectQuery, `"t"."string" DESC`, "ORDER DESC")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -761,6 +927,8 @@ func Test_Core_Subquery(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "(SELECT `t`.`id` FROM `test` AS `t`)", "SUBQUERY")
 		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `(SELECT "t"."id" FROM "test" AS "t")`, "SUBQUERY")
+		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `(SELECT "t"."id" FROM "test" AS "t")`, "SUBQUERY")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
@@ -786,6 +954,8 @@ func Test_Core_Value(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ?", "VALUE PLACEHOLDER")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `"t"."string" = $1`, "VALUE PLACEHOLDER")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `"t"."string" = ?`, "VALUE PLACEHOLDER")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -805,6 +975,8 @@ func Test_Delete(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t`", "DELETE")
 		case DialectPostgreSQL:
+			assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t"`, "DELETE")
+		case DialectSQLite:
 			assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t"`, "DELETE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
@@ -832,6 +1004,8 @@ func Test_Delete_Join(t *testing.T) {
 		case DialectPostgreSQL:
 			assertContains(t, sqlDeleteQuery, `USING "test1" AS "t1", "test2" AS "t2"`, "USING LIST")
 			assertContains(t, sqlDeleteQuery, `"t1"."id" = "t"."id" AND "t2"."id" = "t"."id"`, "USING CONDITION")
+		case DialectSQLite:
+			// Дописать ограничения
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -856,6 +1030,8 @@ func Test_Delete_Returning(t *testing.T) {
 			// Not support
 		case DialectPostgreSQL:
 			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id", "t"."string"`, "RETURNING")
+		case DialectSQLite:
+			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id", "t"."string"`, "RETURNING")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -876,6 +1052,8 @@ func Test_Delete_Where(t *testing.T) {
 			assertContains(t, sqlDeleteQuery, "WHERE `t`.`string` = ?", "WHERE")
 		case DialectPostgreSQL:
 			assertContains(t, sqlDeleteQuery, `WHERE "t"."string" = $1`, "WHERE")
+		case DialectSQLite:
+			assertContains(t, sqlDeleteQuery, `WHERE "t"."string" = ?`, "WHERE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -908,6 +1086,8 @@ func Test_Delete_With(t *testing.T) {
 			assertContains(t, sqlDeleteQuery, "WITH `cte_nr`", "WITH")
 		case DialectPostgreSQL:
 			assertContains(t, sqlDeleteQuery, `WITH "cte_nr"`, "WITH")
+		case DialectSQLite:
+			assertContains(t, sqlDeleteQuery, `WITH "cte_nr"`, "WITH")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
@@ -928,6 +1108,8 @@ func Test_Insert(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
 		case DialectPostgreSQL:
+			assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
+		case DialectSQLite:
 			assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
@@ -952,6 +1134,8 @@ func Test_Insert_Returning(t *testing.T) {
 		case DialectMySQL:
 			// Not support
 		case DialectPostgreSQL:
+			assertContains(t, sqlInsertQuery, `RETURNING "t"."id"`, "RETURNING")
+		case DialectSQLite:
 			assertContains(t, sqlInsertQuery, `RETURNING "t"."id"`, "RETURNING")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
@@ -979,6 +1163,8 @@ func Test_Insert_Source(t *testing.T) {
 			assertContains(t, sqlInsertQuery, "SELECT `t1`.`string`, `t1`.`number` FROM `test1` AS `t1` WHERE `t1`.`string` = ?", "SOURCE")
 		case DialectPostgreSQL:
 			assertContains(t, sqlInsertQuery, `SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = $1`, "SOURCE")
+		case DialectSQLite:
+			assertContains(t, sqlInsertQuery, `SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = ?`, "SOURCE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -1000,6 +1186,8 @@ func Test_Insert_Values(t *testing.T) {
 			assertContains(t, sqlInsertQuery, "VALUES (?, ?)", "VALUES")
 		case DialectPostgreSQL:
 			assertContains(t, sqlInsertQuery, `VALUES ($1, $2)`, "VALUES")
+		case DialectSQLite:
+			assertContains(t, sqlInsertQuery, `VALUES (?, ?)`, "VALUES")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -1037,6 +1225,8 @@ func Test_Insert_With(t *testing.T) {
 			assertContains(t, sqlInsertQuery, "WITH `cte_nr`", "WITH")
 		case DialectPostgreSQL:
 			assertContains(t, sqlInsertQuery, `WITH "cte_nr"`, "WITH")
+		case DialectSQLite:
+			assertContains(t, sqlInsertQuery, `WITH "cte_nr"`, "WITH")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -1056,6 +1246,8 @@ func Test_Select(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "SELECT `t`.`string` FROM `test` AS `t`", "SELECT")
 		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `SELECT "t"."string" FROM "test" AS "t"`, "SELECT")
+		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `SELECT "t"."string" FROM "test" AS "t"`, "SELECT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
@@ -1077,6 +1269,8 @@ func Test_Select_Distinct(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
 		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `DISTINCT`, "DISTINCT")
+		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `DISTINCT`, "DISTINCT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
@@ -1101,6 +1295,8 @@ func Test_Select_GroupBy(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "GROUP BY `t`.`string`", "GROUP BY")
 		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `GROUP BY "t"."string"`, "GROUP BY")
+		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `GROUP BY "t"."string"`, "GROUP BY")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
@@ -1129,6 +1325,8 @@ func Test_Select_Having(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "COUNT")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > $1`, "COUNT")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > ?`, "COUNT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1173,6 +1371,8 @@ func Test_Select_Join(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT OUTER")
 			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT")
 			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT OUTER")
+		case DialectSQLite:
+			// Дописать ограничения
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1194,6 +1394,8 @@ func Test_Select_Limit(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "LIMIT ?", "LIMIT")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `LIMIT $1`, "LIMIT")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `LIMIT ?`, "LIMIT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1215,6 +1417,8 @@ func Test_Select_Offset(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "OFFSET ?", "OFFSET")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `OFFSET $1`, "OFFSET")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `OFFSET ?`, "OFFSET")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1237,6 +1441,8 @@ func Test_Select_OrderBy(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "ORDER BY `t`.`string`", "ORDER BY")
 		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string"`, "ORDER BY")
+		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string"`, "ORDER BY")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
@@ -1297,6 +1503,12 @@ func Test_Select_Unions(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `UNION ALL`, "UNION ALL")
 			assertContains(t, sqlSelectQuery, `EXCEPT`, "UNION EXCEPT")
 			assertContains(t, sqlSelectQuery, `INTERSECT`, "UNION INTERSECT")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `WITH RECURSIVE "cte_re"`, "WITH")
+			assertContains(t, sqlSelectQuery, `UNION`, "UNION")
+			assertContains(t, sqlSelectQuery, `UNION ALL`, "UNION ALL")
+			assertContains(t, sqlSelectQuery, `EXCEPT`, "UNION EXCEPT")
+			assertContains(t, sqlSelectQuery, `INTERSECT`, "UNION INTERSECT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1319,7 +1531,9 @@ func Test_Select_Where(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "WHERE `t`.`string` = ?", "WHERE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `WHERE "t"."string" = $1`, "EQUAL")
+			assertContains(t, sqlSelectQuery, `WHERE "t"."string" = $1`, "WHERE")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `WHERE "t"."string" = ?`, "WHERE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1357,6 +1571,8 @@ func Test_Select_With(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "WITH `cte_nr`", "WITH")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `WITH "cte_nr"`, "WITH")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `WITH "cte_nr"`, "WITH")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1379,6 +1595,8 @@ func Test_Update(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t`", "UPDATE")
 		case DialectPostgreSQL:
+			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t"`, "UPDATE")
+		case DialectSQLite:
 			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t"`, "UPDATE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
@@ -1404,6 +1622,8 @@ func Test_Update_Join(t *testing.T) {
 			assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "UPDATE")
 		case DialectPostgreSQL:
 			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "UPDATE")
+		case DialectSQLite:
+			// Дописать ограничения
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})
@@ -1430,6 +1650,8 @@ func Test_Update_Returning(t *testing.T) {
 			// Not support
 		case DialectPostgreSQL:
 			assertContains(t, sqlUpdateQuery, `RETURNING "t"."id"`, "RETURNING")
+		case DialectSQLite:
+			assertContains(t, sqlUpdateQuery, `RETURNING "t"."id"`, "RETURNING")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})
@@ -1453,6 +1675,8 @@ func Test_Update_Set(t *testing.T) {
 			assertContains(t, sqlUpdateQuery, "SET `t`.`string` = ?", "SET")
 		case DialectPostgreSQL:
 			assertContains(t, sqlUpdateQuery, `SET "t"."string" = $1`, "SET")
+		case DialectSQLite:
+			assertContains(t, sqlUpdateQuery, `SET "t"."string" = ?`, "SET")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})
@@ -1475,7 +1699,9 @@ func Test_Update_Where(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlUpdateQuery, "WHERE `t`.`number` = ?", "WHERE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlUpdateQuery, `WHERE "t"."number" = $2`, "WHERE")
+			assertContains(t, sqlUpdateQuery, `WHERE "t"."number" = $1`, "WHERE")
+		case DialectSQLite:
+			assertContains(t, sqlUpdateQuery, `WHERE "t"."number" = ?`, "WHERE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 	})
@@ -1510,6 +1736,8 @@ func Test_Update_With(t *testing.T) {
 		case DialectMySQL:
 			assertContains(t, sqlUpdateQuery, "WITH `cte_nr`", "WITH")
 		case DialectPostgreSQL:
+			assertContains(t, sqlUpdateQuery, `WITH "cte_nr"`, "WITH")
+		case DialectSQLite:
 			assertContains(t, sqlUpdateQuery, `WITH "cte_nr"`, "WITH")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)

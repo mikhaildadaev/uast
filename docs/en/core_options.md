@@ -5,7 +5,7 @@ outline: deep
 # API / Core / Options
 
 ::: info **Info**
-This page covers all configuration options: `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseUnions`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprOrderBy`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
+This page covers all configuration options: `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseUnions`, `clauseWith`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprOrderBy`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
 ## clauseJoin
@@ -162,6 +162,8 @@ Output SQLite:
 ### UnionAll
 ### UnionExcept
 ### UnionIntersect
+
+## clauseWith
 
 ## exprArray
 ### Array

@@ -2,13 +2,31 @@ package uast
 
 // Публичные переменные
 var (
+	// Диалект по умолчанию
+	DialectDefault = DialectPostgreSQL
+	// Cовместимые с MySQL
+	DialectAuroraMySQL = DialectMySQL
+	DialectAzureMySQL  = DialectMySQL
+	DialectDoltDB      = DialectMySQL
+	DialectGoogleMySQL = DialectMySQL
+	DialectPlanetScale = DialectMySQL
+	DialectSingleStore = DialectMySQL
+	DialectTiDB        = DialectMySQL
+	// Cовместимые с PostgreSQL
 	DialectAlloyDB          = DialectPostgreSQL
-	DialectAuroraMySQL      = DialectMySQL
 	DialectAuroraPostgreSQL = DialectPostgreSQL
+	DialectAzurePostgreSQL  = DialectPostgreSQL
+	DialectCitus            = DialectPostgreSQL
 	DialectCockroachDB      = DialectPostgreSQL
-	DialectDefault          = DialectPostgreSQL
-	DialectTiDB             = DialectMySQL
+	DialectGooglePostgreSQL = DialectPostgreSQL
+	DialectNeon             = DialectPostgreSQL
+	DialectSupabase         = DialectPostgreSQL
+	DialectTimescaleDB      = DialectPostgreSQL
 	DialectYugabyteDB       = DialectPostgreSQL
+	// Cовместимые с SQLite
+	DialectCloudflareD1 = DialectSQLite
+	DialectLiteFS       = DialectSQLite
+	DialectTurso        = DialectSQLite
 )
 
 // Публичные структуры

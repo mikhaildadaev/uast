@@ -765,14 +765,14 @@ func Radians[T typeNumeric](angle ExpressionSafe[T]) *exprFunction[T, T, T] {
 }
 
 // -- Function [date and time] -- //
-func CurDate() *exprFunction[time.Time, time.Time, time.Time] {
-	return &exprFunction[time.Time, time.Time, time.Time]{
+func CurDate() *exprFunction[string, time.Time, time.Time] {
+	return &exprFunction[string, time.Time, time.Time]{
 		process: uastProcessEmpty,
 		service: uastFunctionCurDate,
 	}
 }
-func CurTime() *exprFunction[time.Time, time.Time, time.Time] {
-	return &exprFunction[time.Time, time.Time, time.Time]{
+func CurTime() *exprFunction[string, time.Time, time.Time] {
+	return &exprFunction[string, time.Time, time.Time]{
 		process: uastProcessEmpty,
 		service: uastFunctionCurTime,
 	}
@@ -850,8 +850,8 @@ func MonthName(datetime ExpressionSafe[time.Time]) *exprFunction[time.Time, stri
 		service: uastFunctionMonthName,
 	}
 }
-func Now() *exprFunction[time.Time, time.Time, time.Time] {
-	return &exprFunction[time.Time, time.Time, time.Time]{
+func Now() *exprFunction[string, time.Time, time.Time] {
+	return &exprFunction[string, time.Time, time.Time]{
 		process: uastProcessEmpty,
 		service: uastFunctionNow,
 	}

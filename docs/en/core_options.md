@@ -21,6 +21,9 @@ ARRAY[?, ?, ?]
 Output PostgreSQL:
 ```text
 ARRAY[$1, $2, $3]
+Output SQLite:
+```text
+ARRAY[?, ?, ?]
 ```
 
 ## exprBinary
@@ -37,6 +40,10 @@ Output PostgreSQL:
 ```text
 "t"."number" & $1
 ```
+Output SQLite:
+```text
+"t"."number" & ?
+```
 
 ### BitwiseOr
 Performs a bitwise OR operation between two expressions.
@@ -50,6 +57,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."number" | $1
+```
+Output SQLite:
+```text
+"t"."number" | ?
 ```
 
 ### BitwiseXor
@@ -65,6 +76,10 @@ Output PostgreSQL:
 ```text
 "t"."number" ^ $1
 ```
+Output SQLite:
+```text
+"t"."number" ^ ?
+```
 
 ### Divide
 Divides the left expression by the right expression.
@@ -78,6 +93,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."number" / $1
+```
+Output SQLite:
+```text
+"t"."number" / ?
 ```
 
 ### Minus
@@ -93,6 +112,10 @@ Output PostgreSQL:
 ```text
 "t"."number" - $1
 ```
+Output SQLite:
+```text
+"t"."number" - ?
+```
 
 ### Modulo
 Returns the remainder of dividing the left expression by the right expression.
@@ -106,6 +129,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."number" % $1
+```
+Output SQLite:
+```text
+"t"."number" % ?
 ```
 
 ### Multiply
@@ -121,6 +148,10 @@ Output PostgreSQL:
 ```text
 "t"."number" * $1
 ```
+Output SQLite:
+```text
+"t"."number" * ?
+```
 
 ### Plus
 Adds the left expression to the right expression.
@@ -134,6 +165,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."number" + $1
+```
+Output SQLite:
+```text
+"t"."number" + ?
 ```
 
 ### ShiftLeft
@@ -149,6 +184,10 @@ Output PostgreSQL:
 ```text
 "t"."number" << $1
 ```
+Output SQLite:
+```text
+"t"."number" << ?
+```
 
 ### ShiftRight
 Performs a bitwise right shift on the left expression by the number of bits specified in the right expression.
@@ -163,6 +202,10 @@ Output PostgreSQL:
 ```text
 "t"."number" >> $1
 ```
+Output SQLite:
+```text
+"t"."number" >> ?
+```
 
 ## exprColumn
 ### Column
@@ -175,6 +218,10 @@ Output MySQL:
 `t`.`string`
 ```
 Output PostgreSQL:
+```text
+"t"."string"
+```
+Output SQLite:
 ```text
 "t"."string"
 ```
@@ -193,6 +240,10 @@ Output PostgreSQL:
 ```text
 "t"."number" BETWEEN $1 AND $2
 ```
+Output SQLite:
+```text
+"t"."number" BETWEEN ? AND ?
+```
 
 ### Equal
 Compares two expressions for equality (`=`).
@@ -207,6 +258,10 @@ Output PostgreSQL:
 ```text
 "t"."number" = $1
 ```
+Output SQLite:
+```text
+"t"."number" = ?
+```
 
 ### Exists
 Checks if the subquery returns any rows. Returns `true` if at least one row exists.
@@ -218,6 +273,10 @@ Output MySQL:
 EXISTS (SELECT 1 FROM `test` AS `t`)
 ```
 Output PostgreSQL:
+```text
+EXISTS (SELECT 1 FROM "test" AS "t")
+```
+Output SQLite:
 ```text
 EXISTS (SELECT 1 FROM "test" AS "t")
 ```
@@ -235,6 +294,10 @@ Output PostgreSQL:
 ```text
 "t"."number" > $1
 ```
+Output SQLite:
+```text
+"t"."number" > ?
+```
 
 ### GreaterEqual
 Compares if the left expression is greater than or equal to the right expression (`>=`).
@@ -249,6 +312,10 @@ Output PostgreSQL:
 ```text
 "t"."number" >= $1
 ```
+Output SQLite:
+```text
+"t"."number" >= ?
+```
 
 ### ILike
 Performs a case-insensitive pattern matching comparison. The right expression should contain a pattern with `%` (any sequence) and `_` (single character) wildcards.
@@ -257,11 +324,15 @@ comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"
 ```
 Output MySQL:
 ```text
-`t`.`string` ILIKE ?
+LOWER(`t`.`string`) LIKE LOWER(?)
 ```
 Output PostgreSQL:
 ```text
 "t"."string" ILIKE $1
+```
+Output SQLite:
+```text
+LOWER("t"."string") LIKE LOWER(?)
 ```
 
 ### In
@@ -277,6 +348,10 @@ Output PostgreSQL:
 ```text
 "t"."string" IN ($1, $2)
 ```
+Output SQLite:
+```text
+"t"."string" IN (?, ?)
+```
 
 ### IsNotNull
 Checks if the expression is not `NULL`.
@@ -288,6 +363,10 @@ Output MySQL:
 `t`.`string` IS NOT NULL
 ```
 Output PostgreSQL:
+```text
+"t"."string" IS NOT NULL
+```
+Output SQLite:
 ```text
 "t"."string" IS NOT NULL
 ```
@@ -305,6 +384,10 @@ Output PostgreSQL:
 ```text
 "t"."string" IS NULL
 ```
+Output SQLite:
+```text
+"t"."string" IS NULL
+```
 
 ### Less
 Compares if the left expression is less than the right expression (`<`).
@@ -318,6 +401,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."number" < $1
+```
+Output SQLite:
+```text
+"t"."number" < ?
 ```
 
 ### LessEqual
@@ -333,6 +420,10 @@ Output PostgreSQL:
 ```text
 "t"."number" <= $1
 ```
+Output SQLite:
+```text
+"t"."number" <= ?
+```
 
 ### Like
 Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
@@ -346,6 +437,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."string" LIKE $1
+```
+Output SQLite:
+```text
+"t"."string" LIKE ?
 ```
 
 ### NotBetween
@@ -361,6 +456,10 @@ Output PostgreSQL:
 ```text
 "t"."number" NOT BETWEEN $1 AND $2
 ```
+Output SQLite:
+```text
+"t"."number" NOT BETWEEN ? AND ?
+```
 
 ### NotEqual
 Compares two expressions for inequality (`!=` or `<>`).
@@ -374,6 +473,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."number" != $1
+```
+Output SQLite:
+```text
+"t"."number" != ?
 ```
 
 ### NotExists
@@ -389,6 +492,10 @@ Output PostgreSQL:
 ```text
 NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ```
+Output SQLite:
+```text
+NOT EXISTS (SELECT 1 FROM "test" AS "t")
+```
 
 ### NotILike
 Performs a negated case-insensitive pattern matching comparison.
@@ -397,11 +504,15 @@ comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%iva
 ```
 Output MySQL:
 ```text
-`t`.`string` NOT ILIKE ?
+LOWER(`t`.`string`) NOT LIKE LOWER(?)
 ```
 Output PostgreSQL:
 ```text
 "t"."string" NOT ILIKE $1
+```
+Output SQLite:
+```text
+LOWER("t"."string") NOT LIKE LOWER(?)
 ```
 
 ### NotIn
@@ -417,6 +528,10 @@ Output PostgreSQL:
 ```text
 "t"."string" NOT IN ($1, $2)
 ```
+Output SQLite:
+```text
+"t"."string" NOT IN (?, ?)
+```
 
 ### NotLike
 Performs a negated case-sensitive pattern matching comparison.
@@ -430,6 +545,10 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 "t"."string" NOT LIKE $1
+```
+Output SQLite:
+```text
+"t"."string" NOT LIKE ?
 ```
 
 ## exprConstant
@@ -611,6 +730,11 @@ Output PostgreSQL:
 AVG("t"."number")
 AVG(DISTINCT "t"."number")
 ```
+Output SQLite:
+```text
+AVG("t"."number")
+AVG(DISTINCT "t"."number")
+```
 
 #### BitAnd
 Returns the bitwise AND of all bits in the expression. Only meaningful for integer types.
@@ -624,6 +748,11 @@ BIT_AND(`t`.`number`)
 BIT_AND(DISTINCT `t`.`number`)
 ```
 Output PostgreSQL:
+```text
+BIT_AND("t"."number")
+BIT_AND(DISTINCT "t"."number")
+```
+Output SQLite:
 ```text
 BIT_AND("t"."number")
 BIT_AND(DISTINCT "t"."number")
@@ -645,6 +774,11 @@ Output PostgreSQL:
 BIT_OR("t"."number")
 BIT_OR(DISTINCT "t"."number")
 ```
+Output SQLite:
+```text
+BIT_OR("t"."number")
+BIT_OR(DISTINCT "t"."number")
+```
 
 #### BitXor
 Returns the bitwise XOR of all bits in the expression. Only meaningful for integer types.
@@ -658,6 +792,11 @@ BIT_XOR(`t`.`number`)
 BIT_XOR(DISTINCT `t`.`number`)
 ```
 Output PostgreSQL:
+```text
+BIT_XOR("t"."number")
+BIT_XOR(DISTINCT "t"."number")
+```
+Output SQLite:
 ```text
 BIT_XOR("t"."number")
 BIT_XOR(DISTINCT "t"."number")
@@ -679,6 +818,11 @@ Output PostgreSQL:
 COUNT("t"."string")
 COUNT(DISTINCT "t"."string")
 ```
+Output SQLite:
+```text
+COUNT("t"."string")
+COUNT(DISTINCT "t"."string")
+```
 
 #### GroupConcat
 Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The `distinct` flag removes duplicates before concatenation.
@@ -696,6 +840,11 @@ Output PostgreSQL:
 STRING_AGG("t"."string", ',')
 STRING_AGG(DISTINCT "t"."string", ',')
 ```
+Output SQLite:
+```text
+GROUP_CONCAT("t"."string" SEPARATOR ',')
+GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ',')
+```
 
 #### Max
 Returns the maximum value of the expression across all rows in the group.
@@ -709,6 +858,11 @@ MAX(`t`.`number`)
 MAX(DISTINCT `t`.`number`)
 ```
 Output PostgreSQL:
+```text
+MAX("t"."number")
+MAX(DISTINCT "t"."number")
+```
+Output SQLite:
 ```text
 MAX("t"."number")
 MAX(DISTINCT "t"."number")
@@ -730,6 +884,11 @@ Output PostgreSQL:
 MIN("t"."number")
 MIN(DISTINCT "t"."number")
 ```
+Output SQLite:
+```text
+MIN("t"."number")
+MIN(DISTINCT "t"."number")
+```
 
 #### StdDev
 Returns the population standard deviation of the expression.
@@ -747,6 +906,11 @@ Output PostgreSQL:
 STDDEV_SAMP("t"."number")
 STDDEV_SAMP(DISTINCT "t"."number")
 ```
+Output SQLite:
+```text
+STDEV("t"."number")
+STDEV(DISTINCT "t"."number")
+```
 
 #### Sum
 Returns the sum of all values in the expression. If `distinct` is `true`, sums only distinct values.
@@ -760,6 +924,11 @@ SUM(`t`.`number`)
 SUM(DISTINCT `t`.`number`)
 ```
 Output PostgreSQL:
+```text
+SUM("t"."number")
+SUM(DISTINCT "t"."number")
+```
+Output SQLite:
 ```text
 SUM("t"."number")
 SUM(DISTINCT "t"."number")
@@ -781,6 +950,11 @@ Output PostgreSQL:
 VAR_SAMP("t"."number")
 VAR_SAMP(DISTINCT "t"."number")
 ```
+Output SQLite:
+```text
+VARIANCE("t"."number")
+VARIANCE(DISTINCT "t"."number")
+```
 
 ### Analytical
 #### FirstValue
@@ -799,6 +973,10 @@ Output PostgreSQL:
 ```text
 FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
+Output SQLite:
+```text
+FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
 
 #### Lag
 Returns the value of the expression from a row that is `offset` rows before the current row within the partition.
@@ -813,6 +991,10 @@ Output MySQL:
 LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
 ```
 Output PostgreSQL:
+```text
+LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
+```
+Output SQLite:
 ```text
 LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
@@ -834,6 +1016,10 @@ Output PostgreSQL:
 ```text
 LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
+Output SQLite:
+```text
+LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+```
 
 #### Lead
 Returns the value of the expression from a row that is `offset` rows after the current row within the partition.
@@ -848,6 +1034,10 @@ Output MySQL:
 LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
 ```
 Output PostgreSQL:
+```text
+LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
+```
+Output SQLite:
 ```text
 LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
@@ -866,6 +1056,10 @@ Output MySQL:
 NTH_VALUE(`t`.`string`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 Output PostgreSQL:
+```text
+NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+```
+Output SQLite:
 ```text
 NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
@@ -891,6 +1085,10 @@ Output PostgreSQL:
 ```text
 CASE WHEN "t"."number" < $1 THEN $2 ELSE $3 END
 ```
+Output SQLite:
+```text
+CASE WHEN "t"."number" < ? THEN ? ELSE ? END
+```
 
 #### Coalesce
 Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
@@ -902,6 +1100,10 @@ Output MySQL:
 COALESCE(`t`.`createat`, `t`.`updateat`)
 ```
 Output PostgreSQL:
+```text
+COALESCE("t"."createat", "t"."updateat")
+```
+Output SQLite:
 ```text
 COALESCE("t"."createat", "t"."updateat")
 ```
@@ -919,6 +1121,10 @@ Output PostgreSQL:
 ```text
 GREATEST("t"."createat", "t"."updateat")
 ```
+Output SQLite:
+```text
+GREATEST("t"."createat", "t"."updateat")
+```
 
 #### Least
 Returns the smallest value from the provided list of expressions.
@@ -933,6 +1139,10 @@ Output PostgreSQL:
 ```text
 LEAST("t"."createat", "t"."updateat")
 ```
+Output SQLite:
+```text
+LEAST("t"."createat", "t"."updateat")
+```
 
 #### NullIf
 Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
@@ -944,6 +1154,10 @@ Output MySQL:
 NULLIF(`t`.`createat`, `t`.`updateat`)
 ```
 Output PostgreSQL:
+```text
+NULLIF("t"."createat", "t"."updateat")
+```
+Output SQLite:
 ```text
 NULLIF("t"."createat", "t"."updateat")
 ```
@@ -962,6 +1176,10 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS VARCHAR)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 #### CharLength
 Returns the number of characters in a string expression.
@@ -973,6 +1191,10 @@ Output MySQL:
 CHAR_LENGTH(`t`.`string`)
 ```
 Output PostgreSQL:
+```text
+CHAR_LENGTH("t"."string")
+```
+Output SQLite:
 ```text
 CHAR_LENGTH("t"."string")
 ```
@@ -990,6 +1212,10 @@ Output PostgreSQL:
 ```text
 TO_CHAR("t"."createat", '%Y-%m-%d')
 ```
+Output SQLite:
+```text
+strftime("t"."createat", '%Y-%m-%d')
+```
 
 #### Degrees
 Converts an angle from radians to degrees.
@@ -1001,6 +1227,10 @@ Output MySQL:
 DEGREES(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+DEGREES("t"."number")
+```
+Output SQLite:
 ```text
 DEGREES("t"."number")
 ```
@@ -1018,6 +1248,10 @@ Output PostgreSQL:
 ```text
 LENGTH("t"."string")
 ```
+Output SQLite:
+```text
+LENGTH("t"."string")
+```
 
 #### Position
 Returns the starting position of the first occurrence of a substring within a string.
@@ -1032,6 +1266,10 @@ Output PostgreSQL:
 ```text
 POSITION($1 IN "t"."string")
 ```
+Output SQLite:
+```text
+POSITION(? IN "t"."string")
+```
 
 #### Radians
 Converts an angle from degrees to radians.
@@ -1043,6 +1281,10 @@ Output MySQL:
 RADIANS(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+RADIANS("t"."number")
+```
+Output SQLite:
 ```text
 RADIANS("t"."number")
 ```
@@ -1061,6 +1303,10 @@ Output PostgreSQL:
 ```text
 CURRENT_DATE
 ```
+Output SQLite:
+```text
+date('now')
+```
 
 #### CurTime
 Returns the current time (without date).
@@ -1074,6 +1320,10 @@ CURTIME()
 Output PostgreSQL:
 ```text
 CURRENT_TIME
+```
+Output SQLite:
+```text
+time('now')
 ```
 
 #### DateAdd
@@ -1089,6 +1339,10 @@ Output PostgreSQL:
 ```text
 ("t"."createat" + INTERVAL '2 DAY')
 ```
+Output SQLite:
+```text
+datetime(`t`.`createat`,  '+2 DAY')
+```
 
 #### DateDiff
 Returns the difference in days between two datetime expressions (`datetimeEnd` - `datetimeStart`).
@@ -1102,6 +1356,10 @@ DATEDIFF(`t`.`updateat`, `t`.`createat`)
 Output PostgreSQL:
 ```text
 DATE_PART('day', "t"."updateat" - "t"."createat")
+```
+Output SQLite:
+```text
+DATEDIFF("t"."updateat", "t"."createat")
 ```
 
 #### DateSub
@@ -1117,6 +1375,10 @@ Output PostgreSQL:
 ```text
 ("t"."createat" - INTERVAL '2 DAY')
 ```
+Output SQLite:
+```text
+datetime("t"."createat", '-2 DAY')
+```
 
 #### Day
 Extracts the day of the month (1–31) from a datetime expression.
@@ -1130,6 +1392,10 @@ DAY(`t`.`createat`)
 Output PostgreSQL:
 ```text
 EXTRACT(DAY FROM "t"."createat")
+```
+Output SQLite:
+```text
+DAY("t"."createat")
 ```
 
 #### DayName
@@ -1145,6 +1411,10 @@ Output PostgreSQL:
 ```text
 TO_CHAR("t"."createat", 'Day')
 ```
+Output SQLite:
+```text
+strftime('%w', "t"."createat")
+```
 
 #### Hour
 Extracts the hour (0–23) from a datetime expression.
@@ -1158,6 +1428,10 @@ HOUR(`t`.`createat`)
 Output PostgreSQL:
 ```text
 EXTRACT(HOUR FROM "t"."createat")
+```
+Output SQLite:
+```text
+HOUR("t"."createat")
 ```
 
 #### Minute
@@ -1173,6 +1447,10 @@ Output PostgreSQL:
 ```text
 EXTRACT(MINUTE FROM "t"."createat")
 ```
+Output SQLite:
+```text
+MINUTE("t"."createat")
+```
 
 #### Month
 Extracts the month (1–12) from a datetime expression.
@@ -1186,6 +1464,10 @@ MONTH(`t`.`createat`)
 Output PostgreSQL:
 ```text
 EXTRACT(MONTH FROM "t"."createat")
+```
+Output SQLite:
+```text
+MONTH("t"."createat")
 ```
 
 #### MonthName
@@ -1201,6 +1483,10 @@ Output PostgreSQL:
 ```text
 TO_CHAR("t"."createat", 'Month')
 ```
+Output SQLite:
+```text
+strftime('%m', "t"."createat")
+```
 
 #### Now
 Returns the current date and time.
@@ -1214,6 +1500,10 @@ NOW()
 Output PostgreSQL:
 ```text
 CURRENT_TIMESTAMP
+```
+Output SQLite:
+```text
+datetime('now')
 ```
 
 #### Quarter
@@ -1229,6 +1519,10 @@ Output PostgreSQL:
 ```text
 EXTRACT(QUARTER FROM "t"."createat")
 ```
+Output SQLite:
+```text
+QUARTER("t"."createat")
+```
 
 #### Second
 Extracts the second (0–59) from a datetime expression.
@@ -1242,6 +1536,10 @@ SECOND(`t`.`createat`)
 Output PostgreSQL:
 ```text
 EXTRACT(SECOND FROM "t"."createat")
+```
+Output SQLite:
+```text
+SECOND("t"."createat")
 ```
 
 #### TimeAdd
@@ -1257,6 +1555,10 @@ Output PostgreSQL:
 ```text
 ("t"."createat" + INTERVAL '2 HOUR')
 ```
+Output SQLite:
+```text
+time("t"."createat", '+2 HOUR')
+```
 
 #### TimeDiff
 Returns the difference between two time/datetime expressions (`timeEnd` - `timeStart`).
@@ -1270,6 +1572,10 @@ TIMEDIFF(`t`.`updateat`, `t`.`createat`)
 Output PostgreSQL:
 ```text
 DATE_PART('time', "t"."updateat" - "t"."createat")
+```
+Output SQLite:
+```text
+TIMEDIFF("t"."updateat", "t"."createat")
 ```
 
 #### TimeSub
@@ -1285,6 +1591,10 @@ Output PostgreSQL:
 ```text
 ("t"."createat" - INTERVAL '2 HOUR')
 ```
+Output SQLite:
+```text
+time(`t`.`createat`, '-2 HOUR')
+```
 
 #### Week
 Extracts the week number (1–53) from a datetime expression.
@@ -1299,6 +1609,10 @@ Output PostgreSQL:
 ```text
 EXTRACT(WEEK FROM "t"."createat")
 ```
+Output SQLite:
+```text
+WEEK("t"."createat")
+```
 
 #### Year
 Extracts the year from a datetime expression.
@@ -1312,6 +1626,10 @@ YEAR(`t`.`createat`)
 Output PostgreSQL:
 ```text
 EXTRACT(YEAR FROM "t"."createat")
+```
+Output SQLite:
+```text
+YEAR("t"."createat")
 ```
 
 ### Json
@@ -1332,6 +1650,10 @@ Output PostgreSQL:
 ```text
 JSON_ARRAY("t"."json", $1, $2)
 ```
+Output SQLite:
+```text
+JSON_ARRAY("t"."json", ?, ?)
+```
 
 #### JsonArrayAgg
 Aggregates values from a group into a JSON array.
@@ -1347,6 +1669,10 @@ JSON_ARRAYAGG(`t`.`json`)
 Output PostgreSQL:
 ```text
 JSON_AGG("t"."json")
+```
+Output SQLite:
+```text
+JSON_GROUP_ARRAY("t"."json")
 ```
 
 #### JsonContains
@@ -1364,6 +1690,10 @@ JSON_CONTAINS(`t`.`json`, '{"key":"val"}')
 Output PostgreSQL:
 ```text
 ("t"."json" @> '{"key":"val"}')
+```
+Output SQLite:
+```text
+JSON_CONTAINS("t"."json", '{"key":"val"}')
 ```
 
 #### JsonExtract
@@ -1389,6 +1719,10 @@ Output PostgreSQL:
 ```text
 ("t"."json" #>> '{parent,0,child}')
 ```
+Output SQLite:
+```text
+("t"."json" ->> '$.parent[0].child')
+```
 
 #### JsonObject
 Builds a JSON object from key-value pairs.
@@ -1408,6 +1742,10 @@ Output PostgreSQL:
 ```text
 JSON_BUILD_OBJECT('key', COUNT("t"."json"))
 ```
+Output SQLite:
+```text
+JSON_OBJECT('key', COUNT(`t`.`json`))
+```
 
 #### JsonObjectAgg
 Aggregates key-value pairs from a group into a single JSON object.
@@ -1424,6 +1762,10 @@ JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
 Output PostgreSQL:
 ```text
 JSON_OBJECT_AGG("t"."json", "t"."number")
+```
+Output SQLite:
+```text
+JSON_GROUP_OBJECT("t"."json", "t"."number")
 ```
 
 #### JsonRemove
@@ -1450,6 +1792,10 @@ JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
 Output PostgreSQL:
 ```text
 ("t"."json" - '{key1}' - '{key2}')
+```
+Output SQLite:
+```text
+JSON_REMOVE("t"."json", '$.key1', '$.key2')
 ```
 
 #### JsonSet
@@ -1479,6 +1825,10 @@ Output PostgreSQL:
 ```text
 -
 ```
+Output SQLite:
+```text
+JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)
+```
 
 #### JsonType
 Returns the JSON type of a JSON value (e.g., 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
@@ -1493,6 +1843,10 @@ Output PostgreSQL:
 ```text
 jsonb_typeof("t"."json")
 ```
+Output SQLite:
+```text
+JSON_TYPE("t"."json")
+```
 
 ### Math
 #### Abs
@@ -1505,6 +1859,10 @@ Output MySQL:
 ABS(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+ABS("t"."number")
+```
+Output SQLite:
 ```text
 ABS("t"."number")
 ```
@@ -1522,6 +1880,10 @@ Output PostgreSQL:
 ```text
 ACOS("t"."number")
 ```
+Output SQLite:
+```text
+ACOS("t"."number")
+```
 
 #### ASin
 Returns the arc sine (inverse sine) of the expression, in radians.
@@ -1533,6 +1895,10 @@ Output MySQL:
 ASIN(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+ASIN("t"."number")
+```
+Output SQLite:
 ```text
 ASIN("t"."number")
 ```
@@ -1550,6 +1916,10 @@ Output PostgreSQL:
 ```text
 ATAN("t"."number")
 ```
+Output SQLite:
+```text
+ATAN("t"."number")
+```
 
 #### ATan2
 Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using their signs to determine the quadrant.
@@ -1561,6 +1931,10 @@ Output MySQL:
 ATAN2(`t`.`y`, `t`.`x`)
 ```
 Output PostgreSQL:
+```text
+ATAN2("t"."y", "t"."x")
+```
+Output SQLite:
 ```text
 ATAN2("t"."y", "t"."x")
 ```
@@ -1578,6 +1952,10 @@ Output PostgreSQL:
 ```text
 CBRT("t"."number")
 ```
+Output SQLite:
+```text
+CBRT("t"."number")
+```
 
 #### Ceil
 Returns the smallest integer value not less than the argument (rounds up).
@@ -1589,6 +1967,10 @@ Output MySQL:
 CEILING(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+CEIL("t"."number")
+```
+Output SQLite:
 ```text
 CEIL("t"."number")
 ```
@@ -1606,6 +1988,10 @@ Output PostgreSQL:
 ```text
 COS("t"."number")
 ```
+Output SQLite:
+```text
+COS("t"."number")
+```
 
 #### Exp
 Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
@@ -1617,6 +2003,10 @@ Output MySQL:
 EXP(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+EXP("t"."number")
+```
+Output SQLite:
 ```text
 EXP("t"."number")
 ```
@@ -1634,6 +2024,10 @@ Output PostgreSQL:
 ```text
 FLOOR("t"."number")
 ```
+Output SQLite:
+```text
+FLOOR("t"."number")
+```
 
 #### Ln
 Returns the natural logarithm (base `e`) of the expression.
@@ -1645,6 +2039,10 @@ Output MySQL:
 LN(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+LN("t"."number")
+```
+Output SQLite:
 ```text
 LN("t"."number")
 ```
@@ -1662,6 +2060,10 @@ Output PostgreSQL:
 ```text
 LOG("t"."number", $1)
 ```
+Output SQLite:
+```text
+LOG("t"."number", ?)
+```
 
 #### Mod
 Returns the remainder (modulo) of the division of the first expression by the second.
@@ -1676,6 +2078,10 @@ Output PostgreSQL:
 ```text
 MOD("t"."number", $1)
 ```
+Output SQLite:
+```text
+MOD("t"."number", ?)
+```
 
 #### Pi
 Returns the mathematical constant `p` (~3.14159).
@@ -1687,6 +2093,10 @@ Output MySQL:
 PI()
 ```
 Output PostgreSQL:
+```text
+PI()
+```
+Output SQLite:
 ```text
 PI()
 ```
@@ -1704,6 +2114,10 @@ Output PostgreSQL:
 ```text
 POWER("t"."number", $1)
 ```
+Output SQLite:
+```text
+POWER("t"."number", ?)
+```
 
 #### Rand
 Returns a random floating-point value in the range [0, 1].
@@ -1715,6 +2129,10 @@ Output MySQL:
 RAND()
 ```
 Output PostgreSQL:
+```text
+RANDOM()
+```
+Output SQLite:
 ```text
 RANDOM()
 ```
@@ -1732,6 +2150,10 @@ Output PostgreSQL:
 ```text
 ROUND("t"."number", $1)
 ```
+Output SQLite:
+```text
+ROUND("t"."number", ?)
+```
 
 #### Sin
 Returns the sine of the expression, where the expression is in radians.
@@ -1743,6 +2165,10 @@ Output MySQL:
 SIN(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+SIN("t"."number")
+```
+Output SQLite:
 ```text
 SIN("t"."number")
 ```
@@ -1760,6 +2186,10 @@ Output PostgreSQL:
 ```text
 SQRT("t"."number")
 ```
+Output SQLite:
+```text
+SQRT("t"."number")
+```
 
 #### Tan
 Returns the tangent of the expression, where the expression is in radians.
@@ -1771,6 +2201,10 @@ Output MySQL:
 TAN(`t`.`number`)
 ```
 Output PostgreSQL:
+```text
+TAN("t"."number")
+```
+Output SQLite:
 ```text
 TAN("t"."number")
 ```
@@ -1788,6 +2222,10 @@ Output PostgreSQL:
 ```text
 TRUNC("t"."number", $1)
 ```
+Output SQLite:
+```text
+TRUNC("t"."number", ?)
+```
 
 ### Ranking
 #### CumeDist
@@ -1803,6 +2241,10 @@ Output MySQL:
 CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output PostgreSQL:
+```text
+CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+Output SQLite:
 ```text
 CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1823,6 +2265,10 @@ Output PostgreSQL:
 ```text
 DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
+Output SQLite:
+```text
+DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
 
 #### NTile
 Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
@@ -1837,6 +2283,10 @@ Output MySQL:
 NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output PostgreSQL:
+```text
+NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+Output SQLite:
 ```text
 NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1857,6 +2307,10 @@ Output PostgreSQL:
 ```text
 PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
+Output SQLite:
+```text
+PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
 
 #### Rank
 Returns the rank of a row with gaps. Equal values receive the same rank, and the next distinct value skips ahead. Requires `OVER`.
@@ -1871,6 +2325,10 @@ Output MySQL:
 RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output PostgreSQL:
+```text
+RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+Output SQLite:
 ```text
 RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -1891,6 +2349,10 @@ Output PostgreSQL:
 ```text
 ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
+Output SQLite:
+```text
+ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
 
 ### String
 #### Concat
@@ -1906,6 +2368,10 @@ Output PostgreSQL:
 ```text
 CONCAT("t"."string", $1, $2)
 ```
+Output SQLite:
+```text
+CONCAT("t"."string", ?, ?)
+```
 
 #### ConcatWs
 Concatenates two or more string expressions with a specified separator between them. Skips `NULL` arguments.
@@ -1919,6 +2385,10 @@ CONCAT_WS(?, `t`.`string`, ?, ?)
 Output PostgreSQL:
 ```text
 CONCAT_WS($1, "t"."string", $2, $3)
+```
+Output SQLite:
+```text
+CONCAT_WS(?, "t"."string", ?, ?)
 ```
 
 #### LeftString
@@ -1934,6 +2404,10 @@ Output PostgreSQL:
 ```text
 LEFT("t"."string", $1)
 ```
+Output SQLite:
+```text
+LEFT("t"."string", ?)
+```
 
 #### Lower
 Converts a string expression to lowercase.
@@ -1945,6 +2419,10 @@ Output MySQL:
 LOWER(`t`.`string`)
 ```
 Output PostgreSQL:
+```text
+LOWER("t"."string")
+```
+Output SQLite:
 ```text
 LOWER("t"."string")
 ```
@@ -1962,6 +2440,10 @@ Output PostgreSQL:
 ```text
 LPAD("t"."string", $1, $2)
 ```
+Output SQLite:
+```text
+LPAD("t"."string", ?, ?)
+```
 
 #### LTrim
 Removes leading spaces from a string expression.
@@ -1973,6 +2455,10 @@ Output MySQL:
 LTRIM(`t`.`string`)
 ```
 Output PostgreSQL:
+```text
+LTRIM("t"."string")
+```
+Output SQLite:
 ```text
 LTRIM("t"."string")
 ```
@@ -1990,6 +2476,10 @@ Output PostgreSQL:
 ```text
 REPEAT("t"."string", $1)
 ```
+Output SQLite:
+```text
+REPEAT("t"."string", ?)
+```
 
 #### Replace
 Replaces all occurrences of a substring in a string with a new substring.
@@ -2004,6 +2494,10 @@ Output PostgreSQL:
 ```text
 REPLACE("t"."string", $1, $2)
 ```
+Output SQLite:
+```text
+REPLACE("t"."string", ?, ?)
+```
 
 #### Reverse
 Reverses the characters in a string expression.
@@ -2015,6 +2509,10 @@ Output MySQL:
 REVERSE(`t`.`string`)
 ```
 Output PostgreSQL:
+```text
+REVERSE("t"."string")
+```
+Output SQLite:
 ```text
 REVERSE("t"."string")
 ```
@@ -2032,6 +2530,10 @@ Output PostgreSQL:
 ```text
 RIGHT("t"."string", $1)
 ```
+Output SQLite:
+```text
+RIGHT("t"."string", ?)
+```
 
 #### RPad
 Right-pads a string expression with the specified separator to a total length of `count` characters.
@@ -2046,6 +2548,10 @@ Output PostgreSQL:
 ```text
 RPAD("t"."string", $1, $2)
 ```
+Output SQLite:
+```text
+RPAD("t"."string", ?, ?)
+```
 
 #### RTrim
 Removes trailing spaces from a string expression.
@@ -2057,6 +2563,10 @@ Output MySQL:
 RTRIM(`t`.`string`)
 ```
 Output PostgreSQL:
+```text
+RTRIM("t"."string")
+```
+Output SQLite:
 ```text
 RTRIM("t"."string")
 ```
@@ -2074,6 +2584,10 @@ Output PostgreSQL:
 ```text
 SUBSTRING("t"."string", $1, $2)
 ```
+Output SQLite:
+```text
+SUBSTRING("t"."string", ?, ?)
+```
 
 #### Trim
 Removes both leading and trailing spaces from a string expression.
@@ -2088,6 +2602,10 @@ Output PostgreSQL:
 ```text
 TRIM("t"."string")
 ```
+Output SQLite:
+```text
+TRIM("t"."string")
+```
 
 #### Upper
 Converts a string expression to uppercase.
@@ -2099,6 +2617,10 @@ Output MySQL:
 UPPER(`t`.`string`)
 ```
 Output PostgreSQL:
+```text
+UPPER("t"."string")
+```
+Output SQLite:
 ```text
 UPPER("t"."string")
 ```
@@ -2131,6 +2653,10 @@ Output PostgreSQL:
 ```text
 ("t"."string" = $1 AND "t"."number" > $2)
 ```
+Output SQLite:
+```text
+("t"."string" = ? AND "t"."number" > ?)
+```
 
 ### Or
 Combines multiple conditions with a logical `OR`. At least one condition must be true for the combined expression to be true.
@@ -2148,6 +2674,10 @@ Output PostgreSQL:
 ```text
 ("t"."string" = $1 OR "t"."number" > $2)
 ```
+Output SQLite:
+```text
+("t"."string" = ? OR "t"."number" > ?)
+```
 
 ## exprOrderBy
 ### Asc
@@ -2160,6 +2690,10 @@ Output MySQL:
 `t`.`string` ASC
 ```
 Output PostgreSQL:
+```text
+"t"."string" ASC
+```
+Output SQLite:
 ```text
 "t"."string" ASC
 ```
@@ -2177,6 +2711,10 @@ Output PostgreSQL:
 ```text
 "t"."string" DESC
 ```
+Output SQLite:
+```text
+"t"."string" DESC
+```
 
 ## exprSubquery
 ### Subquery
@@ -2189,6 +2727,10 @@ Output MySQL:
 (SELECT `t`.`id` FROM `test` AS `t`)
 ```
 Output PostgreSQL:
+```text
+(SELECT "t"."id" FROM "test" AS "t")
+```
+Output SQLite:
 ```text
 (SELECT "t"."id" FROM "test" AS "t")
 ```
@@ -2208,4 +2750,8 @@ Output MySQL:
 Output PostgreSQL:
 ```text
 $1
+```
+Output SQLite:
+```text
+?
 ```

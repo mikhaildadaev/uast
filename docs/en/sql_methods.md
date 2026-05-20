@@ -31,7 +31,7 @@ DELETE FROM "test" AS "t" USING "test1" AS "t1", "test2" AS "t2" WHERE "t1"."id"
 ```
 Output SQLite:
 ```text
-...
+DELETE FROM "test" AS "t" USING "test1" AS "t1", "test2" AS "t2" WHERE "t1"."id" = "t"."id" AND "t2"."id" = "t"."id" AND "t"."string" = ?
 ```
 
 ### Returning
@@ -563,7 +563,7 @@ UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" SET "t".
 ```
 Output SQLite:
 ```text
-...
+UPDATE "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" SET "t"."string" = ? WHERE "t1"."string" = ?
 ```
 
 ### Returning

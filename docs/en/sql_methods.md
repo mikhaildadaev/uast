@@ -21,6 +21,10 @@ stmtDelete := uast.NewDelete(uast.NewTable("test").As("t")).
         uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
 ```
+Output MariaDB:
+```text
+DELETE `t` FROM `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` LEFT JOIN `test2` AS `t2` ON `t2`.`id` = `t`.`id` WHERE `t`.`string` = ?
+```
 Output MySQL:
 ```text
 DELETE `t` FROM `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` LEFT JOIN `test2` AS `t2` ON `t2`.`id` = `t`.`id` WHERE `t`.`string` = ?
@@ -45,6 +49,10 @@ stmtDelete := uast.NewDelete(uast.NewTable("test").As("t")).
         uast.Column[int64]("t", "id"),
     )
 ```
+Output MariaDB:
+```text
+DELETE FROM `test` AS `t` WHERE `t`.`string` = ? RETURNING `t`.`id`
+```
 Output MySQL:
 ```text
 // Not supported
@@ -65,6 +73,10 @@ stmtDelete := uast.NewDelete(uast.NewTable("test").As("t")).
     Where(
         uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
+```
+Output MariaDB:
+```text
+DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output MySQL:
 ```text
@@ -98,6 +110,10 @@ stmtDelete := uast.NewDelete(uast.NewTable("test").As("t")).
 		stmtWithN,
 	)
 ```
+Output MariaDB:
+```text
+WITH cte_nr AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) DELETE FROM `test` AS `t` WHERE `t`.`id` IN (SELECT `cte_nr`.`id` FROM `test` AS `t`)
+```
 Output MySQL:
 ```text
 WITH cte_nr AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) DELETE FROM `test` AS `t` WHERE `t`.`id` IN (SELECT `cte_nr`.`id` FROM `test` AS `t`)
@@ -123,6 +139,10 @@ stmtInsert := uast.NewInsert(uast.NewTable("test").As("t")).
     Returning(
         uast.Column[int64]("t", "id"),
     )
+```
+Output MariaDB:
+```text
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) RETURNING `t`.`id`
 ```
 Output MySQL:
 ```text
@@ -151,6 +171,10 @@ stmtInsert := NewInsert(uast.NewTable("test").As("t")).
 		),
 	)
 ```
+Output MariaDB:
+```text
+INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t1`.`string`, `t1`.`number` FROM `test1` AS `t1` WHERE `t1`.`string` = ?
+```
 Output MySQL:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t1`.`string`, `t1`.`number` FROM `test1` AS `t1` WHERE `t1`.`string` = ?
@@ -172,6 +196,10 @@ stmtInsert := NewInsert(uast.NewTable("test").As("t")).
         uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
 		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
     ).
+```
+Output MariaDB:
+```text
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
 Output MySQL:
 ```text
@@ -211,6 +239,10 @@ stmtInsert := NewInsert(uast.NewTable("test").As("t")).
 		stmtWithN,
 	)
 ```
+Output MariaDB:
+```text
+WITH `cte_nr` (`id`, `string`) AS (SELECT `t1`.`id`, `t1`.`string` FROM `test1` AS `t1` WHERE `t1`.`string` = ?) INSERT INTO `test` AS `t` (`id`, `string`) SELECT `cte_nr`.`id`, `cte_nr`.`string` FROM `cte_nr` AS `ctenr`
+```
 Output MySQL:
 ```text
 WITH `cte_nr` (`id`, `string`) AS (SELECT `t1`.`id`, `t1`.`string` FROM `test1` AS `t1` WHERE `t1`.`string` = ?) INSERT INTO `test` AS `t` (`id`, `string`) SELECT `cte_nr`.`id`, `cte_nr`.`string` FROM `cte_nr` AS `ctenr`
@@ -233,6 +265,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 	Field(
 		uast.Column[int64]("t", "id"),
 	)
+```
+Output MariaDB:
+```text
+SELECT DISTINCT `t`.`id` FROM `test` AS `t`
 ```
 Output MySQL:
 ```text
@@ -259,6 +295,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 		uast.Column[string]("t", "string"),
 	)
 ```
+Output MariaDB:
+```text
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string`
+```
 Output MySQL:
 ```text
 SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string`
@@ -283,6 +323,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 	GroupBy(
 		uast.Column[string]("t", "string"),
 	)
+```
+Output MariaDB:
+```text
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string`
 ```
 Output MySQL:
 ```text
@@ -312,6 +356,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 		uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
 	)
 ```
+Output MariaDB:
+```text
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
+```
 Output MySQL:
 ```text
 SELECT `t`.`string`, COUNT(`t`.`id`) AS `count` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
@@ -336,6 +384,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 		uast.Inner(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
 	)
 ```
+Output MariaDB:
+```text
+SELECT `t`.`id` FROM `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
 Output MySQL:
 ```text
 SELECT `t`.`id` FROM `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
@@ -358,6 +410,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 	).
 	Limit(10)
 ```
+Output MariaDB:
+```text
+SELECT `t`.`id` FROM `test` AS `t` LIMIT ?
+```
 Output MySQL:
 ```text
 SELECT `t`.`id` FROM `test` AS `t` LIMIT ?
@@ -379,6 +435,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 		uast.Column[int64]("t", "id"),
 	).
 	Offset(20)
+```
+Output MariaDB:
+```text
+SELECT `t`.`id` FROM `test` AS `t` OFFSET ?
 ```
 Output MySQL:
 ```text
@@ -403,6 +463,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 	OrderBy(
 		uast.Column[string]("t", "string"),
 	)
+```
+Output MariaDB:
+```text
+SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`string`
 ```
 Output MySQL:
 ```text
@@ -456,6 +520,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 		stmtWithR,
 	)
 ```
+Output MariaDB:
+```text
+WITH RECURSIVE `cte_re` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ? UNION ALL SELECT `t`.`id` FROM `test` AS `t` INNER JOIN `cte_re` AS `ctere` ON `t`.`id` = `ctere`.`id`) SELECT `t`.`string` FROM `test` AS `t` UNION SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `t`.`string` FROM `test` AS `t` EXCEPT SELECT `t`.`string` FROM `test` AS `t` INTERSECT SELECT `t`.`string` FROM `test` AS `t`
+```
 Output MySQL:
 ```text
 WITH RECURSIVE `cte_re` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ? UNION ALL SELECT `t`.`id` FROM `test` AS `t` INNER JOIN `cte_re` AS `ctere` ON `t`.`id` = `ctere`.`id`) SELECT `t`.`string` FROM `test` AS `t` UNION SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `t`.`string` FROM `test` AS `t` EXCEPT SELECT `t`.`string` FROM `test` AS `t` INTERSECT SELECT `t`.`string` FROM `test` AS `t`
@@ -479,6 +547,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 	Where(
 		uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
 	)
+```
+Output MariaDB:
+```text
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output MySQL:
 ```text
@@ -518,6 +590,10 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 		stmtWithN,
 	)
 ```
+Output MariaDB:
+```text
+WITH `cte_nr` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?) SELECT `t`.`id`, `t`.`number` FROM `test` AS `t` INNER JOIN `cte_nr` AS `ctenr` ON `t`.`id` = `ctenr`.`id`
+```
 Output MySQL:
 ```text
 WITH `cte_nr` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?) SELECT `t`.`id`, `t`.`number` FROM `test` AS `t` INNER JOIN `cte_nr` AS `ctenr` ON `t`.`id` = `ctenr`.`id`
@@ -546,6 +622,10 @@ stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 		uast.Equal(uast.Column[string]("t1", "string"), uast.Value("active")),
 	)
 ```
+Output MariaDB:
+```text
+UPDATE `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` SET `t`.`string` = ? WHERE `t1`.`string` = ?
+```
 Output MySQL:
 ```text
 UPDATE `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` SET `t`.`string` = ? WHERE `t1`.`string` = ?
@@ -573,6 +653,10 @@ stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 		uast.Column[int64]("t", "id"),
 	)
 ```
+Output MariaDB:
+```text
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ? RETURNING `t`.`id`
+```
 Output MySQL:
 ```text
 // Not supported
@@ -597,6 +681,10 @@ stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
 ```
+Output MariaDB:
+```text
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
+```
 Output MySQL:
 ```text
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
@@ -620,6 +708,10 @@ stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	Where(
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
+```
+Output MariaDB:
+```text
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 ```
 Output MySQL:
 ```text
@@ -655,6 +747,10 @@ stmtUpdate := NewUpdate(uast.NewTable("test").As("t")).
 	With(
 		stmtWithN,
 	)
+```
+Output MariaDB:
+```text
+WITH `cte_nr` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`string` = ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `cte_nr`.`id` FROM `test` AS `t`)
 ```
 Output MySQL:
 ```text

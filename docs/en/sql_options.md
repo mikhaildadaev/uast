@@ -26,6 +26,10 @@ mysqlQuery, mysqlArgs, _ := sql.Build(stmt)
 sql.SetDialect(uast.DialectPostgreSQL)
 pgsqlQuery, pgsqlArgs, _ := sql.Build(stmt)
 ```
+Output MariaDB:
+```text
+SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
+```
 Output MySQL:
 ```text
 SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?

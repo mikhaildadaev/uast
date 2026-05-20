@@ -14,6 +14,10 @@ Assigns an alias to a column expression.
 ```go
 column := uast.Column[string]("t", "string").As("alias")
 ```
+Output MariaDB:
+```text
+`t`.`string` AS `alias`
+```
 Output MySQL:
 ```text
 `t`.`string` AS `alias`
@@ -32,6 +36,10 @@ Output SQLite:
 Assigns an alias to a function expression.
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
+```
+Output MariaDB:
+```text
+AVG(`t`.`number`) AS `alias`
 ```
 Output MySQL:
 ```text
@@ -54,6 +62,10 @@ function := uast.Avg(uast.Column[int]("t", "number"), false).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
+Output MariaDB:
+```text
+AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
 Output MySQL:
 ```text
 AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -72,6 +84,10 @@ AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Assigns an alias to a subquery expression.
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test").As("t"))).As("alias")
+```
+Output MariaDB:
+```text
+(SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
 ```
 Output MySQL:
 ```text

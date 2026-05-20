@@ -16,6 +16,10 @@ statement := uast.NewDelete(uast.NewTable("test").As("t")).
         uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
 ```
+Output MariaDB:
+```text
+DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
+```
 Output MySQL:
 ```text
 DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
@@ -38,6 +42,10 @@ statement := uast.NewInsert(uast.NewTable("test").As("t")).
         uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
     )
 ```
+Output MariaDB:
+```text
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+```
 Output MySQL:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
@@ -58,6 +66,10 @@ statement := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
         uast.Column[string]("t", "string"),
     )
+```
+Output MariaDB:
+```text
+SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MySQL:
 ```text
@@ -82,6 +94,10 @@ statement := uast.NewUpdate(uast.NewTable("test").As("t")).
     Where(
         uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
     )
+```
+Output MariaDB:
+```text
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 ```
 Output MySQL:
 ```text

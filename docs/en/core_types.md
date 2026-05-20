@@ -14,6 +14,10 @@ Fixed-length binary string.
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS BINARY)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS BINARY)
@@ -31,6 +35,10 @@ CAST("t"."number" AS BLOB)
 Variable-length binary string.
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS VARBINARY)
 ```
 Output MySQL:
 ```text
@@ -51,6 +59,10 @@ Represents a date value (year, month, day).
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DATE)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS DATE)
@@ -68,6 +80,10 @@ CAST("t"."number" AS TEXT)
 Represents a combined date and time value.
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DATETIME)
 ```
 Output MySQL:
 ```text
@@ -87,6 +103,10 @@ Represents a time value (hour, minute, second).
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TIME)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS TIME)
@@ -104,6 +124,10 @@ CAST("t"."number" AS TEXT)
 Represents a timestamp value.
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TIMESTAMP)
 ```
 Output MySQL:
 ```text
@@ -124,6 +148,10 @@ Large integer type.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS SIGNED)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS SIGNED)
@@ -141,6 +169,10 @@ CAST("t"."number" AS INTEGER)
 Fixed-point decimal number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DECIMAL)
 ```
 Output MySQL:
 ```text
@@ -160,6 +192,10 @@ Double-precision floating-point number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DECIMAL)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS DECIMAL)
@@ -177,6 +213,10 @@ CAST("t"."number" AS REAL)
 Single-precision floating-point number.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DECIMAL)
 ```
 Output MySQL:
 ```text
@@ -196,6 +236,10 @@ Integer type.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS SIGNED)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS SIGNED)
@@ -213,6 +257,10 @@ CAST("t"."number" AS INTEGER)
 Small integer type.
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS SIGNED)
 ```
 Output MySQL:
 ```text
@@ -233,6 +281,10 @@ Fixed-length character string.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS CHAR)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS CHAR)
@@ -250,6 +302,10 @@ CAST("t"."number" AS TEXT)
 Variable-length character string.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS VARCHAR)
 ```
 Output MySQL:
 ```text
@@ -269,6 +325,10 @@ Variable-length text string.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TEXT)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS TEXT)
@@ -286,6 +346,10 @@ CAST("t"."number" AS TEXT)
 Variable-length character string with specified maximum.
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS VARCHAR)
 ```
 Output MySQL:
 ```text
@@ -306,6 +370,10 @@ Represents an array type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS JSON)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS JSON)
@@ -323,6 +391,10 @@ CAST("t"."number" AS TEXT)
 Represents a boolean (true/false) type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TINYINT(1))
 ```
 Output MySQL:
 ```text
@@ -342,6 +414,10 @@ Represents a JSON data type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS JSON)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS JSON)
@@ -360,6 +436,10 @@ Represents a universally unique identifier (UUID).
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS UUID)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS CHAR(36))
@@ -377,6 +457,10 @@ CAST("t"."number" AS TEXT)
 Represents an XML data type.
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TEXT)
 ```
 Output MySQL:
 ```text

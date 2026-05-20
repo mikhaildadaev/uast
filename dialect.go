@@ -2,7 +2,13 @@ package uast
 
 // Публичные переменные
 var (
-	DialectDefault = DialectPostgreSQL
+	DialectAlloyDB          = DialectPostgreSQL
+	DialectAuroraMySQL      = DialectMySQL
+	DialectAuroraPostgreSQL = DialectPostgreSQL
+	DialectCockroachDB      = DialectPostgreSQL
+	DialectDefault          = DialectPostgreSQL
+	DialectTiDB             = DialectMySQL
+	DialectYugabyteDB       = DialectPostgreSQL
 )
 
 // Публичные структуры

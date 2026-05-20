@@ -153,6 +153,16 @@ Output SQLite:
 // Not supported
 ```
 
+## clauseLimit
+
+## clauseOffset
+
+## clauseUnions
+### Union
+### UnionAll
+### UnionExcept
+### UnionIntersect
+
 ## exprArray
 ### Array
 Constructs an array expression for use in SQL queries.

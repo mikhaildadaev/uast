@@ -10,6 +10,7 @@ This page covers all configuration options: `exprArray`, `exprBinary`, `exprComp
 
 ## clauseJoin
 ### Cross
+Adds a CROSS JOIN to the statement. Returns the Cartesian product of both tables.
 ```go
 join := Cross(Test1.Table)
 ```
@@ -27,6 +28,7 @@ CROSS JOIN "test1" AS "t1"
 ```
 
 ### Full
+Adds a FULL JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
 join := Full(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
@@ -44,6 +46,7 @@ FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 
 ### FullOuter
+Adds a FULL OUTER JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
 join := FullOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
@@ -61,6 +64,7 @@ FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 
 ### Inner
+Adds an INNER JOIN to the statement. Returns rows that have matching values in both tables.
 ```go
 join := Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
@@ -78,6 +82,7 @@ INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 
 ### Left
+Adds a LEFT JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
 join := Left(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
@@ -95,6 +100,7 @@ LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 
 ### LeftOuter
+Adds a LEFT OUTER JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
 join := LeftOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
@@ -112,6 +118,7 @@ LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 
 ### Right
+Adds a RIGHT JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
 join := Right(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```
@@ -129,6 +136,7 @@ Output SQLite:
 ```
 
 ### RightOuter
+Adds a RIGHT OUTER JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
 join := RightOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
 ```

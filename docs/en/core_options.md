@@ -8,6 +8,143 @@ outline: deep
 This page covers all configuration options: `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprOrderBy`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
+## clauseJoin
+### Cross
+```go
+join := Cross(Test1.Table)
+```
+Output MySQL:
+```text
+CROSS JOIN `test1` AS `t1`
+```
+Output PostgreSQL:
+```text
+CROSS JOIN "test1" AS "t1"
+```
+Output SQLite:
+```text
+CROSS JOIN "test1" AS "t1"
+```
+
+### Full
+```go
+join := Full(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MySQL:
+```text
+FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
+Output PostgreSQL:
+```text
+FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+Output SQLite:
+```text
+FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+
+### FullOuter
+```go
+join := FullOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MySQL:
+```text
+FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
+Output PostgreSQL:
+```text
+FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+Output SQLite:
+```text
+FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+
+### Inner
+```go
+join := Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MySQL:
+```text
+INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
+Output PostgreSQL:
+```text
+INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+Output SQLite:
+```text
+INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+
+### Left
+```go
+join := Left(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MySQL:
+```text
+LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
+Output PostgreSQL:
+```text
+LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+Output SQLite:
+```text
+LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+
+### LeftOuter
+```go
+join := LeftOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MySQL:
+```text
+LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
+Output PostgreSQL:
+```text
+LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+Output SQLite:
+```text
+LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+
+### Right
+```go
+join := Right(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MySQL:
+```text
+RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
+Output PostgreSQL:
+```text
+RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+Output SQLite:
+```text
+// Not supported
+```
+
+### RightOuter
+```go
+join := RightOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+```
+Output MySQL:
+```text
+RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+```
+Output PostgreSQL:
+```text
+RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+```
+Output SQLite:
+```text
+// Not supported
+```
+
 ## exprArray
 ### Array
 Constructs an array expression for use in SQL queries.

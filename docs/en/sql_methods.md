@@ -333,27 +333,20 @@ stmtSelect := NewSelect(uast.NewTable("test").As("t")).
 		uast.Column[int64]("t", "id"),
 	).
 	Join(
-		uast.Cross(uast.NewTable("test1")),
-		uast.Full(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
-		uast.FullOuter(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
 		uast.Inner(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
-		uast.Left(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
-		uast.LeftOuter(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
-		uast.Right(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
-		uast.RightOuter(uast.NewTable("test1"), uast.Equal(uast.Column[int64]("t1", "id"), uast.Column[int64]("t", "id"))),
 	)
 ```
 Output MySQL:
 ```text
-SELECT `t`.`id` FROM `test` AS `t` CROSS JOIN `test1` AS `t1` FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id` RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+SELECT `t`.`id` FROM `test` AS `t` INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."id" FROM "test" AS "t" CROSS JOIN "test1" AS "t1" FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id" RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+SELECT "t"."id" FROM "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 Output SQLite:
 ```text
-...
+SELECT "t"."id" FROM "test" AS "t" INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ```
 
 ### Limit

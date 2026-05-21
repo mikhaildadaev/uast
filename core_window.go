@@ -8,7 +8,7 @@ type WindowFrame struct {
 }
 type WindowSpec struct {
 	partition []ExpressionBase
-	order     []*exprOrderBy
+	order     []*clauseOrderBy
 	frame     *WindowFrame
 }
 type WindowOption func(*WindowSpec)
@@ -23,7 +23,7 @@ func GroupsBetween(start, end string) WindowOption {
 		}
 	}
 }
-func OrderBy(orders ...*exprOrderBy) WindowOption {
+func OrderBy(orders ...*clauseOrderBy) WindowOption {
 	return func(windowSpec *WindowSpec) {
 		windowSpec.order = orders
 	}

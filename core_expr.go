@@ -22,21 +22,9 @@ type markExpressable interface {
 	isColumnable()
 	isFieldable()
 }
-type markGroupable interface {
-	ExpressionBase
-	isGroupable()
-}
-type markOrderable interface {
-	ExpressionBase
-	isOrderable()
-}
 type markPredicable interface {
 	ExpressionBase
 	isPredicable()
-}
-type markReturnable interface {
-	ExpressionBase
-	isReturnable()
 }
 type transformComparison interface {
 	ExpressionBase
@@ -110,12 +98,6 @@ type exprFunction[InLT, InRT, T typeScalar] struct {
 	valueType  ValueType
 	window     *WindowSpec
 }
-type exprGroupBy struct {
-	expression ExpressionBase
-}
-type exprHaving struct {
-	expression ExpressionBase
-}
 type exprJson struct {
 	expressions []ExpressionBase
 	operator    compositeOperator
@@ -131,15 +113,8 @@ type exprLogical struct {
 type exprOperator[T typeString] struct {
 	value T
 }
-type exprOrderBy struct {
-	direction  bool
-	expression ExpressionBase
-}
 type exprPair[T typeScalar] struct {
 	name string
-}
-type exprReturning struct {
-	expression ExpressionBase
 }
 type exprService[T typeString] struct {
 	value T
@@ -149,9 +124,6 @@ type exprSubquery[T typeScalar] struct {
 }
 type exprValue[T typeScalar] struct {
 	value T
-}
-type exprWhere struct {
-	expression ExpressionBase
 }
 
 // Приватные методы
@@ -659,27 +631,6 @@ func (exprFunction *exprFunction[InLT, InRT, T]) validate(baseValidator *baseVal
 	}
 	return nil
 }
-func (exprGroupBy *exprGroupBy) isExpressionBase() {}
-func (exprGroupBy *exprGroupBy) isGroupable()      {}
-func (exprGroupBy *exprGroupBy) render(baseRenderer *baseRenderer) error {
-	if err := exprGroupBy.expression.render(baseRenderer); err != nil {
-		return err
-	}
-	return nil
-}
-func (exprGroupBy *exprGroupBy) validate(baseValidator *baseValidator) error {
-	if exprGroupBy.expression == nil {
-		return ErrInvalidStatementGroupBy
-	}
-	return nil
-}
-func (exprHaving *exprHaving) isExpressionBase() {}
-func (exprHaving *exprHaving) render(baseRenderer *baseRenderer) error {
-	return exprHaving.expression.render(baseRenderer)
-}
-func (exprHaving *exprHaving) validate(baseValidator *baseValidator) error {
-	return exprHaving.expression.validate(baseValidator)
-}
 func (exprJson *exprJson) isExpressionBase() {}
 func (exprJson *exprJson) render(baseRenderer *baseRenderer) error {
 	lengthExpressions := len(exprJson.expressions) - 1
@@ -778,26 +729,6 @@ func (exprOperator *exprOperator[T]) validate(baseValidator *baseValidator) erro
 	}
 	return nil
 }
-func (exprOrderBy *exprOrderBy) isExpressionBase() {}
-func (exprOrderBy *exprOrderBy) isOrderable()      {}
-func (exprOrderBy *exprOrderBy) render(baseRenderer *baseRenderer) error {
-	if err := exprOrderBy.expression.render(baseRenderer); err != nil {
-		return err
-	}
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	if exprOrderBy.direction {
-		baseRenderer.renderOperator(uastOrderDesc)
-	} else {
-		baseRenderer.renderOperator(uastOrderAsc)
-	}
-	return nil
-}
-func (exprOrderBy *exprOrderBy) validate(baseValidator *baseValidator) error {
-	if exprOrderBy == nil {
-		return ErrInvalidStatementOrderBy
-	}
-	return nil
-}
 func (exprPair *exprPair[T]) isExpressionBase()  {}
 func (exprPair *exprPair[T]) isExpressionSafe(T) {}
 func (exprPair *exprPair[T]) isColumnable()      {}
@@ -815,14 +746,6 @@ func (exprPair *exprPair[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
-}
-func (exprReturning *exprReturning) isExpressionBase() {}
-func (exprReturning *exprReturning) isReturnable()     {}
-func (exprReturning *exprReturning) render(baseRenderer *baseRenderer) error {
-	return exprReturning.expression.render(baseRenderer)
-}
-func (exprReturning *exprReturning) validate(baseValidator *baseValidator) error {
-	return exprReturning.expression.validate(baseValidator)
 }
 func (exprService *exprService[T]) isExpressionBase()  {}
 func (exprService *exprService[T]) isExpressionSafe(T) {}
@@ -879,12 +802,4 @@ func (exprValue *exprValue[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
-}
-func (exprWhere *exprWhere) isExpressionBase() {}
-func (exprWhere *exprWhere) isPredicable()     {}
-func (exprWhere *exprWhere) render(baseRenderer *baseRenderer) error {
-	return exprWhere.expression.render(baseRenderer)
-}
-func (exprWhere *exprWhere) validate(baseValidator *baseValidator) error {
-	return exprWhere.expression.validate(baseValidator)
 }

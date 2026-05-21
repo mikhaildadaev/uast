@@ -1391,14 +1391,14 @@ func Or(expressions ...markPredicable) *exprLogical {
 }
 
 // -- Order -- //
-func Asc(expression markOrderable) *exprOrderBy {
-	return &exprOrderBy{
+func Asc(expression markOrderable) *clauseOrderBy {
+	return &clauseOrderBy{
 		direction:  false,
 		expression: expression,
 	}
 }
-func Desc(expression markOrderable) *exprOrderBy {
-	return &exprOrderBy{
+func Desc(expression markOrderable) *clauseOrderBy {
+	return &clauseOrderBy{
 		direction:  true,
 		expression: expression,
 	}

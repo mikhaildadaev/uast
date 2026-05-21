@@ -50,14 +50,14 @@ func Benchmark_Select_Multi(b *testing.B) {
 						Where(
 							Greater(Test1.Column.Number, Value(10)),
 						)
-					queryExistsSub := NewSelect(Test2.Table).
+					queryExistsSub := NewSelect(Test1.Table).
 						Field(
-							Test2.Column.ID,
+							Test1.Column.ID,
 						).
 						Where(
 							And(
-								Equal(Test2.Column.Number, Test.Column.Number),
-								Equal(Test2.Column.String, Value("active")),
+								Equal(Test1.Column.Number, Test.Column.Number),
+								Equal(Test1.Column.String, Value("active")),
 							),
 						)
 					stmtSelect := NewSelect(Test.Table).
@@ -70,7 +70,7 @@ func Benchmark_Select_Multi(b *testing.B) {
 						).
 						Join(
 							Inner(Test1.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-							Left(Test2.Table, Equal(Test2.Column.String, Test.Column.String)),
+							Left(Test1.Table, Equal(Test1.Column.String, Test.Column.String)),
 						).
 						Where(
 							And(
@@ -138,14 +138,14 @@ func Benchmark_Select_Single(b *testing.B) {
 					Where(
 						Greater(Test1.Column.Number, Value(10)),
 					)
-				queryExistsSub := NewSelect(Test2.Table).
+				queryExistsSub := NewSelect(Test1.Table).
 					Field(
-						Test2.Column.ID,
+						Test1.Column.ID,
 					).
 					Where(
 						And(
-							Equal(Test2.Column.Number, Test.Column.Number),
-							Equal(Test2.Column.String, Value("active")),
+							Equal(Test1.Column.Number, Test.Column.Number),
+							Equal(Test1.Column.String, Value("active")),
 						),
 					)
 				stmtSelect := NewSelect(Test.Table).
@@ -158,7 +158,7 @@ func Benchmark_Select_Single(b *testing.B) {
 					).
 					Join(
 						Inner(Test1.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-						Left(Test2.Table, Equal(Test2.Column.String, Test.Column.String)),
+						Left(Test1.Table, Equal(Test1.Column.String, Test.Column.String)),
 					).
 					Where(
 						And(

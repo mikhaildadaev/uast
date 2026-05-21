@@ -37,19 +37,6 @@ var Test1 = struct {
 }{
 	Table: NewTable("test1", "t1"),
 }
-var Test2 = struct {
-	Column struct {
-		Date   *ColumnExpr[time.Time]
-		ID     *ColumnExpr[int64]
-		Json   *ColumnExpr[string]
-		Number *ColumnExpr[int]
-		String *ColumnExpr[string]
-		Time   *ColumnExpr[time.Time]
-	}
-	Table *TableSource
-}{
-	Table: NewTable("test2", "t2"),
-}
 
 // Публичные функции
 func Test_Core_clauseGroupBy(t *testing.T) {
@@ -1718,13 +1705,6 @@ func init() {
 	Test1.Column.Number = Column[int](Test1.Table.aliasName, "number")
 	Test1.Column.String = Column[string](Test1.Table.aliasName, "string")
 	Test1.Column.Time = Column[time.Time](Test1.Table.aliasName, "time")
-	// Test2
-	Test2.Column.Date = Column[time.Time](Test2.Table.aliasName, "date")
-	Test2.Column.ID = Column[int64](Test2.Table.aliasName, "id")
-	Test2.Column.Json = Column[string](Test2.Table.aliasName, "json")
-	Test2.Column.Number = Column[int](Test2.Table.aliasName, "number")
-	Test2.Column.String = Column[string](Test2.Table.aliasName, "string")
-	Test2.Column.Time = Column[time.Time](Test2.Table.aliasName, "time")
 }
 func testAllDialects(t *testing.T, testFunc func(t *testing.T, supportDialect *SupportDialect)) {
 	for _, supportDialect := range listSupportDialects {

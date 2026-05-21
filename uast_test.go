@@ -52,6 +52,65 @@ var Test2 = struct {
 }
 
 // Публичные функции
+func Test_Core_clauseGroupBy(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Test.Column.String,
+				Count(Test.Column.ID, false).As("count"),
+			).
+			GroupBy(
+				Test.Column.String,
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "GROUP BY `t`.`string`", "GROUP BY")
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "GROUP BY `t`.`string`", "GROUP BY")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `GROUP BY "t"."string"`, "GROUP BY")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `GROUP BY "t"."string"`, "GROUP BY")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_clauseHaving(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Test.Column.String,
+				Count(Test.Column.ID, false).As("count"),
+			).
+			GroupBy(
+				Test.Column.String,
+			).
+			Having(
+				Greater(Count(Test.Column.ID, false), Value[int64](2)),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "COUNT")
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "COUNT")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > $1`, "COUNT")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > ?`, "COUNT")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
 func Test_Core_clauseJoin(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
@@ -160,6 +219,62 @@ func Test_Core_clauseOffset(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `OFFSET ?`, "OFFSET")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_clauseOrderBy(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Test.Column.ID,
+			).
+			OrderBy(
+				Asc(Test.Column.String),
+				Desc(Test.Column.String),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "ORDER BY `t`.`string` ASC, `t`.`string` DESC", "ORDER BY")
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "ORDER BY `t`.`string` ASC, `t`.`string` DESC", "ORDER BY")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string" ASC, "t"."string" DESC`, "ORDER BY")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string" ASC, "t"."string" DESC`, "ORDER BY")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_clauseReturning(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtDelete := NewDelete(Test.Table).
+			Where(
+				Equal(Test.Column.String, Value("active")),
+			).
+			Returning(
+				Test.Column.ID,
+				Test.Column.String,
+			)
+		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlDeleteQuery, "RETURNING `t`.`id`, `t`.`string`", "RETURNING")
+		case DialectMySQL:
+			// Not support
+		case DialectPostgreSQL:
+			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id", "t"."string"`, "RETURNING")
+		case DialectSQLite:
+			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id", "t"."string"`, "RETURNING")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
 }
 func Test_Core_clauseSet(t *testing.T) {
@@ -283,6 +398,33 @@ func Test_Core_clauseValues(t *testing.T) {
 			assertContains(t, sqlInsertQuery, `VALUES (?, ?)`, "VALUES")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
+	})
+}
+func Test_Core_clauseWhere(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Test.Column.ID,
+			).
+			Where(
+				Equal(Test.Column.String, Value("active")),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "WHERE `t`.`string` = ?", "WHERE")
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "WHERE `t`.`string` = ?", "WHERE")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `WHERE "t"."string" = $1`, "WHERE")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `WHERE "t"."string" = ?`, "WHERE")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
 func Test_Core_clauseWith(t *testing.T) {
@@ -1254,65 +1396,6 @@ func Test_Core_exprFunction(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Core_exprGroupBy(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).
-			Field(
-				Test.Column.String,
-				Count(Test.Column.ID, false).As("count"),
-			).
-			GroupBy(
-				Test.Column.String,
-			)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "GROUP BY `t`.`string`", "GROUP BY")
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "GROUP BY `t`.`string`", "GROUP BY")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `GROUP BY "t"."string"`, "GROUP BY")
-		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `GROUP BY "t"."string"`, "GROUP BY")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
-func Test_Core_exprHaving(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).
-			Field(
-				Test.Column.String,
-				Count(Test.Column.ID, false).As("count"),
-			).
-			GroupBy(
-				Test.Column.String,
-			).
-			Having(
-				Greater(Count(Test.Column.ID, false), Value[int64](2)),
-			)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "COUNT")
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "COUNT")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > $1`, "COUNT")
-		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > ?`, "COUNT")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
 func Test_Core_exprLiteral(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
@@ -1380,62 +1463,6 @@ func Test_Core_exprLogical(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Core_exprOrderBy(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).
-			Field(
-				Test.Column.ID,
-			).
-			OrderBy(
-				Asc(Test.Column.String),
-				Desc(Test.Column.String),
-			)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "ORDER BY `t`.`string` ASC, `t`.`string` DESC", "ORDER BY")
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "ORDER BY `t`.`string` ASC, `t`.`string` DESC", "ORDER BY")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string" ASC, "t"."string" DESC`, "ORDER BY")
-		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string" ASC, "t"."string" DESC`, "ORDER BY")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
-func Test_Core_exprReturning(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmtDelete := NewDelete(Test.Table).
-			Where(
-				Equal(Test.Column.String, Value("active")),
-			).
-			Returning(
-				Test.Column.ID,
-				Test.Column.String,
-			)
-		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
-		switch supportDialect {
-		case DialectMariaDB:
-			assertContains(t, sqlDeleteQuery, "RETURNING `t`.`id`, `t`.`string`", "RETURNING")
-		case DialectMySQL:
-			// Not support
-		case DialectPostgreSQL:
-			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id", "t"."string"`, "RETURNING")
-		case DialectSQLite:
-			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id", "t"."string"`, "RETURNING")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
-	})
-}
 func Test_Core_exprSubquery(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
@@ -1484,33 +1511,6 @@ func Test_Core_exprValue(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `"t"."string" = $1`, "VALUE PLACEHOLDER")
 		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `"t"."string" = ?`, "VALUE PLACEHOLDER")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
-func Test_Core_exprWhere(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).
-			Field(
-				Test.Column.ID,
-			).
-			Where(
-				Equal(Test.Column.String, Value("active")),
-			)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "WHERE `t`.`string` = ?", "WHERE")
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "WHERE `t`.`string` = ?", "WHERE")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `WHERE "t"."string" = $1`, "WHERE")
-		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `WHERE "t"."string" = ?`, "WHERE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

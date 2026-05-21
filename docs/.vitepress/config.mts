@@ -99,10 +99,6 @@ export default defineConfig({
                         link: '/en/sql_constructors' 
                       },
                       { 
-                        text: 'Methods', 
-                        link: '/en/sql_methods' 
-                      },
-                      { 
                         text: 'Options', 
                         link: '/en/sql_options' 
                       }
@@ -229,10 +225,6 @@ export default defineConfig({
                         link: '/ru/sql_constructors' 
                       },
                       { 
-                        text: 'Методы', 
-                        link: '/ru/sql_methods' 
-                      },
-                      { 
                         text: 'Опции', 
                         link: '/ru/sql_options' 
                       }
@@ -357,10 +349,6 @@ export default defineConfig({
                       { 
                         text: '构造函数', 
                         link: '/zh/sql_constructors' 
-                      },
-                      { 
-                        text: '方法', 
-                        link: '/zh/sql_methods' 
                       },
                       { 
                         text: '选项', 

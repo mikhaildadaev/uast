@@ -15,14 +15,17 @@ var (
 	DialectTiDB        = DialectMySQL
 	// Cовместимые с PostgreSQL
 	DialectAlloyDB          = DialectPostgreSQL
+	DialectArenadataDB      = DialectPostgreSQL
 	DialectAuroraPostgreSQL = DialectPostgreSQL
 	DialectAzurePostgreSQL  = DialectPostgreSQL
 	DialectCitus            = DialectPostgreSQL
 	DialectCockroachDB      = DialectPostgreSQL
 	DialectGooglePostgreSQL = DialectPostgreSQL
+	DialectGreenplum        = DialectPostgreSQL
 	DialectNeon             = DialectPostgreSQL
 	DialectSupabase         = DialectPostgreSQL
 	DialectTimescaleDB      = DialectPostgreSQL
+	DialectYandexDB         = DialectPostgreSQL
 	DialectYugabyteDB       = DialectPostgreSQL
 	// Cовместимые с SQLite
 	DialectCloudflareD1 = DialectSQLite

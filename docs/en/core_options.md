@@ -8,6 +8,12 @@ outline: deep
 This page covers all configuration options: `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseUnions`, `clauseWith`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprOrderBy`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
+## exprGroupBy
+...
+
+## exprHaving
+...
+
 ## clauseJoin
 ### Cross
 Adds a CROSS JOIN to the statement. Returns the Cartesian product of both tables.
@@ -186,8 +192,39 @@ Output SQLite:
 ```
 
 ## clauseLimit
+...
 
 ## clauseOffset
+...
+
+## clauseOrderBy
+### Asc
+Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
+```go
+order := uast.Asc(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+`t`.`string` ASC
+```
+Output MySQL:
+```text
+`t`.`string` ASC
+```
+Output PostgreSQL:
+```text
+"t"."string" ASC
+```
+Output SQLite:
+```text
+"t"."string" ASC
+```
+
+## exprReturning
+...
+
+## clauseSet
+...
 
 ## clauseUnions
 ### Union
@@ -195,7 +232,14 @@ Output SQLite:
 ### UnionExcept
 ### UnionIntersect
 
+## clauseValues
+...
+
+## clauseWhere
+...
+
 ## clauseWith
+...
 
 ## exprArray
 ### Array
@@ -3398,29 +3442,6 @@ Output PostgreSQL:
 Output SQLite:
 ```text
 ("t"."string" = ? OR "t"."number" > ?)
-```
-
-## exprOrderBy
-### Asc
-Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
-```go
-order := uast.Asc(uast.Column[string]("t", "string"))
-```
-Output MariaDB:
-```text
-`t`.`string` ASC
-```
-Output MySQL:
-```text
-`t`.`string` ASC
-```
-Output PostgreSQL:
-```text
-"t"."string" ASC
-```
-Output SQLite:
-```text
-"t"."string" ASC
 ```
 
 ### Desc

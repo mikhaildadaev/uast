@@ -5,7 +5,7 @@ outline: deep
 # API / Core / Options
 
 ::: info **Info**
-This page covers all configuration options: `exprGroupBy`, `exprHaving`, `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseOrderBy`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
+This page covers all configuration options: `exprGroupBy`, `exprHaving`, `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseOrderBy`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprColumn`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
 ## exprGroupBy

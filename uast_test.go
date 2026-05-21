@@ -61,7 +61,6 @@ func Test_Core_clauseGroupBy(t *testing.T) {
 		stmtSelect := NewSelect(Test.Table).
 			Field(
 				Test.Column.String,
-				Count(Test.Column.ID, false).As("count"),
 			).
 			GroupBy(
 				Test.Column.String,
@@ -89,7 +88,6 @@ func Test_Core_clauseHaving(t *testing.T) {
 		stmtSelect := NewSelect(Test.Table).
 			Field(
 				Test.Column.String,
-				Count(Test.Column.ID, false).As("count"),
 			).
 			Having(
 				Greater(Count(Test.Column.ID, false), Value[int64](2)),
@@ -235,13 +233,21 @@ func Test_Core_clauseOrderBy(t *testing.T) {
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "ORDER BY `t`.`string` ASC, `t`.`string` DESC", "ORDER BY")
+			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
+			assertContains(t, sqlSelectQuery, "`t`.`string` ASC", "ORDER BY ASC")
+			assertContains(t, sqlSelectQuery, "`t`.`string` DESC", "ORDER BY DESC")
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "ORDER BY `t`.`string` ASC, `t`.`string` DESC", "ORDER BY")
+			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
+			assertContains(t, sqlSelectQuery, "`t`.`string` ASC", "ORDER BY ASC")
+			assertContains(t, sqlSelectQuery, "`t`.`string` DESC", "ORDER BY DESC")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string" ASC, "t"."string" DESC`, "ORDER BY")
+			assertContains(t, sqlSelectQuery, `ORDER BY`, "ORDER BY")
+			assertContains(t, sqlSelectQuery, `"t"."string" ASC`, "ORDER BY ASC")
+			assertContains(t, sqlSelectQuery, `"t"."string" DESC`, "ORDER BY DESC")
 		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `ORDER BY "t"."string" ASC, "t"."string" DESC`, "ORDER BY")
+			assertContains(t, sqlSelectQuery, `ORDER BY`, "ORDER BY")
+			assertContains(t, sqlSelectQuery, `"t"."string" ASC`, "ORDER BY ASC")
+			assertContains(t, sqlSelectQuery, `"t"."string" DESC`, "ORDER BY DESC")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

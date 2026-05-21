@@ -34,7 +34,7 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ```
 
 ## NewInsert
-Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source`, `Values`, `With`.
+Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source/Values`, `With`.
 ```go
 statement := uast.NewInsert(uast.NewTable("test").As("t")).
     Values(

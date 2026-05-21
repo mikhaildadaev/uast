@@ -323,7 +323,29 @@ Output SQLite:
 ```
 
 ## exprReturning
-...
+Adds a RETURNING clause to return modified rows. Supported by MariaDB, PostgreSQL, and SQLite. MySQL does not support this clause natively.
+```go
+returning = Returning(
+	uast.Column[int64]("t", "id")
+    uast.Column[string]("t", "string")
+)
+```
+Output MariaDB:
+```text
+RETURNING `t`.`id`, `t`.`string`
+```
+Output MySQL:
+```text
+// Not support
+```
+Output PostgreSQL:
+```text
+RETURNING `t`.`id`, `t`.`string`
+```
+Output SQLite:
+```text
+RETURNING `t`.`id`, `t`.`string`
+```
 
 ## clauseSet
 Specifies columns and their new values using `Assign` to associate columns with values. Supports multiple pairs for updating multiple columns.
@@ -351,7 +373,7 @@ UPDATE "test" AS "t" SET "t"."string" = ?
 
 ## clauseUnions
 ### Union
-...
+Combines results from multiple SELECT statements. UNION returns distinct rows.
 ```go
 unions := uast.Union(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -377,7 +399,7 @@ UNION SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionAll
-...
+Combines results from multiple SELECT statements. UNION ALL returns all rows, including duplicates.
 ```go
 unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -403,7 +425,7 @@ UNION ALL SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionExcept
-...
+Combines results from multiple SELECT statements. EXCEPT returns distinct rows from the first query that are not in the second.
 ```go
 unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -429,7 +451,7 @@ EXCEPT SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionIntersect
-...
+Combines results from multiple SELECT statements. INTERSECT returns distinct rows that are common to both queries.
 ```go
 unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("test").As("t")).
 	Field(
@@ -480,7 +502,28 @@ VALUES (?, ?)
 ```
 
 ## clauseWhere
-...
+Adds a WHERE clause to filter rows before grouping or aggregation. Accepts comparison expressions, logical operators, and subqueries.
+```go
+where = Where(
+	uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+)
+```
+Output MariaDB:
+```text
+WHERE `t`.`string` = ?
+```
+Output MySQL:
+```text
+WHERE `t`.`string` = ?
+```
+Output PostgreSQL:
+```text
+WHERE "t"."string" = $1
+```
+Output SQLite:
+```text
+WHERE "t"."string" = ?
+```
 
 ## clauseWith
 ### Non-Recursive

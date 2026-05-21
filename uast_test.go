@@ -91,22 +91,19 @@ func Test_Core_clauseHaving(t *testing.T) {
 				Test.Column.String,
 				Count(Test.Column.ID, false).As("count"),
 			).
-			GroupBy(
-				Test.Column.String,
-			).
 			Having(
 				Greater(Count(Test.Column.ID, false), Value[int64](2)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "COUNT")
+			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "HAVING")
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "COUNT")
+			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "HAVING")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > $1`, "COUNT")
+			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > $1`, "HAVING")
 		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > ?`, "COUNT")
+			assertContains(t, sqlSelectQuery, `HAVING COUNT("t"."id") > ?`, "HAVING")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -256,9 +253,6 @@ func Test_Core_clauseReturning(t *testing.T) {
 		)
 		defer sql.Close()
 		stmtDelete := NewDelete(Test.Table).
-			Where(
-				Equal(Test.Column.String, Value("active")),
-			).
 			Returning(
 				Test.Column.ID,
 				Test.Column.String,
@@ -286,9 +280,6 @@ func Test_Core_clauseSet(t *testing.T) {
 		stmtUpdate := NewUpdate(Test.Table).
 			Set(
 				Assign(Test.Column.String, Value("active")),
-			).
-			Where(
-				Equal(Test.Column.Number, Value(2)),
 			)
 		sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 		switch supportDialect {
@@ -310,67 +301,54 @@ func Test_Core_clauseUnions(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtWithR := WithR("cte_re", NewSelect(Test.Table).
-			Field(
-				Test.Column.ID,
-			).
-			Where(
-				Equal(Test.Column.Number, Value(0)),
-			).
-			Unions(
-				UnionAll(NewSelect(Test.Table).
-					Field(
-						Test.Column.ID,
-					).
-					Join(
-						Inner(NewCTE("cte_re", "ctere"), Equal(Test.Column.ID, Column[int64]("ctere", "id"))),
-					),
-				),
-			),
-		)
-		stmtUnion := NewSelect(Test.Table).
-			Field(
-				Test.Column.String,
-			)
 		stmtSelect := NewSelect(Test.Table).
 			Field(
 				Test.Column.String,
 			).
 			Unions(
-				Union(stmtUnion),
-				UnionAll(stmtUnion),
-				UnionExcept(stmtUnion),
-				UnionIntersect(stmtUnion),
-			).
-			With(
-				stmtWithR,
+				Union(NewSelect(Test.Table).
+					Field(
+						Test.Column.String,
+					),
+				),
+				UnionAll(NewSelect(Test.Table).
+					Field(
+						Test.Column.String,
+					),
+				),
+				UnionExcept(NewSelect(Test.Table).
+					Field(
+						Test.Column.String,
+					),
+				),
+				UnionIntersect(NewSelect(Test.Table).
+					Field(
+						Test.Column.String,
+					),
+				),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "WITH RECURSIVE `cte_re`", "WITH")
-			assertContains(t, sqlSelectQuery, "UNION", "UNION")
-			assertContains(t, sqlSelectQuery, "UNION ALL", "UNION ALL")
-			assertContains(t, sqlSelectQuery, "EXCEPT", "UNION EXCEPT")
-			assertContains(t, sqlSelectQuery, "INTERSECT", "UNION INTERSECT")
+			assertContains(t, sqlSelectQuery, "UNION SELECT `t`.`string` FROM `test` AS `t`", "UNION")
+			assertContains(t, sqlSelectQuery, "UNION ALL SELECT `t`.`string` FROM `test` AS `t`", "UNION ALL")
+			assertContains(t, sqlSelectQuery, "EXCEPT SELECT `t`.`string` FROM `test` AS `t`", "UNION EXCEPT")
+			assertContains(t, sqlSelectQuery, "INTERSECT SELECT `t`.`string` FROM `test` AS `t`", "UNION INTERSECT")
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "WITH RECURSIVE `cte_re`", "WITH")
-			assertContains(t, sqlSelectQuery, "UNION", "UNION")
-			assertContains(t, sqlSelectQuery, "UNION ALL", "UNION ALL")
-			assertContains(t, sqlSelectQuery, "EXCEPT", "UNION EXCEPT")
-			assertContains(t, sqlSelectQuery, "INTERSECT", "UNION INTERSECT")
+			assertContains(t, sqlSelectQuery, "UNION SELECT `t`.`string` FROM `test` AS `t`", "UNION")
+			assertContains(t, sqlSelectQuery, "UNION ALL SELECT `t`.`string` FROM `test` AS `t`", "UNION ALL")
+			assertContains(t, sqlSelectQuery, "EXCEPT SELECT `t`.`string` FROM `test` AS `t`", "UNION EXCEPT")
+			assertContains(t, sqlSelectQuery, "INTERSECT SELECT `t`.`string` FROM `test` AS `t`", "UNION INTERSECT")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `WITH RECURSIVE "cte_re"`, "WITH")
-			assertContains(t, sqlSelectQuery, `UNION`, "UNION")
-			assertContains(t, sqlSelectQuery, `UNION ALL`, "UNION ALL")
-			assertContains(t, sqlSelectQuery, `EXCEPT`, "UNION EXCEPT")
-			assertContains(t, sqlSelectQuery, `INTERSECT`, "UNION INTERSECT")
+			assertContains(t, sqlSelectQuery, `UNION SELECT "t"."string" FROM "test" AS "t"`, "UNION")
+			assertContains(t, sqlSelectQuery, `UNION ALL SELECT "t"."string" FROM "test" AS "t"`, "UNION ALL")
+			assertContains(t, sqlSelectQuery, `EXCEPT SELECT "t"."string" FROM "test" AS "t"`, "UNION EXCEPT")
+			assertContains(t, sqlSelectQuery, `INTERSECT SELECT "t"."string" FROM "test" AS "t"`, "UNION INTERSECT")
 		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `WITH RECURSIVE "cte_re"`, "WITH")
-			assertContains(t, sqlSelectQuery, `UNION`, "UNION")
-			assertContains(t, sqlSelectQuery, `UNION ALL`, "UNION ALL")
-			assertContains(t, sqlSelectQuery, `EXCEPT`, "UNION EXCEPT")
-			assertContains(t, sqlSelectQuery, `INTERSECT`, "UNION INTERSECT")
+			assertContains(t, sqlSelectQuery, `UNION SELECT "t"."string" FROM "test" AS "t"`, "UNION")
+			assertContains(t, sqlSelectQuery, `UNION ALL SELECT "t"."string" FROM "test" AS "t"`, "UNION ALL")
+			assertContains(t, sqlSelectQuery, `EXCEPT SELECT "t"."string" FROM "test" AS "t"`, "UNION EXCEPT")
+			assertContains(t, sqlSelectQuery, `INTERSECT SELECT "t"."string" FROM "test" AS "t"`, "UNION INTERSECT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

@@ -60,7 +60,7 @@ HAVING COUNT("t"."id") > ?
 ### Cross
 Adds a CROSS JOIN to the statement. Returns the Cartesian product of both tables.
 ```go
-join := uast.Cross(uast.Test.Table)
+join := uast.Cross(uast.NewTable("test").As("t"))
 ```
 Output MariaDB:
 ```text
@@ -82,7 +82,7 @@ CROSS JOIN "test" AS "t"
 ### Full
 Adds a FULL JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := uast.Full(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
+join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -104,7 +104,7 @@ FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### FullOuter
 Adds a FULL OUTER JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := uast.FullOuter(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
+join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -126,7 +126,7 @@ FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Inner
 Adds an INNER JOIN to the statement. Returns rows that have matching values in both tables.
 ```go
-join := uast.Inner(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
+join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -148,7 +148,7 @@ INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Left
 Adds a LEFT JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := uast.Left(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
+join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -170,7 +170,7 @@ LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### LeftOuter
 Adds a LEFT OUTER JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := uast.LeftOuter(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
+join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -192,7 +192,7 @@ LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Right
 Adds a RIGHT JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := uast.Right(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
+join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -214,7 +214,7 @@ Output SQLite:
 ### RightOuter
 Adds a RIGHT OUTER JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := uast.RightOuter(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
+join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text

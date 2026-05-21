@@ -13,7 +13,7 @@ func (stmtUpdate *stmtUpdate) Returning(returnings ...markReturnable) *stmtUpdat
 	stmtUpdate.returning = returnings
 	return stmtUpdate
 }
-func (stmtUpdate *stmtUpdate) Set(sets ...*clauseAssign) *stmtUpdate {
+func (stmtUpdate *stmtUpdate) Set(sets ...*clauseSet) *stmtUpdate {
 	stmtUpdate.set = sets
 	return stmtUpdate
 }
@@ -32,7 +32,7 @@ type stmtUpdate struct {
 	onto      SourceBase
 	join      []*clauseJoin
 	returning []markReturnable
-	set       []*clauseAssign
+	set       []*clauseSet
 	where     markPredicable
 	with      []*clauseWith
 }

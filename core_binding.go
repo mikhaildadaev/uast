@@ -1,14 +1,14 @@
 package uast
 
 // Публичные функции
-func Assign[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clauseAssign {
-	return &clauseAssign{
+func Assign[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clauseSet {
+	return &clauseSet{
 		column: column,
 		value:  value,
 	}
 }
-func Pair[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clausePair {
-	return &clausePair{
+func Pair[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clauseValues {
+	return &clauseValues{
 		column: &exprPair[T]{
 			name: column.name},
 		value: value,
@@ -16,54 +16,54 @@ func Pair[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clauseP
 }
 
 // Приватные структуры
-type clauseAssign struct {
+type clauseSet struct {
 	column markExpressable
 	value  ExpressionBase
 }
-type clausePair struct {
+type clauseValues struct {
 	column markExpressable
 	value  ExpressionBase
 }
 
 // Приватные методы
-func (clauseAssign *clauseAssign) render(baseRenderer *baseRenderer) error {
-	if err := clauseAssign.column.render(baseRenderer); err != nil {
+func (clauseSet *clauseSet) render(baseRenderer *baseRenderer) error {
+	if err := clauseSet.column.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderOperator(uastComparisonEqual)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	if err := clauseAssign.value.render(baseRenderer); err != nil {
+	if err := clauseSet.value.render(baseRenderer); err != nil {
 		return err
 	}
 	return nil
 }
-func (clauseAssign *clauseAssign) validate(baseValidator *baseValidator) error {
-	if clauseAssign.column == nil || clauseAssign.value == nil {
+func (clauseSet *clauseSet) validate(baseValidator *baseValidator) error {
+	if clauseSet.column == nil || clauseSet.value == nil {
 		return ErrInvalidStatementSet
 	}
-	if err := clauseAssign.column.validate(baseValidator); err != nil {
+	if err := clauseSet.column.validate(baseValidator); err != nil {
 		return err
 	}
-	if err := clauseAssign.value.validate(baseValidator); err != nil {
-		return err
-	}
-	return nil
-}
-func (clausePair *clausePair) render(baseRenderer *baseRenderer) error {
-	if err := clausePair.value.render(baseRenderer); err != nil {
+	if err := clauseSet.value.validate(baseValidator); err != nil {
 		return err
 	}
 	return nil
 }
-func (clausePair *clausePair) validate(baseValidator *baseValidator) error {
-	if clausePair.column == nil || clausePair.value == nil {
+func (clauseValues *clauseValues) render(baseRenderer *baseRenderer) error {
+	if err := clauseValues.value.render(baseRenderer); err != nil {
+		return err
+	}
+	return nil
+}
+func (clauseValues *clauseValues) validate(baseValidator *baseValidator) error {
+	if clauseValues.column == nil || clauseValues.value == nil {
 		return ErrInvalidStatementValues
 	}
-	if err := clausePair.column.validate(baseValidator); err != nil {
+	if err := clauseValues.column.validate(baseValidator); err != nil {
 		return err
 	}
-	if err := clausePair.value.validate(baseValidator); err != nil {
+	if err := clauseValues.value.validate(baseValidator); err != nil {
 		return err
 	}
 	return nil

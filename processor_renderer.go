@@ -419,7 +419,7 @@ func (baseRenderer *baseRenderer) renderReturning(returnings []markReturnable) e
 	}
 	return nil
 }
-func (baseRenderer *baseRenderer) renderSet(sets []*clauseAssign) error {
+func (baseRenderer *baseRenderer) renderSet(sets []*clauseSet) error {
 	if sets == nil {
 		return nil
 	}

@@ -51,7 +51,7 @@ func (stmtInsert *stmtInsert) Source(source *stmtSelect) *stmtInsert {
 	stmtInsert.source = source
 	return stmtInsert
 }
-func (stmtInsert *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {
+func (stmtInsert *stmtInsert) Values(pairs ...*clauseValues) *stmtInsert {
 	columns := make([]markExpressable, len(pairs))
 	values := make([]ExpressionBase, len(pairs))
 	for i, pair := range pairs {

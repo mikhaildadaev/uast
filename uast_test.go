@@ -112,56 +112,56 @@ func Test_Core_clauseJoin(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).
+		stmtSelect := NewSelect(Test1.Table).
 			Field(
-				Test.Column.ID,
+				Test1.Column.ID,
 			).
 			Join(
-				Cross(Test1.Table),
-				Full(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				FullOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				Left(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				LeftOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				Right(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
-				RightOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID)),
+				Cross(Test.Table),
+				Full(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
+				FullOuter(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
+				Inner(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
+				Left(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
+				LeftOuter(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
+				Right(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
+				RightOuter(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "CROSS JOIN `test1` AS `t1`", "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, "FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL JOIN")
-			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "INNER JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "CROSS JOIN `test` AS `t`", "CROSS JOIN")
+			assertContains(t, sqlSelectQuery, "FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL JOIN")
+			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "INNER JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT OUTER JOIN")
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "CROSS JOIN `test1` AS `t1`", "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, "FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL JOIN")
-			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "INNER JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "LEFT OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`", "RIGHT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "CROSS JOIN `test` AS `t`", "CROSS JOIN")
+			assertContains(t, sqlSelectQuery, "FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL JOIN")
+			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "INNER JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT OUTER JOIN")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `CROSS JOIN "test1" AS "t1"`, "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, `FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL JOIN")
-			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT OUTER JOIN")
-			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT JOIN")
-			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "RIGHT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `CROSS JOIN "test" AS "t"`, "CROSS JOIN")
+			assertContains(t, sqlSelectQuery, `FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL JOIN")
+			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "INNER JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "RIGHT JOIN")
+			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "RIGHT OUTER JOIN")
 		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `CROSS JOIN "test1" AS "t1"`, "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, `FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL JOIN")
-			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, `INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "INNER JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"`, "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `CROSS JOIN "test" AS "t"`, "CROSS JOIN")
+			assertContains(t, sqlSelectQuery, `FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL JOIN")
+			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "INNER JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT OUTER JOIN")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

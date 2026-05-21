@@ -526,10 +526,78 @@ WHERE "t"."string" = ?
 ```
 
 ## clauseWith
-### Non-Recursive
-...
+### Norecursive
+Adds a norecursive Common Table Expression (CTE) to the statement using `WithN`. Columns are aliased via the variadic string arguments.
+```go
+with := WithN("cte_norecursive", NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[int64]("t", "id"),
+        uast.Column[string]("t", "string"),
+    ).
+    Where(
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    ),
+    "id", "string",
+)
+```
+Output MariaDB:
+```text
+WITH `cte_norecursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?)
+```
+Output MySQL:
+```text
+WITH `cte_norecursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?)
+```
+Output PostgreSQL:
+```text
+WITH "cte_norecursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1)
+```
+Output SQLite:
+```text
+WITH "cte_norecursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = ?)
+```
+
 ### Recursive
-...
+Adds a recursive Common Table Expression (CTE) to the statement using `WithR`. Requires a `Unions` clause with `UnionAll` to define the recursive step.
+```go
+with := WithR("cte_recursive", NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[int64]("t", "id"),
+        uast.Column[string]("t", "string"),
+    ).
+    Where(
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    ).
+    Unions(
+        uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
+            Field(
+                uast.Column[int64]("t", "id"),
+                uast.Column[string]("t", "string"),
+            ).
+            Join(
+                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("rec", "id"))),
+            ),
+        ),
+    ),
+    "id", "string",
+)
+```
+Output MariaDB:
+```text
+WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ? UNION ALL SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` INNER JOIN `cte_recursive` AS `rec` ON `t`.`id` = `rec`.`id`)
+```
+Output MySQL:
+```text
+WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ? UNION ALL SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` INNER JOIN `cte_recursive` AS `rec` ON `t`.`id` = `rec`.`id`)
+```
+Output PostgreSQL:
+```text
+WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1 UNION ALL SELECT "t"."id", "t"."string" FROM "test" AS "t" INNER JOIN "cte_recursive" AS "rec" ON "t"."id" = "rec"."id")
+```
+Output SQLite:
+```text
+WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = ? UNION ALL SELECT "t"."id", "t"."string" FROM "test" AS "t" INNER JOIN "cte_recursive" AS "rec" ON "t"."id" = "rec"."id")
+```
 
 ## exprArray
 ### Array

@@ -7,6 +7,19 @@ import (
 )
 
 // Публичные переменные
+var Data = struct {
+	Column struct {
+		Date   *ColumnExpr[time.Time]
+		ID     *ColumnExpr[int64]
+		Json   *ColumnExpr[string]
+		Number *ColumnExpr[int]
+		String *ColumnExpr[string]
+		Time   *ColumnExpr[time.Time]
+	}
+	Table *TableSource
+}{
+	Table: NewTable("data", "d"),
+}
 var Test = struct {
 	Column struct {
 		CreateAt *ColumnExpr[time.Time]
@@ -23,19 +36,6 @@ var Test = struct {
 	Table *TableSource
 }{
 	Table: NewTable("test", "t"),
-}
-var Test1 = struct {
-	Column struct {
-		Date   *ColumnExpr[time.Time]
-		ID     *ColumnExpr[int64]
-		Json   *ColumnExpr[string]
-		Number *ColumnExpr[int]
-		String *ColumnExpr[string]
-		Time   *ColumnExpr[time.Time]
-	}
-	Table *TableSource
-}{
-	Table: NewTable("test1", "t1"),
 }
 
 // Публичные функции
@@ -99,56 +99,56 @@ func Test_Core_clauseJoin(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test1.Table).
+		stmtSelect := NewSelect(Data.Table).
 			Field(
-				Test1.Column.ID,
+				Data.Column.ID,
 			).
 			Join(
 				Cross(Test.Table),
-				Full(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-				FullOuter(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-				Inner(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-				Left(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-				LeftOuter(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-				Right(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-				RightOuter(Test.Table, Equal(Test.Column.ID, Test1.Column.ID)),
+				Full(Test.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				FullOuter(Test.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				Inner(Test.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				Left(Test.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				LeftOuter(Test.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				Right(Test.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				RightOuter(Test.Table, Equal(Test.Column.ID, Data.Column.ID)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "CROSS JOIN `test` AS `t`", "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, "FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL JOIN")
-			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "INNER JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "FULL JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "FULL JOIN")
+			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "INNER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "INNER JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "RIGHT JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "RIGHT OUTER JOIN")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "CROSS JOIN `test` AS `t`", "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, "FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL JOIN")
-			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "INNER JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "LEFT OUTER JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT JOIN")
-			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`", "RIGHT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "FULL JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "FULL JOIN")
+			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "INNER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "INNER JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "RIGHT JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "RIGHT OUTER JOIN")
 		case DialectPostgreSQL:
 			assertContains(t, sqlSelectQuery, `CROSS JOIN "test" AS "t"`, "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, `FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL JOIN")
-			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, `INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "INNER JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT OUTER JOIN")
-			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "RIGHT JOIN")
-			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "RIGHT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `FULL JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "FULL JOIN")
+			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "INNER JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `RIGHT JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "RIGHT JOIN")
+			assertContains(t, sqlSelectQuery, `RIGHT OUTER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "RIGHT OUTER JOIN")
 		case DialectSQLite:
 			assertContains(t, sqlSelectQuery, `CROSS JOIN "test" AS "t"`, "CROSS JOIN")
-			assertContains(t, sqlSelectQuery, `FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL JOIN")
-			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "FULL OUTER JOIN")
-			assertContains(t, sqlSelectQuery, `INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "INNER JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT JOIN")
-			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"`, "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `FULL JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "FULL JOIN")
+			assertContains(t, sqlSelectQuery, `FULL OUTER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, `INNER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "INNER JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "LEFT OUTER JOIN")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1571,26 +1571,26 @@ func Test_Insert_Source(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtInsert := NewInsert(Test.Table).
-			Source(NewSelect(Test1.Table).
+		stmtInsert := NewInsert(Data.Table).
+			Source(NewSelect(Test.Table).
 				Field(
-					Test1.Column.String,
-					Test1.Column.Number,
+					Test.Column.String,
+					Test.Column.Number,
 				).
 				Where(
-					Equal(Test1.Column.String, Value("active")),
+					Equal(Test.Column.String, Value("active")),
 				),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlInsertQuery, "SELECT `t1`.`string`, `t1`.`number` FROM `test1` AS `t1` WHERE `t1`.`string` = ?", "SOURCE")
+			assertContains(t, sqlInsertQuery, "SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "SOURCE")
 		case DialectMySQL:
-			assertContains(t, sqlInsertQuery, "SELECT `t1`.`string`, `t1`.`number` FROM `test1` AS `t1` WHERE `t1`.`string` = ?", "SOURCE")
+			assertContains(t, sqlInsertQuery, "SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "SOURCE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlInsertQuery, `SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = $1`, "SOURCE")
+			assertContains(t, sqlInsertQuery, `SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1`, "SOURCE")
 		case DialectSQLite:
-			assertContains(t, sqlInsertQuery, `SELECT "t1"."string", "t1"."number" FROM "test1" AS "t1" WHERE "t1"."string" = ?`, "SOURCE")
+			assertContains(t, sqlInsertQuery, `SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?`, "SOURCE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
@@ -1687,6 +1687,13 @@ func assertContains(t *testing.T, str, substr string, message string) {
 	}
 }
 func init() {
+	// Data
+	Data.Column.Date = Column[time.Time](Data.Table.aliasName, "date")
+	Data.Column.ID = Column[int64](Data.Table.aliasName, "id")
+	Data.Column.Json = Column[string](Data.Table.aliasName, "json")
+	Data.Column.Number = Column[int](Data.Table.aliasName, "number")
+	Data.Column.String = Column[string](Data.Table.aliasName, "string")
+	Data.Column.Time = Column[time.Time](Data.Table.aliasName, "time")
 	// Test
 	Test.Column.CreateAt = Column[time.Time](Test.Table.aliasName, "createat")
 	Test.Column.Date = Column[time.Time](Test.Table.aliasName, "date")
@@ -1698,13 +1705,6 @@ func init() {
 	Test.Column.UpdateAt = Column[time.Time](Test.Table.aliasName, "updateat")
 	Test.Column.X = Column[int](Test.Table.aliasName, "x")
 	Test.Column.Y = Column[int](Test.Table.aliasName, "y")
-	// Test1
-	Test1.Column.Date = Column[time.Time](Test1.Table.aliasName, "date")
-	Test1.Column.ID = Column[int64](Test1.Table.aliasName, "id")
-	Test1.Column.Json = Column[string](Test1.Table.aliasName, "json")
-	Test1.Column.Number = Column[int](Test1.Table.aliasName, "number")
-	Test1.Column.String = Column[string](Test1.Table.aliasName, "string")
-	Test1.Column.Time = Column[time.Time](Test1.Table.aliasName, "time")
 }
 func testAllDialects(t *testing.T, testFunc func(t *testing.T, supportDialect *SupportDialect)) {
 	for _, supportDialect := range listSupportDialects {

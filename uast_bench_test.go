@@ -36,62 +36,61 @@ func Benchmark_Select_Multi(b *testing.B) {
 			b.RunParallel(func(pb *testing.PB) {
 				i := 0
 				for pb.Next() {
-					querySub := NewSelect(Test1.Table).
+					stmtSelect := NewSelect(Data.Table).
 						Field(
-							Count(Test1.Column.ID, false),
-						).
-						Where(
-							Equal(Test1.Column.Number, Test.Column.Number),
-						)
-					queryInSub := NewSelect(Test1.Table).
-						Field(
-							Test1.Column.ID.As("uid"),
-						).
-						Where(
-							Greater(Test1.Column.Number, Value(10)),
-						)
-					queryExistsSub := NewSelect(Test1.Table).
-						Field(
-							Test1.Column.ID,
-						).
-						Where(
-							And(
-								Equal(Test1.Column.Number, Test.Column.Number),
-								Equal(Test1.Column.String, Value("active")),
-							),
-						)
-					stmtSelect := NewSelect(Test.Table).
-						Field(
-							Test.Column.ID.As("test_id"),
-							Test.Column.Name.As("test_name"),
-							Test.Column.String.As("test_string"),
-							Test.Column.Number.As("test_number"),
-							Subquery[int](querySub).As("sub_count"),
+							Data.Column.ID.As("test_id"),
+							Data.Column.String.As("test_string"),
+							Data.Column.Number.As("test_number"),
+							Subquery[int](NewSelect(Test.Table).
+								Field(
+									Count(Test.Column.ID, false),
+								).
+								Where(
+									Equal(Test.Column.Number, Data.Column.Number),
+								),
+							).As("sub_count"),
 						).
 						Join(
-							Inner(Test1.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-							Left(Test1.Table, Equal(Test1.Column.String, Test.Column.String)),
+							Inner(Test.Table, Equal(Data.Column.ID, Test.Column.ID)),
+							Left(Test.Table, Equal(Test.Column.String, Data.Column.String)),
 						).
 						Where(
 							And(
 								Equal(Test.Column.String, Value("active")),
 								Greater(Test.Column.Number, Value(2)),
-								In(Test.Column.ID, Subquery[int64](queryInSub)),
-								Exists(Subquery[int](queryExistsSub)),
+								In(Test.Column.ID, Subquery[int64](
+									NewSelect(Test.Table).
+										Field(
+											Test.Column.ID.As("uid"),
+										).
+										Where(
+											Greater(Test.Column.Number, Value(10)),
+										),
+								)),
+								Exists(Subquery[int](NewSelect(Test.Table).
+									Field(
+										Test.Column.ID,
+									).
+									Where(
+										And(
+											Equal(Test.Column.Number, Data.Column.Number),
+											Equal(Test.Column.String, Value("active")),
+										),
+									),
+								)),
 							),
 						).
 						GroupBy(
-							Test.Column.ID,
-							Test.Column.Name,
-							Test.Column.String,
-							Test.Column.Number,
+							Data.Column.ID,
+							Data.Column.String,
+							Data.Column.Number,
 						).
 						Having(
-							Greater(Count(Test1.Column.ID, false), Value[int64](0)),
+							Greater(Count(Test.Column.ID, false), Value[int64](0)),
 						).
 						OrderBy(
-							Desc(Test.Column.Number),
-							Asc(Test.Column.Name),
+							Desc(Data.Column.Number),
+							Asc(Data.Column.ID),
 						).
 						Limit(48)
 					_, _, err := builder.Build(stmtSelect)
@@ -124,62 +123,60 @@ func Benchmark_Select_Single(b *testing.B) {
 		})
 		b.Run("Complex", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				querySub := NewSelect(Test1.Table).
+				stmtSelect := NewSelect(Data.Table).
 					Field(
-						Count(Test1.Column.ID, false),
-					).
-					Where(
-						Equal(Test1.Column.Number, Test.Column.Number),
-					)
-				queryInSub := NewSelect(Test1.Table).
-					Field(
-						Test1.Column.ID.As("uid"),
-					).
-					Where(
-						Greater(Test1.Column.Number, Value(10)),
-					)
-				queryExistsSub := NewSelect(Test1.Table).
-					Field(
-						Test1.Column.ID,
-					).
-					Where(
-						And(
-							Equal(Test1.Column.Number, Test.Column.Number),
-							Equal(Test1.Column.String, Value("active")),
-						),
-					)
-				stmtSelect := NewSelect(Test.Table).
-					Field(
-						Test.Column.ID.As("test_id"),
-						Test.Column.Name.As("test_name"),
-						Test.Column.String.As("test_string"),
-						Test.Column.Number.As("test_number"),
-						Subquery[int](querySub).As("sub_count"),
+						Data.Column.ID.As("test_id"),
+						Data.Column.String.As("test_string"),
+						Data.Column.Number.As("test_number"),
+						Subquery[int](NewSelect(Test.Table).
+							Field(
+								Count(Test.Column.ID, false),
+							).
+							Where(
+								Equal(Test.Column.Number, Data.Column.Number),
+							),
+						).As("sub_count"),
 					).
 					Join(
-						Inner(Test1.Table, Equal(Test.Column.ID, Test1.Column.ID)),
-						Left(Test1.Table, Equal(Test1.Column.String, Test.Column.String)),
+						Inner(Test.Table, Equal(Data.Column.ID, Test.Column.ID)),
+						Left(Test.Table, Equal(Test.Column.String, Test.Column.String)),
 					).
 					Where(
 						And(
-							Equal(Test.Column.String, Value("active")),
-							Greater(Test.Column.Number, Value(2)),
-							In(Test.Column.ID, Subquery[int64](queryInSub)),
-							Exists(Subquery[int](queryExistsSub)),
+							Equal(Data.Column.String, Value("active")),
+							Greater(Data.Column.Number, Value(2)),
+							In(Data.Column.ID, Subquery[int64](NewSelect(Test.Table).
+								Field(
+									Test.Column.ID.As("uid"),
+								).
+								Where(
+									Greater(Test.Column.Number, Value(10)),
+								),
+							)),
+							Exists(Subquery[int](NewSelect(Test.Table).
+								Field(
+									Test.Column.ID,
+								).
+								Where(
+									And(
+										Equal(Test.Column.Number, Data.Column.Number),
+										Equal(Test.Column.String, Value("active")),
+									),
+								),
+							)),
 						),
 					).
 					GroupBy(
-						Test.Column.ID,
-						Test.Column.Name,
-						Test.Column.String,
-						Test.Column.Number,
+						Data.Column.ID,
+						Data.Column.String,
+						Data.Column.Number,
 					).
 					Having(
-						Greater(Count(Test1.Column.ID, false), Value[int64](0)),
+						Greater(Count(Test.Column.ID, false), Value[int64](0)),
 					).
 					OrderBy(
-						Desc(Test.Column.Number),
-						Asc(Test.Column.Name),
+						Desc(Data.Column.Number),
+						Asc(Data.Column.ID),
 					).
 					Limit(48)
 				builder.Build(stmtSelect)

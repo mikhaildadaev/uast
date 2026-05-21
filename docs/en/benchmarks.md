@@ -13,7 +13,7 @@ I recommend that you test `uast` alongside other libraries and choose the tool t
 These benchmarks measure the cost of building SQL queries. Simple queries select one column with a WHERE clause. Complex queries include JOINs, subqueries, GROUP BY, HAVING, ORDER BY, and LIMIT.
 
 ### MultiThread
-| Mode    | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
 |---------|------------|------------|--------------|---------------|--------|
 | Complex | MariaDB    |       383K |        2,965 |         4,971 |     54 |
 | Complex | MySQL      |       371K |        3,136 |         4,972 |     54 |
@@ -25,7 +25,7 @@ These benchmarks measure the cost of building SQL queries. Simple queries select
 | Simple  | SQLite     |       3.3M |        358.3 |           720 |      8 |
 
 ### SingleThread
-| Mode    | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
 |---------|------------|------------|--------------|---------------|--------|
 | Complex | MariaDB    |       197K |        5,852 |         4,948 |     54 |
 | Complex | MySQL      |       204K |        6,279 |         4,948 |     54 |

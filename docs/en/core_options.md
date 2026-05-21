@@ -301,9 +301,9 @@ Output SQLite:
 ```
 
 ### Desc
-Specifies ascending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
+Specifies descending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
 ```go
-order := uast.Desc(uast.Column[string]("t", "string"))
+orderBy := uast.Desc(uast.Column[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -3689,28 +3689,6 @@ Output PostgreSQL:
 Output SQLite:
 ```text
 ("t"."string" = ? OR "t"."number" > ?)
-```
-
-### Desc
-Specifies descending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
-```go
-order := uast.Desc(uast.Column[string]("t", "string"))
-```
-Output MariaDB:
-```text
-`t`.`string` DESC
-```
-Output MySQL:
-```text
-`t`.`string` DESC
-```
-Output PostgreSQL:
-```text
-"t"."string" DESC
-```
-Output SQLite:
-```text
-"t"."string" DESC
 ```
 
 ## exprSubquery

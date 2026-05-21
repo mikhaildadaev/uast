@@ -113,6 +113,9 @@ type exprFunction[InLT, InRT, T typeScalar] struct {
 type exprGroupBy struct {
 	expression ExpressionBase
 }
+type exprHaving struct {
+	expression ExpressionBase
+}
 type exprJson struct {
 	expressions []ExpressionBase
 	operator    compositeOperator
@@ -135,6 +138,9 @@ type exprOrderBy struct {
 type exprPair[T typeScalar] struct {
 	name string
 }
+type exprReturning struct {
+	expression ExpressionBase
+}
 type exprService[T typeString] struct {
 	value T
 }
@@ -143,6 +149,9 @@ type exprSubquery[T typeScalar] struct {
 }
 type exprValue[T typeScalar] struct {
 	value T
+}
+type exprWhere struct {
+	expression ExpressionBase
 }
 
 // Приватные методы
@@ -664,6 +673,13 @@ func (exprGroupBy *exprGroupBy) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (exprHaving *exprHaving) isExpressionBase() {}
+func (exprHaving *exprHaving) render(baseRenderer *baseRenderer) error {
+	return exprHaving.expression.render(baseRenderer)
+}
+func (exprHaving *exprHaving) validate(baseValidator *baseValidator) error {
+	return exprHaving.expression.validate(baseValidator)
+}
 func (exprJson *exprJson) isExpressionBase() {}
 func (exprJson *exprJson) render(baseRenderer *baseRenderer) error {
 	lengthExpressions := len(exprJson.expressions) - 1
@@ -800,6 +816,14 @@ func (exprPair *exprPair[T]) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (exprReturning *exprReturning) isExpressionBase() {}
+func (exprReturning *exprReturning) isReturnable()     {}
+func (exprReturning *exprReturning) render(baseRenderer *baseRenderer) error {
+	return exprReturning.expression.render(baseRenderer)
+}
+func (exprReturning *exprReturning) validate(baseValidator *baseValidator) error {
+	return exprReturning.expression.validate(baseValidator)
+}
 func (exprService *exprService[T]) isExpressionBase()  {}
 func (exprService *exprService[T]) isExpressionSafe(T) {}
 func (exprService *exprService[T]) isPredicable()      {}
@@ -855,4 +879,12 @@ func (exprValue *exprValue[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (exprWhere *exprWhere) isExpressionBase() {}
+func (exprWhere *exprWhere) isPredicable()     {}
+func (exprWhere *exprWhere) render(baseRenderer *baseRenderer) error {
+	return exprWhere.expression.render(baseRenderer)
+}
+func (exprWhere *exprWhere) validate(baseValidator *baseValidator) error {
+	return exprWhere.expression.validate(baseValidator)
 }

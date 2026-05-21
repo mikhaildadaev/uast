@@ -27,10 +27,10 @@ These benchmarks measure the cost of building SQL queries. Simple queries select
 ### SingleThread
 | Mode    | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
 |---------|------------|------------|--------------|---------------|--------|
-| Complex | MariaDB    |       383K |        5,852 |         4,948 |     54 |
-| Complex | MySQL      |       371K |        6,279 |         4,948 |     54 |
-| Complex | PostgreSQL |       380K |        5,874 |         4,948 |     54 |
-| Complex | SQLite     |       376K |        5,845 |         4,948 |     54 |
+| Complex | MariaDB    |       197K |        5,852 |         4,948 |     54 |
+| Complex | MySQL      |       204K |        6,279 |         4,948 |     54 |
+| Complex | PostgreSQL |       196K |        5,874 |         4,948 |     54 |
+| Complex | SQLite     |       196K |        5,845 |         4,948 |     54 |
 | Simple  | MariaDB    |       1.5M |        789.8 |           718 |      8 |
 | Simple  | MySQL      |       1.5M |        778.6 |           718 |      8 |
 | Simple  | PostgreSQL |       1.4M |        795.1 |           718 |      8 |

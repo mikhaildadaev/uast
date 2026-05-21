@@ -417,7 +417,7 @@ func Test_Core_clauseWith(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtWithN := WithN("cte_nr", NewSelect(Test.Table).
+		stmtWithN := WithN("cte_norecursive", NewSelect(Test.Table).
 			Field(
 				Test.Column.ID,
 				Test.Column.String,
@@ -427,27 +427,57 @@ func Test_Core_clauseWith(t *testing.T) {
 			),
 			"id", "string",
 		)
+		stmtWithR := WithR("cte_recursive", NewSelect(Test.Table).
+			Field(
+				Test.Column.ID,
+				Test.Column.String,
+			).
+			Where(
+				Equal(Test.Column.String, Value("active")),
+			).
+			Unions(
+				UnionAll(NewSelect(Test.Table).
+					Field(
+						Test.Column.ID,
+						Test.Column.String,
+					).
+					Join(
+						Inner(NewCTE("cte_recursive", "rec"), Equal(Test.Column.ID, Column[int64]("rec", "id"))),
+					),
+				),
+			),
+			"id", "string",
+		)
 		stmtSelect := NewSelect(Test.Table).
 			Field(
 				Test.Column.ID,
 				Test.Column.Number,
 			).
 			Join(
-				Inner(NewCTE("cte_nr", "ctenr"), Equal(Test.Column.ID, Column[int64]("ctenr", "id"))),
+				Inner(NewCTE("cte_norecursive", "cnr"), Equal(Test.Column.ID, Column[int64]("cnr", "id"))),
 			).
 			With(
+				stmtWithR,
 				stmtWithN,
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "WITH `cte_nr`", "WITH")
+			assertContains(t, sqlSelectQuery, "WITH", "WITH")
+			assertContains(t, sqlSelectQuery, "RECURSIVE `cte_recursive`", "WITH RECURSIVE")
+			assertContains(t, sqlSelectQuery, "`cte_norecursive`", "WITH NORECURSIVE")
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "WITH `cte_nr`", "WITH")
+			assertContains(t, sqlSelectQuery, "WITH", "WITH")
+			assertContains(t, sqlSelectQuery, "RECURSIVE `cte_recursive`", "WITH RECURSIVE")
+			assertContains(t, sqlSelectQuery, "`cte_norecursive`", "WITH NORECURSIVE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `WITH "cte_nr"`, "WITH")
+			assertContains(t, sqlSelectQuery, `WITH`, "WITH")
+			assertContains(t, sqlSelectQuery, `RECURSIVE "cte_recursive"`, "WITH RECURSIVE")
+			assertContains(t, sqlSelectQuery, `"cte_norecursive"`, "WITH NORECURSIVE")
 		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `WITH "cte_nr"`, "WITH")
+			assertContains(t, sqlSelectQuery, `WITH`, "WITH")
+			assertContains(t, sqlSelectQuery, `RECURSIVE "cte_recursive"`, "WITH RECURSIVE")
+			assertContains(t, sqlSelectQuery, `"cte_norecursive"`, "WITH NORECURSIVE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

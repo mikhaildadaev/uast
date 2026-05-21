@@ -9,16 +9,58 @@ This page covers all configuration options: `exprGroupBy`, `exprHaving`, `clause
 :::
 
 ## exprGroupBy
-...
+Adds a GROUP BY clause to group rows by specified columns or expressions.
+```go
+groupBy := GroupBy(
+	uast.Column[string]("t", "string"),
+)
+```
+Output MariaDB:
+```text
+GROUP BY `t`.`string`
+```
+Output MySQL:
+```text
+GROUP BY `t`.`string`
+```
+Output PostgreSQL:
+```text
+GROUP BY "t"."string"
+```
+Output SQLite:
+```text
+GROUP BY "t"."string"
+```
 
 ## exprHaving
-...
+Adds a HAVING clause to filter groups. Used with GROUP BY to filter aggregated results.
+```go
+having := Having(
+	uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
+)
+```
+Output MariaDB:
+```text
+HAVING COUNT(`t`.`id`) > ?
+```
+Output MySQL:
+```text
+HAVING COUNT(`t`.`id`) > ?
+```
+Output PostgreSQL:
+```text
+HAVING COUNT("t"."id") > $1
+```
+Output SQLite:
+```text
+HAVING COUNT("t"."id") > ?
+```
 
 ## clauseJoin
 ### Cross
 Adds a CROSS JOIN to the statement. Returns the Cartesian product of both tables.
 ```go
-join := Cross(Test1.Table)
+join := uast.Cross(uast.Test1.Table)
 ```
 Output MariaDB:
 ```text
@@ -40,7 +82,7 @@ CROSS JOIN "test1" AS "t1"
 ### Full
 Adds a FULL JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := Full(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+join := uast.Full(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
 ```
 Output MariaDB:
 ```text
@@ -62,7 +104,7 @@ FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ### FullOuter
 Adds a FULL OUTER JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := FullOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+join := uast.FullOuter(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
 ```
 Output MariaDB:
 ```text
@@ -84,7 +126,7 @@ FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ### Inner
 Adds an INNER JOIN to the statement. Returns rows that have matching values in both tables.
 ```go
-join := Inner(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+join := uast.Inner(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
 ```
 Output MariaDB:
 ```text
@@ -106,7 +148,7 @@ INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ### Left
 Adds a LEFT JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := Left(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+join := uast.Left(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
 ```
 Output MariaDB:
 ```text
@@ -128,7 +170,7 @@ LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ### LeftOuter
 Adds a LEFT OUTER JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := LeftOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+join := uast.LeftOuter(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
 ```
 Output MariaDB:
 ```text
@@ -150,7 +192,7 @@ LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
 ### Right
 Adds a RIGHT JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := Right(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+join := uast.Right(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
 ```
 Output MariaDB:
 ```text
@@ -172,7 +214,7 @@ Output SQLite:
 ### RightOuter
 Adds a RIGHT OUTER JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := RightOuter(Test1.Table, Equal(Test1.Column.ID, Test.Column.ID))
+join := uast.RightOuter(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
 ```
 Output MariaDB:
 ```text
@@ -192,16 +234,54 @@ Output SQLite:
 ```
 
 ## clauseLimit
-...
+Limits the number of rows returned by the query.
+```go
+limit := Limit(10)
+```
+Output MariaDB:
+```text
+LIMIT ?
+```
+Output MySQL:
+```text
+LIMIT ?
+```
+Output PostgreSQL:
+```text
+LIMIT $1
+```
+Output SQLite:
+```text
+LIMIT ?
+```
 
 ## clauseOffset
-...
+Skips a specified number of rows before returning results. Used for pagination with Limit.
+```go
+offset := Offset(20)
+```
+Output MariaDB:
+```text
+OFFSET ?
+```
+Output MySQL:
+```text
+OFFSET ?
+```
+Output PostgreSQL:
+```text
+OFFSET $1
+```
+Output SQLite:
+```text
+OFFSET ?
+```
 
 ## clauseOrderBy
 ### Asc
 Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
 ```go
-order := uast.Asc(uast.Column[string]("t", "string"))
+orderBy := uast.Asc(uast.Column[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -218,145 +298,186 @@ Output PostgreSQL:
 Output SQLite:
 ```text
 "t"."string" ASC
+```
+
+### Desc
+Specifies ascending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
+```go
+order := uast.Desc(uast.Column[string]("t", "string"))
+```
+Output MariaDB:
+```text
+`t`.`string` DESC
+```
+Output MySQL:
+```text
+`t`.`string` DESC
+```
+Output PostgreSQL:
+```text
+"t"."string" DESC
+```
+Output SQLite:
+```text
+"t"."string" DESC
 ```
 
 ## exprReturning
 ...
 
 ## clauseSet
-...
+Specifies columns and their new values using `Assign` to associate columns with values. Supports multiple pairs for updating multiple columns.
+```go
+set := Set(
+	uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+)
+```
+Output MariaDB:
+```text
+UPDATE `test` AS `t` SET `t`.`string` = ?
+```
+Output MySQL:
+```text
+UPDATE `test` AS `t` SET `t`.`string` = ?
+```
+Output PostgreSQL:
+```text
+UPDATE "test" AS "t" SET "t"."string" = $1
+```
+Output SQLite:
+```text
+UPDATE "test" AS "t" SET "t"."string" = ?
+```
 
 ## clauseUnions
 ### Union
 ...
 ```go
-union := NewSelect(uast.NewTable("test").As("t")).
-	Field(
-		uast.Column[string]("t", "string"),
-	)
-unions := NewSelect(uast.NewTable("test").As("t")).
-	Field(
-		uast.Column[string]("t", "string"),
-	).
-	Unions(
-		uast.Union(union),
-	)
+unions := uast.Union(uast.NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[string]("t", "string"),
+    ),
+)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` UNION SELECT `t`.`string` FROM `test` AS `t` 
+UNION SELECT `t`.`string` FROM `test` AS `t` 
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` UNION SELECT `t`.`string` FROM `test` AS `t`
+UNION SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t" UNION SELECT "t"."string" FROM "test" AS "t"
+UNION SELECT "t"."string" FROM "test" AS "t"
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t" UNION SELECT "t"."string" FROM "test" AS "t"
+UNION SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionAll
 ...
 ```go
-unionall := NewSelect(uast.NewTable("test").As("t")).
-	Field(
-		uast.Column[string]("t", "string"),
-	)
-unions := NewSelect(uast.NewTable("test").As("t")).
-	Field(
-		uast.Column[string]("t", "string"),
-	).
-	Unions(
-		uast.UnionAll(unionall),
-	)
+unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[string]("t", "string"),
+    ),
+)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `t`.`string` FROM `test` AS `t`
+UNION ALL SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `t`.`string` FROM `test` AS `t`
+UNION ALL SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "t"."string" FROM "test" AS "t"
+UNION ALL SELECT "t"."string" FROM "test" AS "t"
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "t"."string" FROM "test" AS "t"
+UNION ALL SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionExcept
 ...
 ```go
-unionExcept := NewSelect(uast.NewTable("test").As("t")).
-	Field(
-		uast.Column[string]("t", "string"),
-	)
-unions := NewSelect(uast.NewTable("test").As("t")).
-	Field(
-		uast.Column[string]("t", "string"),
-	).
-	Unions(
-		uast.UnionExcept(unionExcept),
-	)
+unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[string]("t", "string"),
+    ),
+)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` EXCEPT SELECT `t`.`string` FROM `test` AS `t`
+EXCEPT SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` EXCEPT SELECT `t`.`string` FROM `test` AS `t`
+EXCEPT SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t" EXCEPT SELECT "t"."string" FROM "test" AS "t"
+EXCEPT SELECT "t"."string" FROM "test" AS "t"
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t" EXCEPT SELECT "t"."string" FROM "test" AS "t"
+EXCEPT SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionIntersect
 ...
 ```go
-unionIntersect := NewSelect(uast.NewTable("test").As("t")).
+unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("test").As("t")).
 	Field(
 		uast.Column[string]("t", "string"),
-	)
-unions := NewSelect(uast.NewTable("test").As("t")).
-	Field(
-		uast.Column[string]("t", "string"),
-	).
-	Unions(
-		uast.UnionIntersect(unionIntersect),
-	)
+	),
+)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` INTERSECT SELECT `t`.`string` FROM `test` AS `t`
+INTERSECT SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` INTERSECT SELECT `t`.`string` FROM `test` AS `t`
+INTERSECT SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t" INTERSECT SELECT "t"."string" FROM "test" AS "t"
+INTERSECT SELECT "t"."string" FROM "test" AS "t"
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t" INTERSECT SELECT "t"."string" FROM "test" AS "t"
+INTERSECT SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ## clauseValues
-...
+Specifies values for insertion using `Pair` to associate columns with values. Columns are automatically inferred from the pairs.
+```go
+values := Values(
+    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+)
+```
+Output MariaDB:
+```text
+VALUES (?, ?)
+```
+Output MySQL:
+```text
+VALUES (?, ?)
+```
+Output PostgreSQL:
+```text
+VALUES ($1, $2)
+```
+Output SQLite:
+```text
+VALUES (?, ?)
+```
 
 ## clauseWhere
 ...

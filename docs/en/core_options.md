@@ -60,151 +60,151 @@ HAVING COUNT("t"."id") > ?
 ### Cross
 Adds a CROSS JOIN to the statement. Returns the Cartesian product of both tables.
 ```go
-join := uast.Cross(uast.Test1.Table)
+join := uast.Cross(uast.Test.Table)
 ```
 Output MariaDB:
 ```text
-CROSS JOIN `test1` AS `t1`
+CROSS JOIN `test` AS `t`
 ```
 Output MySQL:
 ```text
-CROSS JOIN `test1` AS `t1`
+CROSS JOIN `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
-CROSS JOIN "test1" AS "t1"
+CROSS JOIN "test" AS "t"
 ```
 Output SQLite:
 ```text
-CROSS JOIN "test1" AS "t1"
+CROSS JOIN "test" AS "t"
 ```
 
 ### Full
 Adds a FULL JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := uast.Full(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
+join := uast.Full(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
 ```
 Output MariaDB:
 ```text
-FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MySQL:
 ```text
-FULL JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-FULL JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### FullOuter
 Adds a FULL OUTER JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := uast.FullOuter(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
+join := uast.FullOuter(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
 ```
 Output MariaDB:
 ```text
-FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MySQL:
 ```text
-FULL OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-FULL OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### Inner
 Adds an INNER JOIN to the statement. Returns rows that have matching values in both tables.
 ```go
-join := uast.Inner(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
+join := uast.Inner(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
 ```
 Output MariaDB:
 ```text
-INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MySQL:
 ```text
-INNER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-INNER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### Left
 Adds a LEFT JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := uast.Left(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
+join := uast.Left(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
 ```
 Output MariaDB:
 ```text
-LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MySQL:
 ```text
-LEFT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-LEFT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### LeftOuter
 Adds a LEFT OUTER JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := uast.LeftOuter(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
+join := uast.LeftOuter(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
 ```
 Output MariaDB:
 ```text
-LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MySQL:
 ```text
-LEFT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-LEFT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### Right
 Adds a RIGHT JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := uast.Right(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
+join := uast.Right(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
 ```
 Output MariaDB:
 ```text
-RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MySQL:
 ```text
-RIGHT JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-RIGHT JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+RIGHT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
@@ -214,19 +214,19 @@ Output SQLite:
 ### RightOuter
 Adds a RIGHT OUTER JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := uast.RightOuter(uast.Test1.Table, uast.Equal(uast.Test1.Column.ID, uast.Test.Column.ID))
+join := uast.RightOuter(uast.Test.Table, uast.Equal(uast.Test.Column.ID, uast.Test1.Column.ID))
 ```
 Output MariaDB:
 ```text
-RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MySQL:
 ```text
-RIGHT OUTER JOIN `test1` AS `t1` ON `t1`.`id` = `t`.`id`
+RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-RIGHT OUTER JOIN "test1" AS "t1" ON "t1"."id" = "t"."id"
+RIGHT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text

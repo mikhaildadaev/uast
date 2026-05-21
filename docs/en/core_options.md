@@ -5,7 +5,7 @@ outline: deep
 # API / Core / Options
 
 ::: info **Info**
-This page covers all configuration options: `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseUnions`, `clauseWith`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprOrderBy`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
+This page covers all configuration options: `exprGroupBy`, `exprHaving`, `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseOrderBy`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
 ## exprGroupBy
@@ -228,9 +228,132 @@ Output SQLite:
 
 ## clauseUnions
 ### Union
+...
+```go
+union := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	)
+unions := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	).
+	Unions(
+		uast.Union(union),
+	)
+```
+Output MariaDB:
+```text
+SELECT `t`.`string` FROM `test` AS `t` UNION SELECT `t`.`string` FROM `test` AS `t` 
+```
+Output MySQL:
+```text
+SELECT `t`.`string` FROM `test` AS `t` UNION SELECT `t`.`string` FROM `test` AS `t`
+```
+Output PostgreSQL:
+```text
+SELECT "t"."string" FROM "test" AS "t" UNION SELECT "t"."string" FROM "test" AS "t"
+```
+Output SQLite:
+```text
+SELECT "t"."string" FROM "test" AS "t" UNION SELECT "t"."string" FROM "test" AS "t"
+```
+
 ### UnionAll
+...
+```go
+unionall := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	)
+unions := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	).
+	Unions(
+		uast.UnionAll(unionall),
+	)
+```
+Output MariaDB:
+```text
+SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `t`.`string` FROM `test` AS `t`
+```
+Output MySQL:
+```text
+SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `t`.`string` FROM `test` AS `t`
+```
+Output PostgreSQL:
+```text
+SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "t"."string" FROM "test" AS "t"
+```
+Output SQLite:
+```text
+SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "t"."string" FROM "test" AS "t"
+```
+
 ### UnionExcept
+...
+```go
+unionExcept := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	)
+unions := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	).
+	Unions(
+		uast.UnionExcept(unionExcept),
+	)
+```
+Output MariaDB:
+```text
+SELECT `t`.`string` FROM `test` AS `t` EXCEPT SELECT `t`.`string` FROM `test` AS `t`
+```
+Output MySQL:
+```text
+SELECT `t`.`string` FROM `test` AS `t` EXCEPT SELECT `t`.`string` FROM `test` AS `t`
+```
+Output PostgreSQL:
+```text
+SELECT "t"."string" FROM "test" AS "t" EXCEPT SELECT "t"."string" FROM "test" AS "t"
+```
+Output SQLite:
+```text
+SELECT "t"."string" FROM "test" AS "t" EXCEPT SELECT "t"."string" FROM "test" AS "t"
+```
+
 ### UnionIntersect
+...
+```go
+unionIntersect := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	)
+unions := NewSelect(uast.NewTable("test").As("t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	).
+	Unions(
+		uast.UnionIntersect(unionIntersect),
+	)
+```
+Output MariaDB:
+```text
+SELECT `t`.`string` FROM `test` AS `t` INTERSECT SELECT `t`.`string` FROM `test` AS `t`
+```
+Output MySQL:
+```text
+SELECT `t`.`string` FROM `test` AS `t` INTERSECT SELECT `t`.`string` FROM `test` AS `t`
+```
+Output PostgreSQL:
+```text
+SELECT "t"."string" FROM "test" AS "t" INTERSECT SELECT "t"."string" FROM "test" AS "t"
+```
+Output SQLite:
+```text
+SELECT "t"."string" FROM "test" AS "t" INTERSECT SELECT "t"."string" FROM "test" AS "t"
+```
 
 ## clauseValues
 ...
@@ -239,6 +362,9 @@ Output SQLite:
 ...
 
 ## clauseWith
+### Non-Recursive
+...
+### Recursive
 ...
 
 ## exprArray

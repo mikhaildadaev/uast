@@ -348,6 +348,7 @@ RETURNING `t`.`id`, `t`.`string`
 ```
 
 ## clauseSet
+### Assign
 Specifies columns and their new values using `Assign` to associate columns with values. Supports multiple pairs for updating multiple columns.
 ```go
 set := Set(

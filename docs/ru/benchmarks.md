@@ -11,17 +11,34 @@ outline: deep
 :::
 
 ## Core Performance
-Данные бенчмарки измеряют **затраты на форматирование и извлечение контекста** путем записи в `io.Discard`.
+Эти бенчмарки измеряют затраты на построение SQL-запросов. Простые запросы выбирают одну колонку с условием WHERE. Сложные запросы включают JOIN, подзапросы, GROUP BY, HAVING, ORDER BY и LIMIT.
 
 ### MultiThread
-| Name                 | Operations | Time (ns/op) | Memory (B/op) | Allocs |
-|----------------------|------------|--------------|---------------|--------|
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+|---------|------------|------------|--------------|---------------|--------|
+| Complex | MariaDB    |       383K |        2,965 |         4,971 |     54 |
+| Complex | MySQL      |       371K |        3,136 |         4,972 |     54 |
+| Complex | PostgreSQL |       380K |        3,299 |         4,970 |     54 |
+| Complex | SQLite     |       376K |        3,399 |         4,972 |     54 |
+| Simple  | MariaDB    |       3.7M |        335.5 |           720 |      8 |
+| Simple  | MySQL      |       3.5M |        349.0 |           720 |      8 |
+| Simple  | PostgreSQL |       3.3M |        398.4 |           720 |      8 |
+| Simple  | SQLite     |       3.3M |        358.3 |           720 |      8 |
 
 ### SingleThread
-| Name                 | Operations | Time (ns/op) | Memory (B/op) | Allocs |
-|----------------------|------------|--------------|---------------|--------|
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+|---------|------------|------------|--------------|---------------|--------|
+| Complex | MariaDB    |       197K |        5,852 |         4,948 |     54 |
+| Complex | MySQL      |       204K |        6,279 |         4,948 |     54 |
+| Complex | PostgreSQL |       196K |        5,874 |         4,948 |     54 |
+| Complex | SQLite     |       196K |        5,845 |         4,948 |     54 |
+| Simple  | MariaDB    |       1.5M |        789.8 |           718 |      8 |
+| Simple  | MySQL      |       1.5M |        778.6 |           718 |      8 |
+| Simple  | PostgreSQL |       1.4M |        795.1 |           718 |      8 |
+| Simple  | SQLite     |       1.4M |        787.9 |           718 |      8 |
 
-::: tip **Примечание**
+::: tip **Примечание** 
+Простые запросы выбирают одну колонку с базовым условием WHERE. Сложные запросы включают 2 JOIN, 3 подзапроса, GROUP BY, HAVING, ORDER BY и LIMIT. sync.Pool в режиме Multi переиспользует буферы contexter, снижая количество аллокаций и нагрузку на сборщик мусора.
 
-*Протестировано на Intel Core i9-9880H (2.30 ГГц).*
+*Benchmarked on Intel Core i9-9880H (2.30 GHz).*
 :::

@@ -14,6 +14,10 @@ outline: deep
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
 ```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS BINARY)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS BINARY)
@@ -22,11 +26,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS BYTEA)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS BLOB)
+```
 
 ### TypeVarBinary
 变长二进制字符串。
 ```go
 binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS VARBINARY)
 ```
 Output MySQL:
 ```text
@@ -36,12 +48,20 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS BYTEA)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS BLOB)
+```
 
 ## Datetime
 ### TypeDate
 表示日期值（年、月、日）。
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DATE)
 ```
 Output MySQL:
 ```text
@@ -51,11 +71,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS DATE)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeDateTime
 表示组合的日期和时间值。
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DATETIME)
 ```
 Output MySQL:
 ```text
@@ -65,11 +93,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS TIMESTAMP)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeTime
 表示时间值（时、分、秒）。
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TIME)
 ```
 Output MySQL:
 ```text
@@ -79,11 +115,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS TIME)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeTimestamp
 表示时间戳值。
 ```go
 datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TIMESTAMP)
 ```
 Output MySQL:
 ```text
@@ -93,12 +137,20 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS TIMESTAMPTZ)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ## Numeric
 ### TypeBigInt
 大整数类型。
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS SIGNED)
 ```
 Output MySQL:
 ```text
@@ -108,11 +160,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS BIGINT)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
+```
 
 ### TypeDecimal
 定点十进制数。
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DECIMAL)
 ```
 Output MySQL:
 ```text
@@ -122,11 +182,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS DECIMAL)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS REAL)
+```
 
 ### TypeDouble
 双精度浮点数。
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DECIMAL)
 ```
 Output MySQL:
 ```text
@@ -136,11 +204,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS DOUBLE PRECISION)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS REAL)
+```
 
 ### TypeFloat
 单精度浮点数。
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS DECIMAL)
 ```
 Output MySQL:
 ```text
@@ -150,11 +226,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS REAL)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS REAL)
+```
 
 ### TypeInt
 整数类型。
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS SIGNED)
 ```
 Output MySQL:
 ```text
@@ -164,11 +248,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS INTEGER)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
+```
 
 ### TypeSmallInt
 小整数类型。
 ```go
 math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS SIGNED)
 ```
 Output MySQL:
 ```text
@@ -178,12 +270,20 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS SMALLINT)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
+```
 
 ## String
 ### TypeChar 
 定长字符串。
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS CHAR)
 ```
 Output MySQL:
 ```text
@@ -193,11 +293,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS CHAR)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeString
 变长字符串。
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS VARCHAR)
 ```
 Output MySQL:
 ```text
@@ -207,11 +315,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS VARCHAR)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeText
 变长文本字符串。
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TEXT)
 ```
 Output MySQL:
 ```text
@@ -221,11 +337,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS TEXT)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeVarChar
 指定最大长度的变长字符串。
 ```go
 str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS VARCHAR)
 ```
 Output MySQL:
 ```text
@@ -235,12 +359,20 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS VARCHAR)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ## Special
 ### TypeArray
 表示数组类型。
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS JSON)
 ```
 Output MySQL:
 ```text
@@ -250,11 +382,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS ARRAY)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeBoolean
 表示布尔类型（真/假）。
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TINYINT(1))
 ```
 Output MySQL:
 ```text
@@ -264,11 +404,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS BOOLEAN)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS INTEGER)
+```
 
 ### TypeJSON
 表示 JSON 数据类型。
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS JSON)
 ```
 Output MySQL:
 ```text
@@ -278,11 +426,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS JSONB)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeUUID
 表示通用唯一标识符（UUID）。
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS UUID)
 ```
 Output MySQL:
 ```text
@@ -292,11 +448,19 @@ Output PostgreSQL:
 ```text
 CAST("t"."number" AS UUID)
 ```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
+```
 
 ### TypeXML
 表示 XML 数据类型。
 ```go
 special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
+```
+Output MariaDB:
+```text
+CAST(`t`.`number` AS TEXT)
 ```
 Output MySQL:
 ```text
@@ -305,4 +469,8 @@ CAST(`t`.`number` AS TEXT)
 Output PostgreSQL:
 ```text
 CAST("t"."number" AS XML)
+```
+Output SQLite:
+```text
+CAST("t"."number" AS TEXT)
 ```

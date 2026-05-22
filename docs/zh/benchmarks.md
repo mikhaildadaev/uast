@@ -11,17 +11,34 @@ outline: deep
 :::
 
 ## Core Performance
-这些基准测试通过写入 `io.Discard` 来测量**格式化和上下文提取的成本**。
+这些基准测试测量构建 SQL 查询的成本。简单查询选择一列并带有 WHERE 条件。复杂查询包括 JOIN、子查询、GROUP BY、HAVING、ORDER BY 和 LIMIT。
 
 ### MultiThread
-| Name                 | Operations | Time (ns/op) | Memory (B/op) | Allocs |
-|----------------------|------------|--------------|---------------|--------|
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+|---------|------------|------------|--------------|---------------|--------|
+| Complex | MariaDB    |       383K |        2,965 |         4,971 |     54 |
+| Complex | MySQL      |       371K |        3,136 |         4,972 |     54 |
+| Complex | PostgreSQL |       380K |        3,299 |         4,970 |     54 |
+| Complex | SQLite     |       376K |        3,399 |         4,972 |     54 |
+| Simple  | MariaDB    |       3.7M |        335.5 |           720 |      8 |
+| Simple  | MySQL      |       3.5M |        349.0 |           720 |      8 |
+| Simple  | PostgreSQL |       3.3M |        398.4 |           720 |      8 |
+| Simple  | SQLite     |       3.3M |        358.3 |           720 |      8 |
 
 ### SingleThread
-| Name                 | Operations | Time (ns/op) | Memory (B/op) | Allocs |
-|----------------------|------------|--------------|---------------|--------|
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+|---------|------------|------------|--------------|---------------|--------|
+| Complex | MariaDB    |       197K |        5,852 |         4,948 |     54 |
+| Complex | MySQL      |       204K |        6,279 |         4,948 |     54 |
+| Complex | PostgreSQL |       196K |        5,874 |         4,948 |     54 |
+| Complex | SQLite     |       196K |        5,845 |         4,948 |     54 |
+| Simple  | MariaDB    |       1.5M |        789.8 |           718 |      8 |
+| Simple  | MySQL      |       1.5M |        778.6 |           718 |      8 |
+| Simple  | PostgreSQL |       1.4M |        795.1 |           718 |      8 |
+| Simple  | SQLite     |       1.4M |        787.9 |           718 |      8 |
 
-::: tip **注**
+::: tip **注** 
+简单查询选择一列并带有基本的 WHERE 条件。复杂查询包括 2 个 JOIN、3 个子查询、GROUP BY、HAVING、ORDER BY 和 LIMIT。Multi 模式下的 sync.Pool 重用 contexter 缓冲区，减少内存分配并降低 GC 压力。
 
-*在 Intel Core i9-9880H (2.30 GHz) 上测试。*
+*Benchmarked on Intel Core i9-9880H (2.30 GHz).*
 :::

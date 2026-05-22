@@ -1523,7 +1523,7 @@ func Test_Core_exprValue(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Delete(t *testing.T) {
+func Test_SQL_Delete(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
 			WithDialect(supportDialect),
@@ -1547,7 +1547,7 @@ func Test_Delete(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
 }
-func Test_Insert(t *testing.T) {
+func Test_SQL_Insert(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
 			WithDialect(supportDialect),
@@ -1572,7 +1572,7 @@ func Test_Insert(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
 }
-func Test_Insert_Source(t *testing.T) {
+func Test_SQL_Insert_Source(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
 			WithDialect(supportDialect),
@@ -1602,7 +1602,7 @@ func Test_Insert_Source(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})
 }
-func Test_Select(t *testing.T) {
+func Test_SQL_Select(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
 			WithDialect(supportDialect),
@@ -1626,7 +1626,7 @@ func Test_Select(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Select_Distinct(t *testing.T) {
+func Test_SQL_Select_Distinct(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
 			WithDialect(supportDialect),
@@ -1651,7 +1651,7 @@ func Test_Select_Distinct(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Update(t *testing.T) {
+func Test_SQL_Update(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
 			WithDialect(supportDialect),
@@ -1676,6 +1676,57 @@ func Test_Update(t *testing.T) {
 			assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t"`, "UPDATE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
+	})
+}
+func Test_Transformer_Comparison(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(WithDialect(supportDialect))
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(Test.Column.ID).
+			Where(
+				And(
+					ILike(Test.Column.String, Value("%ivan%")),
+					ILike(Test.Column.String, Value("%petr%")),
+				),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `("t"."string" ILIKE $1 AND "t"."string" ILIKE $2)`, "ILIKE")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `(LOWER("t"."string") LIKE LOWER(?) AND LOWER("t"."string") LIKE LOWER(?))`, "ILIKE")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Transformer_Function(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(WithDialect(supportDialect))
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Trunc(Ceil(Test.Column.Number), Value(2)).As("result"),
+			)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		if err != nil {
+			t.Fatal(err)
+		}
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "TRUNCATE(CEILING(`t`.`number`), ?)", "TRUNC→TRUNCATE, CEIL→CEILING")
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "TRUNCATE(CEILING(`t`.`number`), ?)", "TRUNC→TRUNCATE, CEIL→CEILING")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `TRUNC(CEIL("t"."number"), $1)`, "TRUNC→TRUNC, CEIL→CEIL")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `TRUNC(CEIL("t"."number"), ?)`, "TRUNC→TRUNC, CEIL→CEIL")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
 

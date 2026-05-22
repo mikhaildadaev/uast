@@ -5,10 +5,10 @@ outline: deep
 # API / Core / Options
 
 ::: info **Info**
-This page covers all configuration options: `exprGroupBy`, `exprHaving`, `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseOrderBy`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprColumn`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
+This page covers all configuration options: `clauseGroupBy`, `clauseHaving`, `clauseJoin`, `clauseLimit`, `clauseOffset`, `clauseOrderBy`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprColumn`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
-## exprGroupBy
+## clauseGroupBy
 Adds a GROUP BY clause to group rows by specified columns or expressions.
 ```go
 groupBy := GroupBy(
@@ -32,7 +32,7 @@ Output SQLite:
 GROUP BY "t"."string"
 ```
 
-## exprHaving
+## clauseHaving
 Adds a HAVING clause to filter groups. Used with GROUP BY to filter aggregated results.
 ```go
 having := Having(

@@ -364,12 +364,16 @@ func Test_Core_clauseValues(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlInsertQuery, "VALUES (?, ?)", "VALUES")
+			assertContains(t, sqlInsertQuery, "ON DUPLICATE KEY UPDATE `string` = ?", "UPSERT")
 		case DialectMySQL:
 			assertContains(t, sqlInsertQuery, "VALUES (?, ?)", "VALUES")
+			assertContains(t, sqlInsertQuery, "ON DUPLICATE KEY UPDATE `string` = ?", "UPSERT")
 		case DialectPostgreSQL:
 			assertContains(t, sqlInsertQuery, `VALUES ($1, $2)`, "VALUES")
+			assertContains(t, sqlInsertQuery, `ON CONFLICT DO UPDATE SET "string" = $3`, "UPSERT")
 		case DialectSQLite:
 			assertContains(t, sqlInsertQuery, `VALUES (?, ?)`, "VALUES")
+			assertContains(t, sqlInsertQuery, `ON CONFLICT DO UPDATE SET "string" = ?`, "UPSERT")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 	})

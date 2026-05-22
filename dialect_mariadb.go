@@ -442,7 +442,7 @@ func MariaDBTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 }
 
 // Приватные методы
-func (mariaDBStrateger *mariaDBStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
+func (strateger *mariaDBStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -466,7 +466,7 @@ func (mariaDBStrateger *mariaDBStrateger) renderDelete(baseRenderer *baseRendere
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
+func (strateger *mariaDBStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
 	if err := baseRenderer.renderWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -490,7 +490,7 @@ func (mariaDBStrateger *mariaDBStrateger) renderInsert(baseRenderer *baseRendere
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
+func (strateger *mariaDBStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
 	if err := baseRenderer.renderWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -532,7 +532,7 @@ func (mariaDBStrateger *mariaDBStrateger) renderSelect(baseRenderer *baseRendere
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
+func (strateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
 	if err := baseRenderer.renderWith(stmtUpdate.with); err != nil {
 		return err
 	}
@@ -556,7 +556,7 @@ func (mariaDBStrateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRendere
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
+func (strateger *mariaDBStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -565,7 +565,7 @@ func (mariaDBStrateger *mariaDBStrateger) transformDelete(baseTransformer *baseT
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
+func (strateger *mariaDBStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -577,7 +577,7 @@ func (mariaDBStrateger *mariaDBStrateger) transformInsert(baseTransformer *baseT
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
+func (strateger *mariaDBStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -586,7 +586,7 @@ func (mariaDBStrateger *mariaDBStrateger) transformSelect(baseTransformer *baseT
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
+func (strateger *mariaDBStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -595,7 +595,7 @@ func (mariaDBStrateger *mariaDBStrateger) transformUpdate(baseTransformer *baseT
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
+func (strateger *mariaDBStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
 	if err := baseValidator.validateWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -613,7 +613,7 @@ func (mariaDBStrateger *mariaDBStrateger) validateDelete(baseValidator *baseVali
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
+func (strateger *mariaDBStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -637,7 +637,7 @@ func (mariaDBStrateger *mariaDBStrateger) validateInsert(baseValidator *baseVali
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
+func (strateger *mariaDBStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
 	if err := baseValidator.validateWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -673,7 +673,7 @@ func (mariaDBStrateger *mariaDBStrateger) validateSelect(baseValidator *baseVali
 	}
 	return nil
 }
-func (mariaDBStrateger *mariaDBStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
+func (strateger *mariaDBStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}

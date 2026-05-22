@@ -442,7 +442,7 @@ func mysqlTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 }
 
 // Приватные методы
-func (mysqlStrateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
+func (strateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -463,7 +463,7 @@ func (mysqlStrateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, s
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
+func (strateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
 	if err := baseRenderer.renderWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -484,7 +484,7 @@ func (mysqlStrateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, s
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
+func (strateger *mysqlStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
 	if err := baseRenderer.renderWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -526,7 +526,7 @@ func (mysqlStrateger *mysqlStrateger) renderSelect(baseRenderer *baseRenderer, s
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
+func (strateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
 	if err := baseRenderer.renderWith(stmtUpdate.with); err != nil {
 		return err
 	}
@@ -547,7 +547,7 @@ func (mysqlStrateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, s
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
+func (strateger *mysqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -556,7 +556,7 @@ func (mysqlStrateger *mysqlStrateger) transformDelete(baseTransformer *baseTrans
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
+func (strateger *mysqlStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -568,7 +568,7 @@ func (mysqlStrateger *mysqlStrateger) transformInsert(baseTransformer *baseTrans
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
+func (strateger *mysqlStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -577,7 +577,7 @@ func (mysqlStrateger *mysqlStrateger) transformSelect(baseTransformer *baseTrans
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
+func (strateger *mysqlStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -586,7 +586,7 @@ func (mysqlStrateger *mysqlStrateger) transformUpdate(baseTransformer *baseTrans
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
+func (strateger *mysqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
 	if err := baseValidator.validateWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -601,7 +601,7 @@ func (mysqlStrateger *mysqlStrateger) validateDelete(baseValidator *baseValidato
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
+func (strateger *mysqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -622,7 +622,7 @@ func (mysqlStrateger *mysqlStrateger) validateInsert(baseValidator *baseValidato
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
+func (strateger *mysqlStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
 	if err := baseValidator.validateWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -658,7 +658,7 @@ func (mysqlStrateger *mysqlStrateger) validateSelect(baseValidator *baseValidato
 	}
 	return nil
 }
-func (mysqlStrateger *mysqlStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
+func (strateger *mysqlStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}

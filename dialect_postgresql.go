@@ -687,7 +687,7 @@ func postgresqlUsingAndWhere(baseRenderer *baseRenderer, stmtDelete *stmtDelete)
 }
 
 // Приватные методы
-func (postgresqlStrateger *postgresqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
+func (strateger *postgresqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -705,7 +705,7 @@ func (postgresqlStrateger *postgresqlStrateger) renderDelete(baseRenderer *baseR
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
+func (strateger *postgresqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
 	if err := baseRenderer.renderWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -729,7 +729,7 @@ func (postgresqlStrateger *postgresqlStrateger) renderInsert(baseRenderer *baseR
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
+func (strateger *postgresqlStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
 	if err := baseRenderer.renderWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -771,7 +771,7 @@ func (postgresqlStrateger *postgresqlStrateger) renderSelect(baseRenderer *baseR
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
+func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
 	if err := baseRenderer.renderWith(stmtUpdate.with); err != nil {
 		return err
 	}
@@ -795,7 +795,7 @@ func (postgresqlStrateger *postgresqlStrateger) renderUpdate(baseRenderer *baseR
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
+func (strateger *postgresqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -804,7 +804,7 @@ func (postgresqlStrateger *postgresqlStrateger) transformDelete(baseTransformer 
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
+func (strateger *postgresqlStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -816,7 +816,7 @@ func (postgresqlStrateger *postgresqlStrateger) transformInsert(baseTransformer 
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
+func (strateger *postgresqlStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -825,7 +825,7 @@ func (postgresqlStrateger *postgresqlStrateger) transformSelect(baseTransformer 
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
+func (strateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -834,7 +834,7 @@ func (postgresqlStrateger *postgresqlStrateger) transformUpdate(baseTransformer 
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
+func (strateger *postgresqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
 	if err := baseValidator.validateWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -852,7 +852,7 @@ func (postgresqlStrateger *postgresqlStrateger) validateDelete(baseValidator *ba
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
+func (strateger *postgresqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -876,7 +876,7 @@ func (postgresqlStrateger *postgresqlStrateger) validateInsert(baseValidator *ba
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
+func (strateger *postgresqlStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
 	if err := baseValidator.validateWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -912,7 +912,7 @@ func (postgresqlStrateger *postgresqlStrateger) validateSelect(baseValidator *ba
 	}
 	return nil
 }
-func (postgresqlStrateger *postgresqlStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
+func (strateger *postgresqlStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}

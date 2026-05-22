@@ -39,10 +39,10 @@ type componentRenderer interface {
 	renderWith(withs []*clauseWith) error
 }
 type statementRenderer interface {
-	renderDelete(baseRenderer *baseRenderer, stmt *stmtDelete) error
-	renderInsert(baseRenderer *baseRenderer, stmt *stmtInsert) error
-	renderSelect(baseRenderer *baseRenderer, stmt *stmtSelect) error
-	renderUpdate(baseRenderer *baseRenderer, stmt *stmtUpdate) error
+	renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error
+	renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error
+	renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error
+	renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error
 }
 type transformer interface {
 	elementTransformer

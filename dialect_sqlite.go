@@ -480,7 +480,7 @@ func sqliteFunctionRand(baseTransformer *baseTransformer, expr transformFunction
 }
 
 // Приватные методы
-func (sqliteStrateger *sqliteStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
+func (strateger *sqliteStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -501,7 +501,7 @@ func (sqliteStrateger *sqliteStrateger) renderDelete(baseRenderer *baseRenderer,
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
+func (strateger *sqliteStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
 	if err := baseRenderer.renderWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -525,7 +525,7 @@ func (sqliteStrateger *sqliteStrateger) renderInsert(baseRenderer *baseRenderer,
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
+func (strateger *sqliteStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
 	if err := baseRenderer.renderWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -567,7 +567,7 @@ func (sqliteStrateger *sqliteStrateger) renderSelect(baseRenderer *baseRenderer,
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
+func (strateger *sqliteStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
 	if err := baseRenderer.renderWith(stmtUpdate.with); err != nil {
 		return err
 	}
@@ -591,7 +591,7 @@ func (sqliteStrateger *sqliteStrateger) renderUpdate(baseRenderer *baseRenderer,
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
+func (strateger *sqliteStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -600,7 +600,7 @@ func (sqliteStrateger *sqliteStrateger) transformDelete(baseTransformer *baseTra
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
+func (strateger *sqliteStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -612,7 +612,7 @@ func (sqliteStrateger *sqliteStrateger) transformInsert(baseTransformer *baseTra
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
+func (strateger *sqliteStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -621,7 +621,7 @@ func (sqliteStrateger *sqliteStrateger) transformSelect(baseTransformer *baseTra
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
+func (strateger *sqliteStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -630,7 +630,7 @@ func (sqliteStrateger *sqliteStrateger) transformUpdate(baseTransformer *baseTra
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
+func (strateger *sqliteStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
 	if err := baseValidator.validateWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -648,7 +648,7 @@ func (sqliteStrateger *sqliteStrateger) validateDelete(baseValidator *baseValida
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
+func (strateger *sqliteStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -672,7 +672,7 @@ func (sqliteStrateger *sqliteStrateger) validateInsert(baseValidator *baseValida
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
+func (strateger *sqliteStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
 	if err := baseValidator.validateWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -708,7 +708,7 @@ func (sqliteStrateger *sqliteStrateger) validateSelect(baseValidator *baseValida
 	}
 	return nil
 }
-func (sqliteStrateger *sqliteStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
+func (strateger *sqliteStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}

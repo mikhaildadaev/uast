@@ -322,7 +322,7 @@ Output SQLite:
 "t"."string" DESC
 ```
 
-## exprReturning
+## clauseReturning
 Adds a RETURNING clause to return modified rows. Supported by MariaDB, PostgreSQL, and SQLite. MySQL does not support this clause natively.
 ```go
 returning = Returning(

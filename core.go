@@ -204,9 +204,6 @@ func JsonPair(key ExpressionSafe[string], value ExpressionBase) *exprJson {
 func JsonPath(path ...ExpressionBase) []ExpressionBase {
 	return path
 }
-func Row(values ...ExpressionBase) []ExpressionBase {
-	return values
-}
 
 // -- Array -- //
 func Array[T typeScalar](array ...T) *exprArray[T] {

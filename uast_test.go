@@ -1686,20 +1686,23 @@ func Test_Transformer_Comparison(t *testing.T) {
 			Field(Test.Column.ID).
 			Where(
 				And(
-					ILike(Test.Column.String, Value("%ivan%")),
-					ILike(Test.Column.String, Value("%petr%")),
+					ILike(Test.Column.String, Value("%alex%")),
+					And(
+						ILike(Test.Column.String, Value("%ivan%")),
+						ILike(Test.Column.String, Value("%petr%")),
+					),
 				),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
+			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
 		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
+			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `("t"."string" ILIKE $1 AND "t"."string" ILIKE $2)`, "ILIKE")
+			assertContains(t, sqlSelectQuery, `("t"."string" ILIKE $1 AND "t"."string" ILIKE $2 AND "t"."string" ILIKE $3)`, "ILIKE")
 		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `(LOWER("t"."string") LIKE LOWER(?) AND LOWER("t"."string") LIKE LOWER(?))`, "ILIKE")
+			assertContains(t, sqlSelectQuery, `(LOWER("t"."string") LIKE LOWER(?) AND LOWER("t"."string") LIKE LOWER(?) AND LOWER("t"."string") LIKE LOWER(?))`, "ILIKE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1713,9 +1716,6 @@ func Test_Transformer_Function(t *testing.T) {
 				Trunc(Ceil(Test.Column.Number), Value(2)).As("result"),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		if err != nil {
-			t.Fatal(err)
-		}
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "TRUNCATE(CEILING(`t`.`number`), ?)", "TRUNC→TRUNCATE, CEIL→CEILING")

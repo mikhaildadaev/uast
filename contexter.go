@@ -35,11 +35,11 @@ func newContext() *contexter {
 }
 
 // Приватные методы
-func (contexter *contexter) appendCollectionComparison(expr transformComparison) {
-	contexter.collectionComparison = append(contexter.collectionComparison, expr)
+func (contexter *contexter) prependCollectionComparison(expr transformComparison) {
+	contexter.collectionComparison = append([]transformComparison{expr}, contexter.collectionComparison...)
 }
-func (contexter *contexter) appendCollectionFunction(expr transformFunction) {
-	contexter.collectionFunction = append(contexter.collectionFunction, expr)
+func (contexter *contexter) prependCollectionFunction(expr transformFunction) {
+	contexter.collectionFunction = append([]transformFunction{expr}, contexter.collectionFunction...)
 }
 func (contexter *contexter) resetAll() {
 	contexter.resetBufferByte()

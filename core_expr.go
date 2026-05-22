@@ -630,6 +630,16 @@ func (expr *exprFunction[InLT, InRT, T]) validate(baseValidator *baseValidator) 
 	if err := baseValidator.validateFunction(expr); err != nil {
 		return err
 	}
+	if expr.left != nil {
+		if err := expr.left.validate(baseValidator); err != nil {
+			return err
+		}
+	}
+	if expr.right != nil {
+		if err := expr.right.validate(baseValidator); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 func (expr *exprJson) isExpressionBase() {}
@@ -695,7 +705,9 @@ func (expr *exprLogical) render(baseRenderer *baseRenderer) error {
 		last := len(expr.expressions) - 1
 		for i, predicate := range expr.expressions {
 			if logical, ok := predicate.(*exprLogical); ok {
-				logical.parentIsLogical = true
+				if logical.operator == expr.operator {
+					logical.parentIsLogical = true
+				}
 			}
 			if err := predicate.render(baseRenderer); err != nil {
 				return err

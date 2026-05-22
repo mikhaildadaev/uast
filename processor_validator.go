@@ -83,7 +83,7 @@ func (validator *baseValidator) validateComparison(value transformComparison) er
 			return ErrInvalidComparisonLikeNotLike
 		}
 	}
-	validator.contexter.appendCollectionComparison(value)
+	validator.contexter.prependCollectionComparison(value)
 	return nil
 }
 func (validator *baseValidator) validateConstant(value any) error {
@@ -165,8 +165,7 @@ func (validator *baseValidator) validateFunction(value transformFunction) error 
 		if i.max != -1 && paramCount > i.max {
 			return ErrUnsupportFunctionParamMax
 		}
-		// !!! Внимание, необходимо проверить порядок добавления (дети - родитель)
-		validator.contexter.appendCollectionFunction(value)
+		validator.contexter.prependCollectionFunction(value)
 		return nil
 	}
 	return ErrUnsupportFunction

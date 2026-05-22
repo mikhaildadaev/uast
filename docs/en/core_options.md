@@ -477,6 +477,7 @@ INTERSECT SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ## clauseValues
+### Pair
 Specifies values for insertion using `Pair` to associate columns with values. Columns are automatically inferred from the pairs.
 ```go
 values := Values(
@@ -499,6 +500,34 @@ VALUES ($1, $2)
 Output SQLite:
 ```text
 VALUES (?, ?)
+```
+
+### Upsert
+Adds an upsert clause to INSERT ... VALUES using `Upsert`. Associates columns with values.
+```go
+values := Values(
+    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+).
+Upsert(
+    uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
+)
+```
+Output MariaDB:
+```text
+VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
+```
+Output MySQL:
+```text
+VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
+```
+Output PostgreSQL:
+```text
+VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3
+```
+Output SQLite:
+```text
+VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
 ```
 
 ## clauseWhere

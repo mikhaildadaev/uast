@@ -19,12 +19,16 @@ stmt := uast.NewSelect(uast.Column[string]("t", "string")).
         uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
     )
 sql := uast.NewSQL(
-    uast.WithDialect(uast.DialectMySQL)
+    uast.WithDialect(uast.DialectMariaDB)
 )
 defer sql.Close()
+mariadbQuery, mariadbArgs, _ := sql.Build(stmt)
+sql.SetDialect(uast.DialectMySQL)
 mysqlQuery, mysqlArgs, _ := sql.Build(stmt)
 sql.SetDialect(uast.DialectPostgreSQL)
 pgsqlQuery, pgsqlArgs, _ := sql.Build(stmt)
+sql.SetDialect(uast.DialectSQLite)
+sqliteQuery, sqliteArgs, _ := sql.Build(stmt)
 ```
 Output MariaDB:
 ```text

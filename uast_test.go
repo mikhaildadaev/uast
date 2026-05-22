@@ -356,6 +356,9 @@ func Test_Core_clauseValues(t *testing.T) {
 			Values(
 				Pair(Test.Column.String, Value("ivan")),
 				Pair(Test.Column.Number, Value(2)),
+			).
+			Upsert(
+				Pair(Test.Column.String, Value("updated")),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {

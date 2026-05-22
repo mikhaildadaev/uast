@@ -51,15 +51,19 @@ func (stmtInsert *stmtInsert) Source(source *stmtSelect) *stmtInsert {
 	stmtInsert.source = source
 	return stmtInsert
 }
-func (stmtInsert *stmtInsert) Values(pairs ...*clauseValues) *stmtInsert {
+func (stmtInsert *stmtInsert) Upsert(pairs ...*clausePair) *stmtInsert {
+	if stmtInsert.values != nil {
+		stmtInsert.values.upsert = &clauseUpsert{pairs: pairs}
+	}
+	return stmtInsert
+}
+func (stmtInsert *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {
 	columns := make([]markExpressable, len(pairs))
-	values := make([]ExpressionBase, len(pairs))
 	for i, pair := range pairs {
 		columns[i] = pair.column
-		values[i] = pair.value
 	}
 	stmtInsert.column = columns
-	stmtInsert.values = [][]ExpressionBase{values}
+	stmtInsert.values = &clauseValues{pairs: pairs}
 	return stmtInsert
 }
 func (stmtInsert *stmtInsert) With(with ...*clauseWith) *stmtInsert {
@@ -74,7 +78,7 @@ type stmtInsert struct {
 	into      SourceBase
 	source    statement
 	returning []markReturnable
-	values    [][]ExpressionBase
+	values    *clauseValues
 	with      []*clauseWith
 }
 

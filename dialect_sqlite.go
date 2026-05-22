@@ -66,6 +66,9 @@ const (
 	// Функции строковые
 )
 const (
+	uastSQLiteManagementUpsert managementService = "ON CONFLICT DO UPDATE SET"
+)
+const (
 	// Типы бинарные
 	uastSQLiteTypeBinary    typeService = "BLOB"
 	uastSQLiteTypeVarBinary typeService = "BLOB"
@@ -603,6 +606,9 @@ func (sqliteStrateger *sqliteStrateger) transformInsert(baseTransformer *baseTra
 	}
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
+	}
+	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
+		stmtInsert.values.upsert.service = uastSQLiteManagementUpsert
 	}
 	return nil
 }

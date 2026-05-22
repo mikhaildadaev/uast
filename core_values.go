@@ -1,36 +1,48 @@
 package uast
 
 // Публичные функции
-func Pair[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clauseValues {
-	return &clauseValues{
+func Pair[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clausePair {
+	return &clausePair{
 		column: &exprPair[T]{
-			name: column.name},
+			name: column.name,
+		},
 		value: value,
 	}
 }
 
 // Приватные структуры
-type clauseValues struct {
+type clausePair struct {
 	column markExpressable
 	value  ExpressionBase
+}
+type clauseValues struct {
+	pairs  []*clausePair
+	upsert *clauseUpsert
 }
 
 // Приватные методы
 func (clauseValues *clauseValues) render(baseRenderer *baseRenderer) error {
-	if err := clauseValues.value.render(baseRenderer); err != nil {
-		return err
+	for _, pair := range clauseValues.pairs {
+		if err := pair.value.render(baseRenderer); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 func (clauseValues *clauseValues) validate(baseValidator *baseValidator) error {
-	if clauseValues.column == nil || clauseValues.value == nil {
+	if clauseValues.pairs == nil {
 		return ErrInvalidStatementValues
 	}
-	if err := clauseValues.column.validate(baseValidator); err != nil {
-		return err
-	}
-	if err := clauseValues.value.validate(baseValidator); err != nil {
-		return err
+	for _, pair := range clauseValues.pairs {
+		if pair.column == nil || pair.value == nil {
+			return ErrInvalidStatementValues
+		}
+		if err := pair.column.validate(baseValidator); err != nil {
+			return err
+		}
+		if err := pair.value.validate(baseValidator); err != nil {
+			return err
+		}
 	}
 	return nil
 }

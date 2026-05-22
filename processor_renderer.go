@@ -463,29 +463,25 @@ func (baseRenderer *baseRenderer) renderUnions(unions []*clauseUnions) error {
 	}
 	return nil
 }
-func (baseRenderer *baseRenderer) renderValues(values [][]ExpressionBase) error {
+func (baseRenderer *baseRenderer) renderValues(values *clauseValues) error {
 	if values == nil {
 		return nil
 	}
-	valuesCount := len(values) - 1
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(uastManagementValues)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	for i, part := range values {
-		baseRenderer.renderOperator(uastCompositeParenLeft)
-		partCount := len(part) - 1
-		for j, value := range part {
-			if err := value.render(baseRenderer); err != nil {
-				return err
-			}
-			if j < partCount {
-				baseRenderer.renderOperator(uastCompositeCommaSpace)
-			}
-		}
-		baseRenderer.renderOperator(uastCompositeParenRight)
-		if i < valuesCount {
+	baseRenderer.renderOperator(uastCompositeParenLeft)
+	for i, pair := range values.pairs {
+		if i > 0 {
 			baseRenderer.renderOperator(uastCompositeCommaSpace)
 		}
+		if err := pair.value.render(baseRenderer); err != nil {
+			return err
+		}
+	}
+	baseRenderer.renderOperator(uastCompositeParenRight)
+	if values.upsert != nil {
+		values.upsert.render(baseRenderer)
 	}
 	return nil
 }

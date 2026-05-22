@@ -56,6 +56,9 @@ const (
 	// Функции строковые
 )
 const (
+	uastMySQLManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
+)
+const (
 	// Типы бинарные
 	uastMysqlTypeBinary    typeService = "BINARY"
 	uastMysqlTypeVarBinary typeService = "VARBINARY"
@@ -559,6 +562,9 @@ func (mysqlStrateger *mysqlStrateger) transformInsert(baseTransformer *baseTrans
 	}
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
+	}
+	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
+		stmtInsert.values.upsert.service = uastMySQLManagementUpsert
 	}
 	return nil
 }

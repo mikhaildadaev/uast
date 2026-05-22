@@ -79,6 +79,9 @@ const (
 	// Функции строковые
 )
 const (
+	uastPostgreSQLManagementUpsert managementService = "ON CONFLICT DO UPDATE SET"
+)
+const (
 	// Типы бинарные
 	uastPostgresqlTypeBinary    typeService = "BYTEA"
 	uastPostgresqlTypeVarBinary typeService = "BYTEA"
@@ -807,6 +810,9 @@ func (postgresqlStrateger *postgresqlStrateger) transformInsert(baseTransformer 
 	}
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
+	}
+	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
+		stmtInsert.values.upsert.service = uastPostgreSQLManagementUpsert
 	}
 	return nil
 }

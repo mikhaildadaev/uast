@@ -490,15 +490,18 @@ func (baseValidator *baseValidator) validateUnions(unions []*clauseUnions) error
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateValues(values [][]ExpressionBase) error {
+func (baseValidator *baseValidator) validateValues(values *clauseValues) error {
 	if values == nil {
 		return nil
 	}
-	for _, part := range values {
-		for _, value := range part {
-			if err := value.validate(baseValidator); err != nil {
-				return err
-			}
+	for _, pair := range values.pairs {
+		if err := pair.value.validate(baseValidator); err != nil {
+			return err
+		}
+	}
+	if values.upsert != nil {
+		if err := values.upsert.validate(baseValidator); err != nil {
+			return err
 		}
 	}
 	return nil

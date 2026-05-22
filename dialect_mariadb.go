@@ -56,6 +56,9 @@ const (
 	// Функции строковые
 )
 const (
+	uastMariaDBManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
+)
+const (
 	// Типы бинарные
 	uastMariaDBTypeBinary    typeService = "BINARY"
 	uastMariaDBTypeVarBinary typeService = "VARBINARY"
@@ -568,6 +571,9 @@ func (mariaDBStrateger *mariaDBStrateger) transformInsert(baseTransformer *baseT
 	}
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
+	}
+	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
+		stmtInsert.values.upsert.service = uastMariaDBManagementUpsert
 	}
 	return nil
 }

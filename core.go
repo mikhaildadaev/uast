@@ -1416,31 +1416,31 @@ func Value[T typeScalar](value T) *exprValue[T] {
 }
 
 // Публичные методы
-func (expression *exprColumn[T]) As(aliasName string) *exprAlias[T] {
+func (exprColumn *exprColumn[T]) As(aliasName string) *exprAlias[T] {
 	return &exprAlias[T]{
 		aliasName:  aliasName,
-		expression: expression,
+		expression: exprColumn,
 	}
 }
-func (expression *exprFunction[InLT, InRT, T]) As(aliasName string) *exprAlias[T] {
+func (exprFunction *exprFunction[InLT, InRT, T]) As(aliasName string) *exprAlias[T] {
 	return &exprAlias[T]{
 		aliasName:  aliasName,
-		expression: expression,
+		expression: exprFunction,
 	}
 }
-func (expression *exprFunction[InLT, InRT, T]) Over(options ...WindowOption) *exprFunction[InLT, InRT, T] {
+func (exprFunction *exprFunction[InLT, InRT, T]) Over(options ...WindowOption) *exprFunction[InLT, InRT, T] {
 	spec := &WindowSpec{}
 	for _, option := range options {
 		option(spec)
 	}
-	copy := *expression
+	copy := *exprFunction
 	copy.window = spec
 	copy.process = uastProcessWindow
 	return &copy
 }
-func (expression *exprSubquery[T]) As(aliasName string) *exprAlias[T] {
+func (exprSubquery *exprSubquery[T]) As(aliasName string) *exprAlias[T] {
 	return &exprAlias[T]{
 		aliasName:  aliasName,
-		expression: expression,
+		expression: exprSubquery,
 	}
 }

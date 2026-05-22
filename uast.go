@@ -109,6 +109,7 @@ const (
 	uastCompositeBrackRight                   compositeOperator = "]"
 	uastCompositeCommaSpace                   compositeOperator = ", "
 	uastCompositeDollarPoint                  compositeOperator = "$."
+	uastCompositeEqualSpace                   compositeOperator = "= "
 	uastCompositeParenLeft                    compositeOperator = "("
 	uastCompositeParenRight                   compositeOperator = ")"
 	uastCompositeSpaceAtGreaterSpace          compositeOperator = " @> "

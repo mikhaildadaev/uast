@@ -692,7 +692,6 @@ func (expr *exprLogical) render(baseRenderer *baseRenderer) error {
 		if !expr.parentIsLogical {
 			baseRenderer.renderOperator(uastCompositeParenLeft)
 		}
-		// !!! Внимание, необходимо доработать скобки на первом уровне
 		last := len(expr.expressions) - 1
 		for i, predicate := range expr.expressions {
 			if logical, ok := predicate.(*exprLogical); ok {
@@ -708,7 +707,7 @@ func (expr *exprLogical) render(baseRenderer *baseRenderer) error {
 			}
 		}
 		if !expr.parentIsLogical {
-			baseRenderer.renderOperator(uastCompositeParenLeft)
+			baseRenderer.renderOperator(uastCompositeParenRight)
 		}
 	}
 	return nil

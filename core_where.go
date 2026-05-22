@@ -6,11 +6,11 @@ type clauseWhere struct {
 }
 
 // Приватные методы
-func (clauseWhere *clauseWhere) isExpressionBase() {}
-func (clauseWhere *clauseWhere) isPredicable()     {}
-func (clauseWhere *clauseWhere) render(baseRenderer *baseRenderer) error {
-	return clauseWhere.expression.render(baseRenderer)
+func (clause *clauseWhere) isExpressionBase() {}
+func (clause *clauseWhere) isPredicable()     {}
+func (clause *clauseWhere) render(baseRenderer *baseRenderer) error {
+	return clause.expression.render(baseRenderer)
 }
-func (clauseWhere *clauseWhere) validate(baseValidator *baseValidator) error {
-	return clauseWhere.expression.validate(baseValidator)
+func (clause *clauseWhere) validate(baseValidator *baseValidator) error {
+	return clause.expression.validate(baseValidator)
 }

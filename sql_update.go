@@ -1,29 +1,29 @@
 package uast
 
 // Публичные методы
-func (stmtUpdate *stmtUpdate) Join(joins ...*clauseJoin) *stmtUpdate {
-	stmtUpdate.join = joins
-	return stmtUpdate
+func (stmt *stmtUpdate) Join(joins ...*clauseJoin) *stmtUpdate {
+	stmt.join = joins
+	return stmt
 }
-func (stmtUpdate *stmtUpdate) Onto(onto SourceBase) *stmtUpdate {
-	stmtUpdate.onto = onto
-	return stmtUpdate
+func (stmt *stmtUpdate) Onto(onto SourceBase) *stmtUpdate {
+	stmt.onto = onto
+	return stmt
 }
-func (stmtUpdate *stmtUpdate) Returning(returnings ...markReturnable) *stmtUpdate {
-	stmtUpdate.returning = returnings
-	return stmtUpdate
+func (stmt *stmtUpdate) Returning(returnings ...markReturnable) *stmtUpdate {
+	stmt.returning = returnings
+	return stmt
 }
-func (stmtUpdate *stmtUpdate) Set(sets ...*clauseSet) *stmtUpdate {
-	stmtUpdate.set = sets
-	return stmtUpdate
+func (stmt *stmtUpdate) Set(sets ...*clauseSet) *stmtUpdate {
+	stmt.set = sets
+	return stmt
 }
-func (stmtUpdate *stmtUpdate) Where(where markPredicable) *stmtUpdate {
-	stmtUpdate.where = where
-	return stmtUpdate
+func (stmt *stmtUpdate) Where(where markPredicable) *stmtUpdate {
+	stmt.where = where
+	return stmt
 }
-func (stmtUpdate *stmtUpdate) With(with ...*clauseWith) *stmtUpdate {
-	stmtUpdate.with = with
-	return stmtUpdate
+func (stmt *stmtUpdate) With(with ...*clauseWith) *stmtUpdate {
+	stmt.with = with
+	return stmt
 }
 
 // Приватные структуры
@@ -38,12 +38,12 @@ type stmtUpdate struct {
 }
 
 // Приватные методы
-func (stmtUpdate *stmtUpdate) render(baseRenderer *baseRenderer) error {
-	return baseRenderer.strateger.renderUpdate(baseRenderer, stmtUpdate)
+func (stmt *stmtUpdate) render(baseRenderer *baseRenderer) error {
+	return baseRenderer.strateger.renderUpdate(baseRenderer, stmt)
 }
-func (stmtUpdate *stmtUpdate) transform(baseTransformer *baseTransformer) error {
-	return baseTransformer.strateger.transformUpdate(baseTransformer, stmtUpdate)
+func (stmt *stmtUpdate) transform(baseTransformer *baseTransformer) error {
+	return baseTransformer.strateger.transformUpdate(baseTransformer, stmt)
 }
-func (stmtUpdate *stmtUpdate) validate(baseValidator *baseValidator) error {
-	return baseValidator.strateger.validateUpdate(baseValidator, stmtUpdate)
+func (stmt *stmtUpdate) validate(baseValidator *baseValidator) error {
+	return baseValidator.strateger.validateUpdate(baseValidator, stmt)
 }

@@ -65,27 +65,27 @@ type clauseJoin struct {
 }
 
 // Приватные методы
-func (clauseJoin *clauseJoin) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderOperator(clauseJoin.operator)
+func (clause *clauseJoin) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderOperator(clause.operator)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	if err := clauseJoin.source.render(baseRenderer); err != nil {
+	if err := clause.source.render(baseRenderer); err != nil {
 		return err
 	}
-	if clauseJoin.expression != nil {
+	if clause.expression != nil {
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
 		baseRenderer.renderService(uastModifierOn)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := clauseJoin.expression.render(baseRenderer); err != nil {
+		if err := clause.expression.render(baseRenderer); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (clauseJoin *clauseJoin) validate(baseValidator *baseValidator) error {
-	if clauseJoin.source == nil {
+func (clause *clauseJoin) validate(baseValidator *baseValidator) error {
+	if clause.source == nil {
 		return ErrInvalidStatementJoin
 	}
-	if (clauseJoin.operator == uastJoinCross && clauseJoin.expression != nil) || (clauseJoin.operator != uastJoinCross && clauseJoin.expression == nil) {
+	if (clause.operator == uastJoinCross && clause.expression != nil) || (clause.operator != uastJoinCross && clause.expression == nil) {
 		return ErrInvalidStatementJoinCross
 	}
 	return nil

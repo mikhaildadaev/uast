@@ -3,15 +3,15 @@ package uast
 import "time"
 
 // Публичные методы
-func (stmtInsert *stmtInsert) Into(into SourceBase) *stmtInsert {
-	stmtInsert.into = into
-	return stmtInsert
+func (stmt *stmtInsert) Into(into SourceBase) *stmtInsert {
+	stmt.into = into
+	return stmt
 }
-func (stmtInsert *stmtInsert) Returning(returnings ...markReturnable) *stmtInsert {
-	stmtInsert.returning = returnings
-	return stmtInsert
+func (stmt *stmtInsert) Returning(returnings ...markReturnable) *stmtInsert {
+	stmt.returning = returnings
+	return stmt
 }
-func (stmtInsert *stmtInsert) Source(source *stmtSelect) *stmtInsert {
+func (stmt *stmtInsert) Source(source *stmtSelect) *stmtInsert {
 	columns := make([]markExpressable, len(source.field))
 	for i, field := range source.field {
 		switch column := field.(type) {
@@ -47,28 +47,28 @@ func (stmtInsert *stmtInsert) Source(source *stmtSelect) *stmtInsert {
 			columns[i] = &exprPair[uint64]{name: column.name}
 		}
 	}
-	stmtInsert.column = columns
-	stmtInsert.source = source
-	return stmtInsert
+	stmt.column = columns
+	stmt.source = source
+	return stmt
 }
-func (stmtInsert *stmtInsert) Upsert(pairs ...*clausePair) *stmtInsert {
-	if stmtInsert.values != nil {
-		stmtInsert.values.upsert = &clauseUpsert{pairs: pairs}
+func (stmt *stmtInsert) Upsert(pairs ...*clausePair) *stmtInsert {
+	if stmt.values != nil {
+		stmt.values.upsert = &clauseUpsert{pairs: pairs}
 	}
-	return stmtInsert
+	return stmt
 }
-func (stmtInsert *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {
+func (stmt *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {
 	columns := make([]markExpressable, len(pairs))
 	for i, pair := range pairs {
 		columns[i] = pair.column
 	}
-	stmtInsert.column = columns
-	stmtInsert.values = &clauseValues{pairs: pairs}
-	return stmtInsert
+	stmt.column = columns
+	stmt.values = &clauseValues{pairs: pairs}
+	return stmt
 }
-func (stmtInsert *stmtInsert) With(with ...*clauseWith) *stmtInsert {
-	stmtInsert.with = with
-	return stmtInsert
+func (stmt *stmtInsert) With(with ...*clauseWith) *stmtInsert {
+	stmt.with = with
+	return stmt
 }
 
 // Приватные структуры
@@ -83,12 +83,12 @@ type stmtInsert struct {
 }
 
 // Приватные методы
-func (stmtInsert *stmtInsert) render(baseRenderer *baseRenderer) error {
-	return baseRenderer.strateger.renderInsert(baseRenderer, stmtInsert)
+func (stmt *stmtInsert) render(baseRenderer *baseRenderer) error {
+	return baseRenderer.strateger.renderInsert(baseRenderer, stmt)
 }
-func (stmtInsert *stmtInsert) transform(baseTransformer *baseTransformer) error {
-	return baseTransformer.strateger.transformInsert(baseTransformer, stmtInsert)
+func (stmt *stmtInsert) transform(baseTransformer *baseTransformer) error {
+	return baseTransformer.strateger.transformInsert(baseTransformer, stmt)
 }
-func (stmtInsert *stmtInsert) validate(baseValidator *baseValidator) error {
-	return baseValidator.strateger.validateInsert(baseValidator, stmtInsert)
+func (stmt *stmtInsert) validate(baseValidator *baseValidator) error {
+	return baseValidator.strateger.validateInsert(baseValidator, stmt)
 }

@@ -107,8 +107,9 @@ type exprLiteral[T typeScalar] struct {
 	value T
 }
 type exprLogical struct {
-	expressions []markPredicable
-	operator    logicalOperator
+	expressions     []markPredicable
+	operator        logicalOperator
+	parentIsLogical bool
 }
 type exprOperator[T typeString] struct {
 	value T
@@ -127,45 +128,45 @@ type exprValue[T typeScalar] struct {
 }
 
 // Приватные методы
-func (exprAlias *exprAlias[T]) isExpressionBase()  {}
-func (exprAlias *exprAlias[T]) isExpressionSafe(T) {}
-func (exprAlias *exprAlias[T]) isColumnable()      {}
-func (exprAlias *exprAlias[T]) isFieldable()       {}
-func (exprAlias *exprAlias[T]) isPredicable()      {}
-func (exprAlias *exprAlias[T]) isReturnable()      {}
-func (exprAlias *exprAlias[T]) render(baseRenderer *baseRenderer) error {
-	if err := exprAlias.expression.render(baseRenderer); err != nil {
+func (expr *exprAlias[T]) isExpressionBase()  {}
+func (expr *exprAlias[T]) isExpressionSafe(T) {}
+func (expr *exprAlias[T]) isColumnable()      {}
+func (expr *exprAlias[T]) isFieldable()       {}
+func (expr *exprAlias[T]) isPredicable()      {}
+func (expr *exprAlias[T]) isReturnable()      {}
+func (expr *exprAlias[T]) render(baseRenderer *baseRenderer) error {
+	if err := expr.expression.render(baseRenderer); err != nil {
 		return err
 	}
-	if exprAlias.aliasName != "" {
+	if expr.aliasName != "" {
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
 		baseRenderer.renderService(uastModifierAs)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderAlias(exprAlias.aliasName)
+		baseRenderer.renderAlias(expr.aliasName)
 	}
 	return nil
 }
-func (exprAlias *exprAlias[T]) validate(baseValidator *baseValidator) error {
-	if exprAlias.expression != nil {
-		return exprAlias.expression.validate(baseValidator)
+func (expr *exprAlias[T]) validate(baseValidator *baseValidator) error {
+	if expr.expression != nil {
+		return expr.expression.validate(baseValidator)
 	}
-	if err := baseValidator.validateAlias(exprAlias.aliasName); err != nil {
+	if err := baseValidator.validateAlias(expr.aliasName); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprArray *exprArray[T]) isExpressionBase()  {}
-func (exprArray *exprArray[T]) isExpressionSafe(T) {}
-func (exprArray *exprArray[T]) isColumnable()      {}
-func (exprArray *exprArray[T]) isFieldable()       {}
-func (exprArray *exprArray[T]) isGroupable()       {}
-func (exprArray *exprArray[T]) isOrderable()       {}
-func (exprArray *exprArray[T]) isPredicable()      {}
-func (exprArray *exprArray[T]) isReturnable()      {}
-func (exprArray *exprArray[T]) render(baseRenderer *baseRenderer) error {
+func (expr *exprArray[T]) isExpressionBase()  {}
+func (expr *exprArray[T]) isExpressionSafe(T) {}
+func (expr *exprArray[T]) isColumnable()      {}
+func (expr *exprArray[T]) isFieldable()       {}
+func (expr *exprArray[T]) isGroupable()       {}
+func (expr *exprArray[T]) isOrderable()       {}
+func (expr *exprArray[T]) isPredicable()      {}
+func (expr *exprArray[T]) isReturnable()      {}
+func (expr *exprArray[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeParenLeft)
-	valueCount := len(exprArray.array) - 1
-	for i, value := range exprArray.array {
+	valueCount := len(expr.array) - 1
+	for i, value := range expr.array {
 		exprValue := &exprValue[T]{
 			value: value,
 		}
@@ -179,218 +180,218 @@ func (exprArray *exprArray[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (exprArray *exprArray[T]) validate(baseValidator *baseValidator) error {
-	if exprArray.array == nil {
+func (expr *exprArray[T]) validate(baseValidator *baseValidator) error {
+	if expr.array == nil {
 		return ErrInvalidArray
 	}
-	if err := baseValidator.validateArray(len(exprArray.array)); err != nil {
+	if err := baseValidator.validateArray(len(expr.array)); err != nil {
 		return err
 	}
-	for _, value := range exprArray.array {
+	for _, value := range expr.array {
 		if err := baseValidator.validateValue(any(value)); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (exprBinary *exprBinary[T]) isExpressionBase()  {}
-func (exprBinary *exprBinary[T]) isExpressionSafe(T) {}
-func (exprBinary *exprBinary[T]) isColumnable()      {}
-func (exprBinary *exprBinary[T]) isFieldable()       {}
-func (exprBinary *exprBinary[T]) isPredicable()      {}
-func (exprBinary *exprBinary[T]) isReturnable()      {}
-func (exprBinary *exprBinary[T]) render(baseRenderer *baseRenderer) error {
-	if err := exprBinary.left.render(baseRenderer); err != nil {
+func (expr *exprBinary[T]) isExpressionBase()  {}
+func (expr *exprBinary[T]) isExpressionSafe(T) {}
+func (expr *exprBinary[T]) isColumnable()      {}
+func (expr *exprBinary[T]) isFieldable()       {}
+func (expr *exprBinary[T]) isPredicable()      {}
+func (expr *exprBinary[T]) isReturnable()      {}
+func (expr *exprBinary[T]) render(baseRenderer *baseRenderer) error {
+	if err := expr.left.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderOperator(exprBinary.operator)
+	baseRenderer.renderOperator(expr.operator)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	if err := exprBinary.right.render(baseRenderer); err != nil {
+	if err := expr.right.render(baseRenderer); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprBinary *exprBinary[T]) validate(baseValidator *baseValidator) error {
-	if exprBinary.left == nil || exprBinary.right == nil {
+func (expr *exprBinary[T]) validate(baseValidator *baseValidator) error {
+	if expr.left == nil || expr.right == nil {
 		return ErrInvalidBinary
 	}
 	return nil
 }
-func (exprColumn *exprColumn[T]) isExpressionBase()  {}
-func (exprColumn *exprColumn[T]) isExpressionSafe(T) {}
-func (exprColumn *exprColumn[T]) isColumnable()      {}
-func (exprColumn *exprColumn[T]) isFieldable()       {}
-func (exprColumn *exprColumn[T]) isGroupable()       {}
-func (exprColumn *exprColumn[T]) isOrderable()       {}
-func (exprColumn *exprColumn[T]) isPredicable()      {}
-func (exprColumn *exprColumn[T]) isReturnable()      {}
-func (exprColumn *exprColumn[T]) render(baseRenderer *baseRenderer) error {
-	if exprColumn.tableAlias != "" {
-		baseRenderer.renderAlias(exprColumn.tableAlias)
+func (expr *exprColumn[T]) isExpressionBase()  {}
+func (expr *exprColumn[T]) isExpressionSafe(T) {}
+func (expr *exprColumn[T]) isColumnable()      {}
+func (expr *exprColumn[T]) isFieldable()       {}
+func (expr *exprColumn[T]) isGroupable()       {}
+func (expr *exprColumn[T]) isOrderable()       {}
+func (expr *exprColumn[T]) isPredicable()      {}
+func (expr *exprColumn[T]) isReturnable()      {}
+func (expr *exprColumn[T]) render(baseRenderer *baseRenderer) error {
+	if expr.tableAlias != "" {
+		baseRenderer.renderAlias(expr.tableAlias)
 		baseRenderer.renderOperator(uastCompositeSinglePoint)
 	}
-	baseRenderer.renderName(exprColumn.name)
+	baseRenderer.renderName(expr.name)
 	return nil
 }
-func (exprColumn *exprColumn[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(exprColumn.name); err != nil {
+func (expr *exprColumn[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(expr.name); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(exprColumn.tableAlias); err != nil {
+	if err := baseValidator.validateAlias(expr.tableAlias); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprComparison *exprComparison[T]) isExpressionBase()  {}
-func (exprComparison *exprComparison[T]) isExpressionSafe(T) {}
-func (exprComparison *exprComparison[T]) isPredicable()      {}
-func (exprComparison *exprComparison[T]) render(baseRenderer *baseRenderer) error {
-	switch exprComparison.operator {
+func (expr *exprComparison[T]) isExpressionBase()  {}
+func (expr *exprComparison[T]) isExpressionSafe(T) {}
+func (expr *exprComparison[T]) isPredicable()      {}
+func (expr *exprComparison[T]) render(baseRenderer *baseRenderer) error {
+	switch expr.operator {
 	case uastComparisonExists, uastComparisonNotExists:
-		baseRenderer.renderOperator(exprComparison.operator)
+		baseRenderer.renderOperator(expr.operator)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := exprComparison.left.render(baseRenderer); err != nil {
+		if err := expr.left.render(baseRenderer); err != nil {
 			return err
 		}
 	case uastComparisonIn, uastComparisonNotIn:
-		if err := exprComparison.left.render(baseRenderer); err != nil {
+		if err := expr.left.render(baseRenderer); err != nil {
 			return err
 		}
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderOperator(exprComparison.operator)
+		baseRenderer.renderOperator(expr.operator)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := exprComparison.right.render(baseRenderer); err != nil {
+		if err := expr.right.render(baseRenderer); err != nil {
 			return err
 		}
 	case uastComparisonIsNull, uastComparisonIsNotNull:
-		if err := exprComparison.left.render(baseRenderer); err != nil {
+		if err := expr.left.render(baseRenderer); err != nil {
 			return err
 		}
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderOperator(exprComparison.operator)
+		baseRenderer.renderOperator(expr.operator)
 	case uastComparisonLike, uastComparisonNotLike:
-		if err := exprComparison.left.render(baseRenderer); err != nil {
+		if err := expr.left.render(baseRenderer); err != nil {
 			return err
 		}
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderOperator(exprComparison.operator)
+		baseRenderer.renderOperator(expr.operator)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := exprComparison.right.render(baseRenderer); err != nil {
+		if err := expr.right.render(baseRenderer); err != nil {
 			return err
 		}
 	case uastComparisonILike, uastComparisonNotILike:
-		if err := exprComparison.left.render(baseRenderer); err != nil {
+		if err := expr.left.render(baseRenderer); err != nil {
 			return err
 		}
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderOperator(exprComparison.operator)
+		baseRenderer.renderOperator(expr.operator)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := exprComparison.right.render(baseRenderer); err != nil {
+		if err := expr.right.render(baseRenderer); err != nil {
 			return err
 		}
 	case uastComparisonBetween, uastComparisonNotBetween:
-		if err := exprComparison.left.render(baseRenderer); err != nil {
+		if err := expr.left.render(baseRenderer); err != nil {
 			return err
 		}
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderOperator(exprComparison.operator)
+		baseRenderer.renderOperator(expr.operator)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := exprComparison.valueStart.render(baseRenderer); err != nil {
+		if err := expr.valueStart.render(baseRenderer); err != nil {
 			return err
 		}
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderOperator(exprComparison.valueGap)
+		baseRenderer.renderOperator(expr.valueGap)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := exprComparison.valueEnd.render(baseRenderer); err != nil {
+		if err := expr.valueEnd.render(baseRenderer); err != nil {
 			return err
 		}
 	default:
-		if err := exprComparison.left.render(baseRenderer); err != nil {
+		if err := expr.left.render(baseRenderer); err != nil {
 			return err
 		}
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderOperator(exprComparison.operator)
+		baseRenderer.renderOperator(expr.operator)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		if err := exprComparison.right.render(baseRenderer); err != nil {
+		if err := expr.right.render(baseRenderer); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (exprComparison *exprComparison[T]) transformGetLeft() ExpressionBase {
-	return exprComparison.left
+func (expr *exprComparison[T]) transformGetLeft() ExpressionBase {
+	return expr.left
 }
-func (exprComparison *exprComparison[T]) transformGetOperator() comparisonOperator {
-	return exprComparison.operator
+func (expr *exprComparison[T]) transformGetOperator() comparisonOperator {
+	return expr.operator
 }
-func (exprComparison *exprComparison[T]) transformGetRight() ExpressionBase {
-	return exprComparison.right
+func (expr *exprComparison[T]) transformGetRight() ExpressionBase {
+	return expr.right
 }
-func (exprComparison *exprComparison[T]) transformGetValueEnd() ExpressionBase {
-	return exprComparison.valueEnd
+func (expr *exprComparison[T]) transformGetValueEnd() ExpressionBase {
+	return expr.valueEnd
 }
-func (exprComparison *exprComparison[T]) transformGetValueStart() ExpressionBase {
-	return exprComparison.valueStart
+func (expr *exprComparison[T]) transformGetValueStart() ExpressionBase {
+	return expr.valueStart
 }
-func (exprComparison *exprComparison[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateComparison(exprComparison); err != nil {
+func (expr *exprComparison[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateComparison(expr); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprComposite *exprComposite[T]) isExpressionBase()  {}
-func (exprComposite *exprComposite[T]) isExpressionSafe(T) {}
-func (exprComposite *exprComposite[T]) isPredicable()      {}
-func (exprComposite *exprComposite[T]) render(baseRenderer *baseRenderer) error {
-	last := len(exprComposite.expressions) - 1
-	for i, predicate := range exprComposite.expressions {
+func (expr *exprComposite[T]) isExpressionBase()  {}
+func (expr *exprComposite[T]) isExpressionSafe(T) {}
+func (expr *exprComposite[T]) isPredicable()      {}
+func (expr *exprComposite[T]) render(baseRenderer *baseRenderer) error {
+	last := len(expr.expressions) - 1
+	for i, predicate := range expr.expressions {
 		if err := predicate.render(baseRenderer); err != nil {
 			return err
 		}
 		if i < last {
-			baseRenderer.renderOperator(exprComposite.operator)
+			baseRenderer.renderOperator(expr.operator)
 		}
 	}
 	return nil
 }
-func (exprComposite *exprComposite[T]) validate(baseValidator *baseValidator) error {
-	if exprComposite.expressions == nil {
+func (expr *exprComposite[T]) validate(baseValidator *baseValidator) error {
+	if expr.expressions == nil {
 		return ErrInvalidComposite
 	}
 	return nil
 }
-func (exprConstant *exprConstant[T]) isExpressionBase()  {}
-func (exprConstant *exprConstant[T]) isExpressionSafe(T) {}
-func (exprConstant *exprConstant[T]) isColumnable()      {}
-func (exprConstant *exprConstant[T]) isFieldable()       {}
-func (exprConstant *exprConstant[T]) isGroupable()       {}
-func (exprConstant *exprConstant[T]) isOrderable()       {}
-func (exprConstant *exprConstant[T]) isPredicable()      {}
-func (exprConstant *exprConstant[T]) isReturnable()      {}
-func (exprConstant *exprConstant[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderConstant(exprConstant.value)
+func (expr *exprConstant[T]) isExpressionBase()  {}
+func (expr *exprConstant[T]) isExpressionSafe(T) {}
+func (expr *exprConstant[T]) isColumnable()      {}
+func (expr *exprConstant[T]) isFieldable()       {}
+func (expr *exprConstant[T]) isGroupable()       {}
+func (expr *exprConstant[T]) isOrderable()       {}
+func (expr *exprConstant[T]) isPredicable()      {}
+func (expr *exprConstant[T]) isReturnable()      {}
+func (expr *exprConstant[T]) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderConstant(expr.value)
 	return nil
 }
-func (exprConstant *exprConstant[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateConstant(exprConstant.value); err != nil {
+func (expr *exprConstant[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateConstant(expr.value); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) isExpressionBase()  {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isExpressionSafe(T) {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isColumnable()      {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isFieldable()       {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isGroupable()       {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isOrderable()       {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isPredicable()      {}
-func (exprFunction *exprFunction[InLT, InRT, T]) isReturnable()      {}
-func (exprFunction *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRenderer) error {
-	switch exprFunction.process {
+func (expr *exprFunction[InLT, InRT, T]) isExpressionBase()  {}
+func (expr *exprFunction[InLT, InRT, T]) isExpressionSafe(T) {}
+func (expr *exprFunction[InLT, InRT, T]) isColumnable()      {}
+func (expr *exprFunction[InLT, InRT, T]) isFieldable()       {}
+func (expr *exprFunction[InLT, InRT, T]) isGroupable()       {}
+func (expr *exprFunction[InLT, InRT, T]) isOrderable()       {}
+func (expr *exprFunction[InLT, InRT, T]) isPredicable()      {}
+func (expr *exprFunction[InLT, InRT, T]) isReturnable()      {}
+func (expr *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRenderer) error {
+	switch expr.process {
 	case uastProcessСross:
-		baseRenderer.renderService(exprFunction.service)
-		length := len(exprFunction.valueArray)
+		baseRenderer.renderService(expr.service)
+		length := len(expr.valueArray)
 		hasElse := length%2 == 1
 		endIdx := length
 		if hasElse {
@@ -406,7 +407,7 @@ func (exprFunction *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRender
 				baseRenderer.renderService(uastModifierThen)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
 			}
-			if err := exprFunction.valueArray[i].render(baseRenderer); err != nil {
+			if err := expr.valueArray[i].render(baseRenderer); err != nil {
 				return err
 			}
 		}
@@ -414,7 +415,7 @@ func (exprFunction *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRender
 			baseRenderer.renderOperator(uastCompositeSingleSpace)
 			baseRenderer.renderService(uastModifierElse)
 			baseRenderer.renderOperator(uastCompositeSingleSpace)
-			if err := exprFunction.valueArray[length-1].render(baseRenderer); err != nil {
+			if err := expr.valueArray[length-1].render(baseRenderer); err != nil {
 				return err
 			}
 		}
@@ -422,83 +423,83 @@ func (exprFunction *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRender
 		baseRenderer.renderService(uastModifierEnd)
 		return nil
 	case uastProcessDirect:
-		baseRenderer.renderService(exprFunction.service)
-		if exprFunction.distinct {
+		baseRenderer.renderService(expr.service)
+		if expr.distinct {
 			baseRenderer.renderService(uastModifierDistinct)
 			baseRenderer.renderOperator(uastCompositeSingleSpace)
 		}
 		baseRenderer.renderOperator(uastCompositeParenLeft)
-		if exprFunction.left != nil {
-			if err := exprFunction.left.render(baseRenderer); err != nil {
+		if expr.left != nil {
+			if err := expr.left.render(baseRenderer); err != nil {
 				return err
 			}
 		}
-		if exprFunction.operator != "" {
-			baseRenderer.renderOperator(exprFunction.operator)
+		if expr.operator != "" {
+			baseRenderer.renderOperator(expr.operator)
 		}
-		if exprFunction.right != nil {
-			if err := exprFunction.right.render(baseRenderer); err != nil {
+		if expr.right != nil {
+			if err := expr.right.render(baseRenderer); err != nil {
 				return err
 			}
 		}
 		baseRenderer.renderOperator(uastCompositeParenRight)
 	case uastProcessEmpty:
-		baseRenderer.renderService(exprFunction.service)
+		baseRenderer.renderService(expr.service)
 		if baseRenderer.config.parensFunction {
 			baseRenderer.renderOperator(uastCompositeParenLeft)
 			baseRenderer.renderOperator(uastCompositeParenRight)
 		}
 		return nil
 	case uastProcessInvert:
-		baseRenderer.renderService(exprFunction.service)
-		if exprFunction.distinct {
+		baseRenderer.renderService(expr.service)
+		if expr.distinct {
 			baseRenderer.renderService(uastModifierDistinct)
 			baseRenderer.renderOperator(uastCompositeSingleSpace)
 		}
 		baseRenderer.renderOperator(uastCompositeParenLeft)
-		if exprFunction.right != nil {
-			if err := exprFunction.right.render(baseRenderer); err != nil {
+		if expr.right != nil {
+			if err := expr.right.render(baseRenderer); err != nil {
 				return err
 			}
 		}
-		if exprFunction.operator != "" {
-			baseRenderer.renderOperator(exprFunction.operator)
+		if expr.operator != "" {
+			baseRenderer.renderOperator(expr.operator)
 		}
-		if exprFunction.left != nil {
-			if err := exprFunction.left.render(baseRenderer); err != nil {
+		if expr.left != nil {
+			if err := expr.left.render(baseRenderer); err != nil {
 				return err
 			}
 		}
 		baseRenderer.renderOperator(uastCompositeParenRight)
 	case uastProcessJson:
-		baseRenderer.renderService(exprFunction.service)
+		baseRenderer.renderService(expr.service)
 		baseRenderer.renderOperator(uastCompositeParenLeft)
-		if exprFunction.left != nil {
-			if err := exprFunction.left.render(baseRenderer); err != nil {
+		if expr.left != nil {
+			if err := expr.left.render(baseRenderer); err != nil {
 				return err
 			}
 		}
-		if exprFunction.operator != "" {
-			baseRenderer.renderOperator(exprFunction.operator)
+		if expr.operator != "" {
+			baseRenderer.renderOperator(expr.operator)
 		}
-		last := len(exprFunction.json) - 1
-		for i, group := range exprFunction.json {
+		last := len(expr.json) - 1
+		for i, group := range expr.json {
 			if err := group.render(baseRenderer); err != nil {
 				return err
 			}
 			if i < last {
-				baseRenderer.renderOperator(exprFunction.operator)
+				baseRenderer.renderOperator(expr.operator)
 			}
 		}
 		baseRenderer.renderOperator(uastCompositeParenRight)
 	case uastProcessWindow:
-		baseRenderer.renderService(exprFunction.service)
+		baseRenderer.renderService(expr.service)
 		baseRenderer.renderOperator(uastCompositeParenLeft)
-		if exprFunction.left != nil {
-			exprFunction.left.render(baseRenderer)
-			if exprFunction.right != nil {
+		if expr.left != nil {
+			expr.left.render(baseRenderer)
+			if expr.right != nil {
 				baseRenderer.renderOperator(uastCompositeCommaSpace)
-				exprFunction.right.render(baseRenderer)
+				expr.right.render(baseRenderer)
 			}
 		}
 		baseRenderer.renderOperator(uastCompositeParenRight)
@@ -506,64 +507,64 @@ func (exprFunction *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRender
 		baseRenderer.renderService(uastModifierOver)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
 		baseRenderer.renderOperator(uastCompositeParenLeft)
-		if exprFunction.window != nil {
-			if len(exprFunction.window.partition) > 0 {
+		if expr.window != nil {
+			if len(expr.window.partition) > 0 {
 				baseRenderer.renderService(uastManagementPartitionBy)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				for i, expr := range exprFunction.window.partition {
+				for i, expression := range expr.window.partition {
 					if i > 0 {
 						baseRenderer.renderOperator(uastCompositeCommaSpace)
 					}
-					expr.render(baseRenderer)
+					expression.render(baseRenderer)
 				}
 			}
-			if len(exprFunction.window.order) > 0 {
-				if len(exprFunction.window.partition) > 0 {
+			if len(expr.window.order) > 0 {
+				if len(expr.window.partition) > 0 {
 					baseRenderer.renderOperator(uastCompositeSingleSpace)
 				}
 				baseRenderer.renderService(uastManagementOrderBy)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				for i, order := range exprFunction.window.order {
+				for i, order := range expr.window.order {
 					if i > 0 {
 						baseRenderer.renderOperator(uastCompositeCommaSpace)
 					}
 					order.render(baseRenderer)
 				}
 			}
-			if exprFunction.window.frame != nil {
+			if expr.window.frame != nil {
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				baseRenderer.renderOperator(exprFunction.window.frame.Type)
+				baseRenderer.renderOperator(expr.window.frame.Type)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
 				baseRenderer.renderService(uastModifierBetween)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				baseRenderer.renderOperator(exprFunction.window.frame.Start)
+				baseRenderer.renderOperator(expr.window.frame.Start)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
 				baseRenderer.renderService(uastModifierAnd)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				baseRenderer.renderOperator(exprFunction.window.frame.End)
+				baseRenderer.renderOperator(expr.window.frame.End)
 			}
 		}
 		baseRenderer.renderOperator(uastCompositeParenRight)
 	}
 	return nil
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetDistinct() bool {
-	return exprFunction.distinct
+func (expr *exprFunction[InLT, InRT, T]) transformGetDistinct() bool {
+	return expr.distinct
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetJson() []*exprJson {
-	return exprFunction.json
+func (expr *exprFunction[InLT, InRT, T]) transformGetJson() []*exprJson {
+	return expr.json
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetLeft() ExpressionBase {
-	return exprFunction.left
+func (expr *exprFunction[InLT, InRT, T]) transformGetLeft() ExpressionBase {
+	return expr.left
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetParamCount() int {
+func (expr *exprFunction[InLT, InRT, T]) transformGetParamCount() int {
 	var countJson int
 	var countLeft int
 	var countRight int
 	var countValueArray int
 	var countValueType int
-	countJson = len(exprFunction.json)
-	switch left := exprFunction.left.(type) {
+	countJson = len(expr.json)
+	switch left := expr.left.(type) {
 	case nil:
 		countLeft = 0
 	case *exprComposite[InLT]:
@@ -571,7 +572,7 @@ func (exprFunction *exprFunction[InLT, InRT, T]) transformGetParamCount() int {
 	default:
 		countLeft = 1
 	}
-	switch right := exprFunction.right.(type) {
+	switch right := expr.right.(type) {
 	case nil:
 		countRight = 0
 	case *exprComposite[InRT]:
@@ -579,62 +580,62 @@ func (exprFunction *exprFunction[InLT, InRT, T]) transformGetParamCount() int {
 	default:
 		countRight = 1
 	}
-	countValueArray = len(exprFunction.valueArray)
-	if exprFunction.valueType != "" {
+	countValueArray = len(expr.valueArray)
+	if expr.valueType != "" {
 		countValueType = 1
 	}
 	return countJson + countLeft + countRight + countValueArray + countValueType
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetProcess() processingStage {
-	return exprFunction.process
+func (expr *exprFunction[InLT, InRT, T]) transformGetProcess() processingStage {
+	return expr.process
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetRight() ExpressionBase {
-	return exprFunction.right
+func (expr *exprFunction[InLT, InRT, T]) transformGetRight() ExpressionBase {
+	return expr.right
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetService() functionService {
-	return exprFunction.service
+func (expr *exprFunction[InLT, InRT, T]) transformGetService() functionService {
+	return expr.service
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetValueArray() []ExpressionBase {
-	return exprFunction.valueArray
+func (expr *exprFunction[InLT, InRT, T]) transformGetValueArray() []ExpressionBase {
+	return expr.valueArray
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformGetValueType() ValueType {
-	return exprFunction.valueType
+func (expr *exprFunction[InLT, InRT, T]) transformGetValueType() ValueType {
+	return expr.valueType
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformSetJson(json []*exprJson) {
-	exprFunction.json = json
+func (expr *exprFunction[InLT, InRT, T]) transformSetJson(json []*exprJson) {
+	expr.json = json
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformSetLeft(left ExpressionBase) {
+func (expr *exprFunction[InLT, InRT, T]) transformSetLeft(left ExpressionBase) {
 	if expression, ok := left.(ExpressionSafe[InLT]); ok {
-		exprFunction.left = expression
+		expr.left = expression
 	}
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformSetOperator(operator compositeOperator) {
-	exprFunction.operator = operator
+func (expr *exprFunction[InLT, InRT, T]) transformSetOperator(operator compositeOperator) {
+	expr.operator = operator
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformSetProcess(process processingStage) {
-	exprFunction.process = process
+func (expr *exprFunction[InLT, InRT, T]) transformSetProcess(process processingStage) {
+	expr.process = process
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformSetRight(right ExpressionBase) {
+func (expr *exprFunction[InLT, InRT, T]) transformSetRight(right ExpressionBase) {
 	if expression, ok := right.(ExpressionSafe[InRT]); ok {
-		exprFunction.right = expression
+		expr.right = expression
 	}
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformSetService(service functionService) {
-	exprFunction.service = service
+func (expr *exprFunction[InLT, InRT, T]) transformSetService(service functionService) {
+	expr.service = service
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) transformSetValueArray(valueArray []ExpressionBase) {
-	exprFunction.valueArray = valueArray
+func (expr *exprFunction[InLT, InRT, T]) transformSetValueArray(valueArray []ExpressionBase) {
+	expr.valueArray = valueArray
 }
-func (exprFunction *exprFunction[InLT, InRT, T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateFunction(exprFunction); err != nil {
+func (expr *exprFunction[InLT, InRT, T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateFunction(expr); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprJson *exprJson) isExpressionBase() {}
-func (exprJson *exprJson) render(baseRenderer *baseRenderer) error {
-	lengthExpressions := len(exprJson.expressions) - 1
-	for i, expression := range exprJson.expressions {
+func (expr *exprJson) isExpressionBase() {}
+func (expr *exprJson) render(baseRenderer *baseRenderer) error {
+	lengthExpressions := len(expr.expressions) - 1
+	for i, expression := range expr.expressions {
 		if err := expression.render(baseRenderer); err != nil {
 			return err
 		}
@@ -642,11 +643,11 @@ func (exprJson *exprJson) render(baseRenderer *baseRenderer) error {
 			baseRenderer.renderOperator(uastCompositeCommaSpace)
 		}
 	}
-	if exprJson.expressions != nil && exprJson.values != nil {
-		baseRenderer.renderOperator(exprJson.operator)
+	if expr.expressions != nil && expr.values != nil {
+		baseRenderer.renderOperator(expr.operator)
 	}
-	lengthValues := len(exprJson.values) - 1
-	for i, value := range exprJson.values {
+	lengthValues := len(expr.values) - 1
+	for i, value := range expr.values {
 		if err := value.render(baseRenderer); err != nil {
 			return err
 		}
@@ -656,149 +657,156 @@ func (exprJson *exprJson) render(baseRenderer *baseRenderer) error {
 	}
 	return nil
 }
-func (exprJson *exprJson) validate(baseValidator *baseValidator) error {
-	if exprJson.expressions == nil {
+func (expr *exprJson) validate(baseValidator *baseValidator) error {
+	if expr.expressions == nil {
 		return ErrInvalidStatementJson
 	}
 	return nil
 }
-func (exprLiteral *exprLiteral[T]) isExpressionBase()  {}
-func (exprLiteral *exprLiteral[T]) isExpressionSafe(T) {}
-func (exprLiteral *exprLiteral[T]) isColumnable()      {}
-func (exprLiteral *exprLiteral[T]) isFieldable()       {}
-func (exprLiteral *exprLiteral[T]) isGroupable()       {}
-func (exprLiteral *exprLiteral[T]) isOrderable()       {}
-func (exprLiteral *exprLiteral[T]) isPredicable()      {}
-func (exprLiteral *exprLiteral[T]) isReturnable()      {}
-func (exprLiteral *exprLiteral[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderLiteral(exprLiteral.value)
+func (expr *exprLiteral[T]) isExpressionBase()  {}
+func (expr *exprLiteral[T]) isExpressionSafe(T) {}
+func (expr *exprLiteral[T]) isColumnable()      {}
+func (expr *exprLiteral[T]) isFieldable()       {}
+func (expr *exprLiteral[T]) isGroupable()       {}
+func (expr *exprLiteral[T]) isOrderable()       {}
+func (expr *exprLiteral[T]) isPredicable()      {}
+func (expr *exprLiteral[T]) isReturnable()      {}
+func (expr *exprLiteral[T]) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderLiteral(expr.value)
 	return nil
 }
-func (exprLiteral *exprLiteral[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateLiteral(exprLiteral.value); err != nil {
+func (expr *exprLiteral[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateLiteral(expr.value); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprLogical *exprLogical) isExpressionBase()     {}
-func (exprLiteral *exprLogical) isExpressionSafe(bool) {}
-func (exprLogical *exprLogical) isPredicable()         {}
-func (exprLogical *exprLogical) render(baseRenderer *baseRenderer) error {
-	switch len(exprLogical.expressions) {
+func (expr *exprLogical) isExpressionBase()     {}
+func (expr *exprLogical) isExpressionSafe(bool) {}
+func (expr *exprLogical) isPredicable()         {}
+func (expr *exprLogical) render(baseRenderer *baseRenderer) error {
+	switch len(expr.expressions) {
 	case 1:
-		return exprLogical.expressions[0].render(baseRenderer)
+		return expr.expressions[0].render(baseRenderer)
 	default:
-		// !!! Внимание - Доработать скобки на первом уровне
-		baseRenderer.renderOperator(uastCompositeParenLeft)
-		last := len(exprLogical.expressions) - 1
-		for i, predicate := range exprLogical.expressions {
+		if !expr.parentIsLogical {
+			baseRenderer.renderOperator(uastCompositeParenLeft)
+		}
+		// !!! Внимание, необходимо доработать скобки на первом уровне
+		last := len(expr.expressions) - 1
+		for i, predicate := range expr.expressions {
+			if logical, ok := predicate.(*exprLogical); ok {
+				logical.parentIsLogical = true
+			}
 			if err := predicate.render(baseRenderer); err != nil {
 				return err
 			}
 			if i < last {
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				baseRenderer.renderOperator(exprLogical.operator)
+				baseRenderer.renderOperator(expr.operator)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
 			}
 		}
-		baseRenderer.renderOperator(uastCompositeParenRight)
+		if !expr.parentIsLogical {
+			baseRenderer.renderOperator(uastCompositeParenLeft)
+		}
 	}
 	return nil
 }
-func (exprLogical *exprLogical) validate(baseValidator *baseValidator) error {
-	if exprLogical.expressions == nil {
+func (expr *exprLogical) validate(baseValidator *baseValidator) error {
+	if expr.expressions == nil {
 		return ErrInvalidLogical
 	}
-	for _, predicate := range exprLogical.expressions {
+	for _, predicate := range expr.expressions {
 		if err := predicate.validate(baseValidator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (exprOperator *exprOperator[T]) isExpressionBase()  {}
-func (exprOperator *exprOperator[T]) isExpressionSafe(T) {}
-func (exprOperator *exprOperator[T]) isPredicable()      {}
-func (exprOperator *exprOperator[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderOperator(exprOperator.value)
+func (expr *exprOperator[T]) isExpressionBase()  {}
+func (expr *exprOperator[T]) isExpressionSafe(T) {}
+func (expr *exprOperator[T]) isPredicable()      {}
+func (expr *exprOperator[T]) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderOperator(expr.value)
 	return nil
 }
-func (exprOperator *exprOperator[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateOperator(exprOperator.value); err != nil {
+func (expr *exprOperator[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateOperator(expr.value); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprPair *exprPair[T]) isExpressionBase()  {}
-func (exprPair *exprPair[T]) isExpressionSafe(T) {}
-func (exprPair *exprPair[T]) isColumnable()      {}
-func (exprPair *exprPair[T]) isFieldable()       {}
-func (exprPair *exprPair[T]) isGroupable()       {}
-func (exprPair *exprPair[T]) isOrderable()       {}
-func (exprPair *exprPair[T]) isPredicable()      {}
-func (exprPair *exprPair[T]) isReturnable()      {}
-func (exprPair *exprPair[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderName(exprPair.name)
+func (expr *exprPair[T]) isExpressionBase()  {}
+func (expr *exprPair[T]) isExpressionSafe(T) {}
+func (expr *exprPair[T]) isColumnable()      {}
+func (expr *exprPair[T]) isFieldable()       {}
+func (expr *exprPair[T]) isGroupable()       {}
+func (expr *exprPair[T]) isOrderable()       {}
+func (expr *exprPair[T]) isPredicable()      {}
+func (expr *exprPair[T]) isReturnable()      {}
+func (expr *exprPair[T]) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderName(expr.name)
 	return nil
 }
-func (exprPair *exprPair[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(exprPair.name); err != nil {
+func (expr *exprPair[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(expr.name); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprService *exprService[T]) isExpressionBase()  {}
-func (exprService *exprService[T]) isExpressionSafe(T) {}
-func (exprService *exprService[T]) isPredicable()      {}
-func (exprService *exprService[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderService(exprService.value)
+func (expr *exprService[T]) isExpressionBase()  {}
+func (expr *exprService[T]) isExpressionSafe(T) {}
+func (expr *exprService[T]) isPredicable()      {}
+func (expr *exprService[T]) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderService(expr.value)
 	return nil
 }
-func (exprService *exprService[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateService(exprService.value); err != nil {
+func (expr *exprService[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateService(expr.value); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprSubquery *exprSubquery[T]) isExpressionBase()  {}
-func (exprSubquery *exprSubquery[T]) isExpressionSafe(T) {}
-func (exprSubquery *exprSubquery[T]) isColumnable()      {}
-func (exprSubquery *exprSubquery[T]) isFieldable()       {}
-func (exprSubquery *exprSubquery[T]) isGroupable()       {}
-func (exprSubquery *exprSubquery[T]) isOrderable()       {}
-func (exprSubquery *exprSubquery[T]) isPredicable()      {}
-func (exprSubquery *exprSubquery[T]) isReturnable()      {}
-func (exprSubquery *exprSubquery[T]) render(baseRenderer *baseRenderer) error {
+func (expr *exprSubquery[T]) isExpressionBase()  {}
+func (expr *exprSubquery[T]) isExpressionSafe(T) {}
+func (expr *exprSubquery[T]) isColumnable()      {}
+func (expr *exprSubquery[T]) isFieldable()       {}
+func (expr *exprSubquery[T]) isGroupable()       {}
+func (expr *exprSubquery[T]) isOrderable()       {}
+func (expr *exprSubquery[T]) isPredicable()      {}
+func (expr *exprSubquery[T]) isReturnable()      {}
+func (expr *exprSubquery[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeParenLeft)
-	if err := exprSubquery.statement.render(baseRenderer); err != nil {
+	if err := expr.statement.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (exprSubquery *exprSubquery[T]) validate(baseValidator *baseValidator) error {
+func (expr *exprSubquery[T]) validate(baseValidator *baseValidator) error {
 	if err := baseValidator.validateSubquery(); err != nil {
 		return err
 	}
-	if err := exprSubquery.statement.validate(baseValidator); err != nil {
+	if err := expr.statement.validate(baseValidator); err != nil {
 		return err
 	}
 	return nil
 }
-func (exprValue *exprValue[T]) isExpressionBase()  {}
-func (exprValue *exprValue[T]) isExpressionSafe(T) {}
-func (exprValue *exprValue[T]) isColumnable()      {}
-func (exprValue *exprValue[T]) isFieldable()       {}
-func (exprValue *exprValue[T]) isGroupable()       {}
-func (exprValue *exprValue[T]) isOrderable()       {}
-func (exprValue *exprValue[T]) isPredicable()      {}
-func (exprValue *exprValue[T]) isReturnable()      {}
-func (exprValue *exprValue[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderValue(exprValue.value)
+func (expr *exprValue[T]) isExpressionBase()  {}
+func (expr *exprValue[T]) isExpressionSafe(T) {}
+func (expr *exprValue[T]) isColumnable()      {}
+func (expr *exprValue[T]) isFieldable()       {}
+func (expr *exprValue[T]) isGroupable()       {}
+func (expr *exprValue[T]) isOrderable()       {}
+func (expr *exprValue[T]) isPredicable()      {}
+func (expr *exprValue[T]) isReturnable()      {}
+func (expr *exprValue[T]) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderValue(expr.value)
 	return nil
 }
-func (exprValue *exprValue[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateValue(exprValue.value); err != nil {
+func (expr *exprValue[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateValue(expr.value); err != nil {
 		return err
 	}
 	return nil

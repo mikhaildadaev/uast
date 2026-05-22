@@ -26,13 +26,13 @@ type clauseWith struct {
 }
 
 // Приватные методы
-func (clauseWith *clauseWith) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderAlias(clauseWith.alias)
-	if len(clauseWith.columns) > 0 {
+func (clause *clauseWith) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderAlias(clause.alias)
+	if len(clause.columns) > 0 {
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
 		baseRenderer.renderOperator(uastCompositeParenLeft)
-		columnsCount := len(clauseWith.columns) - 1
-		for i, column := range clauseWith.columns {
+		columnsCount := len(clause.columns) - 1
+		for i, column := range clause.columns {
 			baseRenderer.renderName(column)
 			if i < columnsCount {
 				baseRenderer.renderOperator(uastCompositeCommaSpace)
@@ -44,24 +44,24 @@ func (clauseWith *clauseWith) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderService(uastModifierAs)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderOperator(uastCompositeParenLeft)
-	if err := clauseWith.statement.render(baseRenderer); err != nil {
+	if err := clause.statement.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeParenRight)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	return nil
 }
-func (clauseWith *clauseWith) validate(baseValidator *baseValidator) error {
-	if clauseWith.statement == nil {
+func (clause *clauseWith) validate(baseValidator *baseValidator) error {
+	if clause.statement == nil {
 		return ErrInvalidStatementWith
 	}
-	if err := clauseWith.statement.validate(baseValidator); err != nil {
+	if err := clause.statement.validate(baseValidator); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(clauseWith.alias); err != nil {
+	if err := baseValidator.validateAlias(clause.alias); err != nil {
 		return err
 	}
-	for _, column := range clauseWith.columns {
+	for _, column := range clause.columns {
 		if err := baseValidator.validateName(column); err != nil {
 			return err
 		}

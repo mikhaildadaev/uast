@@ -12,16 +12,16 @@ type clauseGroupBy struct {
 }
 
 // Приватные методы
-func (clauseGroupBy *clauseGroupBy) isExpressionBase() {}
-func (clauseGroupBy *clauseGroupBy) isGroupable()      {}
-func (clauseGroupBy *clauseGroupBy) render(baseRenderer *baseRenderer) error {
-	if err := clauseGroupBy.expression.render(baseRenderer); err != nil {
+func (clause *clauseGroupBy) isExpressionBase() {}
+func (clause *clauseGroupBy) isGroupable()      {}
+func (clause *clauseGroupBy) render(baseRenderer *baseRenderer) error {
+	if err := clause.expression.render(baseRenderer); err != nil {
 		return err
 	}
 	return nil
 }
-func (clauseGroupBy *clauseGroupBy) validate(baseValidator *baseValidator) error {
-	if clauseGroupBy.expression == nil {
+func (clause *clauseGroupBy) validate(baseValidator *baseValidator) error {
+	if clause.expression == nil {
 		return ErrInvalidStatementGroupBy
 	}
 	return nil

@@ -6,10 +6,10 @@ type clauseHaving struct {
 }
 
 // Приватные методы
-func (clauseHaving *clauseHaving) isExpressionBase() {}
-func (clauseHaving *clauseHaving) render(baseRenderer *baseRenderer) error {
-	return clauseHaving.expression.render(baseRenderer)
+func (clause *clauseHaving) isExpressionBase() {}
+func (clause *clauseHaving) render(baseRenderer *baseRenderer) error {
+	return clause.expression.render(baseRenderer)
 }
-func (clauseHaving *clauseHaving) validate(baseValidator *baseValidator) error {
-	return clauseHaving.expression.validate(baseValidator)
+func (clause *clauseHaving) validate(baseValidator *baseValidator) error {
+	return clause.expression.validate(baseValidator)
 }

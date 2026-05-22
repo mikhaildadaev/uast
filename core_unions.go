@@ -33,19 +33,19 @@ type clauseUnions struct {
 }
 
 // Приватные методы
-func (clauseUnions *clauseUnions) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderOperator(clauseUnions.operator)
+func (clause *clauseUnions) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderOperator(clause.operator)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	if err := clauseUnions.statement.render(baseRenderer); err != nil {
+	if err := clause.statement.render(baseRenderer); err != nil {
 		return err
 	}
 	return nil
 }
-func (clauseUnions *clauseUnions) validate(baseValidator *baseValidator) error {
-	if clauseUnions.statement == nil {
+func (clause *clauseUnions) validate(baseValidator *baseValidator) error {
+	if clause.statement == nil {
 		return ErrInvalidStatementUnions
 	}
-	if err := clauseUnions.statement.validate(baseValidator); err != nil {
+	if err := clause.statement.validate(baseValidator); err != nil {
 		return err
 	}
 	return nil

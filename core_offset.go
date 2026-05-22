@@ -6,12 +6,12 @@ type clauseOffset struct {
 }
 
 // Приватные методы
-func (clauseOffset *clauseOffset) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderValue(clauseOffset.value)
+func (clause *clauseOffset) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderValue(clause.value)
 	return nil
 }
-func (clauseOffset *clauseOffset) validate(baseValidator *baseValidator) error {
-	if clauseOffset.value < 0 {
+func (clause *clauseOffset) validate(baseValidator *baseValidator) error {
+	if clause.value < 0 {
 		return ErrInvalidStatementOffset
 	}
 	return nil

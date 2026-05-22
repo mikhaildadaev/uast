@@ -6,15 +6,15 @@ type clauseLimit struct {
 }
 
 // Приватные методы
-func (clauseLimit *clauseLimit) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderValue(clauseLimit.value)
+func (clause *clauseLimit) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderValue(clause.value)
 	return nil
 }
-func (clauseLimit *clauseLimit) validate(baseValidator *baseValidator) error {
-	if clauseLimit.value < 0 {
+func (clause *clauseLimit) validate(baseValidator *baseValidator) error {
+	if clause.value < 0 {
 		return ErrInvalidStatementLimit
 	}
-	if clauseLimit.value > uastCountMaxLimit {
+	if clause.value > uastCountMaxLimit {
 		return ErrExcessMaxLimit
 	}
 	return nil

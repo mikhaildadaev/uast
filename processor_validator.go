@@ -165,7 +165,7 @@ func (baseValidator *baseValidator) validateFunction(value transformFunction) er
 		if i.max != -1 && paramCount > i.max {
 			return ErrUnsupportFunctionParamMax
 		}
-		// !!! Внимание - Проверить порядок добавления (дети - родитель)
+		// !!! Внимание, необходимо проверить порядок добавления (дети - родитель)
 		baseValidator.contexter.appendCollectionFunction(value)
 		return nil
 	}

@@ -65,83 +65,83 @@ type sourceQuery struct {
 }
 
 // Приватные методы
-func (sourceCte *sourceCte) alias() string {
-	if sourceCte == nil {
+func (source *sourceCte) alias() string {
+	if source == nil {
 		return ""
 	}
-	return sourceCte.aliasName
+	return source.aliasName
 }
-func (sourceCte *sourceCte) isSourceBase() {}
-func (sourceCte *sourceCte) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderName(sourceCte.cteName)
-	if sourceCte.aliasName != "" {
+func (source *sourceCte) isSourceBase() {}
+func (source *sourceCte) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderName(source.cteName)
+	if source.aliasName != "" {
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
 		baseRenderer.renderService(uastModifierAs)
 		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderAlias(sourceCte.aliasName)
+		baseRenderer.renderAlias(source.aliasName)
 	}
 	return nil
 }
-func (sourceCte *sourceCte) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(sourceCte.cteName); err != nil {
+func (source *sourceCte) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(source.cteName); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(sourceCte.aliasName); err != nil {
+	if err := baseValidator.validateAlias(source.aliasName); err != nil {
 		return err
 	}
 	return nil
 }
-func (sourceTable *sourceTable) alias() string {
-	if sourceTable == nil {
+func (source *sourceTable) alias() string {
+	if source == nil {
 		return ""
 	}
-	return sourceTable.aliasName
+	return source.aliasName
 }
-func (sourceTable *sourceTable) isSourceBase() {}
-func (sourceTable *sourceTable) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderName(sourceTable.tableName)
+func (source *sourceTable) isSourceBase() {}
+func (source *sourceTable) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderName(source.tableName)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(uastModifierAs)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(sourceTable.aliasName)
+	baseRenderer.renderAlias(source.aliasName)
 	return nil
 }
-func (sourceTable *sourceTable) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(sourceTable.tableName); err != nil {
+func (source *sourceTable) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(source.tableName); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(sourceTable.aliasName); err != nil {
+	if err := baseValidator.validateAlias(source.aliasName); err != nil {
 		return err
 	}
 	return nil
 }
-func (sourceQuery *sourceQuery) alias() string {
-	if sourceQuery == nil {
+func (source *sourceQuery) alias() string {
+	if source == nil {
 		return ""
 	}
-	return sourceQuery.aliasName
+	return source.aliasName
 }
-func (sourceQuery *sourceQuery) isSourceBase() {}
-func (sourceQuery *sourceQuery) render(baseRenderer *baseRenderer) error {
+func (source *sourceQuery) isSourceBase() {}
+func (source *sourceQuery) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeParenLeft)
-	if err := sourceQuery.statement.render(baseRenderer); err != nil {
+	if err := source.statement.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeParenRight)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(uastModifierAs)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(sourceQuery.aliasName)
+	baseRenderer.renderAlias(source.aliasName)
 	return nil
 }
-func (sourceQuery *sourceQuery) validate(baseValidator *baseValidator) error {
-	if sourceQuery.statement == nil {
+func (source *sourceQuery) validate(baseValidator *baseValidator) error {
+	if source.statement == nil {
 		return ErrInvalidSubquery
 	}
-	if err := sourceQuery.statement.validate(baseValidator); err != nil {
+	if err := source.statement.validate(baseValidator); err != nil {
 		return err
 	}
-	if err := baseValidator.validateAlias(sourceQuery.aliasName); err != nil {
+	if err := baseValidator.validateAlias(source.aliasName); err != nil {
 		return err
 	}
 	return nil

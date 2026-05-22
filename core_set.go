@@ -15,26 +15,26 @@ type clauseSet struct {
 }
 
 // Приватные методы
-func (clauseSet *clauseSet) render(baseRenderer *baseRenderer) error {
-	if err := clauseSet.column.render(baseRenderer); err != nil {
+func (clause *clauseSet) render(baseRenderer *baseRenderer) error {
+	if err := clause.column.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderOperator(uastComparisonEqual)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	if err := clauseSet.value.render(baseRenderer); err != nil {
+	if err := clause.value.render(baseRenderer); err != nil {
 		return err
 	}
 	return nil
 }
-func (clauseSet *clauseSet) validate(baseValidator *baseValidator) error {
-	if clauseSet.column == nil || clauseSet.value == nil {
+func (clause *clauseSet) validate(baseValidator *baseValidator) error {
+	if clause.column == nil || clause.value == nil {
 		return ErrInvalidStatementSet
 	}
-	if err := clauseSet.column.validate(baseValidator); err != nil {
+	if err := clause.column.validate(baseValidator); err != nil {
 		return err
 	}
-	if err := clauseSet.value.validate(baseValidator); err != nil {
+	if err := clause.value.validate(baseValidator); err != nil {
 		return err
 	}
 	return nil

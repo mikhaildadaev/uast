@@ -13,22 +13,22 @@ type clauseOrderBy struct {
 }
 
 // Приватные методы
-func (clauseOrderBy *clauseOrderBy) isExpressionBase() {}
-func (clauseOrderBy *clauseOrderBy) isOrderable()      {}
-func (clauseOrderBy *clauseOrderBy) render(baseRenderer *baseRenderer) error {
-	if err := clauseOrderBy.expression.render(baseRenderer); err != nil {
+func (clause *clauseOrderBy) isExpressionBase() {}
+func (clause *clauseOrderBy) isOrderable()      {}
+func (clause *clauseOrderBy) render(baseRenderer *baseRenderer) error {
+	if err := clause.expression.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	if clauseOrderBy.direction {
+	if clause.direction {
 		baseRenderer.renderOperator(uastOrderDesc)
 	} else {
 		baseRenderer.renderOperator(uastOrderAsc)
 	}
 	return nil
 }
-func (clauseOrderBy *clauseOrderBy) validate(baseValidator *baseValidator) error {
-	if clauseOrderBy == nil {
+func (clause *clauseOrderBy) validate(baseValidator *baseValidator) error {
+	if clause == nil {
 		return ErrInvalidStatementOrderBy
 	}
 	return nil

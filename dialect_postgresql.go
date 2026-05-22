@@ -635,7 +635,7 @@ func postgresqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transfo
 	return nil
 }
 func postgresqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	// !!! Дописать
+	// !!! Внимание, необходимо дописать реализацию
 	expr.transformSetService(uastPostgresqlFunctionJsonSet)
 	return nil
 }

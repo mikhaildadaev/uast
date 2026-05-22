@@ -1,53 +1,53 @@
 package uast
 
 // Публичные методы
-func (stmtSelect *stmtSelect) Distinct() *stmtSelect {
-	stmtSelect.distinct = true
-	return stmtSelect
+func (stmt *stmtSelect) Distinct() *stmtSelect {
+	stmt.distinct = true
+	return stmt
 }
-func (stmtSelect *stmtSelect) Field(fields ...markExpressable) *stmtSelect {
-	stmtSelect.field = fields
-	return stmtSelect
+func (stmt *stmtSelect) Field(fields ...markExpressable) *stmtSelect {
+	stmt.field = fields
+	return stmt
 }
-func (stmtSelect *stmtSelect) From(from SourceBase) *stmtSelect {
-	stmtSelect.from = from
-	return stmtSelect
+func (stmt *stmtSelect) From(from SourceBase) *stmtSelect {
+	stmt.from = from
+	return stmt
 }
-func (stmtSelect *stmtSelect) GroupBy(groupbys ...markGroupable) *stmtSelect {
-	stmtSelect.groupBy = groupbys
-	return stmtSelect
+func (stmt *stmtSelect) GroupBy(groupbys ...markGroupable) *stmtSelect {
+	stmt.groupBy = groupbys
+	return stmt
 }
-func (stmtSelect *stmtSelect) Having(having markPredicable) *stmtSelect {
-	stmtSelect.having = having
-	return stmtSelect
+func (stmt *stmtSelect) Having(having markPredicable) *stmtSelect {
+	stmt.having = having
+	return stmt
 }
-func (stmtSelect *stmtSelect) Join(joins ...*clauseJoin) *stmtSelect {
-	stmtSelect.join = joins
-	return stmtSelect
+func (stmt *stmtSelect) Join(joins ...*clauseJoin) *stmtSelect {
+	stmt.join = joins
+	return stmt
 }
-func (stmtSelect *stmtSelect) Limit(limit int) *stmtSelect {
-	stmtSelect.limit = &clauseLimit{value: limit}
-	return stmtSelect
+func (stmt *stmtSelect) Limit(limit int) *stmtSelect {
+	stmt.limit = &clauseLimit{value: limit}
+	return stmt
 }
-func (stmtSelect *stmtSelect) Offset(offset int) *stmtSelect {
-	stmtSelect.offset = &clauseOffset{value: offset}
-	return stmtSelect
+func (stmt *stmtSelect) Offset(offset int) *stmtSelect {
+	stmt.offset = &clauseOffset{value: offset}
+	return stmt
 }
-func (stmtSelect *stmtSelect) OrderBy(orderbys ...markOrderable) *stmtSelect {
-	stmtSelect.orderBy = orderbys
-	return stmtSelect
+func (stmt *stmtSelect) OrderBy(orderbys ...markOrderable) *stmtSelect {
+	stmt.orderBy = orderbys
+	return stmt
 }
-func (stmtSelect *stmtSelect) Unions(unions ...*clauseUnions) *stmtSelect {
-	stmtSelect.unions = unions
-	return stmtSelect
+func (stmt *stmtSelect) Unions(unions ...*clauseUnions) *stmtSelect {
+	stmt.unions = unions
+	return stmt
 }
-func (stmtSelect *stmtSelect) Where(where markPredicable) *stmtSelect {
-	stmtSelect.where = where
-	return stmtSelect
+func (stmt *stmtSelect) Where(where markPredicable) *stmtSelect {
+	stmt.where = where
+	return stmt
 }
-func (stmtSelect *stmtSelect) With(withs ...*clauseWith) *stmtSelect {
-	stmtSelect.with = withs
-	return stmtSelect
+func (stmt *stmtSelect) With(withs ...*clauseWith) *stmtSelect {
+	stmt.with = withs
+	return stmt
 }
 
 // Приватные структуры
@@ -68,12 +68,12 @@ type stmtSelect struct {
 }
 
 // Приватные методы
-func (stmtSelect *stmtSelect) render(baseRenderer *baseRenderer) error {
-	return baseRenderer.strateger.renderSelect(baseRenderer, stmtSelect)
+func (stmt *stmtSelect) render(baseRenderer *baseRenderer) error {
+	return baseRenderer.strateger.renderSelect(baseRenderer, stmt)
 }
-func (stmtSelect *stmtSelect) transform(baseTransformer *baseTransformer) error {
-	return baseTransformer.strateger.transformSelect(baseTransformer, stmtSelect)
+func (stmt *stmtSelect) transform(baseTransformer *baseTransformer) error {
+	return baseTransformer.strateger.transformSelect(baseTransformer, stmt)
 }
-func (stmtSelect *stmtSelect) validate(baseValidator *baseValidator) error {
-	return baseValidator.strateger.validateSelect(baseValidator, stmtSelect)
+func (stmt *stmtSelect) validate(baseValidator *baseValidator) error {
+	return baseValidator.strateger.validateSelect(baseValidator, stmt)
 }

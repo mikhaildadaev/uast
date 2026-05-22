@@ -25,10 +25,10 @@ type clauseValues struct {
 }
 
 // Приватные методы
-func (clauseUpsert *clauseUpsert) render(baseRenderer *baseRenderer) error {
+func (clause *clauseUpsert) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderService(clauseUpsert.service)
-	for i, pair := range clauseUpsert.pairs {
+	baseRenderer.renderService(clause.service)
+	for i, pair := range clause.pairs {
 		if i > 0 {
 			baseRenderer.renderOperator(uastCompositeCommaSpace)
 		}
@@ -43,11 +43,11 @@ func (clauseUpsert *clauseUpsert) render(baseRenderer *baseRenderer) error {
 	}
 	return nil
 }
-func (clauseUpsert *clauseUpsert) validate(baseValidator *baseValidator) error {
-	if clauseUpsert.pairs == nil {
+func (clause *clauseUpsert) validate(baseValidator *baseValidator) error {
+	if clause.pairs == nil {
 		return ErrInvalidStatementSet
 	}
-	for _, pair := range clauseUpsert.pairs {
+	for _, pair := range clause.pairs {
 		if err := pair.column.validate(baseValidator); err != nil {
 			return err
 		}
@@ -57,19 +57,19 @@ func (clauseUpsert *clauseUpsert) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (clauseValues *clauseValues) render(baseRenderer *baseRenderer) error {
-	for _, pair := range clauseValues.pairs {
+func (clause *clauseValues) render(baseRenderer *baseRenderer) error {
+	for _, pair := range clause.pairs {
 		if err := pair.value.render(baseRenderer); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (clauseValues *clauseValues) validate(baseValidator *baseValidator) error {
-	if clauseValues.pairs == nil {
+func (clause *clauseValues) validate(baseValidator *baseValidator) error {
+	if clause.pairs == nil {
 		return ErrInvalidStatementValues
 	}
-	for _, pair := range clauseValues.pairs {
+	for _, pair := range clause.pairs {
 		if pair.column == nil || pair.value == nil {
 			return ErrInvalidStatementValues
 		}

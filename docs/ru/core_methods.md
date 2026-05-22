@@ -14,11 +14,19 @@ outline: deep
 ```go
 column := uast.Column[string]("t", "string").As("alias")
 ```
+Output MariaDB:
+```text
+`t`.`string` AS `alias`
+```
 Output MySQL:
 ```text
 `t`.`string` AS `alias`
 ```
 Output PostgreSQL:
+```text
+"t"."string" AS "alias"
+```
+Output SQLite:
 ```text
 "t"."string" AS "alias"
 ```
@@ -29,11 +37,19 @@ Output PostgreSQL:
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
 ```
+Output MariaDB:
+```text
+AVG(`t`.`number`) AS `alias`
+```
 Output MySQL:
 ```text
 AVG(`t`.`number`) AS `alias`
 ```
 Output PostgreSQL:
+```text
+AVG("t"."number") AS "alias"
+```
+Output SQLite:
 ```text
 AVG("t"."number") AS "alias"
 ```
@@ -46,11 +62,19 @@ function := uast.Avg(uast.Column[int]("t", "number"), false).Over(
     uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
 )
 ```
+Output MariaDB:
+```text
+AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
 Output MySQL:
 ```text
 AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output PostgreSQL:
+```text
+AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+```
+Output SQLite:
 ```text
 AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
@@ -61,11 +85,19 @@ AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
 ```
+Output MariaDB:
+```text
+(SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
+```
 Output MySQL:
 ```text
 (SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
 ```
 Output PostgreSQL:
+```text
+(SELECT "t"."id" FROM "test" AS "t") AS "alias"
+```
+Output SQLite:
 ```text
 (SELECT "t"."id" FROM "test" AS "t") AS "alias"
 ```

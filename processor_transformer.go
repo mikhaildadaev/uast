@@ -21,20 +21,20 @@ func newTransformer(config *config, contexter *contexter, strateger strateger) *
 }
 
 // Приватные методы
-func (baseTransformer *baseTransformer) transformComparison() error {
-	for _, expr := range baseTransformer.contexter.collectionComparison {
-		if dialectComparison, exists := baseTransformer.config.listComparisons[expr.transformGetOperator()]; exists {
-			if err := dialectComparison(baseTransformer, expr); err != nil {
+func (transformer *baseTransformer) transformComparison() error {
+	for _, expr := range transformer.contexter.collectionComparison {
+		if dialectComparison, exists := transformer.config.listComparisons[expr.transformGetOperator()]; exists {
+			if err := dialectComparison(transformer, expr); err != nil {
 				return err
 			}
 		}
 	}
 	return nil
 }
-func (baseTransformer *baseTransformer) transformFunction() error {
-	for _, expr := range baseTransformer.contexter.collectionFunction {
-		if dialectFunction, exists := baseTransformer.config.listFunctions[expr.transformGetService()]; exists {
-			if err := dialectFunction(baseTransformer, expr); err != nil {
+func (transformer *baseTransformer) transformFunction() error {
+	for _, expr := range transformer.contexter.collectionFunction {
+		if dialectFunction, exists := transformer.config.listFunctions[expr.transformGetService()]; exists {
+			if err := dialectFunction(transformer, expr); err != nil {
 				return err
 			}
 		}

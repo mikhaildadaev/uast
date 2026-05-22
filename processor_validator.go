@@ -21,9 +21,9 @@ func newValidator(config *config, contexter *contexter, strateger strateger) *ba
 }
 
 // Приватные методы
-func (baseValidator *baseValidator) validateAlias(value string) error {
+func (validator *baseValidator) validateAlias(value string) error {
 	length := len(value)
-	if length > baseValidator.config.lengthMaxIdent || length > uastSizeInitByte {
+	if length > validator.config.lengthMaxIdent || length > uastSizeInitByte {
 		return ErrOverflowIdentAlias
 	}
 	if !isSecureString(value, uastFormatAlias) {
@@ -31,25 +31,25 @@ func (baseValidator *baseValidator) validateAlias(value string) error {
 	}
 	for i := 0; i < length; i++ {
 		if value[i] >= 'a' && value[i] <= 'z' {
-			baseValidator.contexter.bufferByte[i] = value[i] & 0xDF
+			validator.contexter.bufferByte[i] = value[i] & 0xDF
 		} else {
-			baseValidator.contexter.bufferByte[i] = value[i]
+			validator.contexter.bufferByte[i] = value[i]
 		}
 	}
-	if _, exists := constKeywordUniversal[string(baseValidator.contexter.bufferByte[:length])]; !exists {
+	if _, exists := constKeywordUniversal[string(validator.contexter.bufferByte[:length])]; !exists {
 		return nil
 	}
 	return ErrUnsupportIdentAlias
 }
-func (baseValidator *baseValidator) validateArray(value int) error {
-	if value > baseValidator.config.lengthMaxArray {
+func (validator *baseValidator) validateArray(value int) error {
+	if value > validator.config.lengthMaxArray {
 		return ErrOverflowArray
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateComparison(value transformComparison) error {
-	baseValidator.contexter.countMaxComparison++
-	if baseValidator.contexter.countMaxComparison > uastCountMaxComparison {
+func (validator *baseValidator) validateComparison(value transformComparison) error {
+	validator.contexter.countMaxComparison++
+	if validator.contexter.countMaxComparison > uastCountMaxComparison {
 		return ErrExcessMaxComparison
 	}
 	left := value.transformGetLeft()
@@ -83,10 +83,10 @@ func (baseValidator *baseValidator) validateComparison(value transformComparison
 			return ErrInvalidComparisonLikeNotLike
 		}
 	}
-	baseValidator.contexter.appendCollectionComparison(value)
+	validator.contexter.appendCollectionComparison(value)
 	return nil
 }
-func (baseValidator *baseValidator) validateConstant(value any) error {
+func (validator *baseValidator) validateConstant(value any) error {
 	switch v := value.(type) {
 	case nil:
 		return nil
@@ -147,9 +147,9 @@ func (baseValidator *baseValidator) validateConstant(value any) error {
 	}
 	return ErrUnsupportConstant
 }
-func (baseValidator *baseValidator) validateFunction(value transformFunction) error {
-	baseValidator.contexter.countMaxFunction++
-	if baseValidator.contexter.countMaxFunction > uastCountMaxFunction {
+func (validator *baseValidator) validateFunction(value transformFunction) error {
+	validator.contexter.countMaxFunction++
+	if validator.contexter.countMaxFunction > uastCountMaxFunction {
 		return ErrExcessMaxFunction
 	}
 	distinct := value.transformGetDistinct()
@@ -166,12 +166,12 @@ func (baseValidator *baseValidator) validateFunction(value transformFunction) er
 			return ErrUnsupportFunctionParamMax
 		}
 		// !!! Внимание, необходимо проверить порядок добавления (дети - родитель)
-		baseValidator.contexter.appendCollectionFunction(value)
+		validator.contexter.appendCollectionFunction(value)
 		return nil
 	}
 	return ErrUnsupportFunction
 }
-func (baseValidator *baseValidator) validateName(value string) error {
+func (validator *baseValidator) validateName(value string) error {
 	length := len(value)
 	if length == 0 {
 		return ErrInvalidIdentName
@@ -179,7 +179,7 @@ func (baseValidator *baseValidator) validateName(value string) error {
 	if length == 1 && value[0] == '*' {
 		return nil
 	}
-	if length > baseValidator.config.lengthMaxIdent || length > uastSizeInitByte {
+	if length > validator.config.lengthMaxIdent || length > uastSizeInitByte {
 		return ErrOverflowIdentName
 	}
 	if !isSecureString(value, uastFormatName) {
@@ -187,17 +187,17 @@ func (baseValidator *baseValidator) validateName(value string) error {
 	}
 	for i := 0; i < length; i++ {
 		if value[i] >= 'a' && value[i] <= 'z' {
-			baseValidator.contexter.bufferByte[i] = value[i] & 0xDF
+			validator.contexter.bufferByte[i] = value[i] & 0xDF
 		} else {
-			baseValidator.contexter.bufferByte[i] = value[i]
+			validator.contexter.bufferByte[i] = value[i]
 		}
 	}
-	if _, exists := constKeywordUniversal[string(baseValidator.contexter.bufferByte[:length])]; !exists {
+	if _, exists := constKeywordUniversal[string(validator.contexter.bufferByte[:length])]; !exists {
 		return nil
 	}
 	return ErrUnsupportIdentName
 }
-func (baseValidator *baseValidator) validateLiteral(value any) error {
+func (validator *baseValidator) validateLiteral(value any) error {
 	switch v := value.(type) {
 	case nil:
 		return nil
@@ -210,7 +210,7 @@ func (baseValidator *baseValidator) validateLiteral(value any) error {
 		if length == 0 {
 			return ErrInvalidLiteral
 		}
-		if length > baseValidator.config.lengthMaxLimit {
+		if length > validator.config.lengthMaxLimit {
 			return ErrOverflowLiteral
 		}
 		if !isSecureString(v, uastFormatLiteral) {
@@ -218,12 +218,12 @@ func (baseValidator *baseValidator) validateLiteral(value any) error {
 		}
 		for i := 0; i < length; i++ {
 			if v[i] >= 'a' && v[i] <= 'z' {
-				baseValidator.contexter.bufferByte[i] = v[i] & 0xDF
+				validator.contexter.bufferByte[i] = v[i] & 0xDF
 			} else {
-				baseValidator.contexter.bufferByte[i] = v[i]
+				validator.contexter.bufferByte[i] = v[i]
 			}
 		}
-		if _, exists := constKeywordUniversal[string(baseValidator.contexter.bufferByte[:length])]; !exists {
+		if _, exists := constKeywordUniversal[string(validator.contexter.bufferByte[:length])]; !exists {
 			return nil
 		}
 	case time.Time:
@@ -231,7 +231,7 @@ func (baseValidator *baseValidator) validateLiteral(value any) error {
 	}
 	return ErrUnsupportLiteral
 }
-func (baseValidator *baseValidator) validateOperator(value any) error {
+func (validator *baseValidator) validateOperator(value any) error {
 	switch v := value.(type) {
 	case nil:
 		return ErrInvalidOperator
@@ -273,7 +273,7 @@ func (baseValidator *baseValidator) validateOperator(value any) error {
 	}
 	return ErrUnsupportOperator
 }
-func (baseValidator *baseValidator) validateService(value any) error {
+func (validator *baseValidator) validateService(value any) error {
 	switch v := value.(type) {
 	case nil:
 		return ErrInvalidService
@@ -295,14 +295,14 @@ func (baseValidator *baseValidator) validateService(value any) error {
 	}
 	return ErrUnsupportService
 }
-func (baseValidator *baseValidator) validateSubquery() error {
-	baseValidator.contexter.countMaxSubquery++
-	if baseValidator.contexter.countMaxSubquery > uastCountMaxSubquery {
+func (validator *baseValidator) validateSubquery() error {
+	validator.contexter.countMaxSubquery++
+	if validator.contexter.countMaxSubquery > uastCountMaxSubquery {
 		return ErrExcessMaxSubquery
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateValue(value any) error {
+func (validator *baseValidator) validateValue(value any) error {
 	switch v := value.(type) {
 	case nil:
 		return ErrInvalidValue
@@ -310,7 +310,7 @@ func (baseValidator *baseValidator) validateValue(value any) error {
 		return nil
 	case []byte:
 		length := len(v)
-		if length > baseValidator.config.lengthMaxValueByte {
+		if length > validator.config.lengthMaxValueByte {
 			return ErrOverflowValueByte
 		}
 		return nil
@@ -320,7 +320,7 @@ func (baseValidator *baseValidator) validateValue(value any) error {
 		return nil
 	case string:
 		length := len(v)
-		if length > baseValidator.config.lengthMaxValueString {
+		if length > validator.config.lengthMaxValueString {
 			return ErrOverflowValueString
 		}
 		return nil
@@ -329,198 +329,198 @@ func (baseValidator *baseValidator) validateValue(value any) error {
 	}
 	return ErrUnsupportValue
 }
-func (baseValidator *baseValidator) validateColumn(columns []markExpressable) error {
+func (validator *baseValidator) validateColumn(columns []markExpressable) error {
 	if columns == nil {
 		return nil
 	}
 	for _, column := range columns {
-		if err := column.validate(baseValidator); err != nil {
+		if err := column.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateCommand(command managementService) error {
+func (validator *baseValidator) validateCommand(command managementService) error {
 	return nil
 }
-func (baseValidator *baseValidator) validateField(fields []markExpressable) error {
+func (validator *baseValidator) validateField(fields []markExpressable) error {
 	if fields == nil {
 		return ErrInvalidStatementField
 	}
 	for _, field := range fields {
-		if err := field.validate(baseValidator); err != nil {
+		if err := field.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateFrom(from SourceBase) error {
+func (validator *baseValidator) validateFrom(from SourceBase) error {
 	if from == nil {
 		return ErrInvalidStatementFrom
 	}
-	if err := from.validate(baseValidator); err != nil {
+	if err := from.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateGroupBy(groups []markGroupable) error {
+func (validator *baseValidator) validateGroupBy(groups []markGroupable) error {
 	if groups == nil {
 		return nil
 	}
 	for _, group := range groups {
-		if err := group.validate(baseValidator); err != nil {
+		if err := group.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateHaving(having ExpressionBase) error {
+func (validator *baseValidator) validateHaving(having ExpressionBase) error {
 	if having == nil {
 		return nil
 	}
-	if err := having.validate(baseValidator); err != nil {
+	if err := having.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateInto(into SourceBase) error {
+func (validator *baseValidator) validateInto(into SourceBase) error {
 	if into == nil {
 		return ErrInvalidStatementInto
 	}
-	if err := into.validate(baseValidator); err != nil {
+	if err := into.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateJoin(joins []*clauseJoin) error {
+func (validator *baseValidator) validateJoin(joins []*clauseJoin) error {
 	if joins == nil {
 		return nil
 	}
 	for _, join := range joins {
-		if err := join.validate(baseValidator); err != nil {
+		if err := join.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateLimit(limit *clauseLimit) error {
+func (validator *baseValidator) validateLimit(limit *clauseLimit) error {
 	if limit == nil {
 		return nil
 	}
-	if limit.value > baseValidator.config.lengthMaxLimit {
+	if limit.value > validator.config.lengthMaxLimit {
 		return ErrOverflowLimit
 	}
-	if err := limit.validate(baseValidator); err != nil {
+	if err := limit.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateOffset(offset *clauseOffset) error {
+func (validator *baseValidator) validateOffset(offset *clauseOffset) error {
 	if offset == nil {
 		return nil
 	}
-	if err := offset.validate(baseValidator); err != nil {
+	if err := offset.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateOnto(onto SourceBase) error {
+func (validator *baseValidator) validateOnto(onto SourceBase) error {
 	if onto == nil {
 		return ErrInvalidStatementOnto
 	}
-	if err := onto.validate(baseValidator); err != nil {
+	if err := onto.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateOrderBy(orders []markOrderable) error {
+func (validator *baseValidator) validateOrderBy(orders []markOrderable) error {
 	if orders == nil {
 		return nil
 	}
 	for _, order := range orders {
-		if err := order.validate(baseValidator); err != nil {
+		if err := order.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateReturning(returnings []markReturnable) error {
+func (validator *baseValidator) validateReturning(returnings []markReturnable) error {
 	if returnings == nil {
 		return nil
 	}
 	for _, returning := range returnings {
-		if err := returning.validate(baseValidator); err != nil {
+		if err := returning.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateSet(sets []*clauseSet) error {
+func (validator *baseValidator) validateSet(sets []*clauseSet) error {
 	if sets == nil {
 		return ErrInvalidStatementSet
 	}
 	for _, set := range sets {
-		if err := set.validate(baseValidator); err != nil {
+		if err := set.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateSource(source statement) error {
+func (validator *baseValidator) validateSource(source statement) error {
 	if source == nil {
 		return nil
 	}
-	if err := source.validate(baseValidator); err != nil {
+	if err := source.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateUnions(unions []*clauseUnions) error {
+func (validator *baseValidator) validateUnions(unions []*clauseUnions) error {
 	if unions == nil {
 		return nil
 	}
-	baseValidator.contexter.countMaxUnions += len(unions)
-	if baseValidator.contexter.countMaxUnions > uastCountMaxUnions {
+	validator.contexter.countMaxUnions += len(unions)
+	if validator.contexter.countMaxUnions > uastCountMaxUnions {
 		return ErrExcessMaxUnions
 	}
 	for _, union := range unions {
-		if err := union.validate(baseValidator); err != nil {
+		if err := union.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateValues(values *clauseValues) error {
+func (validator *baseValidator) validateValues(values *clauseValues) error {
 	if values == nil {
 		return nil
 	}
 	for _, pair := range values.pairs {
-		if err := pair.value.validate(baseValidator); err != nil {
+		if err := pair.value.validate(validator); err != nil {
 			return err
 		}
 	}
 	if values.upsert != nil {
-		if err := values.upsert.validate(baseValidator); err != nil {
+		if err := values.upsert.validate(validator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateWhere(where ExpressionBase) error {
+func (validator *baseValidator) validateWhere(where ExpressionBase) error {
 	if where == nil {
 		return nil
 	}
-	if err := where.validate(baseValidator); err != nil {
+	if err := where.validate(validator); err != nil {
 		return err
 	}
 	return nil
 }
-func (baseValidator *baseValidator) validateWith(withs []*clauseWith) error {
+func (validator *baseValidator) validateWith(withs []*clauseWith) error {
 	if withs == nil {
 		return nil
 	}
-	baseValidator.contexter.countMaxWith += len(withs)
-	if baseValidator.contexter.countMaxWith > uastCountMaxWith {
+	validator.contexter.countMaxWith += len(withs)
+	if validator.contexter.countMaxWith > uastCountMaxWith {
 		return ErrExcessMaxWith
 	}
 	seen := make(map[string]bool)
@@ -529,7 +529,7 @@ func (baseValidator *baseValidator) validateWith(withs []*clauseWith) error {
 			return ErrDuplicateCTE
 		}
 		seen[with.alias] = true
-		if err := with.validate(baseValidator); err != nil {
+		if err := with.validate(validator); err != nil {
 			return err
 		}
 	}

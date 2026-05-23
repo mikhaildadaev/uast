@@ -1,86 +1,100 @@
-UAST - Universal Abstract SQL Transformer
-Пакет UAST предоставляет типобезопасный построитель SQL запросов для Go с использованием Fluent-интерфейса.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/mikhaildadaev/uast/blob/main/LICENSE.md)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/mikhaildadaev/uast)](https://github.com/mikhaildadaev/uast)
+[![Go Reference](https://pkg.go.dev/badge/github.com/mikhaildadaev/uast.svg)](https://pkg.go.dev/github.com/mikhaildadaev/uast)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mikhaildadaev/uast)](https://goreportcard.com/report/github.com/mikhaildadaev/uast)
+[![CI](https://github.com/mikhaildadaev/uast/actions/workflows/ci.yml/badge.svg)](https://github.com/mikhaildadaev/uast/actions/workflows/ci.yml)
 
-# API
-# API - Builder [data]
-   - [+] NewBuilder(dialect)
-# API - Builder - Dialect [data]
-   - [-] DialectClickHouse
-   - [+] DialectDefault
-   - [+] DialectMySQL
-   - [-] DialectMsSQL
-   - [+] DialectPostgreSQL
-   - [-] DialectSQLite
-# API - Query [data]
-   - [+] Build(statement)
-# API - Statement [list]
-   - [-] DDL
-   - [+] DML
-# API - Statement - DDL [data]
-   - [-] Alter(...)                                           # ALTER/ALTER/
-   - [-] Comment(...)                                         # COMMENT/COMMENT/
-   - [-] Create(...)                                          # CREATE/CREATE/
-   - [-] Drop(...)                                            # DROP/DROP/
-   - [-] Rename(...)                                          # RENAME/RENAME/
-   - [-] Truncate(...)                                        # TRUNCATE/TRUNCATE/
-# API - Statement - DML [data]
-   - [+] Delete(from)                                         # DELETE/DELETE/
-   - [+] Insert(columns...)                                   # INSERT/INSERT/
-   - [+] Select(fields...)                                    # SELECT/SELECT/
-   - [+] Update(onto)                                         # UPDATE/UPDATE/
-# API - Statement - DML - Delete [data]
-...
-# API - Statement - DML - Insert [data]
-...
-# API - Statement - DML - Select [data]
-   - [+] Distinct(bool)                                       # DISTINCT/DISTINCT/
-   - [+] Field(fields...)                                     # FIELD/FIELD/
-   - [+] From(from)                                           # FROM/FROM/
-   - [+] GroupBy(groupbys...)                                 # GROUP BY/GROUP BY/
-   - [+] Having(having)                                       # HAVING/HAVING/
-   - [+] Join(joins...)                                       # JOIN/JOIN/
-   - [+] Limit(limit)                                         # LIMIT/LIMIT/
-   - [+] Offset(offset)                                       # OFFSET/OFFSET/
-   - [+] OrderBy(orderbys...)                                 # ORDER BY/ORDER BY/
-   - [+] Unions(unions...)                                    # UNIONS/UNIONS/
-   - [+] Where(where)                                         # WHERE/WHERE
-   - [+] With(withs...)                                       # WITH/WITH/
-# API - Statement - DML - Update [data]
-...
-# API - Structure - Field [data]
-   - [+] Column(tableAlias, columnName)
-   - [+] Function()
-   - [+] Subquery(statement)
-# API - Structure - From [data]
-   - [+] Cte(cteName, aliasName)
-   - [+] Query(statement, aliasName)
-   - [+] Table(tableName, aliasName)
-# API - Structure - GroupBy [data]
-   - [+] Column(tableAlias, columnName)
-   - [+] Subquery(statement)
-# API - Structure - Having & Where [data]
-   - [+] And(expressions...)
-   - [+] Or(expressions...)
-# API - Structure - Join [data]
-   - [+] Cross(source)                                        # CROSS JOIN/CROSS JOIN/
-   - [+] Full(source, expression)                             # FULL JOIN/FULL JOIN/
-   - [+] FullOuter(source, expression)                        # FULL OUTER JOIN/FULL OUTER JOIN/
-   - [+] Inner(source, expression)                            # INNER JOIN/INNER JOIN/
-   - [+] Left(source, expression)                             # LEFT JOIN/LEFT JOIN/
-   - [+] LeftOuter(source, expression)                        # LEFT OUTER JOIN/LEFT OUTER JOIN/
-   - [+] Right(source, expression)                            # RIGHT JOIN/RIGHT JOIN/
-   - [+] RightOuter(source, expression)                       # RIGHT OUTER JOIN/RIGHT OUTER JOIN/
-# API - Structure - Limit [data]
-   - [+] Value(value)
-# API - Structure - Offset [data]
-   - [+] Value(value)
-# API - Structure - OrderBy [data]
-   - [+] Asc(expression)                                      # ASC/ASC/
-   - [+] Desc(expression)                                     # DESC/DESC/
-# API - Structure - Union [data]
-   - [+] Union(statement)                                     # UNION/UNION/
-   - [+] UnionAll(statement)                                  # UNION ALL/UNION ALL/
-   - [+] UnionExcept(statement)                               # EXCEPT/EXCEPT/
-   - [+] UnionIntersect(statement)                            # INTERSECT/INTERSECT/
-# API - Structure - With [data]
-   - [+] With(...)
+# UAST
+
+A high-performance, zero‑allocation type‑safe SQL builder.
+
+## Go
+```bash
+go get github.com/mikhaildadaev/uast
+```
+
+> **Info**
+>
+> The latest stable version of uast is v1.26.11.
+
+### Run Test 
+```bash
+go test ./...
+go test -bench=. ./...
+go test -cover ./...
+go test -race ./...
+```
+
+## Key Features
+- **Type-safe** — Full generics support, compile-time type checking for columns and values.
+- **Multi-dialect** — MariaDB, MySQL, PostgreSQL, SQLite from a single AST.
+- **Secure by design** — Three-level `Value` / `Literal` / `Constant` system prevents SQL injection.
+- **High performance** — `sync.Pool` for context reuse, ~360 ns/op for simple queries.
+- **Zero dependencies** — Only Go standard library.
+- **Quad outputs** — Every function documented with SQL output for all 4 dialects.
+- **Hot dialect switch** — `SetDialect()` changes dialect at runtime without recreating the pool.
+- **Complete DML** — SELECT, INSERT, UPDATE, DELETE with all standard clauses (JOIN, CTE, UPSERT, window functions, JSON).
+- **100+ functions** — Aggregate, analytical, conditional, conversion, date/time, JSON, math, ranking, string.
+
+## Limits
+- **No DDL yet**: CREATE, ALTER, DROP, TRUNCATE, COMMENT coming in v2.
+- **No code generation**: Table schemas are defined manually (code-gen planned).
+- **MySQL**: `RETURNING` clause not supported (MySQL limitation).
+- **SQLite**: `RIGHT JOIN` / `RIGHT OUTER JOIN` not supported (SQLite limitation).
+- **PostgreSQL**: `JsonSet` in development.
+
+## Benchmarks
+> **Info**
+>
+> The best way to compare libraries is to run benchmarks in **your own environment** with **your own workload**. Each project has unique requirements — latency, throughput, memory usage, and integration complexity — and no single test can cover them all.
+>
+> I recommend that you test `uast` alongside other libraries and choose the tool that best suits your needs.
+
+## Core Performance
+These benchmarks measure the cost of building SQL queries. Simple queries select one column with a WHERE clause. Complex queries include JOINs, subqueries, GROUP BY, HAVING, ORDER BY, and LIMIT.
+
+### MultiThread
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+|---------|------------|------------|--------------|---------------|--------|
+| Complex | MariaDB    |       383K |        2,965 |         4,971 |     54 |
+| Complex | MySQL      |       371K |        3,136 |         4,972 |     54 |
+| Complex | PostgreSQL |       380K |        3,299 |         4,970 |     54 |
+| Complex | SQLite     |       376K |        3,399 |         4,972 |     54 |
+| Simple  | MariaDB    |       3.7M |        335.5 |           720 |      8 |
+| Simple  | MySQL      |       3.5M |        349.0 |           720 |      8 |
+| Simple  | PostgreSQL |       3.3M |        398.4 |           720 |      8 |
+| Simple  | SQLite     |       3.3M |        358.3 |           720 |      8 |
+
+### SingleThread
+| Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
+|---------|------------|------------|--------------|---------------|--------|
+| Complex | MariaDB    |       197K |        5,852 |         4,948 |     54 |
+| Complex | MySQL      |       204K |        6,279 |         4,948 |     54 |
+| Complex | PostgreSQL |       196K |        5,874 |         4,948 |     54 |
+| Complex | SQLite     |       196K |        5,845 |         4,948 |     54 |
+| Simple  | MariaDB    |       1.5M |        789.8 |           718 |      8 |
+| Simple  | MySQL      |       1.5M |        778.6 |           718 |      8 |
+| Simple  | PostgreSQL |       1.4M |        795.1 |           718 |      8 |
+| Simple  | SQLite     |       1.4M |        787.9 |           718 |      8 |
+
+> **Note**
+>
+> Simple queries select one column with a basic WHERE clause. Complex queries include 2 JOINs, 3 subqueries, GROUP BY, HAVING, ORDER BY, and LIMIT. `sync.Pool` in Multi mode reuses `contexter` buffers, reducing allocations and GC pressure.
+>
+>*Benchmarked on Intel Core i9-9880H (2.30 GHz).*
+
+## Usage
+```go
+import (
+    "fmt"
+    "log"
+    "github.com/mikhaildadaev/uast"
+)
+func main() {
+   ...
+}
+```
+
+## Roadmap
+- **DDL** — Data Definition Language support: `CREATE`, `ALTER`, `DROP`, `TRUNCATE`, `COMMENT`.
+- **Dialects** — `ClickHouse`, `MsSQL`, `Oracle` dialects.

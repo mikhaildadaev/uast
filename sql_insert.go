@@ -55,7 +55,7 @@ func (stmt *stmtInsert) Source(source *stmtSelect) *stmtInsert {
 			columns[i] = &exprPair[uint64]{name: column.name}
 		}
 	}
-	stmt.column = columns
+	stmt.columns = columns
 	stmt.source = source
 	return stmt
 }
@@ -70,7 +70,7 @@ func (stmt *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {
 	for i, pair := range pairs {
 		columns[i] = pair.column
 	}
-	stmt.column = columns
+	stmt.columns = columns
 	stmt.values = &clauseValues{pairs: pairs}
 	return stmt
 }
@@ -82,7 +82,7 @@ func (stmt *stmtInsert) With(with ...*clauseWith) *stmtInsert {
 // Приватные структуры
 type stmtInsert struct {
 	command   managementService
-	column    []markExpressable
+	columns   []markExpressable
 	into      SourceBase
 	source    statement
 	returning []markReturnable

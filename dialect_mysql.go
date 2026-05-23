@@ -473,7 +473,7 @@ func (strateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 	if err := baseRenderer.renderInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderColumns(stmtInsert.column); err != nil {
+	if err := baseRenderer.renderColumns(stmtInsert.columns); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderSource(stmtInsert.source); err != nil {
@@ -628,7 +628,7 @@ func (strateger *mysqlStrateger) validateInsert(baseValidator *baseValidator, st
 	if err := baseValidator.validateInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseValidator.validateColumns(stmtInsert.column); err != nil {
+	if err := baseValidator.validateColumns(stmtInsert.columns); err != nil {
 		return err
 	}
 	if (stmtInsert.source == nil && stmtInsert.values == nil) || (stmtInsert.source != nil && stmtInsert.values != nil) {

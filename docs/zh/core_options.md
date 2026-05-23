@@ -9,7 +9,7 @@ outline: deep
 :::
 
 ## clauseGroupBy
-Adds a GROUP BY clause to group rows by specified columns or expressions.
+添加 GROUP BY 子句，按指定列或表达式对行进行分组。
 ```go
 groupBy := GroupBy(
 	uast.Column[string]("t", "string"),
@@ -33,7 +33,7 @@ GROUP BY "t"."string"
 ```
 
 ## clauseHaving
-Adds a HAVING clause to filter groups. Used with GROUP BY to filter aggregated results.
+添加 HAVING 子句以过滤分组。与 GROUP BY 一起使用以过滤聚合结果。
 ```go
 having := Having(
 	uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
@@ -58,7 +58,7 @@ HAVING COUNT("t"."id") > ?
 
 ## clauseJoin
 ### Cross
-Adds a CROSS JOIN to the statement. Returns the Cartesian product of both tables.
+向语句添加 CROSS JOIN。返回两个表的笛卡尔积。
 ```go
 join := uast.Cross(uast.NewTable("test").As("t"))
 ```
@@ -80,7 +80,7 @@ CROSS JOIN "test" AS "t"
 ```
 
 ### Full
-Adds a FULL JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
+向语句添加 FULL JOIN。返回两个表中的所有行，不匹配处为 NULL。
 ```go
 join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
@@ -102,7 +102,7 @@ FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### FullOuter
-Adds a FULL OUTER JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
+向语句添加 FULL OUTER JOIN。返回两个表中的所有行，不匹配处为 NULL。
 ```go
 join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
@@ -124,7 +124,7 @@ FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### Inner
-Adds an INNER JOIN to the statement. Returns rows that have matching values in both tables.
+向语句添加 INNER JOIN。返回两个表中具有匹配值的行。
 ```go
 join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
@@ -146,7 +146,7 @@ INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### Left
-Adds a LEFT JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
+向语句添加 LEFT JOIN。返回左表中的所有行以及右表中的匹配行。
 ```go
 join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
@@ -168,7 +168,7 @@ LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### LeftOuter
-Adds a LEFT OUTER JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
+向语句添加 LEFT OUTER JOIN。返回左表中的所有行以及右表中的匹配行。
 ```go
 join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
@@ -190,7 +190,7 @@ LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ```
 
 ### Right
-Adds a RIGHT JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
+向语句添加 RIGHT JOIN。返回右表中的所有行以及左表中的匹配行。SQLite 不支持。
 ```go
 join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
@@ -212,7 +212,7 @@ Output SQLite:
 ```
 
 ### RightOuter
-Adds a RIGHT OUTER JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
+向语句添加 RIGHT OUTER JOIN。返回右表中的所有行以及左表中的匹配行。SQLite 不支持。
 ```go
 join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
 ```
@@ -234,7 +234,7 @@ Output SQLite:
 ```
 
 ## clauseLimit
-Limits the number of rows returned by the query.
+限制查询返回的行数。
 ```go
 limit := Limit(10)
 ```
@@ -256,7 +256,7 @@ LIMIT ?
 ```
 
 ## clauseOffset
-Skips a specified number of rows before returning results. Used for pagination with Limit.
+在返回结果之前跳过指定数量的行。与 Limit 一起用于分页。
 ```go
 offset := Offset(20)
 ```
@@ -279,7 +279,7 @@ OFFSET ?
 
 ## clauseOrderBy
 ### Asc
-Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
+指定升序排序（最小的在前，A 到 Z）。用于对查询中的行或窗口函数内的行进行排序。
 ```go
 orderBy := uast.Asc(uast.Column[string]("t", "string"))
 ```
@@ -301,7 +301,7 @@ Output SQLite:
 ```
 
 ### Desc
-Specifies descending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
+指定降序排序（最大的在前，Z 到 A）。用于对查询中的行或窗口函数内的行进行排序。
 ```go
 orderBy := uast.Desc(uast.Column[string]("t", "string"))
 ```
@@ -323,7 +323,7 @@ Output SQLite:
 ```
 
 ## clauseReturning
-Adds a RETURNING clause to return modified rows. Supported by MariaDB, PostgreSQL, and SQLite. MySQL does not support this clause natively.
+添加 RETURNING 子句以返回修改后的行。MariaDB、PostgreSQL 和 SQLite 支持。MySQL 原生不支持此子句。
 ```go
 returning = Returning(
 	uast.Column[int64]("t", "id")
@@ -349,7 +349,7 @@ RETURNING `t`.`id`, `t`.`string`
 
 ## clauseSet
 ### Assign
-Specifies columns and their new values using `Assign` to associate columns with values. Supports multiple pairs for updating multiple columns.
+使用 `Assign` 指定列及其新值，将列与值关联。支持多个对以更新多个列。
 ```go
 set := Set(
 	uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
@@ -374,7 +374,7 @@ UPDATE "test" AS "t" SET "t"."string" = ?
 
 ## clauseUnions
 ### Union
-Combines results from multiple SELECT statements. UNION returns distinct rows.
+合并多个 SELECT 语句的结果。UNION 返回不重复的行。
 ```go
 unions := uast.Union(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -400,7 +400,7 @@ UNION SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionAll
-Combines results from multiple SELECT statements. UNION ALL returns all rows, including duplicates.
+合并多个 SELECT 语句的结果。UNION ALL 返回所有行，包括重复行。
 ```go
 unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -426,7 +426,7 @@ UNION ALL SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionExcept
-Combines results from multiple SELECT statements. EXCEPT returns distinct rows from the first query that are not in the second.
+合并多个 SELECT 语句的结果。EXCEPT 返回第一个查询中存在但第二个查询中不存在的不同行。
 ```go
 unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -452,7 +452,7 @@ EXCEPT SELECT "t"."string" FROM "test" AS "t"
 ```
 
 ### UnionIntersect
-Combines results from multiple SELECT statements. INTERSECT returns distinct rows that are common to both queries.
+合并多个 SELECT 语句的结果。INTERSECT 返回两个查询共有的不同行。
 ```go
 unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("test").As("t")).
 	Field(
@@ -479,7 +479,7 @@ INTERSECT SELECT "t"."string" FROM "test" AS "t"
 
 ## clauseValues
 ### Pair
-Specifies values for insertion using `Pair` to associate columns with values. Columns are automatically inferred from the pairs.
+使用 `Pair` 指定插入的值，将列与值关联。列会自动从对中推断。
 ```go
 values := Values(
     uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
@@ -504,7 +504,7 @@ VALUES (?, ?)
 ```
 
 ### Upsert
-Adds an upsert clause to INSERT ... VALUES using `Upsert`. Associates columns with values.
+使用 `Upsert` 向 INSERT ... VALUES 添加 upsert 子句。将列与值关联。
 ```go
 values := Values(
     uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
@@ -532,7 +532,7 @@ VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
 ```
 
 ## clauseWhere
-Adds a WHERE clause to filter rows before grouping or aggregation. Accepts comparison expressions, logical operators, and subqueries.
+添加 WHERE 子句以在分组或聚合之前过滤行。接受比较表达式、逻辑运算符和子查询。
 ```go
 where = Where(
 	uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
@@ -557,7 +557,7 @@ WHERE "t"."string" = ?
 
 ## clauseWith
 ### Norecursive
-Adds a norecursive Common Table Expression (CTE) to the statement using `WithN`. Columns are aliased via the variadic string arguments.
+使用 `WithN` 向语句添加非递归公共表表达式（CTE）。列通过可变字符串参数别名化。
 ```go
 with := WithN("cte_norecursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -588,7 +588,7 @@ WITH "cte_norecursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "
 ```
 
 ### Recursive
-Adds a recursive Common Table Expression (CTE) to the statement using `WithR`. Requires a `Unions` clause with `UnionAll` to define the recursive step.
+使用 `WithR` 向语句添加递归公共表表达式（CTE）。需要带有 `UnionAll` 的 `Unions` 子句来定义递归步骤。
 ```go
 with := WithR("cte_recursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -631,7 +631,7 @@ WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "t"."id", "t"."string
 
 ## exprArray
 ### Array
-Constructs an array expression for use in SQL queries.
+构造用于 SQL 查询的数组表达式。
 ```go
 array := uast.Array(0, 1, 2)
 ```
@@ -654,7 +654,7 @@ ARRAY[?, ?, ?]
 
 ## exprBinary
 ### BitwiseAnd
-Performs a bitwise AND operation between two expressions.
+对两个表达式执行按位与运算。
 ```go
 binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
@@ -676,7 +676,7 @@ Output SQLite:
 ```
 
 ### BitwiseOr
-Performs a bitwise OR operation between two expressions.
+对两个表达式执行按位或运算。
 ```go
 binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
@@ -698,7 +698,7 @@ Output SQLite:
 ```
 
 ### BitwiseXor
-Performs a bitwise XOR operation between two expressions.
+对两个表达式执行按位异或运算。
 ```go
 binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
@@ -720,7 +720,7 @@ Output SQLite:
 ```
 
 ### Divide
-Divides the left expression by the right expression.
+左表达式除以右表达式。
 ```go
 binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -742,7 +742,7 @@ Output SQLite:
 ```
 
 ### Minus
-Subtracts the right expression from the left expression.
+左表达式减去右表达式。
 ```go
 binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -764,7 +764,7 @@ Output SQLite:
 ```
 
 ### Modulo
-Returns the remainder of dividing the left expression by the right expression.
+返回左表达式除以右表达式的余数。
 ```go
 binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -786,7 +786,7 @@ Output SQLite:
 ```
 
 ### Multiply
-Multiplies the left expression by the right expression.
+左表达式乘以右表达式。
 ```go
 binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -808,7 +808,7 @@ Output SQLite:
 ```
 
 ### Plus
-Adds the left expression to the right expression.
+左表达式加上右表达式。
 ```go
 binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -830,7 +830,7 @@ Output SQLite:
 ```
 
 ### ShiftLeft
-Performs a bitwise left shift on the left expression by the number of bits specified in the right expression.
+对左表达式执行按位左移，移动位数由右表达式指定。
 ```go
 binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -852,7 +852,7 @@ Output SQLite:
 ```
 
 ### ShiftRight
-Performs a bitwise right shift on the left expression by the number of bits specified in the right expression.
+对左表达式执行按位右移，移动位数由右表达式指定。
 ```go
 binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -875,7 +875,7 @@ Output SQLite:
 
 ## exprColumn
 ### Column
-Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
+创建对表列的引用，可选择用表别名限定。这是在表达式中引用数据库列的主要方式。
 ```go
 column := uast.Column[string]("t", "string")
 ```
@@ -898,7 +898,7 @@ Output SQLite:
 
 ## exprComparison
 ### Between
-Checks if the left expression falls within the range defined by `valueStart` and `valueEnd` (inclusive).
+检查左表达式是否落在 `valueStart` 和 `valueEnd` 定义的范围内（含）。
 ```go
 comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
@@ -920,7 +920,7 @@ Output SQLite:
 ```
 
 ### Equal
-Compares two expressions for equality (`=`).
+比较两个表达式是否相等（`=`）。
 ```go
 comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -942,7 +942,7 @@ Output SQLite:
 ```
 
 ### Exists
-Checks if the subquery returns any rows. Returns `true` if at least one row exists.
+检查子查询是否返回任何行。如果至少存在一行则返回 `true`。
 ```go
 comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
 ```
@@ -964,7 +964,7 @@ EXISTS (SELECT 1 FROM "test" AS "t")
 ```
 
 ### Greater
-Compares if the left expression is greater than the right expression (`>`).
+比较左表达式是否大于右表达式（`>`）。
 ```go
 comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -986,7 +986,7 @@ Output SQLite:
 ```
 
 ### GreaterEqual
-Compares if the left expression is greater than or equal to the right expression (`>=`).
+比较左表达式是否大于或等于右表达式（`>=`）。
 ```go
 comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1008,7 +1008,7 @@ Output SQLite:
 ```
 
 ### ILike
-Performs a case-insensitive pattern matching comparison. The right expression should contain a pattern with `%` (any sequence) and `_` (single character) wildcards.
+执行不区分大小写的模式匹配比较。右表达式应包含带有 `%`（任意序列）和 `_`（单个字符）通配符的模式。
 ```go
 comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -1030,7 +1030,7 @@ LOWER("t"."string") LIKE LOWER(?)
 ```
 
 ### In
-Checks if the left expression matches any value contained within the right expression (typically a subquery or array).
+检查左表达式是否匹配右表达式中包含的任何值（通常是子查询或数组）。
 ```go
 comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
@@ -1052,7 +1052,7 @@ Output SQLite:
 ```
 
 ### IsNotNull
-Checks if the expression is not `NULL`.
+检查表达式是否不为 `NULL`。
 ```go
 comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
 ```
@@ -1074,7 +1074,7 @@ Output SQLite:
 ```
 
 ### IsNull
-Checks if the expression is `NULL`.
+检查表达式是否为 `NULL`。
 ```go
 comparison := uast.IsNull(uast.Column[string]("t", "string"))
 ```
@@ -1096,7 +1096,7 @@ Output SQLite:
 ```
 
 ### Less
-Compares if the left expression is less than the right expression (`<`).
+比较左表达式是否小于右表达式（`<`）。
 ```go
 comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1118,7 +1118,7 @@ Output SQLite:
 ```
 
 ### LessEqual
-Compares if the left expression is less than or equal to the right expression (`<=`).
+比较左表达式是否小于或等于右表达式（`<=`）。
 ```go
 comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1140,7 +1140,7 @@ Output SQLite:
 ```
 
 ### Like
-Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
+执行区分大小写的模式匹配比较。右表达式应包含带有 `%` 和 `_` 通配符的模式。
 ```go
 comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -1162,7 +1162,7 @@ Output SQLite:
 ```
 
 ### NotBetween
-Checks if the left expression falls outside the range defined by `valueStart` and `valueEnd`.
+检查左表达式是否落在 `valueStart` 和 `valueEnd` 定义的范围之外。
 ```go
 comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
@@ -1184,7 +1184,7 @@ Output SQLite:
 ```
 
 ### NotEqual
-Compares two expressions for inequality (`!=` or `<>`).
+比较两个表达式是否不相等（`!=` 或 `<>`）。
 ```go
 comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -1206,7 +1206,7 @@ Output SQLite:
 ```
 
 ### NotExists
-Checks if the subquery returns no rows. Returns `true` if the subquery result is empty.
+检查子查询是否不返回任何行。如果子查询结果为空则返回 `true`。
 ```go
 comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
 ```
@@ -1228,7 +1228,7 @@ NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ```
 
 ### NotILike
-Performs a negated case-insensitive pattern matching comparison.
+执行否定的不区分大小写的模式匹配比较。
 ```go
 comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -1250,7 +1250,7 @@ LOWER("t"."string") NOT LIKE LOWER(?)
 ```
 
 ### NotIn
-Checks if the left expression does not match any value contained within the right expression.
+检查左表达式是否不匹配右表达式中包含的任何值。
 ```go
 comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
 ```
@@ -1272,7 +1272,7 @@ Output SQLite:
 ```
 
 ### NotLike
-Performs a negated case-sensitive pattern matching comparison.
+执行否定的区分大小写的模式匹配比较。
 ```go
 comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
 ```
@@ -1295,7 +1295,7 @@ Output SQLite:
 
 ## exprConstant
 ### ConstBoolFalse
-Returns a constant boolean `FALSE` expression.
+返回常量布尔 `FALSE` 表达式。
 ```go
 constant := uast.ConstBoolFalse()
 ```
@@ -1305,7 +1305,7 @@ FALSE
 ```
 
 ### ConstBoolTrue
-Returns a constant boolean `TRUE` expression.
+返回常量布尔 `TRUE` 表达式。
 ```go
 constant := uast.ConstBoolTrue()
 ```
@@ -1315,7 +1315,7 @@ TRUE
 ```
 
 ### ConstFloat32One
-Returns a constant `float32` value of `1.0`. 
+返回值为 `1.0` 的 `float32` 常量。
 ```go
 constant := uast.ConstFloat32One()
 ```
@@ -1325,7 +1325,7 @@ Output:
 ```
 
 ### ConstFloat64One
-Returns a constant `float64` value of `1.000000`.
+返回值为 `1.000000` 的 `float64` 常量。
 ```go
 constant := uast.ConstFloat64One()
 ```
@@ -1335,7 +1335,7 @@ Output:
 ```
 
 ### ConstIntOne
-Returns a constant `int` value of `1`.
+返回值为 `1` 的 `int` 常量。
 ```go
 constant := uast.ConstIntOne()
 ```
@@ -1345,7 +1345,7 @@ Output:
 ```
 
 ### ConstInt8One
-Returns a constant `int8` value of `1`.
+返回值为 `1` 的 `int8` 常量。
 ```go
 constant := uast.ConstInt8One()
 ```
@@ -1355,7 +1355,7 @@ Output:
 ```
 
 ### ConstInt16One
-Returns a constant `int16` value of `1`.
+返回值为 `1` 的 `int16` 常量。
 ```go
 constant := uast.ConstInt16One()
 ```
@@ -1365,7 +1365,7 @@ Output:
 ```
 
 ### ConstInt32One
-Returns a constant `int32` value of `1`.
+返回值为 `1` 的 `int32` 常量。
 ```go
 constant := uast.ConstInt32One()
 ```
@@ -1375,7 +1375,7 @@ Output:
 ```
 
 ### ConstInt64One
-Returns a constant `int64` value of `1`.
+返回值为 `1` 的 `int64` 常量。
 ```go
 constant := uast.ConstInt64One()
 ```
@@ -1385,7 +1385,7 @@ Output:
 ```
 
 ### ConstStringDefault
-Returns a constant `string` value of `DEFAULT`.
+返回值为 `DEFAULT` 的 `string` 常量。
 ```go
 constant := uast.ConstStringDefault()
 ```
@@ -1395,7 +1395,7 @@ DEFAULT
 ```
 
 ### ConstStringNull
-Returns a constant `string` value of `NULL`.
+返回值为 `NULL` 的 `string` 常量。
 ```go
 constant := uast.ConstStringNull()
 ```
@@ -1405,7 +1405,7 @@ NULL
 ```
 
 ### ConstUintOne
-Returns a constant `uint` value of `1`.
+返回值为 `1` 的 `uint` 常量。
 ```go
 constant := uast.ConstUintOne()
 ```
@@ -1415,7 +1415,7 @@ Output:
 ```
 
 ### ConstUint8One
-Returns a constant `uint8` value of `1`.
+返回值为 `1` 的 `uint8` 常量。
 ```go
 constant := uast.ConstUint8One()
 ```
@@ -1425,7 +1425,7 @@ Output:
 ```
 
 ### ConstUint16One
-Returns a constant `uint16` value of `1`.
+返回值为 `1` 的 `uint16` 常量。
 ```go
 constant := uast.ConstUint16One()
 ```
@@ -1435,7 +1435,7 @@ Output:
 ```
 
 ### ConstUint32One
-Returns a constant `uint32` value of `1`.
+返回值为 `1` 的 `uint32` 常量。
 ```go
 constant := uast.ConstUint32One()
 ```
@@ -1445,7 +1445,7 @@ Output:
 ```
 
 ### ConstUint64One
-Returns a constant `uint64` value of `1`.
+返回值为 `1` 的 `uint64` 常量。
 ```go
 constant := uast.ConstUint64One()
 ```
@@ -1457,7 +1457,7 @@ Output:
 ## exprFunction
 ### Aggregate
 #### Avg
-Returns the average (arithmetic mean) of all non-NULL values in the expression. If `distinct` is `true`, the average is calculated over distinct values only.
+返回表达式中所有非 NULL 值的平均值（算术平均）。如果 `distinct` 为 `true`，则仅对不重复的值计算平均值。
 ```go
 function := uast.Avg(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
@@ -1484,7 +1484,7 @@ AVG(DISTINCT "t"."number")
 ```
 
 #### BitAnd
-Returns the bitwise AND of all bits in the expression. Only meaningful for integer types.
+返回表达式中所有位的按位与。仅对整数类型有意义。
 ```go
 function := uast.BitAnd(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
@@ -1511,7 +1511,7 @@ BIT_AND(DISTINCT "t"."number")
 ```
 
 #### BitOr
-Returns the bitwise OR of all bits in the expression. Only meaningful for integer types.
+返回表达式中所有位的按位或。仅对整数类型有意义。
 ```go
 function := uast.BitOr(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
@@ -1538,7 +1538,7 @@ BIT_OR(DISTINCT "t"."number")
 ```
 
 #### BitXor
-Returns the bitwise XOR of all bits in the expression. Only meaningful for integer types.
+返回表达式中所有位的按位异或。仅对整数类型有意义。
 ```go
 function := uast.BitXor(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
@@ -1565,7 +1565,7 @@ BIT_XOR(DISTINCT "t"."number")
 ```
 
 #### Count
-Returns the number of rows matching the query, or the number of non-NULL values if an expression is provided. When `distinct` is `true`, counts only distinct values.
+返回匹配查询的行数，如果提供了表达式，则返回非 NULL 值的数量。当 `distinct` 为 `true` 时，仅计数不重复的值。
 ```go
 function := uast.Count(uast.Column[string]("t", "string"), false)
 functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
@@ -1592,7 +1592,7 @@ COUNT(DISTINCT "t"."string")
 ```
 
 #### GroupConcat
-Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The `distinct` flag removes duplicates before concatenation.
+将组中的值连接成一个字符串，用默认分隔符（通常是逗号）分隔。`distinct` 标志在连接前删除重复项。
 ```go
 function := uast.GroupConcat(uast.Column[string]("t", "string"), false)
 functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), true)
@@ -1619,7 +1619,7 @@ GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ',')
 ```
 
 #### Max
-Returns the maximum value of the expression across all rows in the group.
+返回组中所有行的表达式的最大值。
 ```go
 function := uast.Max(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
@@ -1646,7 +1646,7 @@ MAX(DISTINCT "t"."number")
 ```
 
 #### Min
-Returns the minimum value of the expression across all rows in the group.
+返回组中所有行的表达式的最小值。
 ```go
 function := uast.Min(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
@@ -1673,7 +1673,7 @@ MIN(DISTINCT "t"."number")
 ```
 
 #### StdDev
-Returns the population standard deviation of the expression.
+返回表达式的总体标准差。
 ```go
 function := uast.StdDev(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
@@ -1700,7 +1700,7 @@ STDEV(DISTINCT "t"."number")
 ```
 
 #### Sum
-Returns the sum of all values in the expression. If `distinct` is `true`, sums only distinct values.
+返回表达式中所有值的总和。如果 `distinct` 为 `true`，则仅对不重复的值求和。
 ```go
 function := uast.Sum(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
@@ -1727,7 +1727,7 @@ SUM(DISTINCT "t"."number")
 ```
 
 #### Variance
-Returns the population variance of the expression.
+返回表达式的总体方差。
 ```go
 function := uast.Variance(uast.Column[int]("t", "number"), false)
 functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
@@ -1755,7 +1755,7 @@ VARIANCE(DISTINCT "t"."number")
 
 ### Analytical
 #### FirstValue
-Returns the value of the expression from the first row of the window frame. Requires an `OVER` clause with window specification.
+返回窗口框架第一行的表达式值。需要带有窗口规范的 `OVER` 子句。
 ```go
 function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1780,7 +1780,7 @@ FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC
 ```
 
 #### Lag
-Returns the value of the expression from a row that is `offset` rows before the current row within the partition.
+返回分区内当前行之前偏移 `offset` 行的表达式值。
 ```go
 function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1805,7 +1805,7 @@ LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
 
 #### LastValue
-Returns the value of the expression from the last row of the window frame.
+返回窗口框架最后一行的表达式值。
 ```go
 function := uast.LastValue(uast.Column[string]("t", "string")).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1831,7 +1831,7 @@ LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC R
 ```
 
 #### Lead
-Returns the value of the expression from a row that is `offset` rows after the current row within the partition.
+返回分区内当前行之后偏移 `offset` 行的表达式值。
 ```go
 function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1856,7 +1856,7 @@ LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 ```
 
 #### NthValue
-Returns the value of the expression from the `n-th` row of the window frame.
+返回窗口框架第 `n` 行的表达式值。
 ```go
 function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -1883,7 +1883,7 @@ NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DES
 
 ### Condition
 #### Case
-Evaluates a list of `WHEN`-`THEN` pairs and returns the `THEN` expression for the first true WHEN. If no condition is true, returns the `ELSE` expression if provided, or `NULL`.
+计算 `WHEN`-`THEN` 对列表，并为第一个为真的 `WHEN` 返回 `THEN` 表达式。如果没有条件为真，则返回 `ELSE` 表达式（如果提供），否则返回 `NULL`。
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
@@ -1912,7 +1912,7 @@ CASE WHEN "t"."number" < ? THEN ? ELSE ? END
 ```
 
 #### Coalesce
-Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
+返回提供列表中的第一个非 NULL 表达式。用于提供回退值。
 ```go
 function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -1934,7 +1934,7 @@ COALESCE("t"."createat", "t"."updateat")
 ```
 
 #### Greatest
-Returns the largest value from the provided list of expressions.
+返回提供表达式列表中的最大值。
 ```go
 function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -1956,7 +1956,7 @@ GREATEST("t"."createat", "t"."updateat")
 ```
 
 #### Least
-Returns the smallest value from the provided list of expressions.
+返回提供表达式列表中的最小值。
 ```go
 function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -1978,7 +1978,7 @@ LEAST("t"."createat", "t"."updateat")
 ```
 
 #### NullIf
-Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
+如果两个表达式相等，则返回 `NULL`；否则返回第一个表达式。
 ```go
 function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
 ```
@@ -2001,7 +2001,7 @@ NULLIF("t"."createat", "t"."updateat")
 
 ### Convert
 #### Cast
-Converts an expression to a specified data type.
+将表达式转换为指定的数据类型。
 ```go
 function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 ```
@@ -2023,7 +2023,7 @@ CAST("t"."number" AS TEXT)
 ```
 
 #### CharLength
-Returns the number of characters in a string expression.
+返回字符串表达式中的字符数。
 ```go
 function := uast.CharLength(uast.Column[string]("t", "string"))
 ```
@@ -2045,7 +2045,7 @@ CHAR_LENGTH("t"."string")
 ```
 
 #### DateFormat
-Formats a datetime expression according to a specified format mask.
+根据指定的格式掩码格式化日期时间表达式。
 ```go
 function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
 ```
@@ -2067,7 +2067,7 @@ strftime("t"."createat", '%Y-%m-%d')
 ```
 
 #### Degrees
-Converts an angle from radians to degrees.
+将角度从弧度转换为度数。
 ```go
 function := uast.Degrees(uast.Column[int]("t", "number"))
 ```
@@ -2089,7 +2089,7 @@ DEGREES("t"."number")
 ```
 
 #### Length
-Returns the byte length of a string expression.
+返回字符串表达式的字节长度。
 ```go
 function := uast.Length(uast.Column[string]("t", "string"))
 ```
@@ -2111,7 +2111,7 @@ LENGTH("t"."string")
 ```
 
 #### Position
-Returns the starting position of the first occurrence of a substring within a string.
+返回子字符串在字符串中首次出现的起始位置。
 ```go
 function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
 ```
@@ -2133,7 +2133,7 @@ POSITION(? IN "t"."string")
 ```
 
 #### Radians
-Converts an angle from degrees to radians.
+将角度从度数转换为弧度。
 ```go
 function := uast.Radians(uast.Column[int]("t", "number"))
 ```
@@ -2156,7 +2156,7 @@ RADIANS("t"."number")
 
 ### Date and time
 #### CurDate
-Returns the current date (without time).
+返回当前日期（不含时间）。
 ```go
 function := uast.CurDate()
 ```
@@ -2178,7 +2178,7 @@ date('now')
 ```
 
 #### CurTime
-Returns the current time (without date).
+返回当前时间（不含日期）。
 ```go
 function := uast.CurTime()
 ```
@@ -2200,7 +2200,7 @@ time('now')
 ```
 
 #### DateAdd
-Adds a time/date interval to a datetime expression and returns the resulting datetime.
+将时间/日期间隔添加到日期时间表达式，并返回结果日期时间。
 ```go
 function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
@@ -2222,7 +2222,7 @@ datetime("t"."createat",  '+2 DAY')
 ```
 
 #### DateDiff
-Returns the difference in days between two datetime expressions (`datetimeEnd` - `datetimeStart`).
+返回两个日期时间表达式之间的天数差（`datetimeEnd` - `datetimeStart`）。
 ```go
 function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
 ```
@@ -2244,7 +2244,7 @@ DATEDIFF("t"."updateat", "t"."createat")
 ```
 
 #### DateSub
-Subtracts a time/date interval from a datetime expression and returns the resulting datetime.
+从日期时间表达式中减去时间/日期间隔，并返回结果日期时间。
 ```go
 function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
@@ -2266,7 +2266,7 @@ datetime("t"."createat", '-2 DAY')
 ```
 
 #### Day
-Extracts the day of the month (1–31) from a datetime expression.
+从日期时间表达式中提取月份中的日期（1–31）。
 ```go
 function := uast.Day(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2288,7 +2288,7 @@ DAY("t"."createat")
 ```
 
 #### DayName
-Returns the name of the weekday (e.g., 'Monday', 'Tuesday') for a given datetime expression.
+返回给定日期时间表达式的星期名称（例如 'Monday', 'Tuesday'）。
 ```go
 function := uast.DayName(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2310,7 +2310,7 @@ strftime('%w', "t"."createat")
 ```
 
 #### Hour
-Extracts the hour (0–23) from a datetime expression.
+从日期时间表达式中提取小时（0–23）。
 ```go
 function := uast.Hour(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2332,7 +2332,7 @@ HOUR("t"."createat")
 ```
 
 #### Minute
-Extracts the minute (0–59) from a datetime expression.
+从日期时间表达式中提取分钟（0–59）。
 ```go
 function := uast.Minute(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2354,7 +2354,7 @@ MINUTE("t"."createat")
 ```
 
 #### Month
-Extracts the month (1–12) from a datetime expression.
+从日期时间表达式中提取月份（1–12）。
 ```go
 function := uast.Month(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2376,7 +2376,7 @@ MONTH("t"."createat")
 ```
 
 #### MonthName
-Returns the name of the month (e.g., 'January', 'February') for a given datetime expression.
+返回给定日期时间表达式的月份名称（例如 'January', 'February'）。
 ```go
 function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2398,7 +2398,7 @@ strftime('%m', "t"."createat")
 ```
 
 #### Now
-Returns the current date and time.
+返回当前日期和时间。
 ```go
 function := uast.Now()
 ```
@@ -2420,7 +2420,7 @@ datetime('now')
 ```
 
 #### Quarter
-Extracts the quarter (1–4) from a datetime expression.
+从日期时间表达式中提取季度（1–4）。
 ```go
 function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2442,7 +2442,7 @@ QUARTER("t"."createat")
 ```
 
 #### Second
-Extracts the second (0–59) from a datetime expression.
+从日期时间表达式中提取秒数（0–59）。
 ```go
 function := uast.Second(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2464,7 +2464,7 @@ SECOND("t"."createat")
 ```
 
 #### TimeAdd
-Adds a time interval to a time/datetime expression and returns the resulting time.
+将时间间隔添加到时间/日期时间表达式，并返回结果时间。
 ```go
 function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
@@ -2486,7 +2486,7 @@ time("t"."createat", '+2 HOUR')
 ```
 
 #### TimeDiff
-Returns the difference between two time/datetime expressions (`timeEnd` - `timeStart`).
+返回两个时间/日期时间表达式之间的差值（`timeEnd` - `timeStart`）。
 ```go
 function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
 ```
@@ -2508,7 +2508,7 @@ TIMEDIFF("t"."updateat", "t"."createat")
 ```
 
 #### TimeSub
-Subtracts a time interval from a time/datetime expression and returns the resulting time.
+从时间/日期时间表达式中减去时间间隔，并返回结果时间。
 ```go
 function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
@@ -2530,7 +2530,7 @@ time("t"."createat", '-2 HOUR')
 ```
 
 #### Week
-Extracts the week number (1–53) from a datetime expression.
+从日期时间表达式中提取周数（1–53）。
 ```go
 function := uast.Week(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2552,7 +2552,7 @@ WEEK("t"."createat")
 ```
 
 #### Year
-Extracts the year from a datetime expression.
+从日期时间表达式中提取年份。
 ```go
 function := uast.Year(uast.Column[time.Time]("t", "createat"))
 ```
@@ -2575,7 +2575,7 @@ YEAR("t"."createat")
 
 ### Json
 #### JsonArray
-Creates a JSON array from the given expression and optional additional values.
+从给定表达式和可选附加值创建 JSON 数组。
 ```go
 function := uast.JsonArray(
     uast.Column[string]("t", "json"), 
@@ -2601,7 +2601,7 @@ JSON_ARRAY("t"."json", ?, ?)
 ```
 
 #### JsonArrayAgg
-Aggregates values from a group into a JSON array.
+将组中的值聚合到 JSON 数组中。
 ```go
 function := uast.JsonArrayAgg(
     uast.Column[string]("t", "json"),
@@ -2625,7 +2625,7 @@ JSON_GROUP_ARRAY("t"."json")
 ```
 
 #### JsonContains
-Checks whether a JSON document contains a specified value.
+检查 JSON 文档是否包含指定值。
 ```go
 function := uast.JsonContains(
     uast.Column[string]("t", "json"),
@@ -2650,7 +2650,7 @@ JSON_CONTAINS("t"."json", '{"key":"val"}')
 ```
 
 #### JsonExtract
-Extracts a value from a JSON document at the specified path. The `json` parameter is built with `JsonPath` and optional `JsonKey`/`JsonIndex`.
+在指定路径从 JSON 文档中提取值。`json` 参数使用 `JsonPath` 和可选的 `JsonKey`/`JsonIndex` 构建。
 ```go
 function := JsonExtract(
     uast.Column[string]("t", "json"), 
@@ -2682,7 +2682,7 @@ Output SQLite:
 ```
 
 #### JsonObject
-Builds a JSON object from key-value pairs.
+从键值对构建 JSON 对象。
 ```go
 function := uast.JsonObject(
     uast.JsonPair(
@@ -2709,7 +2709,7 @@ JSON_OBJECT('key', COUNT(`t`.`json`))
 ```
 
 #### JsonObjectAgg
-Aggregates key-value pairs from a group into a single JSON object.
+将组中的键值对聚合到单个 JSON 对象中。
 ```go
 function := uast.JsonObjectAgg(
     uast.Column[string]("t", "json"),
@@ -2734,7 +2734,7 @@ JSON_GROUP_OBJECT("t"."json", "t"."number")
 ```
 
 #### JsonRemove
-Removes a value from a JSON document at the specified path(s).
+在指定路径从 JSON 文档中删除值。
 ```go
 function := uast.JsonRemove(
     uast.Column[string]("t", "json"),
@@ -2768,7 +2768,7 @@ JSON_REMOVE("t"."json", '$.key1', '$.key2')
 ```
 
 #### JsonSet
-Sets a value in a JSON document at the specified path(s). Creates the path if it does not exist.
+在指定路径设置 JSON 文档中的值。如果路径不存在则创建。
 ```go
 function := uast.JsonSet(
     uast.Column[string]("t", "json"),
@@ -2804,7 +2804,7 @@ JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)
 ```
 
 #### JsonType
-Returns the JSON type of a JSON value (e.g., 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
+返回 JSON 值的类型（例如 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL'）。
 ```go
 function := uast.JsonType(uast.Column[string]("t", "json"))
 ```
@@ -2827,7 +2827,7 @@ JSON_TYPE("t"."json")
 
 ### Math
 #### Abs
-Returns the absolute (non-negative) value of a numeric expression.
+返回数值表达式的绝对值（非负值）。
 ```go
 function := uast.Abs(uast.Column[int]("t", "number"))
 ```
@@ -2849,7 +2849,7 @@ ABS("t"."number")
 ```
 
 #### ACos
-Returns the arc cosine (inverse cosine) of the expression, in radians.
+返回表达式的反余弦（逆余弦），以弧度为单位。
 ```go
 function := uast.ACos(uast.Column[int]("t", "number"))
 ```
@@ -2871,7 +2871,7 @@ ACOS("t"."number")
 ```
 
 #### ASin
-Returns the arc sine (inverse sine) of the expression, in radians.
+返回表达式的反正弦（逆正弦），以弧度为单位。
 ```go
 function := uast.ASin(uast.Column[int]("t", "number"))
 ```
@@ -2893,7 +2893,7 @@ ASIN("t"."number")
 ```
 
 #### ATan
-Returns the arc tangent (inverse tangent) of the expression, in radians.
+返回表达式的反正切（逆正切），以弧度为单位。
 ```go
 function := uast.ATan(uast.Column[int]("t", "number"))
 ```
@@ -2915,7 +2915,7 @@ ATAN("t"."number")
 ```
 
 #### ATan2
-Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using their signs to determine the quadrant.
+返回两个参数（`y`/`x`）商的反正切，使用它们的符号确定象限。
 ```go
 function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
 ```
@@ -2937,7 +2937,7 @@ ATAN2("t"."y", "t"."x")
 ```
 
 #### Cbrt
-Returns the cube root of a numeric expression.
+返回数值表达式的立方根。
 ```go
 function := uast.Cbrt(uast.Column[int]("t", "number"))
 ```
@@ -2959,7 +2959,7 @@ CBRT("t"."number")
 ```
 
 #### Ceil
-Returns the smallest integer value not less than the argument (rounds up).
+返回不小于参数的最小整数值（向上取整）。
 ```go
 function := uast.Ceil(uast.Column[int]("t", "number"))
 ```
@@ -2981,7 +2981,7 @@ CEIL("t"."number")
 ```
 
 #### Cos
-Returns the cosine of the expression, where the expression is in radians.
+返回表达式的余弦，以弧度为单位。
 ```go
 function := uast.Cos(uast.Column[int]("t", "number"))
 ```
@@ -3003,7 +3003,7 @@ COS("t"."number")
 ```
 
 #### Exp
-Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
+返回 `e`（欧拉数，~2.71828）的表达式次幂。
 ```go
 function := uast.Exp(uast.Column[int]("t", "number"))
 ```
@@ -3025,7 +3025,7 @@ EXP("t"."number")
 ```
 
 #### Floor
-Returns the largest integer value not greater than the argument (rounds down).
+返回不大于参数的最大整数值（向下取整）。
 ```go
 function := uast.Floor(uast.Column[int]("t", "number"))
 ```
@@ -3047,7 +3047,7 @@ FLOOR("t"."number")
 ```
 
 #### Ln
-Returns the natural logarithm (base `e`) of the expression.
+返回表达式的自然对数（以 `e` 为底）。
 ```go
 function := uast.Ln(uast.Column[int]("t", "number"))
 ```
@@ -3069,7 +3069,7 @@ LN("t"."number")
 ```
 
 #### Log
-Returns the logarithm of the expression to the specified base.
+返回表达式对指定底数的对数。
 ```go
 function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -3091,7 +3091,7 @@ LOG("t"."number", ?)
 ```
 
 #### Mod
-Returns the remainder (modulo) of the division of the first expression by the second.
+返回第一个表达式除以第二个表达式的余数（模）。
 ```go
 function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -3113,7 +3113,7 @@ MOD("t"."number", ?)
 ```
 
 #### Pi
-Returns the mathematical constant `p` (~3.14159).
+返回数学常数 `π`（~3.14159）。
 ```go
 function := uast.Pi()
 ```
@@ -3135,7 +3135,7 @@ PI()
 ```
 
 #### Power
-Returns the expression raised to the power of the exponent.
+返回表达式对 exponent 次幂的值。
 ```go
 function := uast.Power(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -3157,7 +3157,7 @@ POWER("t"."number", ?)
 ```
 
 #### Rand
-Returns a random floating-point value in the range [0, 1].
+返回范围 [0, 1] 内的随机浮点值。
 ```go
 function := uast.Rand()
 ```
@@ -3179,7 +3179,7 @@ RANDOM()
 ```
 
 #### Round
-Rounds the expression to the specified number of decimal places.
+将表达式四舍五入到指定的小数位数。
 ```go
 function := uast.Round(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -3201,7 +3201,7 @@ ROUND("t"."number", ?)
 ```
 
 #### Sin
-Returns the sine of the expression, where the expression is in radians.
+返回表达式的正弦，以弧度为单位。
 ```go
 function := uast.Sin(uast.Column[int]("t", "number"))
 ```
@@ -3223,7 +3223,7 @@ SIN("t"."number")
 ```
 
 #### Sqrt
-Returns the square root of the expression.
+返回表达式的平方根。
 ```go
 function := uast.Sqrt(uast.Column[int]("t", "number"))
 ```
@@ -3245,7 +3245,7 @@ SQRT("t"."number")
 ```
 
 #### Tan
-Returns the tangent of the expression, where the expression is in radians.
+返回表达式的正切，以弧度为单位。
 ```go
 function := uast.Tan(uast.Column[int]("t", "number"))
 ```
@@ -3267,7 +3267,7 @@ TAN("t"."number")
 ```
 
 #### Trunc
-Truncates the numeric expression to the specified number of decimal places (without rounding).
+将数值表达式截断到指定的小数位数（不进行四舍五入）。
 ```go
 function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
 ```
@@ -3290,7 +3290,7 @@ TRUNC("t"."number", ?)
 
 ### Ranking
 #### CumeDist
-Returns the cumulative distribution of a value within a partition (the ratio of rows that come before or are peers with the current row). Must be used with an `OVER` clause.
+返回分区内值的累积分布（在当前行之前或与当前行相等的行数比率）。必须与 `OVER` 子句一起使用。
 ```go
 function := uast.CumeDist().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -3315,7 +3315,7 @@ CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### DenseRank
-Returns the rank of a row without gaps. Rows with equal values receive the same rank, and the next rank is the immediate next integer. Requires `OVER`.
+返回无间隙的行排名。相等值的行获得相同的排名，下一个排名是紧接着的下一个整数。需要 `OVER`。
 ```go
 function := uast.DenseRank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -3340,7 +3340,7 @@ DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### NTile
-Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
+将分区内的行划分为 `n` 个近似相等的组，并返回每行的组号（1 到 `n`）。
 ```go
 function := uast.NTile(2).Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -3365,7 +3365,7 @@ NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### PercentRank
-Returns the percentile rank of a row within a partition (range 0 to 1). Rank of first row is always 0. Requires `OVER`.
+返回分区内行的百分位排名（范围 0 到 1）。第一行的排名始终为 0。需要 `OVER`。
 ```go
 function := uast.PercentRank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -3390,7 +3390,7 @@ PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### Rank
-Returns the rank of a row with gaps. Equal values receive the same rank, and the next distinct value skips ahead. Requires `OVER`.
+返回有间隙的行排名。相等值获得相同排名，下一个不同值跳过排名。需要 `OVER`。
 ```go
 function := uast.Rank().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -3415,7 +3415,7 @@ RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ```
 
 #### RowNumber
-Assigns a unique sequential integer to each row within the partition, starting from 1. Order determines the numbering sequence.
+为分区内的每一行分配一个唯一的序号，从 1 开始。顺序决定编号序列。
 ```go
 function := uast.RowNumber().Over(
     uast.PartitionBy(uast.Column[int64]("t", "id")),
@@ -3441,7 +3441,7 @@ ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 
 ### String
 #### Concat
-Concatenates two or more string expressions into a single string. `NULL` arguments are treated as empty strings in most dialects.
+将两个或多个字符串表达式连接成一个字符串。`NULL` 参数在大多数方言中被视为空字符串。
 ```go
 function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
@@ -3463,7 +3463,7 @@ CONCAT("t"."string", ?, ?)
 ```
 
 #### ConcatWs
-Concatenates two or more string expressions with a specified separator between them. Skips `NULL` arguments.
+用指定的分隔符连接两个或多个字符串表达式。跳过 `NULL` 参数。
 ```go
 function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
 ```
@@ -3485,7 +3485,7 @@ CONCAT_WS(?, "t"."string", ?, ?)
 ```
 
 #### LeftString
-Returns the leftmost `count` characters from a string expression.
+返回字符串表达式最左边的 `count` 个字符。
 ```go
 function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
@@ -3507,7 +3507,7 @@ LEFT("t"."string", ?)
 ```
 
 #### Lower
-Converts a string expression to lowercase.
+将字符串表达式转换为小写。
 ```go
 function := uast.Lower(uast.Column[string]("t", "string"))
 ```
@@ -3529,7 +3529,7 @@ LOWER("t"."string")
 ```
 
 #### LPad
-Left-pads a string expression with the specified separator to a total length of `count` characters.
+用指定的分隔符在左侧填充字符串表达式，使其总长度达到 `count` 个字符。
 ```go
 function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
@@ -3551,7 +3551,7 @@ LPAD("t"."string", ?, ?)
 ```
 
 #### LTrim
-Removes leading spaces from a string expression.
+删除字符串表达式的前导空格。
 ```go
 function := uast.LTrim(uast.Column[string]("t", "string"))
 ```
@@ -3573,7 +3573,7 @@ LTRIM("t"."string")
 ```
 
 #### Repeat
-Repeats a string expression `count` times.
+将字符串表达式重复 `count` 次。
 ```go
 function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
 ```
@@ -3595,7 +3595,7 @@ REPEAT("t"."string", ?)
 ```
 
 #### Replace
-Replaces all occurrences of a substring in a string with a new substring.
+将字符串中所有出现的子字符串替换为新的子字符串。
 ```go
 function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
@@ -3617,7 +3617,7 @@ REPLACE("t"."string", ?, ?)
 ```
 
 #### Reverse
-Reverses the characters in a string expression.
+反转字符串表达式中的字符。
 ```go
 function := uast.Reverse(uast.Column[string]("t", "string"))
 ```
@@ -3639,7 +3639,7 @@ REVERSE("t"."string")
 ```
 
 #### RightString
-Returns the rightmost `count` characters from a string expression.
+返回字符串表达式最右边的 `count` 个字符。
 ```go
 function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
 ```
@@ -3661,7 +3661,7 @@ RIGHT("t"."string", ?)
 ```
 
 #### RPad
-Right-pads a string expression with the specified separator to a total length of `count` characters.
+用指定的分隔符在右侧填充字符串表达式，使其总长度达到 `count` 个字符。
 ```go
 function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
@@ -3683,7 +3683,7 @@ RPAD("t"."string", ?, ?)
 ```
 
 #### RTrim
-Removes trailing spaces from a string expression.
+删除字符串表达式的尾部空格。
 ```go
 function := uast.RTrim(uast.Column[string]("t", "string"))
 ```
@@ -3705,7 +3705,7 @@ RTRIM("t"."string")
 ```
 
 #### SubString
-Extracts a substring from a string expression starting at `startPos` (1-based) for `lengthStr` characters.
+从字符串表达式中提取子字符串，从 `startPos`（基于 1）开始，长度为 `lengthStr` 个字符。
 ```go
 function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
@@ -3727,7 +3727,7 @@ SUBSTRING("t"."string", ?, ?)
 ```
 
 #### Trim
-Removes both leading and trailing spaces from a string expression.
+删除字符串表达式的前导和尾部空格。
 ```go
 function := uast.Trim(uast.Column[string]("t", "string"))
 ```
@@ -3749,7 +3749,7 @@ TRIM("t"."string")
 ```
 
 #### Upper
-Converts a string expression to uppercase.
+将字符串表达式转换为大写。
 ```go
 function := uast.Upper(uast.Column[string]("t", "string"))
 ```
@@ -3772,7 +3772,7 @@ UPPER("t"."string")
 
 ## exprLiteral
 ### Literal
-Embeds a raw literal value directly into the generated SQL string (not parameterized). Use with caution — values are written as-is. Prefer `Value` for user-supplied data.
+将原始字面量值直接嵌入生成的 SQL 字符串（不参数化）。请谨慎使用 — 值按原样写入。对于用户提供的数据，请优先使用 `Value`。
 ```go
 literal := uast.Literal("%Y-%m-%d")
 ```
@@ -3783,7 +3783,7 @@ Output:
 
 ## exprLogical
 ### And
-Combines multiple conditions with a logical `AND`. All conditions must be true for the combined expression to be true.
+通过逻辑 `AND` 组合多个条件。要使组合表达式为真，所有条件都必须为真。
 ```go
 logical := uast.And(
     uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
@@ -3808,7 +3808,7 @@ Output SQLite:
 ```
 
 ### Or
-Combines multiple conditions with a logical `OR`. At least one condition must be true for the combined expression to be true.
+通过逻辑 `OR` 组合多个条件。要使组合表达式为真，至少有一个条件为真。
 ```go
 logical := uast.Or(
     uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
@@ -3834,7 +3834,7 @@ Output SQLite:
 
 ## exprSubquery
 ### Subquery
-Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
+将 `SELECT` 语句包装为类型化表达式，可用于比较（`In`、`Exists`、`Equal` 等）或作为 `SELECT` 子句中的列。泛型参数 `T` 指定子查询返回的单个列的标量类型。
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test").As("t")))
 ```
@@ -3857,8 +3857,8 @@ Output SQLite:
 
 ## exprValue
 ### Value
-Wraps a Go value as a parameterized expression. The value is NOT inserted into the SQL string directly — instead, a placeholder (`?`, `$1`, etc.) is generated and the value is appended to the arguments slice returned by `Build()`. This is the safe way to pass user-supplied data and prevents SQL injection. 
-Supported types: `float32`, `float64`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `string`, `time.Time`.
+将 Go 值包装为参数化表达式。该值不会直接插入 SQL 字符串中 — 而是生成一个占位符（`?`、`$1` 等），并将该值附加到 `Build()` 返回的参数切片中。这是传递用户提供的数据并防止 SQL 注入的安全方式。
+支持的类型：`float32`、`float64`、`int`、`int8`、`int16`、`int32`、`int64`、`uint`、`uint8`、`uint16`、`uint32`、`uint64`、`string`、`time.Time`。
 ```go
 var data string = "ivan"
 value := uast.Value(data)

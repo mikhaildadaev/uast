@@ -3113,7 +3113,7 @@ MOD("t"."number", ?)
 ```
 
 #### Pi
-Returns the mathematical constant `p` (~3.14159).
+Returns the mathematical constant `π` (~3.14159).
 ```go
 function := uast.Pi()
 ```

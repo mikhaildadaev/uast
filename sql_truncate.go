@@ -2,10 +2,11 @@ package uast
 
 // Публичные конструкторы
 func NewTruncate(table *TableSource) *stmtTruncate {
-	table.withAlias = false
+	copy := *table
+	copy.withAlias = false
 	return &stmtTruncate{
 		command: uastManagementTruncate,
-		table:   table,
+		table:   &copy,
 	}
 }
 

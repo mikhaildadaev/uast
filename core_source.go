@@ -26,6 +26,7 @@ func NewCTE(name string, alias string) *CteSource {
 	return &CteSource{
 		aliasName: alias,
 		cteName:   name,
+		withAlias: true,
 	}
 }
 func NewQuery(statement statement, alias string) *QuerySource {
@@ -35,6 +36,7 @@ func NewQuery(statement statement, alias string) *QuerySource {
 	return &QuerySource{
 		aliasName: alias,
 		statement: statement,
+		withAlias: true,
 	}
 }
 func NewTable(name, alias string) *TableSource {
@@ -44,6 +46,7 @@ func NewTable(name, alias string) *TableSource {
 	return &TableSource{
 		aliasName: alias,
 		tableName: name,
+		withAlias: true,
 	}
 }
 
@@ -54,14 +57,17 @@ var queryCounter atomic.Int64
 type sourceCte struct {
 	aliasName string
 	cteName   string
+	withAlias bool
 }
 type sourceTable struct {
 	aliasName string
 	tableName string
+	withAlias bool
 }
 type sourceQuery struct {
 	aliasName string
 	statement statement
+	withAlias bool
 }
 
 // Приватные методы
@@ -74,10 +80,12 @@ func (source *sourceCte) alias() string {
 func (source *sourceCte) isSourceBase() {}
 func (source *sourceCte) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.cteName)
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderService(uastModifierAs)
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(source.aliasName)
+	if source.withAlias {
+		baseRenderer.renderOperator(uastCompositeSingleSpace)
+		baseRenderer.renderService(uastModifierAs)
+		baseRenderer.renderOperator(uastCompositeSingleSpace)
+		baseRenderer.renderAlias(source.aliasName)
+	}
 	return nil
 }
 func (source *sourceCte) validate(baseValidator *baseValidator) error {
@@ -98,10 +106,12 @@ func (source *sourceTable) alias() string {
 func (source *sourceTable) isSourceBase() {}
 func (source *sourceTable) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.tableName)
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderService(uastModifierAs)
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(source.aliasName)
+	if source.withAlias {
+		baseRenderer.renderOperator(uastCompositeSingleSpace)
+		baseRenderer.renderService(uastModifierAs)
+		baseRenderer.renderOperator(uastCompositeSingleSpace)
+		baseRenderer.renderAlias(source.aliasName)
+	}
 	return nil
 }
 func (source *sourceTable) validate(baseValidator *baseValidator) error {
@@ -126,10 +136,12 @@ func (source *sourceQuery) render(baseRenderer *baseRenderer) error {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeParenRight)
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderService(uastModifierAs)
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(source.aliasName)
+	if source.withAlias {
+		baseRenderer.renderOperator(uastCompositeSingleSpace)
+		baseRenderer.renderService(uastModifierAs)
+		baseRenderer.renderOperator(uastCompositeSingleSpace)
+		baseRenderer.renderAlias(source.aliasName)
+	}
 	return nil
 }
 func (source *sourceQuery) validate(baseValidator *baseValidator) error {

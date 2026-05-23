@@ -96,5 +96,5 @@ func main() {
 ```
 
 ## Roadmap
-- **DDL** — Data Definition Language support: `CREATE`, `ALTER`, `DROP`, `TRUNCATE`, `COMMENT`.
-- **Dialects** — `ClickHouse`, `MsSQL`, `Oracle` dialects.
+- **DDL** — `CREATE` (TABLE, INDEX, VIEW), `ALTER` (ADD, DROP, ALTER, RENAME COLUMN, CONSTRAINT), `DROP` (TABLE, INDEX, VIEW), `TRUNCATE`, `COMMENT`.
+- **Dialects** — `ClickHouse`, `MsSQL`, `Oracle` support.

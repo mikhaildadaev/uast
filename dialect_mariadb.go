@@ -540,9 +540,6 @@ func (strateger *mariaDBStrateger) renderTruncate(baseRenderer *baseRenderer, st
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
 		return err
 	}
-	//if err := baseRenderer.renderIdentity(stmtTruncate.identity); err != nil {
-	//	return err
-	//}
 	//if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
 	//	return err
 	//}

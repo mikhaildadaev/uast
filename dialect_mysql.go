@@ -534,12 +534,6 @@ func (strateger *mysqlStrateger) renderTruncate(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
 		return err
 	}
-	//if err := baseRenderer.renderIdentity(stmtTruncate.identity); err != nil {
-	//	return err
-	//}
-	//if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
-	//	return err
-	//}
 	return nil
 }
 func (strateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {

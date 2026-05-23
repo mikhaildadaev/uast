@@ -263,7 +263,7 @@ func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (renderer *baseRenderer) renderField(fields []markExpressable) error {
+func (renderer *baseRenderer) renderFields(fields []markExpressable) error {
 	if fields == nil {
 		return nil
 	}

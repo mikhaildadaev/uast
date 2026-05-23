@@ -342,7 +342,7 @@ func (validator *baseValidator) validateColumns(columns []markExpressable) error
 func (validator *baseValidator) validateCommand(command managementService) error {
 	return nil
 }
-func (validator *baseValidator) validateField(fields []markExpressable) error {
+func (validator *baseValidator) validateFields(fields []markExpressable) error {
 	if fields == nil {
 		return ErrInvalidStatementField
 	}

@@ -20,8 +20,8 @@ func (stmt *stmtInsert) Returning(returnings ...markReturnable) *stmtInsert {
 	return stmt
 }
 func (stmt *stmtInsert) Source(source *stmtSelect) *stmtInsert {
-	columns := make([]markExpressable, len(source.field))
-	for i, field := range source.field {
+	columns := make([]markExpressable, len(source.fields))
+	for i, field := range source.fields {
 		switch column := field.(type) {
 		case *ColumnExpr[string]:
 			columns[i] = &exprPair[string]{name: column.name}

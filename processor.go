@@ -20,7 +20,7 @@ type componentRenderer interface {
 	renderCommand(command managementService) error
 	renderColumns(columns []markExpressable) error
 	renderDistinct(distinct bool) error
-	renderField(fields []markExpressable) error
+	renderFields(fields []markExpressable) error
 	renderFrom(from SourceBase) error
 	renderGroupBy(groups []markGroupable) error
 	renderHaving(having ExpressionBase) error
@@ -88,7 +88,7 @@ type elementValidator interface {
 type componentValidator interface {
 	validateColumns(columns []markExpressable) error
 	validateCommand(command managementService) error
-	validateField(fields []markExpressable) error
+	validateFields(fields []markExpressable) error
 	validateFrom(from SourceBase) error
 	validateGroupBy(groups []markGroupable) error
 	validateHaving(having ExpressionBase) error

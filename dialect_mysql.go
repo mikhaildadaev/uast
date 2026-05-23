@@ -494,7 +494,7 @@ func (strateger *mysqlStrateger) renderSelect(baseRenderer *baseRenderer, stmtSe
 	if err := baseRenderer.renderDistinct(stmtSelect.distinct); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderField(stmtSelect.field); err != nil {
+	if err := baseRenderer.renderFields(stmtSelect.fields); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtSelect.from); err != nil {
@@ -646,7 +646,7 @@ func (strateger *mysqlStrateger) validateSelect(baseValidator *baseValidator, st
 	if err := baseValidator.validateWith(stmtSelect.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateField(stmtSelect.field); err != nil {
+	if err := baseValidator.validateFields(stmtSelect.fields); err != nil {
 		return err
 	}
 	if err := baseValidator.validateFrom(stmtSelect.from); err != nil {

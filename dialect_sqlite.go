@@ -535,7 +535,7 @@ func (strateger *sqliteStrateger) renderSelect(baseRenderer *baseRenderer, stmtS
 	if err := baseRenderer.renderDistinct(stmtSelect.distinct); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderField(stmtSelect.field); err != nil {
+	if err := baseRenderer.renderFields(stmtSelect.fields); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtSelect.from); err != nil {
@@ -696,7 +696,7 @@ func (strateger *sqliteStrateger) validateSelect(baseValidator *baseValidator, s
 	if err := baseValidator.validateWith(stmtSelect.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateField(stmtSelect.field); err != nil {
+	if err := baseValidator.validateFields(stmtSelect.fields); err != nil {
 		return err
 	}
 	if err := baseValidator.validateFrom(stmtSelect.from); err != nil {

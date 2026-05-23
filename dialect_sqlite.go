@@ -575,9 +575,6 @@ func (strateger *sqliteStrateger) renderTruncate(baseRenderer *baseRenderer, stm
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
 		return err
 	}
-	//if err := baseRenderer.renderIdentity(stmtTruncate.identity); err != nil {
-	//	return err
-	//}
 	return nil
 }
 func (strateger *sqliteStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {

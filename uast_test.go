@@ -1651,6 +1651,27 @@ func Test_SQL_Select_Distinct(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
+func Test_SQL_Truncate(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtTruncate := NewTruncate(Test.Table)
+		sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlTruncateQuery, "TRUNCATE `test`", "TRUNCATE")
+		case DialectMySQL:
+			assertContains(t, sqlTruncateQuery, "TRUNCATE `test`", "TRUNCATE")
+		case DialectPostgreSQL:
+			assertContains(t, sqlTruncateQuery, `TRUNCATE "test"`, "TRUNCATE")
+		case DialectSQLite:
+			assertContains(t, sqlTruncateQuery, `TRUNCATE "test"`, "TRUNCATE")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
+	})
+}
 func Test_SQL_Update(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(

@@ -1,5 +1,13 @@
 package uast
 
+// Публичные конструкторы
+func NewUpdate(onto SourceBase) *stmtUpdate {
+	return &stmtUpdate{
+		command: uastManagementUpdate,
+		onto:    onto,
+	}
+}
+
 // Публичные методы
 func (stmt *stmtUpdate) Join(joins ...*clauseJoin) *stmtUpdate {
 	stmt.join = joins

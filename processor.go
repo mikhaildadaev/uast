@@ -18,7 +18,7 @@ type elementRenderer interface {
 }
 type componentRenderer interface {
 	renderCommand(command managementService) error
-	renderColumn(columns []markExpressable) error
+	renderColumns(columns []markExpressable) error
 	renderDistinct(distinct bool) error
 	renderField(fields []markExpressable) error
 	renderFrom(from SourceBase) error
@@ -33,12 +33,16 @@ type componentRenderer interface {
 	renderReturning(returnings []markReturnable) error
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
+	renderTable(table *TableSource) error
 	renderUnions(unions []*clauseUnions) error
 	renderValues(values [][]ExpressionBase) error
 	renderWhere(where ExpressionBase) error
 	renderWith(withs []*clauseWith) error
 }
 type statementRenderer interface {
+	// DDL
+	renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error
+	// DML
 	renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error
 	renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error
 	renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error
@@ -56,6 +60,9 @@ type elementTransformer interface {
 type componentTransformer interface {
 }
 type statementTransformer interface {
+	// DDL
+	transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error
+	// DML
 	transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error
 	transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error
 	transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error
@@ -79,7 +86,7 @@ type elementValidator interface {
 	validateValue(value any) error
 }
 type componentValidator interface {
-	validateColumn(columns []markExpressable) error
+	validateColumns(columns []markExpressable) error
 	validateCommand(command managementService) error
 	validateField(fields []markExpressable) error
 	validateFrom(from SourceBase) error
@@ -94,12 +101,16 @@ type componentValidator interface {
 	validateReturning(returnings []markReturnable) error
 	validateSet(sets []*clauseSet) error
 	validateSource(source statement) error
+	validateTable(table *TableSource) error
 	validateUnions(unions []*clauseUnions) error
 	validateValues(values [][]ExpressionBase) error
 	validateWhere(where ExpressionBase) error
 	validateWith(withs []*clauseWith) error
 }
 type statementValidator interface {
+	// DDL
+	validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error
+	// DML
 	validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error
 	validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error
 	validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error

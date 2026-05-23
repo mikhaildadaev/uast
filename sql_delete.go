@@ -1,5 +1,13 @@
 package uast
 
+// Публичные конструкторы
+func NewDelete(from SourceBase) *stmtDelete {
+	return &stmtDelete{
+		command: uastManagementDelete,
+		from:    from,
+	}
+}
+
 // Публичные методы
 func (stmt *stmtDelete) From(from SourceBase) *stmtDelete {
 	stmt.from = from

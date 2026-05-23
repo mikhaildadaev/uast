@@ -2,6 +2,14 @@ package uast
 
 import "time"
 
+// Публичные конструкторы
+func NewInsert(into SourceBase) *stmtInsert {
+	return &stmtInsert{
+		command: uastManagementInsert,
+		into:    into,
+	}
+}
+
 // Публичные методы
 func (stmt *stmtInsert) Into(into SourceBase) *stmtInsert {
 	stmt.into = into

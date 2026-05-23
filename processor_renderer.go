@@ -245,7 +245,7 @@ func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderColumn(columns []markExpressable) error {
+func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
 	if columns == nil {
 		return nil
 	}
@@ -443,6 +443,16 @@ func (renderer *baseRenderer) renderSource(source statement) error {
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := source.render(renderer); err != nil {
+		return err
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderTable(table *TableSource) error {
+	if table == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := table.render(renderer); err != nil {
 		return err
 	}
 	return nil

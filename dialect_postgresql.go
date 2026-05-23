@@ -715,7 +715,7 @@ func (strateger *postgresqlStrateger) renderInsert(baseRenderer *baseRenderer, s
 	if err := baseRenderer.renderInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderColumn(stmtInsert.column); err != nil {
+	if err := baseRenderer.renderColumns(stmtInsert.column); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderSource(stmtInsert.source); err != nil {
@@ -769,6 +769,22 @@ func (strateger *postgresqlStrateger) renderSelect(baseRenderer *baseRenderer, s
 	if err := baseRenderer.renderUnions(stmtSelect.unions); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *postgresqlStrateger) renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error {
+	// !!! Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtTruncate.command); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
+		return err
+	}
+	//if err := baseRenderer.renderIdentity(stmtTruncate.identity); err != nil {
+	//	return err
+	//}
+	//if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
+	//	return err
+	//}
 	return nil
 }
 func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
@@ -825,6 +841,10 @@ func (strateger *postgresqlStrateger) transformSelect(baseTransformer *baseTrans
 	}
 	return nil
 }
+func (strateger *postgresqlStrateger) transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -859,7 +879,7 @@ func (strateger *postgresqlStrateger) validateInsert(baseValidator *baseValidato
 	if err := baseValidator.validateInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseValidator.validateColumn(stmtInsert.column); err != nil {
+	if err := baseValidator.validateColumns(stmtInsert.column); err != nil {
 		return err
 	}
 	if (stmtInsert.source == nil && stmtInsert.values == nil) || (stmtInsert.source != nil && stmtInsert.values != nil) {
@@ -908,6 +928,13 @@ func (strateger *postgresqlStrateger) validateSelect(baseValidator *baseValidato
 		return err
 	}
 	if err := baseValidator.validateUnions(stmtSelect.unions); err != nil {
+		return err
+	}
+	return nil
+}
+func (strateger *postgresqlStrateger) validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error {
+	// !!! Внимание, находится в стадии разработки
+	if err := baseValidator.validateTable(stmtTruncate.table); err != nil {
 		return err
 	}
 	return nil

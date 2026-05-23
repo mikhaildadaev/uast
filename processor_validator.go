@@ -328,7 +328,7 @@ func (validator *baseValidator) validateValue(value any) error {
 	}
 	return ErrUnsupportValue
 }
-func (validator *baseValidator) validateColumn(columns []markExpressable) error {
+func (validator *baseValidator) validateColumns(columns []markExpressable) error {
 	if columns == nil {
 		return nil
 	}
@@ -470,6 +470,15 @@ func (validator *baseValidator) validateSource(source statement) error {
 		return nil
 	}
 	if err := source.validate(validator); err != nil {
+		return err
+	}
+	return nil
+}
+func (validator *baseValidator) validateTable(table *TableSource) error {
+	if table == nil {
+		return ErrInvalidStatementFrom
+	}
+	if err := table.validate(validator); err != nil {
 		return err
 	}
 	return nil

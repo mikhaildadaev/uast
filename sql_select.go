@@ -1,5 +1,13 @@
 package uast
 
+// Публичные конструкторы
+func NewSelect(from SourceBase) *stmtSelect {
+	return &stmtSelect{
+		command: uastManagementSelect,
+		from:    from,
+	}
+}
+
 // Публичные методы
 func (stmt *stmtSelect) Distinct() *stmtSelect {
 	stmt.distinct = true

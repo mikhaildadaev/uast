@@ -1661,13 +1661,13 @@ func Test_SQL_Truncate(t *testing.T) {
 		sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlTruncateQuery, "TRUNCATE `test`", "TRUNCATE")
+			assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test`", "TRUNCATE")
 		case DialectMySQL:
-			assertContains(t, sqlTruncateQuery, "TRUNCATE `test`", "TRUNCATE")
+			assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test`", "TRUNCATE")
 		case DialectPostgreSQL:
-			assertContains(t, sqlTruncateQuery, `TRUNCATE "test"`, "TRUNCATE")
+			assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test"`, "TRUNCATE")
 		case DialectSQLite:
-			assertContains(t, sqlTruncateQuery, `TRUNCATE "test"`, "TRUNCATE")
+			assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test"`, "TRUNCATE")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
 	})

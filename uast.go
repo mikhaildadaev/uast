@@ -285,6 +285,7 @@ const (
 	uastManagementFrom        managementService = "FROM"
 	uastManagementInto        managementService = "INTO"
 	uastManagementSet         managementService = "SET"
+	uastManagementTable       managementService = "TABLE"
 	uastManagementTo          managementService = "TO"
 	uastManagementGroupBy     managementService = "GROUP BY"
 	uastManagementHaving      managementService = "HAVING"

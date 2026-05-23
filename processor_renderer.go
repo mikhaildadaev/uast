@@ -452,6 +452,8 @@ func (renderer *baseRenderer) renderTable(table *TableSource) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastManagementTable)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := table.render(renderer); err != nil {
 		return err
 	}

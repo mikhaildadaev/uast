@@ -34,7 +34,7 @@ go test -race ./...
 - **Quad outputs** — Every function documented with SQL output for all 4 dialects.
 - **Hot dialect switch** — `SetDialect()` changes dialect at runtime without recreating the pool.
 - **Complete DML** — SELECT, INSERT, UPDATE, DELETE with all standard clauses (JOIN, CTE, UPSERT, window functions, JSON).
-- **100+ functions** — Aggregate, analytical, conditional, conversion, date/time, JSON, math, ranking, string.
+- **150+ functions** — Aggregate, analytical, conditional, conversion, date/time, JSON, math, ranking, string.
 
 ## Limits
 - **No DDL yet**: CREATE, ALTER, DROP, TRUNCATE, COMMENT coming in v2.

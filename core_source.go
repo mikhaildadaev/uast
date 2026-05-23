@@ -74,12 +74,10 @@ func (source *sourceCte) alias() string {
 func (source *sourceCte) isSourceBase() {}
 func (source *sourceCte) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.cteName)
-	if source.aliasName != "" {
-		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderService(uastModifierAs)
-		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderAlias(source.aliasName)
-	}
+	baseRenderer.renderOperator(uastCompositeSingleSpace)
+	baseRenderer.renderService(uastModifierAs)
+	baseRenderer.renderOperator(uastCompositeSingleSpace)
+	baseRenderer.renderAlias(source.aliasName)
 	return nil
 }
 func (source *sourceCte) validate(baseValidator *baseValidator) error {

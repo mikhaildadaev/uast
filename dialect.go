@@ -11,7 +11,9 @@ var (
 	DialectAuroraMySQL = DialectMySQL
 	DialectAzureMySQL  = DialectMySQL
 	DialectGoogleMySQL = DialectMySQL
+	DialectOceanBase   = DialectMySQL
 	DialectPlanetScale = DialectMySQL
+	DialectTDSQL       = DialectMySQL
 	DialectTiDB        = DialectMySQL
 	// Cовместимые с PostgreSQL
 	DialectAlloyDB          = DialectPostgreSQL
@@ -22,7 +24,9 @@ var (
 	DialectCockroachDB      = DialectPostgreSQL
 	DialectGooglePostgreSQL = DialectPostgreSQL
 	DialectGreenplum        = DialectPostgreSQL
+	DialectKingbaseES       = DialectPostgreSQL
 	DialectNeon             = DialectPostgreSQL
+	DialectOpenGauss        = DialectPostgreSQL
 	DialectSupabase         = DialectPostgreSQL
 	DialectTimescaleDB      = DialectPostgreSQL
 	DialectYandexDB         = DialectPostgreSQL

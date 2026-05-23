@@ -38,7 +38,7 @@ outline: deep
 | Simple  | SQLite     |       1.4M |        787.9 |           718 |      8 |
 
 ::: tip **注** 
-简单查询选择一列并带有基本的 WHERE 条件。复杂查询包括 2 个 JOIN、3 个子查询、GROUP BY、HAVING、ORDER BY 和 LIMIT。Multi 模式下的 sync.Pool 重用 contexter 缓冲区，减少内存分配并降低 GC 压力。
+简单查询选择一列并带有基本的 WHERE 条件。复杂查询包括 2 个 JOIN、3 个子查询、GROUP BY、HAVING、ORDER BY 和 LIMIT。Multi 模式下的 `sync.Pool` 重用 `contexter` 缓冲区，减少内存分配并降低 GC 压力。
 
 *Benchmarked on Intel Core i9-9880H (2.30 GHz).*
 :::

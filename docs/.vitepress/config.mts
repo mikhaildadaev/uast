@@ -9,7 +9,7 @@ export default defineConfig({
   lastUpdated: true,
   locales: {
     en: {
-      description: 'A high-performance, zero‑allocation type‑safe SQL builder.',
+      description: 'A high-performance, zero-dependency type‑safe query builder.',
       label: 'English',
       lang: 'en',
       link: '/en/',

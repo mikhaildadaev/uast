@@ -442,6 +442,13 @@ func MariaDBTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 }
 
 // Приватные методы
+func (strateger *mariaDBStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *mariaDBStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
@@ -571,6 +578,10 @@ func (strateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRenderer, stmt
 	}
 	return nil
 }
+func (strateger *mariaDBStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mariaDBStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -611,6 +622,10 @@ func (strateger *mariaDBStrateger) transformUpdate(baseTransformer *baseTransfor
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *mariaDBStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariaDBStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {

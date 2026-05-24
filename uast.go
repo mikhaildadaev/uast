@@ -275,6 +275,7 @@ const (
 	uastManagementTimeout   managementService = "TIMEOUT"
 	// Конструкции управления
 	uastManagementAlter       managementService = "ALTER"
+	uastManagementComment     managementService = "COMMENT"
 	uastManagementCreate      managementService = "CREATE"
 	uastManagementDrop        managementService = "DROP"
 	uastManagementDelete      managementService = "DELETE"
@@ -309,6 +310,7 @@ const (
 	uastModifierDistinct  modifierService = "DISTINCT"
 	uastModifierElse      modifierService = "ELSE"
 	uastModifierEnd       modifierService = "END"
+	uastModifierIfExists  modifierService = "IF EXISTS"
 	uastModifierIn        modifierService = "IN"
 	uastModifierInterval  modifierService = "INTERVAL"
 	uastModifierOn        modifierService = "ON"

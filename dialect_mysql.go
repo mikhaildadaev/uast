@@ -442,6 +442,13 @@ func mysqlTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 }
 
 // Приватные методы
+func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
@@ -556,6 +563,10 @@ func (strateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	}
 	return nil
 }
+func (strateger *mysqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mysqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -596,6 +607,10 @@ func (strateger *mysqlStrateger) transformUpdate(baseTransformer *baseTransforme
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *mysqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mysqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {

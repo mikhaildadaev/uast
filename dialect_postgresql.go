@@ -687,6 +687,13 @@ func postgresqlUsingAndWhere(baseRenderer *baseRenderer, stmtDelete *stmtDelete)
 }
 
 // Приватные методы
+func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *postgresqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
@@ -810,6 +817,10 @@ func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, s
 	}
 	return nil
 }
+func (strateger *postgresqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *postgresqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -850,6 +861,10 @@ func (strateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTrans
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
+	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *postgresqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {

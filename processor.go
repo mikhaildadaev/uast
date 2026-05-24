@@ -17,6 +17,7 @@ type elementRenderer interface {
 	renderValue(value any) error
 }
 type componentRenderer interface {
+	renderCascade(cascade bool) error
 	renderCommand(command managementService) error
 	renderColumns(columns []markExpressable) error
 	renderDistinct(distinct bool) error
@@ -30,6 +31,7 @@ type componentRenderer interface {
 	renderOffset(offset *clauseOffset) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
+	renderReindex(reindex bool) error
 	renderReturning(returnings []markReturnable) error
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
@@ -41,6 +43,7 @@ type componentRenderer interface {
 }
 type statementRenderer interface {
 	// DDL
+	renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error
 	renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error
 	// DML
 	renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error
@@ -61,6 +64,7 @@ type componentTransformer interface {
 }
 type statementTransformer interface {
 	// DDL
+	transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error
 	transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error
 	// DML
 	transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error
@@ -109,6 +113,7 @@ type componentValidator interface {
 }
 type statementValidator interface {
 	// DDL
+	validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error
 	validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error
 	// DML
 	validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error

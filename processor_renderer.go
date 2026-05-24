@@ -380,6 +380,34 @@ func (renderer *baseRenderer) renderOffset(offset *clauseOffset) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderOnColumn(column markExpressable, comment string) error {
+	if column == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := column.render(renderer); err != nil {
+		return err
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierIs)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderLiteral(comment)
+	return nil
+}
+func (renderer *baseRenderer) renderOnTable(table *TableSource, comment string) error {
+	if table == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := table.render(renderer); err != nil {
+		return err
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierIs)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderLiteral(comment)
+	return nil
+}
 func (renderer *baseRenderer) renderOnto(onto SourceBase) error {
 	if onto == nil {
 		return nil

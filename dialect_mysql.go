@@ -447,6 +447,12 @@ func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtC
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderOnColumn(stmtComment.column, stmtComment.comment); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderOnTable(stmtComment.table, stmtComment.comment); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {

@@ -313,6 +313,7 @@ const (
 	uastModifierIfExists  modifierService = "IF EXISTS"
 	uastModifierIn        modifierService = "IN"
 	uastModifierInterval  modifierService = "INTERVAL"
+	uastModifierIs        modifierService = "IS"
 	uastModifierOn        modifierService = "ON"
 	uastModifierOver      modifierService = "OVER"
 	uastModifierReindex   modifierService = "RESTART IDENTITY"

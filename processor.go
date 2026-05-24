@@ -29,6 +29,8 @@ type componentRenderer interface {
 	renderJoin(joins []*clauseJoin) error
 	renderLimit(limit *clauseLimit) error
 	renderOffset(offset *clauseOffset) error
+	renderOnColumn(column markExpressable, comment string) error
+	renderOnTable(table *TableSource, comment string) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderReindex(reindex bool) error

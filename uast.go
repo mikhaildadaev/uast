@@ -286,7 +286,6 @@ const (
 	uastManagementFrom        managementService = "FROM"
 	uastManagementInto        managementService = "INTO"
 	uastManagementSet         managementService = "SET"
-	uastManagementTable       managementService = "TABLE"
 	uastManagementTo          managementService = "TO"
 	uastManagementGroupBy     managementService = "GROUP BY"
 	uastManagementHaving      managementService = "HAVING"
@@ -306,6 +305,7 @@ const (
 	uastModifierAnd       modifierService = "AND"
 	uastModifierAs        modifierService = "AS"
 	uastModifierCascade   modifierService = "CASCADE"
+	uastModifierColumn    modifierService = "COLUMN"
 	uastModifierBetween   modifierService = "BETWEEN"
 	uastModifierDistinct  modifierService = "DISTINCT"
 	uastModifierElse      modifierService = "ELSE"
@@ -319,6 +319,7 @@ const (
 	uastModifierReindex   modifierService = "RESTART IDENTITY"
 	uastModifierRecursive modifierService = "RECURSIVE"
 	uastModifierSeparator modifierService = "SEPARATOR"
+	uastModifierTable     modifierService = "TABLE"
 	uastModifierThen      modifierService = "THEN"
 	uastModifierWhen      modifierService = "WHEN"
 )

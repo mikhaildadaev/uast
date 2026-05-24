@@ -385,6 +385,10 @@ func (renderer *baseRenderer) renderOnColumn(column markExpressable, comment str
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierOn)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierColumn)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := column.render(renderer); err != nil {
 		return err
 	}
@@ -398,6 +402,10 @@ func (renderer *baseRenderer) renderOnTable(table *TableSource, comment string) 
 	if table == nil {
 		return nil
 	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierOn)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierTable)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := table.render(renderer); err != nil {
 		return err
@@ -494,7 +502,7 @@ func (renderer *baseRenderer) renderTable(table *TableSource) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementTable)
+	renderer.renderService(uastModifierTable)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := table.render(renderer); err != nil {
 		return err

@@ -443,7 +443,6 @@ func MariaDBTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 
 // Приватные методы
 func (strateger *mariaDBStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
@@ -585,7 +584,6 @@ func (strateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRenderer, stmt
 	return nil
 }
 func (strateger *mariaDBStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
-	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariaDBStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
@@ -631,7 +629,6 @@ func (strateger *mariaDBStrateger) transformUpdate(baseTransformer *baseTransfor
 	return nil
 }
 func (strateger *mariaDBStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	// !!! Внимание, находится в стадии разработки
 	if stmtComment.column == nil && stmtComment.table == nil {
 		return ErrInvalidStatement
 	}

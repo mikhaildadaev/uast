@@ -481,7 +481,6 @@ func sqliteFunctionRand(baseTransformer *baseTransformer, expr transformFunction
 
 // Приватные методы
 func (strateger *sqliteStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
@@ -614,7 +613,6 @@ func (strateger *sqliteStrateger) renderUpdate(baseRenderer *baseRenderer, stmtU
 	return nil
 }
 func (strateger *sqliteStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
-	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *sqliteStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
@@ -660,7 +658,6 @@ func (strateger *sqliteStrateger) transformUpdate(baseTransformer *baseTransform
 	return nil
 }
 func (strateger *sqliteStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	// !!! Внимание, находится в стадии разработки
 	if stmtComment.column == nil && stmtComment.table == nil {
 		return ErrInvalidStatement
 	}

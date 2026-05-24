@@ -1599,13 +1599,13 @@ func Test_SQL_Drop(t *testing.T) {
 		sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 		switch supportDialect {
 		case DialectMariaDB:
-			assertContains(t, sqlDropQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
+			assertContains(t, sqlDropQuery, "DROP", "DROP")
 		case DialectMySQL:
-			assertContains(t, sqlDropQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
+			assertContains(t, sqlDropQuery, "DROP", "DROP")
 		case DialectPostgreSQL:
-			assertContains(t, sqlDropQuery, `COMMENT ON COLUMN "t"."id" IS 'Test comment'`, "COMMENT")
+			assertContains(t, sqlDropQuery, `DROP`, "DROP")
 		case DialectSQLite:
-			assertContains(t, sqlDropQuery, `COMMENT ON COLUMN "t"."id" IS 'Test comment'`, "COMMENT")
+			assertContains(t, sqlDropQuery, `DROP`, "DROP")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 	})

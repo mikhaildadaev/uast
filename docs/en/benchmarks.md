@@ -37,7 +37,7 @@ These benchmarks measure the cost of building SQL queries. Simple queries select
 | Simple  | SQLite     |       1.4M |        787.9 |           718 |      8 |
 
 ::: tip **Note** 
-Simple queries select one column with a basic WHERE clause. Complex queries include 2 JOINs, 3 subqueries, GROUP BY, HAVING, ORDER BY, and LIMIT. `sync.Pool` in Multi mode reuses `contexter` buffers, reducing allocations and GC pressure.
+In Multi mode `sync.Pool` reuses `contexter` buffers, reducing allocations and GC pressure.
 
 *Benchmarked on Intel Core i9-9880H (2.30 GHz).*
 :::

@@ -3858,7 +3858,7 @@ Output SQLite:
 ## exprValue
 ### Value
 将 Go 值包装为参数化表达式。该值不会直接插入 SQL 字符串中 — 而是生成一个占位符（`?`、`$1` 等），并将该值附加到 `Build()` 返回的参数切片中。这是传递用户提供的数据并防止 SQL 注入的安全方式。
-支持的类型：`float32`、`float64`、`int`、`int8`、`int16`、`int32`、`int64`、`uint`、`uint8`、`uint16`、`uint32`、`uint64`、`string`、`time.Time`。
+支持的类型：`bool`、`float32`、`float64`、`int`、`int8`、`int16`、`int32`、`int64`、`uint`、`uint8`、`uint16`、`uint32`、`uint64`、`string`、`time.Time`。
 ```go
 var data string = "ivan"
 value := uast.Value(data)

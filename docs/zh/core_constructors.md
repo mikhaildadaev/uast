@@ -18,11 +18,11 @@ statement := uast.NewDelete(uast.Table("test")).
 ```
 Output MariaDB:
 ```text
-DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
+DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output MySQL:
 ```text
-DELETE FROM `test` AS `t` WHERE `t`.`string` = ?
+DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text

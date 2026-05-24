@@ -328,6 +328,13 @@ func (renderer *baseRenderer) renderHaving(having ExpressionBase) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderIfExists(ifExists bool) error {
+	if ifExists {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierIfExists)
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderInto(into SourceBase) error {
 	if into == nil {
 		return nil

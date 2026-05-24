@@ -12,8 +12,8 @@ func (stmt *stmtDrop) Cascade() *stmtDrop {
 	stmt.cascade = true
 	return stmt
 }
-func (stmt *stmtDrop) isExixts() *stmtDrop {
-	stmt.isExists = true
+func (stmt *stmtDrop) IfExists() *stmtDrop {
+	stmt.ifExists = true
 	return stmt
 }
 
@@ -21,7 +21,7 @@ func (stmt *stmtDrop) isExixts() *stmtDrop {
 type stmtDrop struct {
 	command  managementService
 	cascade  bool
-	isExists bool
+	ifExists bool
 }
 
 // Приватные методы

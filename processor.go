@@ -25,6 +25,7 @@ type componentRenderer interface {
 	renderFrom(from SourceBase) error
 	renderGroupBy(groups []markGroupable) error
 	renderHaving(having ExpressionBase) error
+	renderIfExists(ifExists bool) error
 	renderInto(into SourceBase) error
 	renderJoin(joins []*clauseJoin) error
 	renderLimit(limit *clauseLimit) error

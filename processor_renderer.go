@@ -451,10 +451,10 @@ func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderReindex(reindex bool) error {
-	if reindex {
+func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error {
+	if restartIdentity {
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierReindex)
+		renderer.renderService(uastModifierRestartIdentity)
 	}
 	return nil
 }

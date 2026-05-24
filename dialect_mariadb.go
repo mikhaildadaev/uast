@@ -561,7 +561,7 @@ func (strateger *mariaDBStrateger) renderTruncate(baseRenderer *baseRenderer, st
 	if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderReindex(stmtTruncate.reindex); err != nil {
+	if err := baseRenderer.renderRestartIdentity(stmtTruncate.restartIdentity); err != nil {
 		return err
 	}
 	return nil

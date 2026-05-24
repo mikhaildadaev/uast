@@ -15,17 +15,17 @@ func (stmt *stmtTruncate) Cascade() *stmtTruncate {
 	stmt.cascade = true
 	return stmt
 }
-func (stmt *stmtTruncate) Reindex() *stmtTruncate {
-	stmt.reindex = true
+func (stmt *stmtTruncate) RestartIdentity() *stmtTruncate {
+	stmt.restartIdentity = true
 	return stmt
 }
 
 // Приватные структуры
 type stmtTruncate struct {
-	command managementService
-	table   *TableSource
-	cascade bool
-	reindex bool
+	command         managementService
+	table           *TableSource
+	cascade         bool
+	restartIdentity bool
 }
 
 // Приватные методы

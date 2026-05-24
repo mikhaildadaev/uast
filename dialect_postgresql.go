@@ -800,7 +800,7 @@ func (strateger *postgresqlStrateger) renderTruncate(baseRenderer *baseRenderer,
 	if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderReindex(stmtTruncate.reindex); err != nil {
+	if err := baseRenderer.renderRestartIdentity(stmtTruncate.restartIdentity); err != nil {
 		return err
 	}
 	return nil

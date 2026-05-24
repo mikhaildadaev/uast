@@ -302,26 +302,26 @@ const (
 )
 const (
 	// Конструкции модификаторов
-	uastModifierAnd       modifierService = "AND"
-	uastModifierAs        modifierService = "AS"
-	uastModifierCascade   modifierService = "CASCADE"
-	uastModifierColumn    modifierService = "COLUMN"
-	uastModifierBetween   modifierService = "BETWEEN"
-	uastModifierDistinct  modifierService = "DISTINCT"
-	uastModifierElse      modifierService = "ELSE"
-	uastModifierEnd       modifierService = "END"
-	uastModifierIfExists  modifierService = "IF EXISTS"
-	uastModifierIn        modifierService = "IN"
-	uastModifierInterval  modifierService = "INTERVAL"
-	uastModifierIs        modifierService = "IS"
-	uastModifierOn        modifierService = "ON"
-	uastModifierOver      modifierService = "OVER"
-	uastModifierReindex   modifierService = "RESTART IDENTITY"
-	uastModifierRecursive modifierService = "RECURSIVE"
-	uastModifierSeparator modifierService = "SEPARATOR"
-	uastModifierTable     modifierService = "TABLE"
-	uastModifierThen      modifierService = "THEN"
-	uastModifierWhen      modifierService = "WHEN"
+	uastModifierAnd             modifierService = "AND"
+	uastModifierAs              modifierService = "AS"
+	uastModifierCascade         modifierService = "CASCADE"
+	uastModifierColumn          modifierService = "COLUMN"
+	uastModifierBetween         modifierService = "BETWEEN"
+	uastModifierDistinct        modifierService = "DISTINCT"
+	uastModifierElse            modifierService = "ELSE"
+	uastModifierEnd             modifierService = "END"
+	uastModifierIfExists        modifierService = "IF EXISTS"
+	uastModifierIn              modifierService = "IN"
+	uastModifierInterval        modifierService = "INTERVAL"
+	uastModifierIs              modifierService = "IS"
+	uastModifierOn              modifierService = "ON"
+	uastModifierOver            modifierService = "OVER"
+	uastModifierRestartIdentity modifierService = "RESTART IDENTITY"
+	uastModifierRecursive       modifierService = "RECURSIVE"
+	uastModifierSeparator       modifierService = "SEPARATOR"
+	uastModifierTable           modifierService = "TABLE"
+	uastModifierThen            modifierService = "THEN"
+	uastModifierWhen            modifierService = "WHEN"
 )
 const (
 	// Уровень форматирования
@@ -383,7 +383,7 @@ var listFunctionServices = []functionService{
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementPartitionBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
-var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierCascade, uastModifierColumn, uastModifierBetween, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierInterval, uastModifierIs, uastModifierOn, uastModifierOver, uastModifierReindex, uastModifierRecursive, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierWhen}
+var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierCascade, uastModifierColumn, uastModifierBetween, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierInterval, uastModifierIs, uastModifierOn, uastModifierOver, uastModifierRestartIdentity, uastModifierRecursive, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierWhen}
 var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,

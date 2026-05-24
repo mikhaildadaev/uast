@@ -34,7 +34,7 @@ type componentRenderer interface {
 	renderOnTable(table *TableSource, comment string) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
-	renderReindex(reindex bool) error
+	renderRestartIdentity(restartIdentity bool) error
 	renderReturning(returnings []markReturnable) error
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error

@@ -1523,6 +1523,27 @@ func Test_Core_exprValue(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
+func Test_SQL_Comment(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtComment := NewComment("Test")
+		sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlCommentQuery, "COMMENT", "COMMENT")
+		case DialectMySQL:
+			assertContains(t, sqlCommentQuery, "COMMENT", "COMMENT")
+		case DialectPostgreSQL:
+			assertContains(t, sqlCommentQuery, `COMMENT`, "COMMENT")
+		case DialectSQLite:
+			assertContains(t, sqlCommentQuery, `COMMENT`, "COMMENT")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+	})
+}
 func Test_SQL_Delete(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(

@@ -1529,6 +1529,27 @@ func Test_SQL_Comment(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
+		stmtComment := NewComment("Test comment").OnColumn(Test.Column.ID)
+		sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
+		case DialectMySQL:
+			assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
+		case DialectPostgreSQL:
+			assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "t"."id" IS 'Test comment'`, "COMMENT")
+		case DialectSQLite:
+			assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "t"."id" IS 'Test comment'`, "COMMENT")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+	})
+}
+func Test_SQL_Comment_Table(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
 		stmtComment := NewComment("Test comment").OnTable(Test.Table)
 		sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 		switch supportDialect {

@@ -275,7 +275,6 @@ const (
 	uastManagementTimeout   managementService = "TIMEOUT"
 	// Конструкции управления
 	uastManagementAlter       managementService = "ALTER"
-	uastManagementCascade     managementService = "CASCADE"
 	uastManagementCreate      managementService = "CREATE"
 	uastManagementDrop        managementService = "DROP"
 	uastManagementDelete      managementService = "DELETE"
@@ -295,7 +294,6 @@ const (
 	uastManagementOffset      managementService = "OFFSET"
 	uastManagementOrderBy     managementService = "ORDER BY"
 	uastManagementPartitionBy managementService = "PARTITION BY"
-	uastManagementReindex     managementService = "RESTART IDENTITY"
 	uastManagementReturning   managementService = "RETURNING"
 	uastManagementUsing       managementService = "USING"
 	uastManagementValues      managementService = "VALUES"
@@ -306,6 +304,7 @@ const (
 	// Конструкции модификаторов
 	uastModifierAnd       modifierService = "AND"
 	uastModifierAs        modifierService = "AS"
+	uastModifierCascade   modifierService = "CASCADE"
 	uastModifierBetween   modifierService = "BETWEEN"
 	uastModifierDistinct  modifierService = "DISTINCT"
 	uastModifierElse      modifierService = "ELSE"
@@ -314,6 +313,7 @@ const (
 	uastModifierInterval  modifierService = "INTERVAL"
 	uastModifierOn        modifierService = "ON"
 	uastModifierOver      modifierService = "OVER"
+	uastModifierReindex   modifierService = "RESTART IDENTITY"
 	uastModifierRecursive modifierService = "RECURSIVE"
 	uastModifierSeparator modifierService = "SEPARATOR"
 	uastModifierThen      modifierService = "THEN"

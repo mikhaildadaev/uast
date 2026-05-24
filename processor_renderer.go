@@ -237,7 +237,7 @@ func (renderer *baseRenderer) renderValue(value any) error {
 func (renderer *baseRenderer) renderCascade(cascade bool) error {
 	if cascade {
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastManagementCascade)
+		renderer.renderService(uastModifierCascade)
 	}
 	return nil
 }
@@ -411,7 +411,7 @@ func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
 func (renderer *baseRenderer) renderReindex(reindex bool) error {
 	if reindex {
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastManagementReindex)
+		renderer.renderService(uastModifierReindex)
 	}
 	return nil
 }

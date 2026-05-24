@@ -568,7 +568,6 @@ func (strateger *sqliteStrateger) renderSelect(baseRenderer *baseRenderer, stmtS
 	return nil
 }
 func (strateger *sqliteStrateger) renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtTruncate.command); err != nil {
 		return err
 	}
@@ -632,7 +631,6 @@ func (strateger *sqliteStrateger) transformSelect(baseTransformer *baseTransform
 	return nil
 }
 func (strateger *sqliteStrateger) transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error {
-	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *sqliteStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
@@ -723,7 +721,6 @@ func (strateger *sqliteStrateger) validateSelect(baseValidator *baseValidator, s
 	return nil
 }
 func (strateger *sqliteStrateger) validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseValidator.validateTable(stmtTruncate.table); err != nil {
 		return err
 	}

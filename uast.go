@@ -275,6 +275,7 @@ const (
 	uastManagementTimeout   managementService = "TIMEOUT"
 	// Конструкции управления
 	uastManagementAlter       managementService = "ALTER"
+	uastManagementCascade     managementService = "CASCADE"
 	uastManagementCreate      managementService = "CREATE"
 	uastManagementDrop        managementService = "DROP"
 	uastManagementDelete      managementService = "DELETE"
@@ -294,6 +295,7 @@ const (
 	uastManagementOffset      managementService = "OFFSET"
 	uastManagementOrderBy     managementService = "ORDER BY"
 	uastManagementPartitionBy managementService = "PARTITION BY"
+	uastManagementReindex     managementService = "RESTART IDENTITY"
 	uastManagementReturning   managementService = "RETURNING"
 	uastManagementUsing       managementService = "USING"
 	uastManagementValues      managementService = "VALUES"

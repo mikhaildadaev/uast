@@ -234,6 +234,13 @@ func (renderer *baseRenderer) renderValue(value any) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderCascade(cascade bool) error {
+	if cascade {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastManagementCascade)
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderCommand(command managementService) error {
 	renderer.renderService(command)
 	return nil
@@ -398,6 +405,13 @@ func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
 		if i < ordersCount {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderReindex(reindex bool) error {
+	if reindex {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastManagementReindex)
 	}
 	return nil
 }

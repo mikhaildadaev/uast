@@ -533,19 +533,18 @@ func (strateger *mariaDBStrateger) renderSelect(baseRenderer *baseRenderer, stmt
 	return nil
 }
 func (strateger *mariaDBStrateger) renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtTruncate.command); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
 		return err
 	}
-	//if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
-	//	return err
-	//}
-	//if err := baseRenderer.renderIdentity(stmtTruncate.identity); err != nil {
-	//	return err
-	//}
+	if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderReindex(stmtTruncate.reindex); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
@@ -603,7 +602,6 @@ func (strateger *mariaDBStrateger) transformSelect(baseTransformer *baseTransfor
 	return nil
 }
 func (strateger *mariaDBStrateger) transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error {
-	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariaDBStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
@@ -694,7 +692,6 @@ func (strateger *mariaDBStrateger) validateSelect(baseValidator *baseValidator, 
 	return nil
 }
 func (strateger *mariaDBStrateger) validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseValidator.validateTable(stmtTruncate.table); err != nil {
 		return err
 	}

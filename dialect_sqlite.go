@@ -655,6 +655,15 @@ func (strateger *sqliteStrateger) transformUpdate(baseTransformer *baseTransform
 }
 func (strateger *sqliteStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
 	// !!! Внимание, находится в стадии разработки
+	if stmtComment.column == nil && stmtComment.table == nil {
+		return ErrInvalidStatement
+	}
+	if err := baseValidator.validateOnColumn(stmtComment.column, stmtComment.comment); err != nil {
+		return err
+	}
+	if err := baseValidator.validateOnTable(stmtComment.table, stmtComment.comment); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *sqliteStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {

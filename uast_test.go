@@ -1529,7 +1529,7 @@ func Test_SQL_Comment(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtComment := NewComment("Test")
+		stmtComment := NewComment("Test").OnTable(Test.Table)
 		sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 		switch supportDialect {
 		case DialectMariaDB:

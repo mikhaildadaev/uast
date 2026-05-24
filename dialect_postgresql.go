@@ -865,6 +865,15 @@ func (strateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTrans
 }
 func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
 	// !!! Внимание, находится в стадии разработки
+	if stmtComment.column == nil && stmtComment.table == nil {
+		return ErrInvalidStatement
+	}
+	if err := baseValidator.validateOnColumn(stmtComment.column, stmtComment.comment); err != nil {
+		return err
+	}
+	if err := baseValidator.validateOnTable(stmtComment.table, stmtComment.comment); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *postgresqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {

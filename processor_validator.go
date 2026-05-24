@@ -423,6 +423,30 @@ func (validator *baseValidator) validateOffset(offset *clauseOffset) error {
 	}
 	return nil
 }
+func (validator *baseValidator) validateOnColumn(column markExpressable, comment string) error {
+	if column == nil {
+		return nil
+	}
+	if err := column.validate(validator); err != nil {
+		return err
+	}
+	if err := validator.validateLiteral(comment); err != nil {
+		return err
+	}
+	return nil
+}
+func (validator *baseValidator) validateOnTable(table *TableSource, comment string) error {
+	if table == nil {
+		return nil
+	}
+	if err := table.validate(validator); err != nil {
+		return err
+	}
+	if err := validator.validateLiteral(comment); err != nil {
+		return err
+	}
+	return nil
+}
 func (validator *baseValidator) validateOnto(onto SourceBase) error {
 	if onto == nil {
 		return ErrInvalidStatementOnto

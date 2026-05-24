@@ -100,6 +100,8 @@ type componentValidator interface {
 	validateJoin(joins []*clauseJoin) error
 	validateLimit(limit *clauseLimit) error
 	validateOffset(offset *clauseOffset) error
+	validateOnColumn(column markExpressable, comment string) error
+	validateOnTable(table *TableSource, comment string) error
 	validateOnto(onto SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validateReturning(returnings []markReturnable) error

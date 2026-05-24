@@ -59,7 +59,6 @@ var (
 	ErrInjectionIdentAlias                = errors.New("injection identifier alias")
 	ErrInjectionIdentName                 = errors.New("injection identifier name")
 	ErrInjectionLiteral                   = errors.New("injection literal")
-	ErrInvalidComment                     = errors.New("invalid comment")
 	ErrInvalidDialect                     = errors.New("invalid dialect")
 	ErrInvalidStatement                   = errors.New("invalid statement")
 	ErrInvalidStatementField              = errors.New("invalid statement field")

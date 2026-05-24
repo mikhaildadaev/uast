@@ -9,11 +9,10 @@ func NewComment(comment string) *stmtComment {
 }
 
 // Публичные методы
-//
-//	func (stmt *stmtComment) OnColumn(column *exprColumn) *stmtComment {
-//		stmt.column = column
-//		return stmt
-//	}
+func (stmt *stmtComment) OnColumn(column markExpressable) *stmtComment {
+	stmt.column = column
+	return stmt
+}
 func (stmt *stmtComment) OnTable(table *TableSource) *stmtComment {
 	stmt.table = table
 	return stmt
@@ -23,8 +22,8 @@ func (stmt *stmtComment) OnTable(table *TableSource) *stmtComment {
 type stmtComment struct {
 	command managementService
 	comment string
-	//column  *exprColumn
-	table *TableSource
+	column  markExpressable
+	table   *TableSource
 }
 
 // Приватные методы

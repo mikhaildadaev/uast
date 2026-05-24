@@ -1720,7 +1720,7 @@ func Test_SQL_Truncate(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtTruncate := NewTruncate(Test.Table).Cascade().Reindex()
+		stmtTruncate := NewTruncate(Test.Table).Cascade().RestartIdentity()
 		sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 		switch supportDialect {
 		case DialectMariaDB:

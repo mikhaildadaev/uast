@@ -1589,6 +1589,27 @@ func Test_SQL_Delete(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 	})
 }
+func Test_SQL_Drop(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtDrop := NewDrop()
+		sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlDropQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
+		case DialectMySQL:
+			assertContains(t, sqlDropQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
+		case DialectPostgreSQL:
+			assertContains(t, sqlDropQuery, `COMMENT ON COLUMN "t"."id" IS 'Test comment'`, "COMMENT")
+		case DialectSQLite:
+			assertContains(t, sqlDropQuery, `COMMENT ON COLUMN "t"."id" IS 'Test comment'`, "COMMENT")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+	})
+}
 func Test_SQL_Insert(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(

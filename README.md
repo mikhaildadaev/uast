@@ -50,10 +50,10 @@ go test -race ./...
 >
 > I recommend that you test `uast` alongside other libraries and choose the tool that best suits your needs.
 
-## Core Performance
+### Core Performance
 These benchmarks measure the cost of building SQL queries. Simple queries select one column with a WHERE clause. Complex queries include JOINs, subqueries, GROUP BY, HAVING, ORDER BY, and LIMIT.
 
-### MultiThread
+#### MultiThread
 | Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
 |---------|------------|------------|--------------|---------------|--------|
 | Complex | MariaDB    |       383K |        2,965 |         4,971 |     54 |
@@ -65,7 +65,7 @@ These benchmarks measure the cost of building SQL queries. Simple queries select
 | Simple  | PostgreSQL |       3.3M |        398.4 |           720 |      8 |
 | Simple  | SQLite     |       3.3M |        358.3 |           720 |      8 |
 
-### SingleThread
+#### SingleThread
 | Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
 |---------|------------|------------|--------------|---------------|--------|
 | Complex | MariaDB    |       197K |        5,852 |         4,948 |     54 |

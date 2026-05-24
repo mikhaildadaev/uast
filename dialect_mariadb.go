@@ -478,6 +478,13 @@ func (strateger *mariaDBStrateger) renderDelete(baseRenderer *baseRenderer, stmt
 	}
 	return nil
 }
+func (strateger *mariaDBStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
+	// !!! Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *mariaDBStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
 	if err := baseRenderer.renderWith(stmtInsert.with); err != nil {
 		return err
@@ -595,6 +602,10 @@ func (strateger *mariaDBStrateger) transformDelete(baseTransformer *baseTransfor
 	}
 	return nil
 }
+func (strateger *mariaDBStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mariaDBStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -656,6 +667,10 @@ func (strateger *mariaDBStrateger) validateDelete(baseValidator *baseValidator, 
 	if err := baseValidator.validateReturning(stmtDelete.returning); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *mariaDBStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
+	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariaDBStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {

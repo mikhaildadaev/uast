@@ -46,6 +46,7 @@ type componentRenderer interface {
 type statementRenderer interface {
 	// DDL
 	renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error
+	renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error
 	renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error
 	// DML
 	renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error
@@ -67,6 +68,7 @@ type componentTransformer interface {
 type statementTransformer interface {
 	// DDL
 	transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error
+	transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error
 	transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error
 	// DML
 	transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error
@@ -118,6 +120,7 @@ type componentValidator interface {
 type statementValidator interface {
 	// DDL
 	validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error
+	validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error
 	validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error
 	// DML
 	validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error

@@ -1,0 +1,36 @@
+package uast
+
+// Публичные конструкторы
+func NewDrop() *stmtDrop {
+	return &stmtDrop{
+		command: uastManagementDrop,
+	}
+}
+
+// Публичные методы
+func (stmt *stmtDrop) Cascade() *stmtDrop {
+	stmt.cascade = true
+	return stmt
+}
+func (stmt *stmtDrop) isExixts() *stmtDrop {
+	stmt.isExists = true
+	return stmt
+}
+
+// Приватные структуры
+type stmtDrop struct {
+	command  managementService
+	cascade  bool
+	isExists bool
+}
+
+// Приватные методы
+func (stmt *stmtDrop) render(baseRenderer *baseRenderer) error {
+	return baseRenderer.strateger.renderDrop(baseRenderer, stmt)
+}
+func (stmt *stmtDrop) transform(baseTransformer *baseTransformer) error {
+	return baseTransformer.strateger.transformDrop(baseTransformer, stmt)
+}
+func (stmt *stmtDrop) validate(baseValidator *baseValidator) error {
+	return baseValidator.strateger.validateDrop(baseValidator, stmt)
+}

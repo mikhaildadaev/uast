@@ -717,6 +717,13 @@ func (strateger *postgresqlStrateger) renderDelete(baseRenderer *baseRenderer, s
 	}
 	return nil
 }
+func (strateger *postgresqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
+	// !!! Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *postgresqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
 	if err := baseRenderer.renderWith(stmtInsert.with); err != nil {
 		return err
@@ -834,6 +841,10 @@ func (strateger *postgresqlStrateger) transformDelete(baseTransformer *baseTrans
 	}
 	return nil
 }
+func (strateger *postgresqlStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *postgresqlStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -895,6 +906,10 @@ func (strateger *postgresqlStrateger) validateDelete(baseValidator *baseValidato
 	if err := baseValidator.validateReturning(stmtDelete.returning); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *postgresqlStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
+	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *postgresqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {

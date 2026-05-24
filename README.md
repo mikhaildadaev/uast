@@ -6,7 +6,7 @@
 
 # UAST
 
-A high-performance, zero‑allocation type‑safe SQL builder.
+A high-performance, zero-dependency type‑safe SQL builder.
 
 ## Go
 ```bash

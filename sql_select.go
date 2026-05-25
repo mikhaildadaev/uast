@@ -78,9 +78,11 @@ type stmtSelect struct {
 // Приватные методы
 func (stmt *stmtSelect) clone() statement {
 	copy := *stmt
-	copy.fields = make([]markExpressable, len(stmt.fields))
-	for i, f := range stmt.fields {
-		copy.fields[i] = f.clone().(markExpressable)
+	if stmt.fields != nil {
+		copy.fields = make([]markExpressable, len(stmt.fields))
+		for i, f := range stmt.fields {
+			copy.fields[i] = f.clone().(markExpressable)
+		}
 	}
 	if stmt.from != nil {
 		copy.from = stmt.from.clone()

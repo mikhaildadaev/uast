@@ -163,6 +163,7 @@ func cloneJsonSlice(slice []*exprJson) []*exprJson {
 // Приватные методы
 func (expr *exprAlias[T]) clone() ExpressionBase {
 	copy := *expr
+	copy.expression = cloneExpressionSafe(expr.expression)
 	return &copy
 }
 func (expr *exprAlias[T]) isExpressionBase()  {}

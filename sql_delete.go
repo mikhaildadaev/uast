@@ -46,11 +46,17 @@ func (stmt *stmtDelete) clone() statement {
 	if stmt.from != nil {
 		copy.from = stmt.from.clone()
 	}
-	copy.join = append([]*clauseJoin{}, stmt.join...)
-	copy.returning = append([]markReturnable{}, stmt.returning...)
-	copy.with = append([]*clauseWith{}, stmt.with...)
-	if stmt.where != nil {
-		copy.where = stmt.where.clone().(markPredicable)
+	copy.join = make([]*clauseJoin, len(stmt.join))
+	for i, j := range stmt.join {
+		copy.join[i] = j.clone()
+	}
+	copy.returning = make([]markReturnable, len(stmt.returning))
+	for i, r := range stmt.returning {
+		copy.returning[i] = r.clone().(markReturnable)
+	}
+	copy.with = make([]*clauseWith, len(stmt.with))
+	for i, w := range stmt.with {
+		copy.with[i] = w.clone()
 	}
 	return &copy
 }

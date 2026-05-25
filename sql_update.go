@@ -48,16 +48,28 @@ type stmtUpdate struct {
 // Приватные методы
 func (stmt *stmtUpdate) clone() statement {
 	copy := *stmt
-	copy.set = append([]*clauseSet{}, stmt.set...)
-	copy.join = append([]*clauseJoin{}, stmt.join...)
+	copy.set = make([]*clauseSet, len(stmt.set))
+	for i, s := range stmt.set {
+		copy.set[i] = s.clone()
+	}
+	copy.join = make([]*clauseJoin, len(stmt.join))
+	for i, j := range stmt.join {
+		copy.join[i] = j.clone()
+	}
 	if stmt.onto != nil {
 		copy.onto = stmt.onto.clone()
 	}
-	copy.returning = append([]markReturnable{}, stmt.returning...)
+	copy.returning = make([]markReturnable, len(stmt.returning))
+	for i, r := range stmt.returning {
+		copy.returning[i] = r.clone().(markReturnable)
+	}
 	if stmt.where != nil {
 		copy.where = stmt.where.clone().(markPredicable)
 	}
-	copy.with = append([]*clauseWith{}, stmt.with...)
+	copy.with = make([]*clauseWith, len(stmt.with))
+	for i, w := range stmt.with {
+		copy.with[i] = w.clone()
+	}
 	return &copy
 }
 func (stmt *stmtUpdate) render(baseRenderer *baseRenderer) error {

@@ -29,6 +29,13 @@ type stmtComment struct {
 // Приватные методы
 func (stmt *stmtComment) clone() statement {
 	copy := *stmt
+	if stmt.column != nil {
+		copy.column = stmt.column.clone().(markExpressable)
+	}
+	if stmt.table != nil {
+		t := *stmt.table
+		copy.table = &t
+	}
 	return &copy
 }
 func (stmt *stmtComment) render(baseRenderer *baseRenderer) error {

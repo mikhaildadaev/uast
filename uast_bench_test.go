@@ -6,11 +6,10 @@ import (
 
 // Бенчмарки компонентов
 func Benchmark_Immutable_Multi(b *testing.B) {
+	builder := NewSQL()
+	defer builder.Close()
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
-		builder := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer builder.Close()
+		builder.SetDialect(supportDialect)
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
 				Field(
@@ -102,11 +101,10 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 	})
 }
 func Benchmark_Immutable_Single(b *testing.B) {
+	builder := NewSQL()
+	defer builder.Close()
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
-		builder := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer builder.Close()
+		builder.SetDialect(supportDialect)
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
 				Field(

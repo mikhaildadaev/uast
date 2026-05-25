@@ -37,8 +37,8 @@ func (stmt *stmtUpdate) With(with ...*clauseWith) *stmtUpdate {
 // Приватные структуры
 type stmtUpdate struct {
 	command   managementService
-	onto      SourceBase
 	join      []*clauseJoin
+	onto      SourceBase
 	returning []markReturnable
 	set       []*clauseSet
 	where     markPredicable

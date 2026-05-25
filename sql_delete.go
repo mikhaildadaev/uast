@@ -58,6 +58,9 @@ func (stmt *stmtDelete) clone() statement {
 			copy.returning[i] = r.clone().(markReturnable)
 		}
 	}
+	if stmt.where != nil {
+		copy.where = stmt.where.clone().(markPredicable)
+	}
 	if stmt.with != nil {
 		copy.with = make([]*clauseWith, len(stmt.with))
 		for i, w := range stmt.with {

@@ -1525,7 +1525,6 @@ func Test_Core_exprValue(t *testing.T) {
 }
 func Test_SQL_AST_NotMutated(t *testing.T) {
 	sql := NewSQL(
-		WithClone(),
 		WithDialect(DialectMySQL),
 	)
 	defer sql.Close()

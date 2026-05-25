@@ -48,27 +48,35 @@ type stmtUpdate struct {
 // Приватные методы
 func (stmt *stmtUpdate) clone() statement {
 	copy := *stmt
-	copy.set = make([]*clauseSet, len(stmt.set))
-	for i, s := range stmt.set {
-		copy.set[i] = s.clone()
-	}
-	copy.join = make([]*clauseJoin, len(stmt.join))
-	for i, j := range stmt.join {
-		copy.join[i] = j.clone()
+	if stmt.join != nil {
+		copy.join = make([]*clauseJoin, len(stmt.join))
+		for i, j := range stmt.join {
+			copy.join[i] = j.clone()
+		}
 	}
 	if stmt.onto != nil {
 		copy.onto = stmt.onto.clone()
 	}
-	copy.returning = make([]markReturnable, len(stmt.returning))
-	for i, r := range stmt.returning {
-		copy.returning[i] = r.clone().(markReturnable)
+	if stmt.returning != nil {
+		copy.returning = make([]markReturnable, len(stmt.returning))
+		for i, r := range stmt.returning {
+			copy.returning[i] = r.clone().(markReturnable)
+		}
+	}
+	if stmt.set != nil {
+		copy.set = make([]*clauseSet, len(stmt.set))
+		for i, s := range stmt.set {
+			copy.set[i] = s.clone()
+		}
 	}
 	if stmt.where != nil {
 		copy.where = stmt.where.clone().(markPredicable)
 	}
-	copy.with = make([]*clauseWith, len(stmt.with))
-	for i, w := range stmt.with {
-		copy.with[i] = w.clone()
+	if stmt.with != nil {
+		copy.with = make([]*clauseWith, len(stmt.with))
+		for i, w := range stmt.with {
+			copy.with[i] = w.clone()
+		}
 	}
 	return &copy
 }

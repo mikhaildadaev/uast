@@ -7,8 +7,8 @@ import (
 // Публичные конструкторы
 func NewSQL(options ...SQLOption) *sql {
 	sql := &sql{
-		clone:  false,
-		config: DialectDefault.config,
+		config:  DialectDefault.config,
+		mutable: false,
 		pool: &sync.Pool{
 			New: func() any {
 				return newContext()
@@ -24,11 +24,6 @@ func NewSQL(options ...SQLOption) *sql {
 }
 
 // Публичные функции
-func WithClone() SQLOption {
-	return func(sql *sql) {
-		sql.clone = true
-	}
-}
 func WithDialect(dialect *SupportDialect) SQLOption {
 	return func(sql *sql) {
 		if dialect != nil {
@@ -36,6 +31,11 @@ func WithDialect(dialect *SupportDialect) SQLOption {
 			sql.processor = dialect.processor
 			sql.strateger = dialect.strateger
 		}
+	}
+}
+func WithMutable() SQLOption {
+	return func(sql *sql) {
+		sql.mutable = true
 	}
 }
 
@@ -50,7 +50,7 @@ func (sql *sql) Build(statement statement) (string, []any, error) {
 		sql.pool.Put(contexter)
 	}()
 	stmt := statement
-	if sql.clone {
+	if !sql.mutable {
 		stmt = statement.clone()
 	}
 	baseRenderer := sql.processor.createRenderer(sql.config, contexter, sql.strateger)
@@ -86,8 +86,8 @@ type statement interface {
 
 // Приватные структуры
 type sql struct {
-	clone     bool
 	config    *config
+	mutable   bool
 	pool      *sync.Pool
 	processor processor
 	strateger strateger

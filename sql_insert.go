@@ -93,13 +93,17 @@ type stmtInsert struct {
 // Приватные методы
 func (stmt *stmtInsert) clone() statement {
 	copy := *stmt
-	copy.columns = make([]markExpressable, len(stmt.columns))
-	for i, col := range stmt.columns {
-		copy.columns[i] = col.clone().(markExpressable)
+	if stmt.columns != nil {
+		copy.columns = make([]markExpressable, len(stmt.columns))
+		for i, col := range stmt.columns {
+			copy.columns[i] = col.clone().(markExpressable)
+		}
 	}
-	copy.returning = make([]markReturnable, len(stmt.returning))
-	for i, r := range stmt.returning {
-		copy.returning[i] = r.clone().(markReturnable)
+	if stmt.returning != nil {
+		copy.returning = make([]markReturnable, len(stmt.returning))
+		for i, r := range stmt.returning {
+			copy.returning[i] = r.clone().(markReturnable)
+		}
 	}
 	if stmt.source != nil {
 		copy.source = stmt.source.clone()
@@ -107,9 +111,11 @@ func (stmt *stmtInsert) clone() statement {
 	if stmt.values != nil {
 		copy.values = stmt.values.clone()
 	}
-	copy.with = make([]*clauseWith, len(stmt.with))
-	for i, w := range stmt.with {
-		copy.with[i] = w.clone()
+	if stmt.with != nil {
+		copy.with = make([]*clauseWith, len(stmt.with))
+		for i, w := range stmt.with {
+			copy.with[i] = w.clone()
+		}
 	}
 	return &copy
 }

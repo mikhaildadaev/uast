@@ -85,31 +85,41 @@ func (stmt *stmtSelect) clone() statement {
 	if stmt.from != nil {
 		copy.from = stmt.from.clone()
 	}
-	copy.groupBy = make([]markGroupable, len(stmt.groupBy))
-	for i, g := range stmt.groupBy {
-		copy.groupBy[i] = g.clone().(markGroupable)
+	if stmt.groupBy != nil {
+		copy.groupBy = make([]markGroupable, len(stmt.groupBy))
+		for i, g := range stmt.groupBy {
+			copy.groupBy[i] = g.clone().(markGroupable)
+		}
 	}
 	if stmt.having != nil {
 		copy.having = stmt.having.clone().(markPredicable)
 	}
-	copy.join = make([]*clauseJoin, len(stmt.join))
-	for i, j := range stmt.join {
-		copy.join[i] = j.clone()
+	if stmt.join != nil {
+		copy.join = make([]*clauseJoin, len(stmt.join))
+		for i, j := range stmt.join {
+			copy.join[i] = j.clone()
+		}
 	}
-	copy.orderBy = make([]markOrderable, len(stmt.orderBy))
-	for i, o := range stmt.orderBy {
-		copy.orderBy[i] = o.clone().(markOrderable)
+	if stmt.orderBy != nil {
+		copy.orderBy = make([]markOrderable, len(stmt.orderBy))
+		for i, o := range stmt.orderBy {
+			copy.orderBy[i] = o.clone().(markOrderable)
+		}
 	}
-	copy.unions = make([]*clauseUnions, len(stmt.unions))
-	for i, u := range stmt.unions {
-		copy.unions[i] = u.clone()
+	if stmt.unions != nil {
+		copy.unions = make([]*clauseUnions, len(stmt.unions))
+		for i, u := range stmt.unions {
+			copy.unions[i] = u.clone()
+		}
 	}
 	if stmt.where != nil {
 		copy.where = stmt.where.clone().(markPredicable)
 	}
-	copy.with = make([]*clauseWith, len(stmt.with))
-	for i, w := range stmt.with {
-		copy.with[i] = w.clone()
+	if stmt.with != nil {
+		copy.with = make([]*clauseWith, len(stmt.with))
+		for i, w := range stmt.with {
+			copy.with[i] = w.clone()
+		}
 	}
 	return &copy
 }

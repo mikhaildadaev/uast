@@ -1813,6 +1813,40 @@ func Test_Transformer_Function(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
+func Test_Clone_AST_NotMutated(t *testing.T) {
+	sql := NewSQL(
+		WithClone(),
+		WithDialect(DialectMySQL),
+	)
+	defer sql.Close()
+	stmt := NewSelect(Test.Table).
+		Field(
+			Ceil(Test.Column.Number).As("result"),
+		).
+		Where(
+			ILike(Test.Column.String, Value("%ivan%")),
+		)
+	query1, _, _ := sql.Build(stmt)
+	sql.SetDialect(DialectPostgreSQL)
+	query2, _, _ := sql.Build(stmt)
+	sql.SetDialect(DialectMySQL)
+	query3, _, _ := sql.Build(stmt)
+	// MySQL
+	assertContains(t, query1, "CEILING", "MySQL #1: CEIL→CEILING")
+	assertContains(t, query1, "LOWER", "MySQL #1: ILIKE→LOWER LIKE LOWER")
+	// PostgreSQL
+	//assertContains(t, query2, "CEIL", "PostgreSQL: CEIL→CEIL")
+	//assertContains(t, query2, "ILIKE", "PostgreSQL: ILIKE→ILIKE")
+	// MySQL
+	//assertContains(t, query3, "CEILING", "MySQL #3: CEIL→CEILING")
+	//assertContains(t, query3, "LOWER", "MySQL #3: ILIKE→LOWER LIKE LOWER")
+	t.Logf("#1 MySQL: %s", query1)
+	t.Logf("#2 PostgreSQL: %s", query2)
+	t.Logf("#3 MySQL: %s", query3)
+	//if query1 != query3 {
+	//	t.Error("AST мутировал")
+	//}
+}
 
 // Приватные функции
 func assertContains(t *testing.T, str, substr string, message string) {

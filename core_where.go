@@ -6,6 +6,11 @@ type clauseWhere struct {
 }
 
 // Приватные методы
+func (clause *clauseWhere) clone() ExpressionBase {
+	copy := *clause
+	copy.expression = clause.expression.clone()
+	return &copy
+}
 func (clause *clauseWhere) isExpressionBase() {}
 func (clause *clauseWhere) isPredicable()     {}
 func (clause *clauseWhere) render(baseRenderer *baseRenderer) error {

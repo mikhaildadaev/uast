@@ -3,6 +3,7 @@ package uast
 // Публичные интерфейсы
 type ExpressionBase interface {
 	isExpressionBase()
+	clone() ExpressionBase
 	render(baseRenderer *baseRenderer) error
 	validate(baseValidator *baseValidator) error
 }
@@ -127,7 +128,43 @@ type exprValue[T typeScalar] struct {
 	value T
 }
 
+// Приватные функции
+func cloneExpressionSafe[T typeScalar](expr ExpressionSafe[T]) ExpressionSafe[T] {
+	return expr.clone().(ExpressionSafe[T])
+}
+func cloneExpressionSlice(slice []ExpressionBase) []ExpressionBase {
+	if slice == nil {
+		return nil
+	}
+	result := make([]ExpressionBase, len(slice))
+	for i, expr := range slice {
+		if expr != nil {
+			result[i] = expr.clone()
+		}
+	}
+	return result
+}
+func cloneJsonSlice(slice []*exprJson) []*exprJson {
+	if slice == nil {
+		return nil
+	}
+	result := make([]*exprJson, len(slice))
+	for i, expr := range slice {
+		if expr != nil {
+			copy := *expr
+			copy.expressions = cloneExpressionSlice(expr.expressions)
+			copy.values = cloneExpressionSlice(expr.values)
+			result[i] = &copy
+		}
+	}
+	return result
+}
+
 // Приватные методы
+func (expr *exprAlias[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
+}
 func (expr *exprAlias[T]) isExpressionBase()  {}
 func (expr *exprAlias[T]) isExpressionSafe(T) {}
 func (expr *exprAlias[T]) isColumnable()      {}
@@ -154,6 +191,11 @@ func (expr *exprAlias[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (expr *exprArray[T]) clone() ExpressionBase {
+	copy := *expr
+	copy.array = append([]T{}, expr.array...)
+	return &copy
 }
 func (expr *exprArray[T]) isExpressionBase()  {}
 func (expr *exprArray[T]) isExpressionSafe(T) {}
@@ -194,6 +236,12 @@ func (expr *exprArray[T]) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (expr *exprBinary[T]) clone() ExpressionBase {
+	copy := *expr
+	copy.left = cloneExpressionSafe(expr.left)
+	copy.right = cloneExpressionSafe(expr.right)
+	return &copy
+}
 func (expr *exprBinary[T]) isExpressionBase()  {}
 func (expr *exprBinary[T]) isExpressionSafe(T) {}
 func (expr *exprBinary[T]) isColumnable()      {}
@@ -217,6 +265,10 @@ func (expr *exprBinary[T]) validate(baseValidator *baseValidator) error {
 		return ErrInvalidBinary
 	}
 	return nil
+}
+func (expr *exprColumn[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
 }
 func (expr *exprColumn[T]) isExpressionBase()  {}
 func (expr *exprColumn[T]) isExpressionSafe(T) {}
@@ -242,6 +294,22 @@ func (expr *exprColumn[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (expr *exprComparison[T]) clone() ExpressionBase {
+	copy := *expr
+	if expr.left != nil {
+		copy.left = cloneExpressionSafe(expr.left)
+	}
+	if expr.right != nil {
+		copy.right = cloneExpressionSafe(expr.right)
+	}
+	if expr.valueStart != nil {
+		copy.valueStart = cloneExpressionSafe(expr.valueStart)
+	}
+	if expr.valueEnd != nil {
+		copy.valueEnd = cloneExpressionSafe(expr.valueEnd)
+	}
+	return &copy
 }
 func (expr *exprComparison[T]) isExpressionBase()  {}
 func (expr *exprComparison[T]) isExpressionSafe(T) {}
@@ -340,6 +408,14 @@ func (expr *exprComparison[T]) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (expr *exprComposite[T]) clone() ExpressionBase {
+	copy := *expr
+	copy.expressions = make([]ExpressionSafe[T], len(expr.expressions))
+	for i, expression := range expr.expressions {
+		copy.expressions[i] = cloneExpressionSafe(expression)
+	}
+	return &copy
+}
 func (expr *exprComposite[T]) isExpressionBase()  {}
 func (expr *exprComposite[T]) isExpressionSafe(T) {}
 func (expr *exprComposite[T]) isPredicable()      {}
@@ -361,6 +437,10 @@ func (expr *exprComposite[T]) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (expr *exprConstant[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
+}
 func (expr *exprConstant[T]) isExpressionBase()  {}
 func (expr *exprConstant[T]) isExpressionSafe(T) {}
 func (expr *exprConstant[T]) isColumnable()      {}
@@ -378,6 +458,18 @@ func (expr *exprConstant[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (expr *exprFunction[InLT, InRT, T]) clone() ExpressionBase {
+	copy := *expr
+	if expr.left != nil {
+		copy.left = cloneExpressionSafe(expr.left)
+	}
+	if expr.right != nil {
+		copy.right = cloneExpressionSafe(expr.right)
+	}
+	copy.json = cloneJsonSlice(expr.json)
+	copy.valueArray = cloneExpressionSlice(expr.valueArray)
+	return &copy
 }
 func (expr *exprFunction[InLT, InRT, T]) isExpressionBase()  {}
 func (expr *exprFunction[InLT, InRT, T]) isExpressionSafe(T) {}
@@ -642,6 +734,12 @@ func (expr *exprFunction[InLT, InRT, T]) validate(baseValidator *baseValidator) 
 	}
 	return nil
 }
+func (expr *exprJson) clone() *exprJson {
+	copy := *expr
+	copy.expressions = cloneExpressionSlice(expr.expressions)
+	copy.values = cloneExpressionSlice(expr.values)
+	return &copy
+}
 func (expr *exprJson) isExpressionBase() {}
 func (expr *exprJson) render(baseRenderer *baseRenderer) error {
 	lengthExpressions := len(expr.expressions) - 1
@@ -673,6 +771,10 @@ func (expr *exprJson) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (expr *exprLiteral[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
+}
 func (expr *exprLiteral[T]) isExpressionBase()  {}
 func (expr *exprLiteral[T]) isExpressionSafe(T) {}
 func (expr *exprLiteral[T]) isColumnable()      {}
@@ -690,6 +792,14 @@ func (expr *exprLiteral[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (expr *exprLogical) clone() ExpressionBase {
+	copy := *expr
+	copy.expressions = make([]markPredicable, len(expr.expressions))
+	for i, pred := range expr.expressions {
+		copy.expressions[i] = pred.(ExpressionBase).clone().(markPredicable)
+	}
+	return &copy
 }
 func (expr *exprLogical) isExpressionBase()     {}
 func (expr *exprLogical) isExpressionSafe(bool) {}
@@ -735,6 +845,10 @@ func (expr *exprLogical) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (expr *exprOperator[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
+}
 func (expr *exprOperator[T]) isExpressionBase()  {}
 func (expr *exprOperator[T]) isExpressionSafe(T) {}
 func (expr *exprOperator[T]) isPredicable()      {}
@@ -747,6 +861,10 @@ func (expr *exprOperator[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (expr *exprPair[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
 }
 func (expr *exprPair[T]) isExpressionBase()  {}
 func (expr *exprPair[T]) isExpressionSafe(T) {}
@@ -766,6 +884,10 @@ func (expr *exprPair[T]) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
+func (expr *exprService[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
+}
 func (expr *exprService[T]) isExpressionBase()  {}
 func (expr *exprService[T]) isExpressionSafe(T) {}
 func (expr *exprService[T]) isPredicable()      {}
@@ -778,6 +900,10 @@ func (expr *exprService[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (expr *exprSubquery[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
 }
 func (expr *exprSubquery[T]) isExpressionBase()  {}
 func (expr *exprSubquery[T]) isExpressionSafe(T) {}
@@ -803,6 +929,10 @@ func (expr *exprSubquery[T]) validate(baseValidator *baseValidator) error {
 		return err
 	}
 	return nil
+}
+func (expr *exprValue[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
 }
 func (expr *exprValue[T]) isExpressionBase()  {}
 func (expr *exprValue[T]) isExpressionSafe(T) {}

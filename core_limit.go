@@ -6,6 +6,10 @@ type clauseLimit struct {
 }
 
 // Приватные методы
+func (clause *clauseLimit) clone() *clauseLimit {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseLimit) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderValue(clause.value)
 	return nil

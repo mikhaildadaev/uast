@@ -7,6 +7,7 @@ import (
 // Публичные конструкторы
 func NewSQL(options ...SQLOption) *sql {
 	sql := &sql{
+		clone:  false,
 		config: DialectDefault.config,
 		pool: &sync.Pool{
 			New: func() any {
@@ -23,6 +24,11 @@ func NewSQL(options ...SQLOption) *sql {
 }
 
 // Публичные функции
+func WithClone() SQLOption {
+	return func(sql *sql) {
+		sql.clone = true
+	}
+}
 func WithDialect(dialect *SupportDialect) SQLOption {
 	return func(sql *sql) {
 		if dialect != nil {
@@ -43,16 +49,20 @@ func (sql *sql) Build(statement statement) (string, []any, error) {
 		contexter.resetAll()
 		sql.pool.Put(contexter)
 	}()
+	stmt := statement
+	if sql.clone {
+		stmt = statement.clone()
+	}
 	baseRenderer := sql.processor.createRenderer(sql.config, contexter, sql.strateger)
 	baseTransformer := sql.processor.createTransformer(sql.config, contexter, sql.strateger)
 	baseValidator := sql.processor.createValidator(sql.config, contexter, sql.strateger)
-	if err := statement.validate(baseValidator); err != nil {
+	if err := stmt.validate(baseValidator); err != nil {
 		return "", nil, err
 	}
-	if err := statement.transform(baseTransformer); err != nil {
+	if err := stmt.transform(baseTransformer); err != nil {
 		return "", nil, err
 	}
-	if err := statement.render(baseRenderer); err != nil {
+	if err := stmt.render(baseRenderer); err != nil {
 		return "", nil, err
 	}
 	return contexter.bufferQuery.String(), contexter.bufferValue, nil
@@ -68,6 +78,7 @@ func (sql *sql) SetDialect(dialect *SupportDialect) {
 
 // Приватные интерфейсы
 type statement interface {
+	clone() statement
 	render(baseRenderer *baseRenderer) error
 	transform(baseTransformer *baseTransformer) error
 	validate(baseValidator *baseValidator) error
@@ -75,6 +86,7 @@ type statement interface {
 
 // Приватные структуры
 type sql struct {
+	clone     bool
 	config    *config
 	pool      *sync.Pool
 	processor processor

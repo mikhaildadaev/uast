@@ -29,6 +29,14 @@ type stmtTruncate struct {
 }
 
 // Приватные методы
+func (stmt *stmtTruncate) clone() statement {
+	copy := *stmt
+	if stmt.table != nil {
+		t := *stmt.table
+		copy.table = &t
+	}
+	return &copy
+}
 func (stmt *stmtTruncate) render(baseRenderer *baseRenderer) error {
 	return baseRenderer.strateger.renderTruncate(baseRenderer, stmt)
 }

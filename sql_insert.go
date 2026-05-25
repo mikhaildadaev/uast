@@ -91,6 +91,16 @@ type stmtInsert struct {
 }
 
 // Приватные методы
+func (stmt *stmtInsert) clone() statement {
+	copy := *stmt
+	copy.columns = append([]markExpressable{}, stmt.columns...)
+	copy.returning = append([]markReturnable{}, stmt.returning...)
+	copy.with = append([]*clauseWith{}, stmt.with...)
+	if stmt.values != nil {
+		copy.values = stmt.values.clone()
+	}
+	return &copy
+}
 func (stmt *stmtInsert) render(baseRenderer *baseRenderer) error {
 	return baseRenderer.strateger.renderInsert(baseRenderer, stmt)
 }

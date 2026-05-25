@@ -13,6 +13,10 @@ type clauseOrderBy struct {
 }
 
 // Приватные методы
+func (clause *clauseOrderBy) clone() ExpressionBase {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseOrderBy) isExpressionBase() {}
 func (clause *clauseOrderBy) isOrderable()      {}
 func (clause *clauseOrderBy) render(baseRenderer *baseRenderer) error {

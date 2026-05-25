@@ -46,6 +46,17 @@ type stmtUpdate struct {
 }
 
 // Приватные методы
+func (stmt *stmtUpdate) clone() statement {
+	copy := *stmt
+	copy.set = append([]*clauseSet{}, stmt.set...)
+	copy.join = append([]*clauseJoin{}, stmt.join...)
+	copy.returning = append([]markReturnable{}, stmt.returning...)
+	copy.with = append([]*clauseWith{}, stmt.with...)
+	if stmt.where != nil {
+		copy.where = stmt.where.clone().(markPredicable)
+	}
+	return &copy
+}
 func (stmt *stmtUpdate) render(baseRenderer *baseRenderer) error {
 	return baseRenderer.strateger.renderUpdate(baseRenderer, stmt)
 }

@@ -65,6 +65,10 @@ type clauseJoin struct {
 }
 
 // Приватные методы
+func (clause *clauseJoin) clone() *clauseJoin {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseJoin) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(clause.operator)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)

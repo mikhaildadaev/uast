@@ -25,6 +25,10 @@ type stmtDrop struct {
 }
 
 // Приватные методы
+func (stmt *stmtDrop) clone() statement {
+	copy := *stmt
+	return &copy
+}
 func (stmt *stmtDrop) render(baseRenderer *baseRenderer) error {
 	return baseRenderer.strateger.renderDrop(baseRenderer, stmt)
 }

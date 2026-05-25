@@ -27,6 +27,10 @@ type stmtComment struct {
 }
 
 // Приватные методы
+func (stmt *stmtComment) clone() statement {
+	copy := *stmt
+	return &copy
+}
 func (stmt *stmtComment) render(baseRenderer *baseRenderer) error {
 	return baseRenderer.strateger.renderComment(baseRenderer, stmt)
 }

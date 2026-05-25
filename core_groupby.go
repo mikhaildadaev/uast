@@ -12,6 +12,10 @@ type clauseGroupBy struct {
 }
 
 // Приватные методы
+func (clause *clauseGroupBy) clone() ExpressionBase {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseGroupBy) isExpressionBase() {}
 func (clause *clauseGroupBy) isGroupable()      {}
 func (clause *clauseGroupBy) render(baseRenderer *baseRenderer) error {

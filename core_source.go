@@ -8,6 +8,7 @@ import (
 // Публичные интерфейсы
 type SourceBase interface {
 	alias() string
+	clone() SourceBase
 	isSourceBase()
 	render(baseRenderer *baseRenderer) error
 	validate(baseValidator *baseValidator) error
@@ -77,6 +78,10 @@ func (source *sourceCte) alias() string {
 	}
 	return source.aliasName
 }
+func (source *sourceCte) clone() SourceBase {
+	copy := *source
+	return &copy
+}
 func (source *sourceCte) isSourceBase() {}
 func (source *sourceCte) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.cteName)
@@ -103,6 +108,10 @@ func (source *sourceTable) alias() string {
 	}
 	return source.aliasName
 }
+func (source *sourceTable) clone() SourceBase {
+	copy := *source
+	return &copy
+}
 func (source *sourceTable) isSourceBase() {}
 func (source *sourceTable) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.tableName)
@@ -128,6 +137,10 @@ func (source *sourceQuery) alias() string {
 		return ""
 	}
 	return source.aliasName
+}
+func (source *sourceQuery) clone() SourceBase {
+	copy := *source
+	return &copy
 }
 func (source *sourceQuery) isSourceBase() {}
 func (source *sourceQuery) render(baseRenderer *baseRenderer) error {

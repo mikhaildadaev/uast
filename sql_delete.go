@@ -41,6 +41,16 @@ type stmtDelete struct {
 }
 
 // Приватные методы
+func (stmt *stmtDelete) clone() statement {
+	copy := *stmt
+	copy.join = append([]*clauseJoin{}, stmt.join...)
+	copy.returning = append([]markReturnable{}, stmt.returning...)
+	copy.with = append([]*clauseWith{}, stmt.with...)
+	if stmt.where != nil {
+		copy.where = stmt.where.clone().(markPredicable)
+	}
+	return &copy
+}
 func (stmt *stmtDelete) render(baseRenderer *baseRenderer) error {
 	return baseRenderer.strateger.renderDelete(baseRenderer, stmt)
 }

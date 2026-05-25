@@ -33,6 +33,10 @@ type clauseUnions struct {
 }
 
 // Приватные методы
+func (clause *clauseUnions) clone() *clauseUnions {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseUnions) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(clause.operator)
 	baseRenderer.renderOperator(uastCompositeSingleSpace)

@@ -26,6 +26,10 @@ type clauseWith struct {
 }
 
 // Приватные методы
+func (clause *clauseWith) clone() *clauseWith {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseWith) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderAlias(clause.alias)
 	if len(clause.columns) > 0 {

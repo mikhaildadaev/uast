@@ -15,6 +15,10 @@ type clauseSet struct {
 }
 
 // Приватные методы
+func (clause *clauseSet) clone() *clauseSet {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseSet) render(baseRenderer *baseRenderer) error {
 	if err := clause.column.render(baseRenderer); err != nil {
 		return err

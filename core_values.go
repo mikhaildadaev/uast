@@ -25,6 +25,11 @@ type clauseValues struct {
 }
 
 // Приватные методы
+func (clause *clauseUpsert) clone() *clauseUpsert {
+	copy := *clause
+	copy.pairs = append([]*clausePair{}, clause.pairs...)
+	return &copy
+}
 func (clause *clauseUpsert) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(clause.service)
@@ -56,6 +61,15 @@ func (clause *clauseUpsert) validate(baseValidator *baseValidator) error {
 		}
 	}
 	return nil
+}
+func (clause *clauseValues) clone() *clauseValues {
+	copy := *clause
+	copy.pairs = append([]*clausePair{}, clause.pairs...)
+	if clause.upsert != nil {
+		u := *clause.upsert
+		copy.upsert = &u
+	}
+	return &copy
 }
 func (clause *clauseValues) render(baseRenderer *baseRenderer) error {
 	for _, pair := range clause.pairs {

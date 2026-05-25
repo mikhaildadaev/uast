@@ -6,6 +6,10 @@ type clauseOffset struct {
 }
 
 // Приватные методы
+func (clause *clauseOffset) clone() *clauseOffset {
+	copy := *clause
+	return &copy
+}
 func (clause *clauseOffset) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderValue(clause.value)
 	return nil

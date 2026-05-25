@@ -71,6 +71,9 @@ func (sql *sql) Close() {
 	sql.pool = nil
 }
 func (sql *sql) SetDialect(dialect *SupportDialect) {
+	if sql.mutable {
+		return
+	}
 	sql.config = dialect.config
 	sql.processor = dialect.processor
 	sql.strateger = dialect.strateger

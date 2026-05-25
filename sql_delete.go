@@ -43,6 +43,9 @@ type stmtDelete struct {
 // Приватные методы
 func (stmt *stmtDelete) clone() statement {
 	copy := *stmt
+	if stmt.from != nil {
+		copy.from = stmt.from.clone()
+	}
 	copy.join = append([]*clauseJoin{}, stmt.join...)
 	copy.returning = append([]markReturnable{}, stmt.returning...)
 	copy.with = append([]*clauseWith{}, stmt.with...)

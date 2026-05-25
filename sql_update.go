@@ -50,11 +50,14 @@ func (stmt *stmtUpdate) clone() statement {
 	copy := *stmt
 	copy.set = append([]*clauseSet{}, stmt.set...)
 	copy.join = append([]*clauseJoin{}, stmt.join...)
+	if stmt.onto != nil {
+		copy.onto = stmt.onto.clone()
+	}
 	copy.returning = append([]markReturnable{}, stmt.returning...)
-	copy.with = append([]*clauseWith{}, stmt.with...)
 	if stmt.where != nil {
 		copy.where = stmt.where.clone().(markPredicable)
 	}
+	copy.with = append([]*clauseWith{}, stmt.with...)
 	return &copy
 }
 func (stmt *stmtUpdate) render(baseRenderer *baseRenderer) error {

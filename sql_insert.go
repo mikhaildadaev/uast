@@ -95,10 +95,13 @@ func (stmt *stmtInsert) clone() statement {
 	copy := *stmt
 	copy.columns = append([]markExpressable{}, stmt.columns...)
 	copy.returning = append([]markReturnable{}, stmt.returning...)
-	copy.with = append([]*clauseWith{}, stmt.with...)
+	if stmt.source != nil {
+		copy.source = stmt.source.clone()
+	}
 	if stmt.values != nil {
 		copy.values = stmt.values.clone()
 	}
+	copy.with = append([]*clauseWith{}, stmt.with...)
 	return &copy
 }
 func (stmt *stmtInsert) render(baseRenderer *baseRenderer) error {

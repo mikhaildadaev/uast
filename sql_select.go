@@ -79,20 +79,20 @@ type stmtSelect struct {
 func (stmt *stmtSelect) clone() statement {
 	copy := *stmt
 	copy.fields = append([]markExpressable{}, stmt.fields...)
-	copy.groupBy = append([]markGroupable{}, stmt.groupBy...)
-	copy.orderBy = append([]markOrderable{}, stmt.orderBy...)
-	copy.join = append([]*clauseJoin{}, stmt.join...)
-	copy.unions = append([]*clauseUnions{}, stmt.unions...)
-	copy.with = append([]*clauseWith{}, stmt.with...)
-	if stmt.where != nil {
-		copy.where = stmt.where.clone().(markPredicable)
-	}
-	if stmt.having != nil {
-		copy.having = stmt.having.clone().(markPredicable)
-	}
 	if stmt.from != nil {
 		copy.from = stmt.from.clone()
 	}
+	copy.groupBy = append([]markGroupable{}, stmt.groupBy...)
+	if stmt.having != nil {
+		copy.having = stmt.having.clone().(markPredicable)
+	}
+	copy.join = append([]*clauseJoin{}, stmt.join...)
+	copy.orderBy = append([]markOrderable{}, stmt.orderBy...)
+	copy.unions = append([]*clauseUnions{}, stmt.unions...)
+	if stmt.where != nil {
+		copy.where = stmt.where.clone().(markPredicable)
+	}
+	copy.with = append([]*clauseWith{}, stmt.with...)
 	return &copy
 }
 func (stmt *stmtSelect) render(baseRenderer *baseRenderer) error {

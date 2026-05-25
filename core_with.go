@@ -28,6 +28,7 @@ type clauseWith struct {
 // Приватные методы
 func (clause *clauseWith) clone() *clauseWith {
 	copy := *clause
+	copy.statement = clause.statement.clone()
 	return &copy
 }
 func (clause *clauseWith) render(baseRenderer *baseRenderer) error {

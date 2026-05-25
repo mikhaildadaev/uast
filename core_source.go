@@ -140,6 +140,7 @@ func (source *sourceQuery) alias() string {
 }
 func (source *sourceQuery) clone() SourceBase {
 	copy := *source
+	copy.statement = source.statement.clone()
 	return &copy
 }
 func (source *sourceQuery) isSourceBase() {}

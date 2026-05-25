@@ -67,6 +67,12 @@ type clauseJoin struct {
 // Приватные методы
 func (clause *clauseJoin) clone() *clauseJoin {
 	copy := *clause
+	if clause.expression != nil {
+		copy.expression = clause.expression.clone().(markPredicable)
+	}
+	if clause.source != nil {
+		copy.source = clause.source.clone()
+	}
 	return &copy
 }
 func (clause *clauseJoin) render(baseRenderer *baseRenderer) error {

@@ -35,6 +35,7 @@ type clauseUnions struct {
 // Приватные методы
 func (clause *clauseUnions) clone() *clauseUnions {
 	copy := *clause
+	copy.statement = clause.statement.clone()
 	return &copy
 }
 func (clause *clauseUnions) render(baseRenderer *baseRenderer) error {

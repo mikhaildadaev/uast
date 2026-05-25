@@ -1523,38 +1523,56 @@ func Test_Core_exprValue(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_SQL_AST_NotMutated(t *testing.T) {
-	sql := NewSQL(
-		WithDialect(DialectMySQL),
-	)
-	defer sql.Close()
-	stmt := NewSelect(Test.Table).
-		Field(
-			Ceil(Test.Column.Number).As("result"),
-		).
-		Where(
-			ILike(Test.Column.String, Value("%ivan%")),
+func Test_SQL(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
 		)
-	query1, _, _ := sql.Build(stmt)
-	sql.SetDialect(DialectPostgreSQL)
-	query2, _, _ := sql.Build(stmt)
-	sql.SetDialect(DialectMySQL)
-	query3, _, _ := sql.Build(stmt)
-	// MySQL
-	assertContains(t, query1, "CEILING", "MySQL #1: CEIL→CEILING")
-	assertContains(t, query1, "LOWER", "MySQL #1: ILIKE→LOWER LIKE LOWER")
-	// PostgreSQL
-	assertContains(t, query2, "CEIL", "PostgreSQL: CEIL→CEIL")
-	assertContains(t, query2, "ILIKE", "PostgreSQL: ILIKE→ILIKE")
-	// MySQL
-	assertContains(t, query3, "CEILING", "MySQL #3: CEIL→CEILING")
-	assertContains(t, query3, "LOWER", "MySQL #3: ILIKE→LOWER LIKE LOWER")
-	t.Logf("#1 MySQL: %s", query1)
-	t.Logf("#2 PostgreSQL: %s", query2)
-	t.Logf("#3 MySQL: %s", query3)
-	if query1 != query3 {
-		t.Error("AST мутировал")
-	}
+		defer sql.Close()
+		stmt := NewSelect(Test.Table).
+			Field(
+				Avg(Test.Column.Number, false).As("avg_result"),
+				Ceil(Test.Column.Number).As("ceil_result"),
+				Count(Test.Column.String, false).As("count_result"),
+				FirstValue(Test.Column.Name).Over(
+					PartitionBy(Test.Column.ID),
+					OrderBy(Desc(Test.Column.Number)),
+				).As("first_value"),
+				Trunc(Test.Column.Number, Value(2)).As("trunc_result"),
+			).
+			Join(
+				Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
+			).
+			Where(
+				And(
+					Equal(Test.Column.String, Value("active")),
+					Greater(Test.Column.Number, Value(2)),
+					ILike(Test.Column.String, Value("%ivan%")),
+				),
+			).
+			GroupBy(
+				Test.Column.ID,
+				Test.Column.String,
+			).
+			Having(
+				Greater(Count(Test.Column.ID, false), Value[int64](2)),
+			).
+			OrderBy(
+				Desc(Test.Column.Number),
+			)
+		query1, _, _ := sql.Build(stmt)
+		nextDialect := getNextDialect(supportDialect)
+		sql.SetDialect(nextDialect)
+		query2, _, _ := sql.Build(stmt)
+		sql.SetDialect(supportDialect)
+		query3, _, _ := sql.Build(stmt)
+		if query1 != query3 {
+			t.Errorf("AST мутировал после смены диалекта!\n  Ожидалось: %s\n  Получено:  %s", query1, query3)
+		}
+		t.Logf("Query1 (%s): %s", supportDialect.name, query1)
+		t.Logf("Query2 (%s): %s", nextDialect.name, query2)
+		t.Logf("Query3 (%s): %s", supportDialect.name, query3)
+	})
 }
 func Test_SQL_Comment(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
@@ -1860,6 +1878,19 @@ func assertContains(t *testing.T, str, substr string, message string) {
 	if !matched {
 		t.Errorf("Req: [%s] / Pat: [%s]\n", message, substr)
 	}
+}
+func getNextDialect(dialect *SupportDialect) *SupportDialect {
+	switch dialect {
+	case DialectMariaDB:
+		return DialectMySQL
+	case DialectMySQL:
+		return DialectPostgreSQL
+	case DialectPostgreSQL:
+		return DialectSQLite
+	case DialectSQLite:
+		return DialectMariaDB
+	}
+	return DialectPostgreSQL
 }
 func init() {
 	// Data

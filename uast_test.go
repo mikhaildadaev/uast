@@ -1524,54 +1524,148 @@ func Test_Core_exprValue(t *testing.T) {
 	})
 }
 func Test_SQL(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmt := NewSelect(Test.Table).
-			Field(
-				Avg(Test.Column.Number, false).As("avg_result"),
-				Ceil(Test.Column.Number).As("ceil_result"),
-				Count(Test.Column.String, false).As("count_result"),
-				FirstValue(Test.Column.Name).Over(
-					PartitionBy(Test.Column.ID),
-					OrderBy(Desc(Test.Column.Number)),
-				).As("first_value"),
-				Trunc(Test.Column.Number, Value(2)).As("trunc_result"),
-			).
-			Join(
-				Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
-			).
-			Where(
-				And(
-					Equal(Test.Column.String, Value("active")),
-					Greater(Test.Column.Number, Value(2)),
-					ILike(Test.Column.String, Value("%ivan%")),
-				),
-			).
-			GroupBy(
-				Test.Column.ID,
-				Test.Column.String,
-			).
-			Having(
-				Greater(Count(Test.Column.ID, false), Value[int64](2)),
-			).
-			OrderBy(
-				Desc(Test.Column.Number),
+	t.Run("Delete", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
 			)
-		query1, _, _ := sql.Build(stmt)
-		nextDialect := getNextDialect(supportDialect)
-		sql.SetDialect(nextDialect)
-		query2, _, _ := sql.Build(stmt)
-		sql.SetDialect(supportDialect)
-		query3, _, _ := sql.Build(stmt)
-		if query1 != query3 {
-			t.Errorf("AST мутировал после смены диалекта!\n  Ожидалось: %s\n  Получено:  %s", query1, query3)
-		}
-		t.Logf("Query1 (%s): %s", supportDialect.name, query1)
-		t.Logf("Query2 (%s): %s", nextDialect.name, query2)
-		t.Logf("Query3 (%s): %s", supportDialect.name, query3)
+			defer sql.Close()
+			stmt := NewDelete(Test.Table).
+				Join(
+					Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				).
+				Where(
+					And(
+						Equal(Test.Column.String, Value("active")),
+						ILike(Test.Column.String, Value("%ivan%")),
+					),
+				)
+			query1, _, _ := sql.Build(stmt)
+			nextDialect := getNextDialect(supportDialect)
+			sql.SetDialect(nextDialect)
+			query2, _, _ := sql.Build(stmt)
+			sql.SetDialect(supportDialect)
+			query3, _, _ := sql.Build(stmt)
+			if query1 != query3 {
+				t.Errorf("AST мутировал!\n  Ожидалось: %s\n  Получено:  %s", query1, query3)
+			}
+			t.Logf("Query1 (%s): %s", supportDialect.name, query1)
+			t.Logf("Query2 (%s): %s", nextDialect.name, query2)
+			t.Logf("Query3 (%s): %s", supportDialect.name, query3)
+		})
+	})
+	t.Run("Insert", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmt := NewInsert(Test.Table).
+				Values(
+					Pair(Test.Column.String, Value("ivan")),
+					Pair(Test.Column.Number, Value(2)),
+				).
+				Upsert(
+					Pair(Test.Column.String, Value("updated")),
+				)
+			query1, _, _ := sql.Build(stmt)
+			nextDialect := getNextDialect(supportDialect)
+			sql.SetDialect(nextDialect)
+			query2, _, _ := sql.Build(stmt)
+			sql.SetDialect(supportDialect)
+			query3, _, _ := sql.Build(stmt)
+			if query1 != query3 {
+				t.Errorf("AST мутировал!\n  Ожидалось: %s\n  Получено:  %s", query1, query3)
+			}
+			t.Logf("Query1 (%s): %s", supportDialect.name, query1)
+			t.Logf("Query2 (%s): %s", nextDialect.name, query2)
+			t.Logf("Query3 (%s): %s", supportDialect.name, query3)
+		})
+	})
+	t.Run("Select", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmt := NewSelect(Test.Table).
+				Field(
+					Avg(Test.Column.Number, false).As("avg_result"),
+					Ceil(Test.Column.Number).As("ceil_result"),
+					Count(Test.Column.String, false).As("count_result"),
+					FirstValue(Test.Column.Name).Over(
+						PartitionBy(Test.Column.ID),
+						OrderBy(Desc(Test.Column.Number)),
+					).As("first_value"),
+					Trunc(Test.Column.Number, Value(2)).As("trunc_result"),
+				).
+				Join(
+					Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				).
+				Where(
+					And(
+						Equal(Test.Column.String, Value("active")),
+						Greater(Test.Column.Number, Value(2)),
+						ILike(Test.Column.String, Value("%ivan%")),
+					),
+				).
+				GroupBy(
+					Test.Column.ID,
+					Test.Column.String,
+				).
+				Having(
+					Greater(Count(Test.Column.ID, false), Value[int64](2)),
+				).
+				OrderBy(
+					Desc(Test.Column.Number),
+				)
+			query1, _, _ := sql.Build(stmt)
+			nextDialect := getNextDialect(supportDialect)
+			sql.SetDialect(nextDialect)
+			query2, _, _ := sql.Build(stmt)
+			sql.SetDialect(supportDialect)
+			query3, _, _ := sql.Build(stmt)
+			if query1 != query3 {
+				t.Errorf("AST мутировал после смены диалекта!\n  Ожидалось: %s\n  Получено:  %s", query1, query3)
+			}
+			t.Logf("Query1 (%s): %s", supportDialect.name, query1)
+			t.Logf("Query2 (%s): %s", nextDialect.name, query2)
+			t.Logf("Query3 (%s): %s", supportDialect.name, query3)
+		})
+	})
+	t.Run("Update", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmt := NewUpdate(Test.Table).
+				Set(
+					Assign(Test.Column.String, Value("updated")),
+					Assign(Test.Column.Number, Value(2)),
+				).
+				Join(
+					Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				).
+				Where(
+					And(
+						Equal(Test.Column.String, Value("active")),
+						ILike(Test.Column.String, Value("%ivan%")),
+					),
+				)
+			query1, _, _ := sql.Build(stmt)
+			nextDialect := getNextDialect(supportDialect)
+			sql.SetDialect(nextDialect)
+			query2, _, _ := sql.Build(stmt)
+			sql.SetDialect(supportDialect)
+			query3, _, _ := sql.Build(stmt)
+			if query1 != query3 {
+				t.Errorf("AST мутировал!\n  Ожидалось: %s\n  Получено:  %s", query1, query3)
+			}
+			t.Logf("Query1 (%s): %s", supportDialect.name, query1)
+			t.Logf("Query2 (%s): %s", nextDialect.name, query2)
+			t.Logf("Query3 (%s): %s", supportDialect.name, query3)
+		})
 	})
 }
 func Test_SQL_Comment(t *testing.T) {

@@ -131,7 +131,7 @@ var listFunctionsSQLite = map[functionService]functionTransform{
 	uastFunctionRand: sqliteFunctionRand,
 	// Функции строковые
 }
-var listSQLiteType = map[ValueType]typeService{
+var listTypeSQLite = map[ValueType]typeService{
 	// Типы бинарные
 	TypeBinary:    uastSQLiteTypeBinary,
 	TypeVarBinary: uastSQLiteTypeVarBinary,
@@ -222,7 +222,7 @@ func sqliteFunctionStdDev(baseTransformer *baseTransformer, expr transformFuncti
 }
 func sqliteFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listSQLiteType[valueType]
+	typeService, exists := listTypeSQLite[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -351,7 +351,7 @@ func sqliteFunctionJsonExtract(baseTransformer *baseTransformer, expr transformF
 		}
 	}
 	valueType := expr.transformGetValueType()
-	typeService, exists := listSQLiteType[valueType]
+	typeService, exists := listTypeSQLite[valueType]
 	if !exists {
 		return ErrUntransformType
 	}

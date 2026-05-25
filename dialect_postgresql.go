@@ -17,8 +17,8 @@ var DialectPostgreSQL = &SupportDialect{
 		lengthMaxQuery:       1 * 1024 * 1024,
 		lengthMaxValueByte:   1024,
 		lengthMaxValueString: 128,
-		listComparisons:      listPostgresqlComparisons,
-		listFunctions:        listPostgresqlFunctions,
+		listComparisons:      listComparisonsPostgresql,
+		listFunctions:        listFunctionsPostgresql,
 		parensFunction:       false,
 		placeholderNumber:    0,
 		placeholderStyle:     "$",
@@ -79,7 +79,7 @@ const (
 	// Функции строковые
 )
 const (
-	uastPostgreSQLManagementUpsert managementService = "ON CONFLICT DO UPDATE SET"
+	uastPostgresqlManagementUpsert managementService = "ON CONFLICT DO UPDATE SET"
 )
 const (
 	// Типы бинарные
@@ -111,8 +111,8 @@ const (
 )
 
 // Приватные переменные
-var listPostgresqlComparisons = map[comparisonOperator]comparisonTransform{}
-var listPostgresqlFunctions = map[functionService]functionTransform{
+var listComparisonsPostgresql = map[comparisonOperator]comparisonTransform{}
+var listFunctionsPostgresql = map[functionService]functionTransform{
 	// Функции агрегатные
 	uastFunctionGroupConcat: postgresqlFunctionGroupConcat,
 	uastFunctionStdDev:      postgresqlFunctionStdDev,
@@ -156,7 +156,7 @@ var listPostgresqlFunctions = map[functionService]functionTransform{
 	uastFunctionATan2: postgresqlFunctionATan2,
 	// Функции строковые
 }
-var listPostgresqlType = map[ValueType]typeService{
+var listTypePostgresql = map[ValueType]typeService{
 	// Типы бинарные
 	TypeBinary:    uastPostgresqlTypeBinary,
 	TypeVarBinary: uastPostgresqlTypeVarBinary,
@@ -216,7 +216,7 @@ func postgresqlFunctionCase(baseTransformer *baseTransformer, expr transformFunc
 }
 func postgresqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listPostgresqlType[valueType]
+	typeService, exists := listTypePostgresql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -544,7 +544,7 @@ func postgresqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transf
 	}
 	path += string(uastCompositeBraceRight)
 	valueType := expr.transformGetValueType()
-	typeService, exists := listPostgresqlType[valueType]
+	typeService, exists := listTypePostgresql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -853,7 +853,7 @@ func (strateger *postgresqlStrateger) transformInsert(baseTransformer *baseTrans
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		stmtInsert.values.upsert.service = uastPostgreSQLManagementUpsert
+		stmtInsert.values.upsert.service = uastPostgresqlManagementUpsert
 	}
 	return nil
 }

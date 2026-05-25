@@ -17,8 +17,8 @@ var DialectMySQL = &SupportDialect{
 		lengthMaxQuery:       64 * 1024,
 		lengthMaxValueByte:   1024,
 		lengthMaxValueString: 128,
-		listComparisons:      listMysqlComparisons,
-		listFunctions:        listMysqlFunctions,
+		listComparisons:      listComparisonsMysql,
+		listFunctions:        listFunctionsMysql,
 		parensFunction:       true,
 		placeholderNumber:    -1,
 		placeholderStyle:     "?",
@@ -88,11 +88,11 @@ const (
 )
 
 // Приватные переменные
-var listMysqlComparisons = map[comparisonOperator]comparisonTransform{
+var listComparisonsMysql = map[comparisonOperator]comparisonTransform{
 	uastComparisonILike:    mysqlComparisonILike,
 	uastComparisonNotILike: mysqlComparisonNotILike,
 }
-var listMysqlFunctions = map[functionService]functionTransform{
+var listFunctionsMysql = map[functionService]functionTransform{
 	// Функции агрегатные
 	uastFunctionGroupConcat: mysqlFunctionGroupConcat,
 	// Функции условий
@@ -113,7 +113,7 @@ var listMysqlFunctions = map[functionService]functionTransform{
 	uastFunctionTrunc: mysqlFunctionTrunc,
 	// Функции строковые
 }
-var listMysqlType = map[ValueType]typeService{
+var listTypeMysql = map[ValueType]typeService{
 	// Типы бинарные
 	TypeBinary:    uastMysqlTypeBinary,
 	TypeVarBinary: uastMysqlTypeVarBinary,
@@ -204,7 +204,7 @@ func mysqlFunctionCase(baseTransformer *baseTransformer, expr transformFunction)
 }
 func mysqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listMysqlType[valueType]
+	typeService, exists := listTypeMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -299,7 +299,7 @@ func mysqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 		}
 	}
 	valueType := expr.transformGetValueType()
-	typeService, exists := listMysqlType[valueType]
+	typeService, exists := listTypeMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}

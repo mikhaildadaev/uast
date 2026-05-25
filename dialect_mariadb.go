@@ -17,8 +17,8 @@ var DialectMariaDB = &SupportDialect{
 		lengthMaxQuery:       64 * 1024,
 		lengthMaxValueByte:   1024,
 		lengthMaxValueString: 128,
-		listComparisons:      listMariaDBComparisons,
-		listFunctions:        listMariaDBFunctions,
+		listComparisons:      listComparisonsMariadb,
+		listFunctions:        listFunctionsMariadb,
 		parensFunction:       true,
 		placeholderNumber:    -1,
 		placeholderStyle:     "?",
@@ -29,124 +29,124 @@ var DialectMariaDB = &SupportDialect{
 		symbolQuoteRight:     "`",
 	},
 	name:      "MariaDB",
-	strateger: &mariaDBStrateger{},
+	strateger: &mariadbStrateger{},
 }
 
 // Приватные константы
 const (
 	// Функции агрегатные
-	uastMariaDBFunctionGroupConcat functionService = "GROUP_CONCAT"
+	uastMariadbFunctionGroupConcat functionService = "GROUP_CONCAT"
 	// Функции условий
-	uastMariaDBFunctionCase functionService = "CASE"
+	uastMariadbFunctionCase functionService = "CASE"
 	// Функции конвертации
-	uastMariaDBFunctionCast functionService = "CAST"
+	uastMariadbFunctionCast functionService = "CAST"
 	// Функции даты и времени
-	uastMariaDBFunctionDateAdd functionService = "DATE_ADD"
-	uastMariaDBFunctionDateSub functionService = "DATE_SUB"
-	uastMariaDBFunctionTimeAdd functionService = "TIME_ADD"
-	uastMariaDBFunctionTimeSub functionService = "TIME_SUB"
+	uastMariadbFunctionDateAdd functionService = "DATE_ADD"
+	uastMariadbFunctionDateSub functionService = "DATE_SUB"
+	uastMariadbFunctionTimeAdd functionService = "TIME_ADD"
+	uastMariadbFunctionTimeSub functionService = "TIME_SUB"
 	// Функции обмена данными
-	uastMariaDBFunctionJsonExtract     functionService = ""
-	uastMariaDBFunctionJsonExtractCast functionService = "CAST"
-	uastMariaDBFunctionJsonRemove      functionService = "JSON_REMOVE"
-	uastMariaDBFunctionJsonSet         functionService = "JSON_SET"
+	uastMariadbFunctionJsonExtract     functionService = ""
+	uastMariadbFunctionJsonExtractCast functionService = "CAST"
+	uastMariadbFunctionJsonRemove      functionService = "JSON_REMOVE"
+	uastMariadbFunctionJsonSet         functionService = "JSON_SET"
 	// Функции математические
-	uastMariaDBFunctionCeil  functionService = "CEILING"
-	uastMariaDBFunctionTrunc functionService = "TRUNCATE"
+	uastMariadbFunctionCeil  functionService = "CEILING"
+	uastMariadbFunctionTrunc functionService = "TRUNCATE"
 	// Функции строковые
 )
 const (
-	uastMariaDBManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
+	uastMariadbManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
 )
 const (
 	// Типы бинарные
-	uastMariaDBTypeBinary    typeService = "BINARY"
-	uastMariaDBTypeVarBinary typeService = "VARBINARY"
+	uastMariadbTypeBinary    typeService = "BINARY"
+	uastMariadbTypeVarBinary typeService = "VARBINARY"
 	// Типы даты и времени
-	uastMariaDBTypeDate      typeService = "DATE"
-	uastMariaDBTypeDateTime  typeService = "DATETIME"
-	uastMariaDBTypeTime      typeService = "TIME"
-	uastMariaDBTypeTimestamp typeService = "DATETIME"
+	uastMariadbTypeDate      typeService = "DATE"
+	uastMariadbTypeDateTime  typeService = "DATETIME"
+	uastMariadbTypeTime      typeService = "TIME"
+	uastMariadbTypeTimestamp typeService = "DATETIME"
 	// Типы числовые
-	uastMariaDBTypeBigInt   typeService = "SIGNED"
-	uastMariaDBTypeDecimal  typeService = "DECIMAL"
-	uastMariaDBTypeDouble   typeService = "DECIMAL"
-	uastMariaDBTypeFloat    typeService = "DECIMAL"
-	uastMariaDBTypeInt      typeService = "SIGNED"
-	uastMariaDBTypeSmallInt typeService = "SIGNED"
+	uastMariadbTypeBigInt   typeService = "SIGNED"
+	uastMariadbTypeDecimal  typeService = "DECIMAL"
+	uastMariadbTypeDouble   typeService = "DECIMAL"
+	uastMariadbTypeFloat    typeService = "DECIMAL"
+	uastMariadbTypeInt      typeService = "SIGNED"
+	uastMariadbTypeSmallInt typeService = "SIGNED"
 	// Типы строковые
-	uastMariaDBTypeChar    typeService = "CHAR"
-	uastMariaDBTypeString  typeService = "VARCHAR"
-	uastMariaDBTypeText    typeService = "TEXT"
-	uastMariaDBTypeVarChar typeService = "VARCHAR"
+	uastMariadbTypeChar    typeService = "CHAR"
+	uastMariadbTypeString  typeService = "VARCHAR"
+	uastMariadbTypeText    typeService = "TEXT"
+	uastMariadbTypeVarChar typeService = "VARCHAR"
 	// Типы специальные
-	uastMariaDBTypeArray   typeService = "JSON"
-	uastMariaDBTypeBoolean typeService = "TINYINT(1)"
-	uastMariaDBTypeJson    typeService = "JSON"
-	uastMariaDBTypeUUID    typeService = "UUID"
-	uastMariaDBTypeXML     typeService = "TEXT"
+	uastMariadbTypeArray   typeService = "JSON"
+	uastMariadbTypeBoolean typeService = "TINYINT(1)"
+	uastMariadbTypeJson    typeService = "JSON"
+	uastMariadbTypeUUID    typeService = "UUID"
+	uastMariadbTypeXML     typeService = "TEXT"
 )
 
 // Приватные переменные
-var listMariaDBComparisons = map[comparisonOperator]comparisonTransform{
-	uastComparisonILike:    MariaDBComparisonILike,
-	uastComparisonNotILike: MariaDBComparisonNotILike,
+var listComparisonsMariadb = map[comparisonOperator]comparisonTransform{
+	uastComparisonILike:    mariadbComparisonILike,
+	uastComparisonNotILike: mariadbComparisonNotILike,
 }
-var listMariaDBFunctions = map[functionService]functionTransform{
+var listFunctionsMariadb = map[functionService]functionTransform{
 	// Функции агрегатные
-	uastFunctionGroupConcat: MariaDBFunctionGroupConcat,
+	uastFunctionGroupConcat: mariadbFunctionGroupConcat,
 	// Функции условий
-	uastFunctionCase: MariaDBFunctionCase,
+	uastFunctionCase: mariadbFunctionCase,
 	// Функции конвертации
-	uastFunctionCast: MariaDBFunctionCast,
+	uastFunctionCast: mariadbFunctionCast,
 	// Функции даты и времени
-	uastFunctionDateAdd: MariaDBFunctionDateAdd,
-	uastFunctionDateSub: MariaDBFunctionDateSub,
-	uastFunctionTimeAdd: MariaDBFunctionTimeAdd,
-	uastFunctionTimeSub: MariaDBFunctionTimeSub,
+	uastFunctionDateAdd: mariadbFunctionDateAdd,
+	uastFunctionDateSub: mariadbFunctionDateSub,
+	uastFunctionTimeAdd: mariadbFunctionTimeAdd,
+	uastFunctionTimeSub: mariadbFunctionTimeSub,
 	// Функции обмена данными
-	uastFunctionJsonExtract: MariaDBFunctionJsonExtract,
-	uastFunctionJsonRemove:  MariaDBFunctionJsonRemove,
-	uastFunctionJsonSet:     MariaDBFunctionJsonSet,
+	uastFunctionJsonExtract: mariadbFunctionJsonExtract,
+	uastFunctionJsonRemove:  mariadbFunctionJsonRemove,
+	uastFunctionJsonSet:     mariadbFunctionJsonSet,
 	// Функции математические
-	uastFunctionCeil:  MariaDBFunctionCeil,
-	uastFunctionTrunc: MariaDBFunctionTrunc,
+	uastFunctionCeil:  mariadbFunctionCeil,
+	uastFunctionTrunc: mariadbFunctionTrunc,
 	// Функции строковые
 }
-var listMariaDBType = map[ValueType]typeService{
+var listTypeMariadb = map[ValueType]typeService{
 	// Типы бинарные
-	TypeBinary:    uastMariaDBTypeBinary,
-	TypeVarBinary: uastMariaDBTypeVarBinary,
+	TypeBinary:    uastMariadbTypeBinary,
+	TypeVarBinary: uastMariadbTypeVarBinary,
 	// Типы даты и времени
-	TypeDate:      uastMariaDBTypeDate,
-	TypeDateTime:  uastMariaDBTypeDateTime,
-	TypeTime:      uastMariaDBTypeTime,
-	TypeTimestamp: uastMariaDBTypeTimestamp,
+	TypeDate:      uastMariadbTypeDate,
+	TypeDateTime:  uastMariadbTypeDateTime,
+	TypeTime:      uastMariadbTypeTime,
+	TypeTimestamp: uastMariadbTypeTimestamp,
 	// Типы числовые
-	TypeBigInt:   uastMariaDBTypeBigInt,
-	TypeDecimal:  uastMariaDBTypeDecimal,
-	TypeDouble:   uastMariaDBTypeDouble,
-	TypeFloat:    uastMariaDBTypeFloat,
-	TypeInt:      uastMariaDBTypeInt,
-	TypeSmallInt: uastMariaDBTypeSmallInt,
+	TypeBigInt:   uastMariadbTypeBigInt,
+	TypeDecimal:  uastMariadbTypeDecimal,
+	TypeDouble:   uastMariadbTypeDouble,
+	TypeFloat:    uastMariadbTypeFloat,
+	TypeInt:      uastMariadbTypeInt,
+	TypeSmallInt: uastMariadbTypeSmallInt,
 	// Типы строковые
-	TypeChar:    uastMariaDBTypeChar,
-	TypeString:  uastMariaDBTypeString,
-	TypeText:    uastMariaDBTypeText,
-	TypeVarChar: uastMariaDBTypeVarChar,
+	TypeChar:    uastMariadbTypeChar,
+	TypeString:  uastMariadbTypeString,
+	TypeText:    uastMariadbTypeText,
+	TypeVarChar: uastMariadbTypeVarChar,
 	// Типы специальные
-	TypeArray:   uastMariaDBTypeArray,
-	TypeBoolean: uastMariaDBTypeBoolean,
-	TypeJSON:    uastMariaDBTypeJson,
-	TypeUUID:    uastMariaDBTypeUUID,
-	TypeXML:     uastMariaDBTypeXML,
+	TypeArray:   uastMariadbTypeArray,
+	TypeBoolean: uastMariadbTypeBoolean,
+	TypeJSON:    uastMariadbTypeJson,
+	TypeUUID:    uastMariadbTypeUUID,
+	TypeXML:     uastMariadbTypeXML,
 }
 
 // Приватные структуры
-type mariaDBStrateger struct{}
+type mariadbStrateger struct{}
 
 // Приватные функции
-func MariaDBComparisonILike(baseTransformer *baseTransformer, expr transformComparison) error {
+func mariadbComparisonILike(baseTransformer *baseTransformer, expr transformComparison) error {
 	if comparison, ok := expr.(*exprComparison[string]); ok {
 		comparison.left = &exprFunction[string, string, string]{
 			left:    comparison.left,
@@ -163,7 +163,7 @@ func MariaDBComparisonILike(baseTransformer *baseTransformer, expr transformComp
 	}
 	return ErrUntransformComparison
 }
-func MariaDBComparisonNotILike(baseTransformer *baseTransformer, expr transformComparison) error {
+func mariadbComparisonNotILike(baseTransformer *baseTransformer, expr transformComparison) error {
 	if comparison, ok := expr.(*exprComparison[string]); ok {
 		comparison.left = &exprFunction[string, string, string]{
 			left:    comparison.left,
@@ -180,7 +180,7 @@ func MariaDBComparisonNotILike(baseTransformer *baseTransformer, expr transformC
 	}
 	return ErrUntransformComparison
 }
-func MariaDBFunctionGroupConcat(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionGroupConcat(baseTransformer *baseTransformer, expr transformFunction) error {
 	function, exists := expr.(*exprFunction[string, string, string])
 	if !exists {
 		return ErrUntransformFunction
@@ -195,16 +195,16 @@ func MariaDBFunctionGroupConcat(baseTransformer *baseTransformer, expr transform
 		},
 		operator: uastCompositeSingleSpace,
 	}
-	function.service = uastMariaDBFunctionGroupConcat
+	function.service = uastMariadbFunctionGroupConcat
 	return nil
 }
-func MariaDBFunctionCase(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMariaDBFunctionCase)
+func mariadbFunctionCase(baseTransformer *baseTransformer, expr transformFunction) error {
+	expr.transformSetService(uastMariadbFunctionCase)
 	return nil
 }
-func MariaDBFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listMariaDBType[valueType]
+	typeService, exists := listTypeMariadb[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -215,10 +215,10 @@ func MariaDBFunctionCast(baseTransformer *baseTransformer, expr transformFunctio
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetService(uastMariaDBFunctionCast)
+	expr.transformSetService(uastMariadbFunctionCast)
 	return nil
 }
-func MariaDBFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
 	function, exists := expr.(*exprFunction[time.Time, string, time.Time])
 	if !exists {
 		return ErrUntransformFunction
@@ -231,10 +231,10 @@ func MariaDBFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunc
 		},
 		operator: uastCompositeSingleSpace,
 	}
-	function.service = uastMariaDBFunctionDateAdd
+	function.service = uastMariadbFunctionDateAdd
 	return nil
 }
-func MariaDBFunctionDateSub(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionDateSub(baseTransformer *baseTransformer, expr transformFunction) error {
 	function, exists := expr.(*exprFunction[time.Time, string, time.Time])
 	if !exists {
 		return ErrUntransformFunction
@@ -247,10 +247,10 @@ func MariaDBFunctionDateSub(baseTransformer *baseTransformer, expr transformFunc
 		},
 		operator: uastCompositeSingleSpace,
 	}
-	function.service = uastMariaDBFunctionDateSub
+	function.service = uastMariadbFunctionDateSub
 	return nil
 }
-func MariaDBFunctionTimeAdd(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionTimeAdd(baseTransformer *baseTransformer, expr transformFunction) error {
 	function, exists := expr.(*exprFunction[time.Time, string, time.Time])
 	if !exists {
 		return ErrUntransformFunction
@@ -263,10 +263,10 @@ func MariaDBFunctionTimeAdd(baseTransformer *baseTransformer, expr transformFunc
 		},
 		operator: uastCompositeSingleSpace,
 	}
-	function.service = uastMariaDBFunctionTimeAdd
+	function.service = uastMariadbFunctionTimeAdd
 	return nil
 }
-func MariaDBFunctionTimeSub(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionTimeSub(baseTransformer *baseTransformer, expr transformFunction) error {
 	function, exists := expr.(*exprFunction[time.Time, string, time.Time])
 	if !exists {
 		return ErrUntransformFunction
@@ -279,10 +279,10 @@ func MariaDBFunctionTimeSub(baseTransformer *baseTransformer, expr transformFunc
 		},
 		operator: uastCompositeSingleSpace,
 	}
-	function.service = uastMariaDBFunctionTimeSub
+	function.service = uastMariadbFunctionTimeSub
 	return nil
 }
-func MariaDBFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
 	json := expr.transformGetJson()
 	path := string(uastCompositeDollarPoint)
 	for j, expression := range json[0].expressions {
@@ -299,7 +299,7 @@ func MariaDBFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 		}
 	}
 	valueType := expr.transformGetValueType()
-	typeService, exists := listMariaDBType[valueType]
+	typeService, exists := listTypeMariadb[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -316,7 +316,7 @@ func MariaDBFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 			},
 		})
 		expr.transformSetOperator(uastCompositeSpaceMinusGreaterSpace)
-		expr.transformSetService(uastMariaDBFunctionJsonExtract)
+		expr.transformSetService(uastMariadbFunctionJsonExtract)
 	case TypeString:
 		expr.transformSetJson([]*exprJson{
 			{
@@ -329,7 +329,7 @@ func MariaDBFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 			},
 		})
 		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMariaDBFunctionJsonExtract)
+		expr.transformSetService(uastMariadbFunctionJsonExtract)
 	default:
 		expr.transformSetJson([]*exprJson{
 			{
@@ -344,11 +344,11 @@ func MariaDBFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 			},
 		})
 		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMariaDBFunctionJsonExtractCast)
+		expr.transformSetService(uastMariadbFunctionJsonExtractCast)
 	}
 	return nil
 }
-func MariaDBFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
 	json := expr.transformGetJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
@@ -377,10 +377,10 @@ func MariaDBFunctionJsonRemove(baseTransformer *baseTransformer, expr transformF
 	}
 	expr.transformSetJson(groups)
 	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMariaDBFunctionJsonRemove)
+	expr.transformSetService(uastMariadbFunctionJsonRemove)
 	return nil
 }
-func MariaDBFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
+func mariadbFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
 	json := expr.transformGetJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
@@ -410,18 +410,18 @@ func MariaDBFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunc
 	}
 	expr.transformSetJson(groups)
 	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMariaDBFunctionJsonSet)
+	expr.transformSetService(uastMariadbFunctionJsonSet)
 	return nil
 }
-func MariaDBFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMariaDBFunctionCeil)
+func mariadbFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {
+	expr.transformSetService(uastMariadbFunctionCeil)
 	return nil
 }
-func MariaDBFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMariaDBFunctionTrunc)
+func mariadbFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction) error {
+	expr.transformSetService(uastMariadbFunctionTrunc)
 	return nil
 }
-func MariaDBTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
+func mariadbTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if stmtDelete.from == nil {
 		return ErrInvalidStatementTarget
 	}
@@ -442,7 +442,7 @@ func MariaDBTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 }
 
 // Приватные методы
-func (strateger *mariaDBStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
+func (strateger *mariadbStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
@@ -454,14 +454,14 @@ func (strateger *mariaDBStrateger) renderComment(baseRenderer *baseRenderer, stm
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
+func (strateger *mariadbStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderCommand(stmtDelete.command); err != nil {
 		return err
 	}
-	if err := MariaDBTarget(baseRenderer, stmtDelete); err != nil {
+	if err := mariadbTarget(baseRenderer, stmtDelete); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {
@@ -478,14 +478,14 @@ func (strateger *mariaDBStrateger) renderDelete(baseRenderer *baseRenderer, stmt
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
+func (strateger *mariadbStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
 	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
+func (strateger *mariadbStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
 	if err := baseRenderer.renderWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -509,7 +509,7 @@ func (strateger *mariaDBStrateger) renderInsert(baseRenderer *baseRenderer, stmt
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
+func (strateger *mariadbStrateger) renderSelect(baseRenderer *baseRenderer, stmtSelect *stmtSelect) error {
 	if err := baseRenderer.renderWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -551,7 +551,7 @@ func (strateger *mariaDBStrateger) renderSelect(baseRenderer *baseRenderer, stmt
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error {
+func (strateger *mariadbStrateger) renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error {
 	if err := baseRenderer.renderCommand(stmtTruncate.command); err != nil {
 		return err
 	}
@@ -566,7 +566,7 @@ func (strateger *mariaDBStrateger) renderTruncate(baseRenderer *baseRenderer, st
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
+func (strateger *mariadbStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUpdate *stmtUpdate) error {
 	if err := baseRenderer.renderWith(stmtUpdate.with); err != nil {
 		return err
 	}
@@ -590,10 +590,10 @@ func (strateger *mariaDBStrateger) renderUpdate(baseRenderer *baseRenderer, stmt
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
+func (strateger *mariadbStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
-func (strateger *mariaDBStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
+func (strateger *mariadbStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -602,11 +602,11 @@ func (strateger *mariaDBStrateger) transformDelete(baseTransformer *baseTransfor
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
+func (strateger *mariadbStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
 	// !!! Внимание, находится в стадии разработки
 	return nil
 }
-func (strateger *mariaDBStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
+func (strateger *mariadbStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -614,11 +614,11 @@ func (strateger *mariaDBStrateger) transformInsert(baseTransformer *baseTransfor
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		stmtInsert.values.upsert.service = uastMariaDBManagementUpsert
+		stmtInsert.values.upsert.service = uastMariadbManagementUpsert
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
+func (strateger *mariadbStrateger) transformSelect(baseTransformer *baseTransformer, stmtSelect *stmtSelect) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -627,10 +627,10 @@ func (strateger *mariaDBStrateger) transformSelect(baseTransformer *baseTransfor
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error {
+func (strateger *mariadbStrateger) transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error {
 	return nil
 }
-func (strateger *mariaDBStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
+func (strateger *mariadbStrateger) transformUpdate(baseTransformer *baseTransformer, stmtUpdate *stmtUpdate) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
 	}
@@ -639,7 +639,7 @@ func (strateger *mariaDBStrateger) transformUpdate(baseTransformer *baseTransfor
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
+func (strateger *mariadbStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
 	if stmtComment.column == nil && stmtComment.table == nil {
 		return ErrInvalidStatement
 	}
@@ -651,7 +651,7 @@ func (strateger *mariaDBStrateger) validateComment(baseValidator *baseValidator,
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
+func (strateger *mariadbStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
 	if err := baseValidator.validateWith(stmtDelete.with); err != nil {
 		return err
 	}
@@ -669,11 +669,11 @@ func (strateger *mariaDBStrateger) validateDelete(baseValidator *baseValidator, 
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
+func (strateger *mariadbStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
 	// !!! Внимание, находится в стадии разработки
 	return nil
 }
-func (strateger *mariaDBStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
+func (strateger *mariadbStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -697,7 +697,7 @@ func (strateger *mariaDBStrateger) validateInsert(baseValidator *baseValidator, 
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
+func (strateger *mariadbStrateger) validateSelect(baseValidator *baseValidator, stmtSelect *stmtSelect) error {
 	if err := baseValidator.validateWith(stmtSelect.with); err != nil {
 		return err
 	}
@@ -733,13 +733,13 @@ func (strateger *mariaDBStrateger) validateSelect(baseValidator *baseValidator, 
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error {
+func (strateger *mariadbStrateger) validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error {
 	if err := baseValidator.validateTable(stmtTruncate.table); err != nil {
 		return err
 	}
 	return nil
 }
-func (strateger *mariaDBStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
+func (strateger *mariadbStrateger) validateUpdate(baseValidator *baseValidator, stmtUpdate *stmtUpdate) error {
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}

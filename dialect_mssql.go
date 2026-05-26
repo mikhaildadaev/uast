@@ -46,16 +46,18 @@ const (
 	uastMssqlFunctionCast       functionService = "CAST"
 	uastMssqlFunctionDateFormat functionService = "FORMAT"
 	// Функции даты и времени
-	uastMssqlFunctionDateAdd functionService = "DATEADD"
-	uastMssqlFunctionDateSub functionService = "DATEADD"
-	uastMssqlFunctionHour    functionService = "DATEPART"
-	uastMssqlFunctionMinute  functionService = "DATEPART"
-	uastMssqlFunctionNow     functionService = "GETDATE"
-	uastMssqlFunctionQuarter functionService = "DATEPART"
-	uastMssqlFunctionSecond  functionService = "DATEPART"
-	uastMssqlFunctionTimeAdd functionService = "DATEADD"
-	uastMssqlFunctionTimeSub functionService = "DATEADD"
-	uastMssqlFunctionWeek    functionService = "DATEPART"
+	uastMssqlFunctionDateAdd   functionService = "DATEADD"
+	uastMssqlFunctionDateSub   functionService = "DATEADD"
+	uastMssqlFunctionDayName   functionService = "DATENAME"
+	uastMssqlFunctionHour      functionService = "DATEPART"
+	uastMssqlFunctionMinute    functionService = "DATEPART"
+	uastMssqlFunctionNow       functionService = "GETDATE"
+	uastMssqlFunctionMonthName functionService = "DATENAME"
+	uastMssqlFunctionQuarter   functionService = "DATEPART"
+	uastMssqlFunctionSecond    functionService = "DATEPART"
+	uastMssqlFunctionTimeAdd   functionService = "DATEADD"
+	uastMssqlFunctionTimeSub   functionService = "DATEADD"
+	uastMssqlFunctionWeek      functionService = "DATEPART"
 	// Функции обмена данными
 	uastMssqlFunctionJsonExtract     functionService = ""
 	uastMssqlFunctionJsonExtractCast functionService = "CAST"
@@ -116,16 +118,18 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionCast:       mssqlFunctionCast,
 	uastFunctionDateFormat: mssqlFunctionDateFormat,
 	// Функции даты и времени
-	uastFunctionDateAdd: mssqlFunctionDateAdd,
-	uastFunctionDateSub: mssqlFunctionDateSub,
-	uastFunctionHour:    mssqlFunctionHour,
-	uastFunctionMinute:  mssqlFunctionMinute,
-	uastFunctionNow:     mssqlFunctionNow,
-	uastFunctionQuarter: mssqlFunctionQuarter,
-	uastFunctionSecond:  mssqlFunctionSecond,
-	uastFunctionTimeAdd: mssqlFunctionTimeAdd,
-	uastFunctionTimeSub: mssqlFunctionTimeSub,
-	uastFunctionWeek:    mssqlFunctionWeek,
+	uastFunctionDateAdd:   mssqlFunctionDateAdd,
+	uastFunctionDateSub:   mssqlFunctionDateSub,
+	uastFunctionDayName:   mssqlFunctionDayName,
+	uastFunctionHour:      mssqlFunctionHour,
+	uastFunctionMinute:    mssqlFunctionMinute,
+	uastFunctionNow:       mssqlFunctionNow,
+	uastFunctionMonthName: mssqlFunctionMonthName,
+	uastFunctionQuarter:   mssqlFunctionQuarter,
+	uastFunctionSecond:    mssqlFunctionSecond,
+	uastFunctionTimeAdd:   mssqlFunctionTimeAdd,
+	uastFunctionTimeSub:   mssqlFunctionTimeSub,
+	uastFunctionWeek:      mssqlFunctionWeek,
 	// Функции обмена данными
 	uastFunctionJsonExtract: mssqlFunctionJsonExtract,
 	uastFunctionJsonRemove:  mssqlFunctionJsonRemove,
@@ -281,6 +285,17 @@ func mssqlFunctionDateSub(baseTransformer *baseTransformer, expr transformFuncti
 	function.service = uastMssqlFunctionDateSub
 	return nil
 }
+func mssqlFunctionDayName(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[time.Time, string, string])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	function.operator = uastCompositeCommaSpace
+	function.process = uastProcessInvert
+	function.right = serviceString(uastModifierWeekday)
+	function.service = uastMssqlFunctionDayName
+	return nil
+}
 func mssqlFunctionHour(baseTransformer *baseTransformer, expr transformFunction) error {
 	function, exists := expr.(*exprFunction[time.Time, string, int])
 	if !exists {
@@ -301,6 +316,17 @@ func mssqlFunctionMinute(baseTransformer *baseTransformer, expr transformFunctio
 	function.operator = uastCompositeCommaSpace
 	function.process = uastProcessInvert
 	function.service = uastMssqlFunctionMinute
+	return nil
+}
+func mssqlFunctionMonthName(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[time.Time, string, string])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	function.operator = uastCompositeCommaSpace
+	function.process = uastProcessInvert
+	function.right = serviceString(uastModifierMonth)
+	function.service = uastMssqlFunctionMonthName
 	return nil
 }
 func mssqlFunctionNow(baseTransformer *baseTransformer, expr transformFunction) error {

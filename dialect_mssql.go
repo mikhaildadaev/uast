@@ -202,13 +202,8 @@ func mssqlFunctionGroupConcat(baseTransformer *baseTransformer, expr transformFu
 	if !exists {
 		return ErrUntransformParam
 	}
-	function.right = &exprComposite[string]{
-		expressions: []ExpressionSafe[string]{
-			serviceString(uastModifierSeparator),
-			&exprLiteral[string]{value: ","},
-		},
-		operator: uastCompositeSingleSpace,
-	}
+	function.operator = uastCompositeCommaSpace
+	function.right = &exprLiteral[string]{value: ","}
 	function.service = uastMssqlFunctionGroupConcat
 	return nil
 }

@@ -384,7 +384,7 @@ var listFunctionServices = []functionService{
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementPartitionBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
 var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierCascade, uastModifierColumn, uastModifierBetween, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierInterval, uastModifierIs, uastModifierOn, uastModifierOver, uastModifierRestartIdentity, uastModifierRecursive, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierWhen}
-var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMySQL, DialectPostgreSQL, DialectSQLite}
+var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMsSQL, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,
 	'0': true, '1': true, '2': true, '3': true, '4': true, '5': true, '6': true, '7': true, '8': true, '9': true,

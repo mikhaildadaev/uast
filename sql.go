@@ -93,9 +93,12 @@ func (sqlBuilder *SQLBuilder) Query(stmt statement, db *sql.DB) (*sql.Rows, erro
 	}
 	return db.Query(query, args...)
 }
-func (sqlBuilder *SQLBuilder) QueryRow(stmt statement, db *sql.DB) *sql.Row {
-	query, args, _ := sqlBuilder.Build(stmt)
-	return db.QueryRow(query, args...)
+func (sqlBuilder *SQLBuilder) QueryRow(stmt statement, db *sql.DB) (*sql.Row, error) {
+	query, args, err := sqlBuilder.Build(stmt)
+	if err != nil {
+		return nil, err
+	}
+	return db.QueryRow(query, args...), nil
 }
 
 // Приватные интерфейсы

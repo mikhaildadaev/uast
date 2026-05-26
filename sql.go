@@ -1,12 +1,13 @@
 package uast
 
 import (
+	"database/sql"
 	"sync"
 )
 
 // Публичные конструкторы
-func NewSQL(options ...SQLOption) *sql {
-	sql := &sql{
+func NewSQL(options ...SQLOption) *SQLBuilder {
+	sqlBuilder := &SQLBuilder{
 		config:  DialectDefault.config,
 		mutable: false,
 		pool: &sync.Pool{
@@ -18,44 +19,44 @@ func NewSQL(options ...SQLOption) *sql {
 		strateger: DialectDefault.strateger,
 	}
 	for _, opt := range options {
-		opt(sql)
+		opt(sqlBuilder)
 	}
-	return sql
+	return sqlBuilder
 }
 
 // Публичные функции
 func WithDialect(dialect *SupportDialect) SQLOption {
-	return func(sql *sql) {
+	return func(sqlBuilder *SQLBuilder) {
 		if dialect != nil {
-			sql.config = dialect.config
-			sql.processor = dialect.processor
-			sql.strateger = dialect.strateger
+			sqlBuilder.config = dialect.config
+			sqlBuilder.processor = dialect.processor
+			sqlBuilder.strateger = dialect.strateger
 		}
 	}
 }
 func WithMutable() SQLOption {
-	return func(sql *sql) {
-		sql.mutable = true
+	return func(sqlBuilder *SQLBuilder) {
+		sqlBuilder.mutable = true
 	}
 }
 
 // Публичные методы
-func (sql *sql) Build(statement statement) (string, []any, error) {
+func (sqlBuilder *SQLBuilder) Build(statement statement) (string, []any, error) {
 	if statement == nil {
 		return "", nil, ErrInvalidStatement
 	}
-	contexter := sql.pool.Get().(*contexter)
+	contexter := sqlBuilder.pool.Get().(*contexter)
 	defer func() {
 		contexter.resetAll()
-		sql.pool.Put(contexter)
+		sqlBuilder.pool.Put(contexter)
 	}()
 	stmt := statement
-	if !sql.mutable {
+	if !sqlBuilder.mutable {
 		stmt = statement.clone()
 	}
-	baseRenderer := sql.processor.createRenderer(sql.config, contexter, sql.strateger)
-	baseTransformer := sql.processor.createTransformer(sql.config, contexter, sql.strateger)
-	baseValidator := sql.processor.createValidator(sql.config, contexter, sql.strateger)
+	baseRenderer := sqlBuilder.processor.createRenderer(sqlBuilder.config, contexter, sqlBuilder.strateger)
+	baseTransformer := sqlBuilder.processor.createTransformer(sqlBuilder.config, contexter, sqlBuilder.strateger)
+	baseValidator := sqlBuilder.processor.createValidator(sqlBuilder.config, contexter, sqlBuilder.strateger)
 	if err := stmt.validate(baseValidator); err != nil {
 		return "", nil, err
 	}
@@ -67,16 +68,34 @@ func (sql *sql) Build(statement statement) (string, []any, error) {
 	}
 	return contexter.bufferQuery.String(), contexter.bufferValue, nil
 }
-func (sql *sql) Close() {
-	sql.pool = nil
+func (sqlBuilder *SQLBuilder) Close() {
+	sqlBuilder.pool = nil
 }
-func (sql *sql) SetDialect(dialect *SupportDialect) {
-	if sql.mutable {
+func (sqlBuilder *SQLBuilder) Exec(stmt statement, db *sql.DB) (sql.Result, error) {
+	query, args, err := sqlBuilder.Build(stmt)
+	if err != nil {
+		return nil, err
+	}
+	return db.Exec(query, args...)
+}
+func (sqlBuilder *SQLBuilder) SetDialect(dialect *SupportDialect) {
+	if sqlBuilder.mutable {
 		return
 	}
-	sql.config = dialect.config
-	sql.processor = dialect.processor
-	sql.strateger = dialect.strateger
+	sqlBuilder.config = dialect.config
+	sqlBuilder.processor = dialect.processor
+	sqlBuilder.strateger = dialect.strateger
+}
+func (sqlBuilder *SQLBuilder) Query(stmt statement, db *sql.DB) (*sql.Rows, error) {
+	query, args, err := sqlBuilder.Build(stmt)
+	if err != nil {
+		return nil, err
+	}
+	return db.Query(query, args...)
+}
+func (sqlBuilder *SQLBuilder) QueryRow(stmt statement, db *sql.DB) *sql.Row {
+	query, args, _ := sqlBuilder.Build(stmt)
+	return db.QueryRow(query, args...)
 }
 
 // Приватные интерфейсы
@@ -88,11 +107,11 @@ type statement interface {
 }
 
 // Приватные структуры
-type sql struct {
+type SQLBuilder struct {
 	config    *config
 	mutable   bool
 	pool      *sync.Pool
 	processor processor
 	strateger strateger
 }
-type SQLOption func(*sql)
+type SQLOption func(*SQLBuilder)

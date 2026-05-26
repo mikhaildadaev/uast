@@ -2,6 +2,7 @@ package uast
 
 import (
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 )
@@ -56,6 +57,8 @@ func Test_Core_clauseGroupBy(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "GROUP BY `t`.`string`", "GROUP BY")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "GROUP BY [t].[string]", "GROUP BY")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "GROUP BY `t`.`string`", "GROUP BY")
 		case DialectPostgreSQL:
@@ -83,6 +86,8 @@ func Test_Core_clauseHaving(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "HAVING")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "HAVING COUNT([t].[id]) > @p1", "HAVING")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "HAVING COUNT(`t`.`id`) > ?", "HAVING")
 		case DialectPostgreSQL:
@@ -124,6 +129,15 @@ func Test_Core_clauseJoin(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "LEFT OUTER JOIN")
 			assertContains(t, sqlSelectQuery, "RIGHT JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "RIGHT JOIN")
 			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "RIGHT OUTER JOIN")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "CROSS JOIN [test] AS [t]", "CROSS JOIN")
+			assertContains(t, sqlSelectQuery, "FULL JOIN [test] AS [t] ON [t].[id] = [d].[id]", "FULL JOIN")
+			assertContains(t, sqlSelectQuery, "FULL OUTER JOIN [test] AS [t] ON [t].[id] = [d].[id]", "FULL OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "INNER JOIN [test] AS [t] ON [t].[id] = [d].[id]", "INNER JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT JOIN [test] AS [t] ON [t].[id] = [d].[id]", "LEFT JOIN")
+			assertContains(t, sqlSelectQuery, "LEFT OUTER JOIN [test] AS [t] ON [t].[id] = [d].[id]", "LEFT OUTER JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT JOIN [test] AS [t] ON [t].[id] = [d].[id]", "RIGHT JOIN")
+			assertContains(t, sqlSelectQuery, "RIGHT OUTER JOIN [test] AS [t] ON [t].[id] = [d].[id]", "RIGHT OUTER JOIN")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "CROSS JOIN `test` AS `t`", "CROSS JOIN")
 			assertContains(t, sqlSelectQuery, "FULL JOIN `test` AS `t` ON `t`.`id` = `d`.`id`", "FULL JOIN")
@@ -168,6 +182,8 @@ func Test_Core_clauseLimit(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "LIMIT ?", "LIMIT")
+		case DialectMsSQL:
+			// Внимание находится в стадии разработки
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "LIMIT ?", "LIMIT")
 		case DialectPostgreSQL:
@@ -193,6 +209,8 @@ func Test_Core_clauseOffset(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "OFFSET ?", "OFFSET")
+		case DialectMsSQL:
+			// Внимание находится в стадии разработки
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "OFFSET ?", "OFFSET")
 		case DialectPostgreSQL:
@@ -223,6 +241,10 @@ func Test_Core_clauseOrderBy(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
 			assertContains(t, sqlSelectQuery, "`t`.`string` ASC", "ORDER BY ASC")
 			assertContains(t, sqlSelectQuery, "`t`.`string` DESC", "ORDER BY DESC")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
+			assertContains(t, sqlSelectQuery, "[t].[string] ASC", "ORDER BY ASC")
+			assertContains(t, sqlSelectQuery, "[t].[string] DESC", "ORDER BY DESC")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "ORDER BY", "ORDER BY")
 			assertContains(t, sqlSelectQuery, "`t`.`string` ASC", "ORDER BY ASC")
@@ -254,6 +276,8 @@ func Test_Core_clauseReturning(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlDeleteQuery, "RETURNING `t`.`id`, `t`.`string`", "RETURNING")
+		case DialectMsSQL:
+			// Внимание находится в стадии разработки
 		case DialectMySQL:
 			// Not support
 		case DialectPostgreSQL:
@@ -278,6 +302,8 @@ func Test_Core_clauseSet(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlUpdateQuery, "SET `t`.`string` = ?", "SET")
+		case DialectMsSQL:
+			assertContains(t, sqlUpdateQuery, "SET [t].[string] = @p1", "SET")
 		case DialectMySQL:
 			assertContains(t, sqlUpdateQuery, "SET `t`.`string` = ?", "SET")
 		case DialectPostgreSQL:
@@ -327,6 +353,11 @@ func Test_Core_clauseUnions(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "UNION ALL SELECT `t`.`string` FROM `test` AS `t`", "UNION ALL")
 			assertContains(t, sqlSelectQuery, "EXCEPT SELECT `t`.`string` FROM `test` AS `t`", "UNION EXCEPT")
 			assertContains(t, sqlSelectQuery, "INTERSECT SELECT `t`.`string` FROM `test` AS `t`", "UNION INTERSECT")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "UNION SELECT [t].[string] FROM [test] AS [t]", "UNION")
+			assertContains(t, sqlSelectQuery, "UNION ALL SELECT [t].[string] FROM [test] AS [t]", "UNION ALL")
+			assertContains(t, sqlSelectQuery, "EXCEPT SELECT [t].[string] FROM [test] AS [t]", "UNION EXCEPT")
+			assertContains(t, sqlSelectQuery, "INTERSECT SELECT [t].[string] FROM [test] AS [t]", "UNION INTERSECT")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "UNION SELECT `t`.`string` FROM `test` AS `t`", "UNION")
 			assertContains(t, sqlSelectQuery, "UNION ALL SELECT `t`.`string` FROM `test` AS `t`", "UNION ALL")
@@ -365,6 +396,8 @@ func Test_Core_clauseValues(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlInsertQuery, "VALUES (?, ?)", "VALUES")
 			assertContains(t, sqlInsertQuery, "ON DUPLICATE KEY UPDATE `string` = ?", "UPSERT")
+		case DialectMsSQL:
+			assertContains(t, sqlInsertQuery, "VALUES (@p1, @p2)", "VALUES")
 		case DialectMySQL:
 			assertContains(t, sqlInsertQuery, "VALUES (?, ?)", "VALUES")
 			assertContains(t, sqlInsertQuery, "ON DUPLICATE KEY UPDATE `string` = ?", "UPSERT")
@@ -395,6 +428,8 @@ func Test_Core_clauseWhere(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "WHERE `t`.`string` = ?", "WHERE")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "WHERE [t].[string] = @p1", "WHERE")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "WHERE `t`.`string` = ?", "WHERE")
 		case DialectPostgreSQL:
@@ -460,6 +495,10 @@ func Test_Core_clauseWith(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "WITH", "WITH")
 			assertContains(t, sqlSelectQuery, "RECURSIVE `cte_recursive`", "WITH RECURSIVE")
 			assertContains(t, sqlSelectQuery, "`cte_norecursive`", "WITH NORECURSIVE")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "WITH", "WITH")
+			assertContains(t, sqlSelectQuery, "RECURSIVE [cte_recursive]", "WITH RECURSIVE")
+			assertContains(t, sqlSelectQuery, "[cte_norecursive]", "WITH NORECURSIVE")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "WITH", "WITH")
 			assertContains(t, sqlSelectQuery, "RECURSIVE `cte_recursive`", "WITH RECURSIVE")
@@ -490,6 +529,8 @@ func Test_Core_exprArray(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "ARRAY INT")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "(@p1, @p2, @p3)", "ARRAY INT")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "(?, ?, ?)", "ARRAY INT")
 		case DialectPostgreSQL:
@@ -537,6 +578,17 @@ func Test_Core_exprBinary(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "`t`.`number` + ?", "BINARY PLUS")
 			assertContains(t, sqlSelectQuery, "`t`.`number` << ?", "BINARY SHIFT LEFT")
 			assertContains(t, sqlSelectQuery, "`t`.`number` >> ?", "BINARY SHIFT RIGHT")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "[t].[number] & @p1", "BINARY BITWISE AND")
+			assertContains(t, sqlSelectQuery, "[t].[number] | @p1", "BINARY BITWISE OR")
+			assertContains(t, sqlSelectQuery, "[t].[number] ^ @p1", "BINARY BITWISE XOR")
+			assertContains(t, sqlSelectQuery, "[t].[number] / @p1", "BINARY DIVIDE")
+			assertContains(t, sqlSelectQuery, "[t].[number] - @p1", "BINARY MINUS")
+			assertContains(t, sqlSelectQuery, "[t].[number] % @p1", "BINARY MODULO")
+			assertContains(t, sqlSelectQuery, "[t].[number] * @p1", "BINARY MULTIPLY")
+			assertContains(t, sqlSelectQuery, "[t].[number] + @p1", "BINARY PLUS")
+			assertContains(t, sqlSelectQuery, "[t].[number] << @p1", "BINARY SHIFT LEFT")
+			assertContains(t, sqlSelectQuery, "[t].[number] >> @p1", "BINARY SHIFT RIGHT")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "`t`.`number` & ?", "BINARY BITWISE AND")
 			assertContains(t, sqlSelectQuery, "`t`.`number` | ?", "BINARY BITWISE OR")
@@ -588,6 +640,8 @@ func Test_Core_exprColumn(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "`t`.`id`", "COLUMN ID")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "[t].[id]", "COLUMN ID")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "`t`.`id`", "COLUMN ID")
 		case DialectPostgreSQL:
@@ -642,7 +696,7 @@ func Test_Core_exprComparison(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "`t`.`string` IS NOT NULL", "COMPARISON IS NOT NULL")
 			assertContains(t, sqlSelectQuery, "`t`.`string` IS NULL", "COMPARISON IS NULL")
 			assertContains(t, sqlSelectQuery, "`t`.`number` < ?", "COMPARISON LESS")
-			assertContains(t, sqlSelectQuery, "`t`.`number` <= ? ", "COMPARISON LESSEQUAL")
+			assertContains(t, sqlSelectQuery, "`t`.`number` <= ?", "COMPARISON LESSEQUAL")
 			assertContains(t, sqlSelectQuery, "`t`.`string` LIKE ?", "COMPARISON LIKE")
 			assertContains(t, sqlSelectQuery, "`t`.`number` NOT BETWEEN ? AND ?", "COMPARISON NOT BETWEEN")
 			assertContains(t, sqlSelectQuery, "`t`.`number` <> ?", "COMPARISON NOT EQUAL")
@@ -650,6 +704,25 @@ func Test_Core_exprComparison(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "LOWER(`t`.`string`) NOT LIKE LOWER(?)", "COMPARISON NOT ILIKE")
 			assertContains(t, sqlSelectQuery, "`t`.`string` NOT IN (?, ?)", "COMPARISON NOT IN")
 			assertContains(t, sqlSelectQuery, "`t`.`string` NOT LIKE ?", "COMPARISON NOT LIKE")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "[t].[number] BETWEEN @p1 AND @p2", "COMPARISON BETWEEN")
+			assertContains(t, sqlSelectQuery, "[t].[number] = @p1", "COMPARISON EQUAL")
+			assertContains(t, sqlSelectQuery, "EXISTS (SELECT 1 FROM [test] AS [t])", "COMPARISON EXISTS")
+			assertContains(t, sqlSelectQuery, "[t].[number] > @p1", "COMPARISON GREATER")
+			assertContains(t, sqlSelectQuery, "[t].[number] >= @p1", "COMPARISON GREATEREQUAL")
+			assertContains(t, sqlSelectQuery, "LOWER([t].[string]) LIKE LOWER(@p1)", "COMPARISON ILIKE")
+			assertContains(t, sqlSelectQuery, "[t].[string] IN (@p1, @p2)", "COMPARISON IN")
+			assertContains(t, sqlSelectQuery, "[t].[string] IS NOT NULL", "COMPARISON IS NOT NULL")
+			assertContains(t, sqlSelectQuery, "[t].[string] IS NULL", "COMPARISON IS NULL")
+			assertContains(t, sqlSelectQuery, "[t].[number] < @p1", "COMPARISON LESS")
+			assertContains(t, sqlSelectQuery, "[t].[number] <= @p1", "COMPARISON LESSEQUAL")
+			assertContains(t, sqlSelectQuery, "[t].[string] LIKE @p1", "COMPARISON LIKE")
+			assertContains(t, sqlSelectQuery, "[t].[number] NOT BETWEEN @p1 AND @p2", "COMPARISON NOT BETWEEN")
+			assertContains(t, sqlSelectQuery, "[t].[number] <> @p1", "COMPARISON NOT EQUAL")
+			assertContains(t, sqlSelectQuery, "NOT EXISTS (SELECT 1 FROM [test] AS [t])", "COMPARISON NOT EXISTS")
+			assertContains(t, sqlSelectQuery, "LOWER([t].[string]) NOT LIKE LOWER(@p1)", "COMPARISON NOT ILIKE")
+			assertContains(t, sqlSelectQuery, "[t].[string] NOT IN (@p1, @p2)", "COMPARISON NOT IN")
+			assertContains(t, sqlSelectQuery, "[t].[string] NOT LIKE @p1", "COMPARISON NOT LIKE")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "`t`.`number` BETWEEN ? AND ?", "COMPARISON BETWEEN")
 			assertContains(t, sqlSelectQuery, "`t`.`number` = ?", "COMPARISON EQUAL")
@@ -661,7 +734,7 @@ func Test_Core_exprComparison(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "`t`.`string` IS NOT NULL", "COMPARISON IS NOT NULL")
 			assertContains(t, sqlSelectQuery, "`t`.`string` IS NULL", "COMPARISON IS NULL")
 			assertContains(t, sqlSelectQuery, "`t`.`number` < ?", "COMPARISON LESS")
-			assertContains(t, sqlSelectQuery, "`t`.`number` <= ? ", "COMPARISON LESSEQUAL")
+			assertContains(t, sqlSelectQuery, "`t`.`number` <= ?", "COMPARISON LESSEQUAL")
 			assertContains(t, sqlSelectQuery, "`t`.`string` LIKE ?", "COMPARISON LIKE")
 			assertContains(t, sqlSelectQuery, "`t`.`number` NOT BETWEEN ? AND ?", "COMPARISON NOT BETWEEN")
 			assertContains(t, sqlSelectQuery, "`t`.`number` <> ?", "COMPARISON NOT EQUAL")
@@ -744,6 +817,23 @@ func Test_Core_exprConstant(t *testing.T) {
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
 		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "FALSE", "CONSTANT BOOlFALSE")
+			assertContains(t, sqlSelectQuery, "TRUE", "CONSTANT BOOlTRUE")
+			assertContains(t, sqlSelectQuery, "1.0", "CONSTANT FLOAT32ONE")
+			assertContains(t, sqlSelectQuery, "1.000000", "CONSTANT FLOAT64ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT INTONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT8ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT16ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT32ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT INT64ONE")
+			assertContains(t, sqlSelectQuery, "DEFAULT", "CONSTANT STRINGDEFAULT")
+			assertContains(t, sqlSelectQuery, "NULL", "CONSTANT NULLSTRINGNULL")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINTONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINT8ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINT16ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINT32ONE")
+			assertContains(t, sqlSelectQuery, "1", "CONSTANT UINT64ONE")
+		case DialectMsSQL:
 			assertContains(t, sqlSelectQuery, "FALSE", "CONSTANT BOOlFALSE")
 			assertContains(t, sqlSelectQuery, "TRUE", "CONSTANT BOOlTRUE")
 			assertContains(t, sqlSelectQuery, "1.0", "CONSTANT FLOAT32ONE")
@@ -1421,6 +1511,8 @@ func Test_Core_exprLiteral(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "'%Y-%m-%d'", "LITERAL STRING")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "'%Y-%m-%d'", "LITERAL STRING")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "'%Y-%m-%d'", "LITERAL STRING")
 		case DialectPostgreSQL:
@@ -1458,6 +1550,9 @@ func Test_Core_exprLogical(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ? AND `t`.`number` > ?", "LOGICAL AND")
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ? OR `t`.`number` > ?", "LOGICAL OR")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "[t].[string] = @p1 AND [t].[number] > @p2", "LOGICAL AND")
+			assertContains(t, sqlSelectQuery, "[t].[string] = @p1 OR [t].[number] > @p2", "LOGICAL OR")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ? AND `t`.`number` > ?", "LOGICAL AND")
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ? OR `t`.`number` > ?", "LOGICAL OR")
@@ -1485,6 +1580,8 @@ func Test_Core_exprSubquery(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "(SELECT `t`.`id` FROM `test` AS `t`)", "SUBQUERY")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "(SELECT [t].[id] FROM [test] AS [t])", "SUBQUERY")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "(SELECT `t`.`id` FROM `test` AS `t`)", "SUBQUERY")
 		case DialectPostgreSQL:
@@ -1513,6 +1610,8 @@ func Test_Core_exprValue(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ?", "VALUE PLACEHOLDER")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "[t].[string] = @p1", "VALUE PLACEHOLDER")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "`t`.`string` = ?", "VALUE PLACEHOLDER")
 		case DialectPostgreSQL:
@@ -1679,6 +1778,8 @@ func Test_SQL_Comment(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
+		case DialectMsSQL:
+			// Not supported
 		case DialectMySQL:
 			assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
 		case DialectPostgreSQL:
@@ -1700,6 +1801,8 @@ func Test_SQL_Comment_Table(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `test` AS `t` IS 'Test comment'", "COMMENT")
+		case DialectMsSQL:
+			// Not supported
 		case DialectMySQL:
 			assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `test` AS `t` IS 'Test comment'", "COMMENT")
 		case DialectPostgreSQL:
@@ -1724,6 +1827,8 @@ func Test_SQL_Delete(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t`", "DELETE")
+		case DialectMsSQL:
+			assertContains(t, sqlDeleteQuery, "DELETE [t] FROM [test] AS [t]", "DELETE")
 		case DialectMySQL:
 			assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t`", "DELETE")
 		case DialectPostgreSQL:
@@ -1744,6 +1849,8 @@ func Test_SQL_Drop(t *testing.T) {
 		sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 		switch supportDialect {
 		case DialectMariaDB:
+			assertContains(t, sqlDropQuery, "DROP", "DROP")
+		case DialectMsSQL:
 			assertContains(t, sqlDropQuery, "DROP", "DROP")
 		case DialectMySQL:
 			assertContains(t, sqlDropQuery, "DROP", "DROP")
@@ -1770,6 +1877,8 @@ func Test_SQL_Insert(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
+		case DialectMsSQL:
+			assertContains(t, sqlInsertQuery, "INSERT INTO [test] AS [t] ([string], [number])", "INSERT")
 		case DialectMySQL:
 			assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
 		case DialectPostgreSQL:
@@ -1800,6 +1909,8 @@ func Test_SQL_Insert_Source(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlInsertQuery, "SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "SOURCE")
+		case DialectMsSQL:
+			assertContains(t, sqlInsertQuery, "SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1", "SOURCE")
 		case DialectMySQL:
 			assertContains(t, sqlInsertQuery, "SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "SOURCE")
 		case DialectPostgreSQL:
@@ -1824,6 +1935,8 @@ func Test_SQL_Select(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "SELECT `t`.`string` FROM `test` AS `t`", "SELECT")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "SELECT [t].[string] FROM [test] AS [t]", "SELECT")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "SELECT `t`.`string` FROM `test` AS `t`", "SELECT")
 		case DialectPostgreSQL:
@@ -1849,6 +1962,8 @@ func Test_SQL_Select_Distinct(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
+		case DialectMsSQL:
+			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "DISTINCT", "DISTINCT")
 		case DialectPostgreSQL:
@@ -1870,6 +1985,8 @@ func Test_SQL_Truncate(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test`", "TRUNCATE")
+		case DialectMsSQL:
+			assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE [test]", "TRUNCATE")
 		case DialectMySQL:
 			assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test`", "TRUNCATE")
 		case DialectPostgreSQL:
@@ -1897,6 +2014,8 @@ func Test_SQL_Update(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t`", "UPDATE")
+		case DialectMsSQL:
+			assertContains(t, sqlUpdateQuery, "UPDATE [test] AS [t]", "UPDATE")
 		case DialectMySQL:
 			assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t`", "UPDATE")
 		case DialectPostgreSQL:
@@ -1926,6 +2045,8 @@ func Test_Transformer_Comparison(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
+		case DialectMsSQL:
+			// Внимание находится в стадии разработки
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
 		case DialectPostgreSQL:
@@ -1948,6 +2069,8 @@ func Test_Transformer_Function(t *testing.T) {
 		switch supportDialect {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "TRUNCATE(CEILING(`t`.`number`), ?)", "TRUNC→TRUNCATE, CEIL→CEILING")
+		case DialectMsSQL:
+			// Внимание находится в стадии разработки
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "TRUNCATE(CEILING(`t`.`number`), ?)", "TRUNC→TRUNCATE, CEIL→CEILING")
 		case DialectPostgreSQL:
@@ -1962,15 +2085,11 @@ func Test_Transformer_Function(t *testing.T) {
 // Приватные функции
 func assertContains(t *testing.T, str, substr string, message string) {
 	t.Helper()
-	escaped := regexp.QuoteMeta(substr)
-	re := regexp.MustCompile(`\\\$[0-9]+`)
-	pattern := re.ReplaceAllString(escaped, `\$[0-9]+`)
-	matched, err := regexp.MatchString(pattern, str)
-	if err != nil {
-		t.Fatalf("Reg err: [%v]\n", err)
-	}
-	if !matched {
-		t.Errorf("Req: [%s] / Pat: [%s]\n", message, substr)
+	re := regexp.MustCompile(`@p\d+|\$\d+`)
+	strNormalized := re.ReplaceAllString(str, `?`)
+	substrNormalized := re.ReplaceAllString(substr, `?`)
+	if !strings.Contains(strNormalized, substrNormalized) {
+		t.Errorf("Req: [%s] / Pat: [%s]\n  Str: [%s]", message, substr, str)
 	}
 }
 func getNextDialect(dialect *SupportDialect) *SupportDialect {

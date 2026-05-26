@@ -48,9 +48,14 @@ const (
 	// Функции даты и времени
 	uastMssqlFunctionDateAdd functionService = "DATEADD"
 	uastMssqlFunctionDateSub functionService = "DATEADD"
+	uastMssqlFunctionHour    functionService = "DATEPART"
+	uastMssqlFunctionMinute  functionService = "DATEPART"
 	uastMssqlFunctionNow     functionService = "GETDATE"
+	uastMssqlFunctionQuarter functionService = "DATEPART"
+	uastMssqlFunctionSecond  functionService = "DATEPART"
 	uastMssqlFunctionTimeAdd functionService = "DATEADD"
 	uastMssqlFunctionTimeSub functionService = "DATEADD"
+	uastMssqlFunctionWeek    functionService = "DATEPART"
 	// Функции обмена данными
 	uastMssqlFunctionJsonExtract     functionService = ""
 	uastMssqlFunctionJsonExtractCast functionService = "CAST"
@@ -113,9 +118,14 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	// Функции даты и времени
 	uastFunctionDateAdd: mssqlFunctionDateAdd,
 	uastFunctionDateSub: mssqlFunctionDateSub,
+	uastFunctionHour:    mssqlFunctionHour,
+	uastFunctionMinute:  mssqlFunctionMinute,
 	uastFunctionNow:     mssqlFunctionNow,
+	uastFunctionQuarter: mssqlFunctionQuarter,
+	uastFunctionSecond:  mssqlFunctionSecond,
 	uastFunctionTimeAdd: mssqlFunctionTimeAdd,
 	uastFunctionTimeSub: mssqlFunctionTimeSub,
+	uastFunctionWeek:    mssqlFunctionWeek,
 	// Функции обмена данными
 	uastFunctionJsonExtract: mssqlFunctionJsonExtract,
 	uastFunctionJsonRemove:  mssqlFunctionJsonRemove,
@@ -271,8 +281,52 @@ func mssqlFunctionDateSub(baseTransformer *baseTransformer, expr transformFuncti
 	function.service = uastMssqlFunctionDateSub
 	return nil
 }
+func mssqlFunctionHour(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[time.Time, string, int])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	function.right = serviceString(uastFunctionHour)
+	function.operator = uastCompositeCommaSpace
+	function.process = uastProcessInvert
+	function.service = uastMssqlFunctionHour
+	return nil
+}
+func mssqlFunctionMinute(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[time.Time, string, int])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	function.right = serviceString(uastFunctionMinute)
+	function.operator = uastCompositeCommaSpace
+	function.process = uastProcessInvert
+	function.service = uastMssqlFunctionMinute
+	return nil
+}
 func mssqlFunctionNow(baseTransformer *baseTransformer, expr transformFunction) error {
 	expr.transformSetService(uastMssqlFunctionNow)
+	return nil
+}
+func mssqlFunctionQuarter(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[time.Time, string, int])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	function.right = serviceString(uastFunctionQuarter)
+	function.operator = uastCompositeCommaSpace
+	function.process = uastProcessInvert
+	function.service = uastMssqlFunctionQuarter
+	return nil
+}
+func mssqlFunctionSecond(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[time.Time, string, int])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	function.right = serviceString(uastFunctionSecond)
+	function.operator = uastCompositeCommaSpace
+	function.process = uastProcessInvert
+	function.service = uastMssqlFunctionSecond
 	return nil
 }
 func mssqlFunctionTimeAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -305,6 +359,17 @@ func mssqlFunctionTimeSub(baseTransformer *baseTransformer, expr transformFuncti
 		operator: uastCompositeSingleSpace,
 	}
 	function.service = uastMssqlFunctionTimeSub
+	return nil
+}
+func mssqlFunctionWeek(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[time.Time, string, int])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	function.right = serviceString(uastFunctionWeek)
+	function.operator = uastCompositeCommaSpace
+	function.process = uastProcessInvert
+	function.service = uastMssqlFunctionWeek
 	return nil
 }
 func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -443,6 +508,18 @@ func mssqlFunctionCeil(baseTransformer *baseTransformer, expr transformFunction)
 	return nil
 }
 func mssqlFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction) error {
+	function, exists := expr.(*exprFunction[int, int, int])
+	if !exists {
+		return ErrUntransformFunction
+	}
+	param := function.right
+	function.right = &exprComposite[int]{
+		expressions: []ExpressionSafe[int]{
+			param,
+			&exprConstant[int]{value: 1},
+		},
+		operator: uastCompositeCommaSpace,
+	}
 	expr.transformSetService(uastMssqlFunctionTrunc)
 	return nil
 }
@@ -451,6 +528,15 @@ func mssqlFunctionLength(baseTransformer *baseTransformer, expr transformFunctio
 	return nil
 }
 func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunction) error {
+	if composite, ok := expr.transformGetLeft().(*exprComposite[string]); ok {
+		expr.transformSetLeft(&exprComposite[string]{
+			expressions: []ExpressionSafe[string]{
+				composite.expressions[0],
+				composite.expressions[2],
+			},
+			operator: uastCompositeCommaSpace,
+		})
+	}
 	expr.transformSetService(uastMssqlFunctionPosition)
 	return nil
 }

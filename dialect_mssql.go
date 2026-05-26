@@ -1,7 +1,6 @@
 package uast
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -46,6 +45,8 @@ const (
 	uastMssqlFunctionCast       functionService = "CAST"
 	uastMssqlFunctionDateFormat functionService = "FORMAT"
 	// Функции даты и времени
+	uastMssqlFunctionCurDate   functionService = "GETDATE"
+	uastMssqlFunctionCurTime   functionService = "GETDATE"
 	uastMssqlFunctionDateAdd   functionService = "DATEADD"
 	uastMssqlFunctionDateSub   functionService = "DATEADD"
 	uastMssqlFunctionDayName   functionService = "DATENAME"
@@ -59,10 +60,6 @@ const (
 	uastMssqlFunctionTimeSub   functionService = "DATEADD"
 	uastMssqlFunctionWeek      functionService = "DATEPART"
 	// Функции обмена данными
-	uastMssqlFunctionJsonExtract     functionService = ""
-	uastMssqlFunctionJsonExtractCast functionService = "CAST"
-	uastMssqlFunctionJsonRemove      functionService = "JSON_REMOVE"
-	uastMssqlFunctionJsonSet         functionService = "JSON_SET"
 	// Функции математические
 	uastMssqlFunctionCeil  functionService = "CEILING"
 	uastMssqlFunctionTrunc functionService = "ROUND"
@@ -118,6 +115,8 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionCast:       mssqlFunctionCast,
 	uastFunctionDateFormat: mssqlFunctionDateFormat,
 	// Функции даты и времени
+	uastFunctionCurDate:   mssqlFunctionCurDate,
+	uastFunctionCurTime:   mssqlFunctionCurTime,
 	uastFunctionDateAdd:   mssqlFunctionDateAdd,
 	uastFunctionDateSub:   mssqlFunctionDateSub,
 	uastFunctionDayName:   mssqlFunctionDayName,
@@ -131,9 +130,6 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionTimeSub:   mssqlFunctionTimeSub,
 	uastFunctionWeek:      mssqlFunctionWeek,
 	// Функции обмена данными
-	uastFunctionJsonExtract: mssqlFunctionJsonExtract,
-	uastFunctionJsonRemove:  mssqlFunctionJsonRemove,
-	uastFunctionJsonSet:     mssqlFunctionJsonSet,
 	// Функции математические
 	uastFunctionCeil:  mssqlFunctionCeil,
 	uastFunctionTrunc: mssqlFunctionTrunc,
@@ -251,6 +247,16 @@ func mssqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction)
 }
 func mssqlFunctionDateFormat(baseTransformer *baseTransformer, expr transformFunction) error {
 	expr.transformSetService(uastMssqlFunctionDateFormat)
+	return nil
+}
+func mssqlFunctionCurDate(baseTransformer *baseTransformer, expr transformFunction) error {
+	expr.transformSetProcess(uastProcessEmpty)
+	expr.transformSetService(uastMssqlFunctionCurDate)
+	return nil
+}
+func mssqlFunctionCurTime(baseTransformer *baseTransformer, expr transformFunction) error {
+	expr.transformSetProcess(uastProcessEmpty)
+	expr.transformSetService(uastMssqlFunctionCurTime)
 	return nil
 }
 func mssqlFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -396,137 +402,6 @@ func mssqlFunctionWeek(baseTransformer *baseTransformer, expr transformFunction)
 	function.operator = uastCompositeCommaSpace
 	function.process = uastProcessInvert
 	function.service = uastMssqlFunctionWeek
-	return nil
-}
-func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
-	path := string(uastCompositeDollarPoint)
-	for j, expression := range json[0].expressions {
-		switch e := expression.(type) {
-		case *exprLiteral[int]:
-			path += string(uastCompositeBrackLeft) + strconv.Itoa(e.value) + string(uastCompositeBrackRight)
-		case *exprLiteral[string]:
-			if j > 0 {
-				path += string(uastCompositeSinglePoint)
-			}
-			path += e.value
-		default:
-			return ErrInvalidLiteral
-		}
-	}
-	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeMssql[valueType]
-	if !exists {
-		return ErrUntransformType
-	}
-	switch valueType {
-	case TypeJSON:
-		expr.transformSetJson([]*exprJson{
-			{
-				expressions: []ExpressionBase{
-					&exprLiteral[string]{
-						value: path,
-					},
-				},
-				operator: uastCompositeSingleSpace,
-			},
-		})
-		expr.transformSetOperator(uastCompositeSpaceMinusGreaterSpace)
-		expr.transformSetService(uastMssqlFunctionJsonExtract)
-	case TypeString:
-		expr.transformSetJson([]*exprJson{
-			{
-				expressions: []ExpressionBase{
-					&exprLiteral[string]{
-						value: path,
-					},
-				},
-				operator: uastCompositeSingleSpace,
-			},
-		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMssqlFunctionJsonExtract)
-	default:
-		expr.transformSetJson([]*exprJson{
-			{
-				expressions: []ExpressionBase{
-					&exprLiteral[string]{
-						value: path,
-					},
-					serviceString(uastModifierAs),
-					serviceString(typeService),
-				},
-				operator: uastCompositeSingleSpace,
-			},
-		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMssqlFunctionJsonExtractCast)
-	}
-	return nil
-}
-func mssqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
-	groups := make([]*exprJson, len(json))
-	for i, group := range json {
-		path := string(uastCompositeDollarPoint)
-		for j, expression := range group.expressions {
-			switch e := expression.(type) {
-			case *exprLiteral[int]:
-				path += string(uastCompositeBrackLeft) + strconv.Itoa(e.value) + string(uastCompositeBrackRight)
-			case *exprLiteral[string]:
-				if j > 0 {
-					path += string(uastCompositeSinglePoint)
-				}
-				path += e.value
-			default:
-				return ErrInvalidLiteral
-			}
-		}
-		groups[i] = &exprJson{
-			expressions: []ExpressionBase{
-				&exprLiteral[string]{
-					value: path,
-				},
-			},
-			operator: uastCompositeCommaSpace,
-		}
-	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMssqlFunctionJsonRemove)
-	return nil
-}
-func mssqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
-	groups := make([]*exprJson, len(json))
-	for i, group := range json {
-		path := string(uastCompositeDollarPoint)
-		for j, expression := range group.expressions {
-			switch e := expression.(type) {
-			case *exprLiteral[int]:
-				path += string(uastCompositeBrackLeft) + strconv.Itoa(e.value) + string(uastCompositeBrackRight)
-			case *exprLiteral[string]:
-				if j > 0 {
-					path += string(uastCompositeSinglePoint)
-				}
-				path += e.value
-			default:
-				return ErrInvalidLiteral
-			}
-		}
-		groups[i] = &exprJson{
-			expressions: []ExpressionBase{
-				&exprLiteral[string]{
-					value: path,
-				},
-			},
-			operator: uastCompositeCommaSpace,
-			values:   group.values,
-		}
-	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMssqlFunctionJsonSet)
 	return nil
 }
 func mssqlFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {

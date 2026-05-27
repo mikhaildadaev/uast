@@ -651,6 +651,15 @@ func (strateger *sqliteStrateger) transformSelect(baseTransformer *baseTransform
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	if stmtSelect.join != nil {
+		filtered := make([]*clauseJoin, 0, len(stmtSelect.join))
+		for _, join := range stmtSelect.join {
+			if join.operator != uastJoinRight && join.operator != uastJoinRightOuter {
+				filtered = append(filtered, join)
+			}
+		}
+		stmtSelect.join = filtered
+	}
 	return nil
 }
 func (strateger *sqliteStrateger) transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error {

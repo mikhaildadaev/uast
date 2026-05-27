@@ -652,13 +652,13 @@ func (strateger *sqliteStrateger) transformSelect(baseTransformer *baseTransform
 		return err
 	}
 	if stmtSelect.join != nil {
-		filtered := make([]*clauseJoin, 0, len(stmtSelect.join))
+		joins := make([]*clauseJoin, 0, len(stmtSelect.join))
 		for _, join := range stmtSelect.join {
 			if join.operator != uastJoinRight && join.operator != uastJoinRightOuter {
-				filtered = append(filtered, join)
+				joins = append(joins, join)
 			}
 		}
-		stmtSelect.join = filtered
+		stmtSelect.join = joins
 	}
 	return nil
 }

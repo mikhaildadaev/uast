@@ -16,7 +16,10 @@ func (stmt *stmtInsert) Into(into SourceBase) *stmtInsert {
 	return stmt
 }
 func (stmt *stmtInsert) Returning(returnings ...markReturnable) *stmtInsert {
-	stmt.returning = returnings
+	stmt.returning = &clauseReturning{
+		expressions:      returnings,
+		serviceReturning: uastManagementReturning,
+	}
 	return stmt
 }
 func (stmt *stmtInsert) Source(source *stmtSelect) *stmtInsert {
@@ -85,7 +88,7 @@ type stmtInsert struct {
 	columns   []markExpressable
 	into      SourceBase
 	source    statement
-	returning []markReturnable
+	returning *clauseReturning
 	values    *clauseValues
 	with      []*clauseWith
 }
@@ -100,10 +103,7 @@ func (stmt *stmtInsert) clone() statement {
 		}
 	}
 	if stmt.returning != nil {
-		copy.returning = make([]markReturnable, len(stmt.returning))
-		for i, r := range stmt.returning {
-			copy.returning[i] = r.clone().(markReturnable)
-		}
+		copy.returning = stmt.returning.clone()
 	}
 	if stmt.source != nil {
 		copy.source = stmt.source.clone()

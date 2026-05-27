@@ -464,12 +464,12 @@ func (validator *baseValidator) validateOrderBy(orders []markOrderable) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validateReturning(returnings []markReturnable) error {
+func (validator *baseValidator) validateReturning(returnings *clauseReturning) error {
 	if returnings == nil {
 		return nil
 	}
-	for _, returning := range returnings {
-		if err := returning.validate(validator); err != nil {
+	for _, expression := range returnings.expressions {
+		if err := expression.validate(validator); err != nil {
 			return err
 		}
 	}

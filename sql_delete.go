@@ -18,7 +18,10 @@ func (stmt *stmtDelete) Join(joins ...*clauseJoin) *stmtDelete {
 	return stmt
 }
 func (stmt *stmtDelete) Returning(returnings ...markReturnable) *stmtDelete {
-	stmt.returning = returnings
+	stmt.returning = &clauseReturning{
+		expressions:      returnings,
+		serviceReturning: uastManagementReturning,
+	}
 	return stmt
 }
 func (stmt *stmtDelete) Where(where markPredicable) *stmtDelete {
@@ -35,7 +38,7 @@ type stmtDelete struct {
 	command   managementService
 	from      SourceBase
 	join      []*clauseJoin
-	returning []markReturnable
+	returning *clauseReturning
 	where     markPredicable
 	with      []*clauseWith
 }
@@ -53,10 +56,7 @@ func (stmt *stmtDelete) clone() statement {
 		}
 	}
 	if stmt.returning != nil {
-		copy.returning = make([]markReturnable, len(stmt.returning))
-		for i, r := range stmt.returning {
-			copy.returning[i] = r.clone().(markReturnable)
-		}
+		copy.returning = stmt.returning.clone()
 	}
 	if stmt.where != nil {
 		copy.where = stmt.where.clone().(markPredicable)

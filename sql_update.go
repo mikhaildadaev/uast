@@ -18,7 +18,10 @@ func (stmt *stmtUpdate) Onto(onto SourceBase) *stmtUpdate {
 	return stmt
 }
 func (stmt *stmtUpdate) Returning(returnings ...markReturnable) *stmtUpdate {
-	stmt.returning = returnings
+	stmt.returning = &clauseReturning{
+		expressions:      returnings,
+		serviceReturning: uastManagementReturning,
+	}
 	return stmt
 }
 func (stmt *stmtUpdate) Set(sets ...*clauseSet) *stmtUpdate {
@@ -39,7 +42,7 @@ type stmtUpdate struct {
 	command   managementService
 	join      []*clauseJoin
 	onto      SourceBase
-	returning []markReturnable
+	returning *clauseReturning
 	set       []*clauseSet
 	where     markPredicable
 	with      []*clauseWith
@@ -58,10 +61,7 @@ func (stmt *stmtUpdate) clone() statement {
 		copy.onto = stmt.onto.clone()
 	}
 	if stmt.returning != nil {
-		copy.returning = make([]markReturnable, len(stmt.returning))
-		for i, r := range stmt.returning {
-			copy.returning[i] = r.clone().(markReturnable)
-		}
+		copy.returning = stmt.returning.clone()
 	}
 	if stmt.set != nil {
 		copy.set = make([]*clauseSet, len(stmt.set))

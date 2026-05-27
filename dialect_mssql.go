@@ -493,7 +493,7 @@ func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDe
 	if err := baseRenderer.renderWhere(stmtDelete.where); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOutput(stmtDelete.returning); err != nil {
+	if err := baseRenderer.renderReturning(stmtDelete.returning); err != nil {
 		return err
 	}
 	return nil
@@ -524,7 +524,7 @@ func (strateger *mssqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 	if err := baseRenderer.renderValues(stmtInsert.values); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOutput(stmtInsert.returning); err != nil {
+	if err := baseRenderer.renderReturning(stmtInsert.returning); err != nil {
 		return err
 	}
 	return nil
@@ -596,7 +596,7 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	if err := baseRenderer.renderWhere(stmtUpdate.where); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOutput(stmtUpdate.returning); err != nil {
+	if err := baseRenderer.renderReturning(stmtUpdate.returning); err != nil {
 		return err
 	}
 	return nil

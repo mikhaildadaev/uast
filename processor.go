@@ -32,7 +32,6 @@ type componentRenderer interface {
 	renderOnTable(table *TableSource, comment string) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
-	renderOutput(returnings []markReturnable) error
 	renderPagination(pagination *clausePagination) error
 	renderRestartIdentity(restartIdentity bool) error
 	renderReturning(returnings []markReturnable) error

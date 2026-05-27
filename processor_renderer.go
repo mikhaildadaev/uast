@@ -427,24 +427,6 @@ func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderOutput(returnings []markReturnable) error {
-	if returnings == nil {
-		return nil
-	}
-	returningsCount := len(returnings) - 1
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementOutput)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	for i, returning := range returnings {
-		if err := returning.render(renderer); err != nil {
-			return err
-		}
-		if i < returningsCount {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-	}
-	return nil
-}
 func (renderer *baseRenderer) renderPagination(pagination *clausePagination) error {
 	if pagination == nil {
 		return nil
@@ -470,19 +452,19 @@ func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error 
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderReturning(returnings []markReturnable) error {
+func (renderer *baseRenderer) renderReturning(returnings *clauseReturning) error {
 	if returnings == nil {
 		return nil
 	}
-	returningsCount := len(returnings) - 1
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementReturning)
+	renderer.renderService(returnings.serviceReturning)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	for i, returning := range returnings {
-		if err := returning.render(renderer); err != nil {
+	last := len(returnings.expressions) - 1
+	for i, expression := range returnings.expressions {
+		if err := expression.render(renderer); err != nil {
 			return err
 		}
-		if i < returningsCount {
+		if i < last {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
 	}

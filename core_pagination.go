@@ -2,9 +2,11 @@ package uast
 
 // Приватные структуры
 type clausePagination struct {
-	process       bool
+	reverse       bool
 	serviceLimit  managementService
 	serviceOffset managementService
+	suffixLimit   modifierService
+	suffixOffset  modifierService
 	valueLimit    int
 	valueOffset   int
 }

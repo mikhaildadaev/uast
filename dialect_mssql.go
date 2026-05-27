@@ -642,6 +642,13 @@ func (strateger *mssqlStrateger) transformSelect(baseTransformer *baseTransforme
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	if stmtSelect.pagination != nil {
+		stmtSelect.pagination.reverse = true
+		stmtSelect.pagination.serviceLimit = uastManagementFetchNext
+		stmtSelect.pagination.serviceOffset = uastManagementOffset
+		stmtSelect.pagination.suffixLimit = uastModifierRowsOnly
+		stmtSelect.pagination.suffixOffset = uastModifierRows
+	}
 	return nil
 }
 func (strateger *mssqlStrateger) transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error {

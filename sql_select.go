@@ -39,7 +39,6 @@ func (stmt *stmtSelect) OrderBy(orderbys ...markOrderable) *stmtSelect {
 }
 func (stmt *stmtSelect) Pagination(limit, offset int) *stmtSelect {
 	stmt.pagination = &clausePagination{
-		process:       false,
 		serviceLimit:  uastManagementLimit,
 		serviceOffset: uastManagementOffset,
 		valueLimit:    limit,

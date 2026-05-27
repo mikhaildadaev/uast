@@ -431,17 +431,36 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 	if pagination == nil {
 		return nil
 	}
-	if pagination.valueLimit > 0 {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(pagination.serviceLimit)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderValue(pagination.valueLimit)
-	}
-	if pagination.valueOffset >= 0 {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(pagination.serviceOffset)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderValue(pagination.valueOffset)
+	if !pagination.reverse {
+		if pagination.valueLimit > 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceLimit)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueLimit)
+		}
+		if pagination.valueOffset >= 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceOffset)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueOffset)
+		}
+	} else {
+		if pagination.valueOffset >= 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceOffset)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueOffset)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.suffixOffset)
+		}
+		if pagination.valueLimit > 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceLimit)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueLimit)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.suffixLimit)
+		}
 	}
 	return nil
 }

@@ -611,6 +611,9 @@ func (strateger *mssqlStrateger) transformDelete(baseTransformer *baseTransforme
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	if stmtDelete.returning != nil {
+		stmtDelete.returning.serviceReturning = uastManagementOutput
+	}
 	return nil
 }
 func (strateger *mssqlStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
@@ -626,6 +629,9 @@ func (strateger *mssqlStrateger) transformInsert(baseTransformer *baseTransforme
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
 		stmtInsert.values.upsert.service = uastMssqlManagementUpsert
+	}
+	if stmtInsert.returning != nil {
+		stmtInsert.returning.serviceReturning = uastManagementOutput
 	}
 	return nil
 }
@@ -647,6 +653,9 @@ func (strateger *mssqlStrateger) transformUpdate(baseTransformer *baseTransforme
 	}
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
+	}
+	if stmtUpdate.returning != nil {
+		stmtUpdate.returning.serviceReturning = uastManagementOutput
 	}
 	return nil
 }

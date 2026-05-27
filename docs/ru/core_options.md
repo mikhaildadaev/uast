@@ -233,50 +233,6 @@ Output SQLite:
 // Not supported
 ```
 
-## clauseLimit
-Ограничивает количество строк, возвращаемых запросом.
-```go
-limit := Limit(10)
-```
-Output MariaDB:
-```text
-LIMIT ?
-```
-Output MySQL:
-```text
-LIMIT ?
-```
-Output PostgreSQL:
-```text
-LIMIT $1
-```
-Output SQLite:
-```text
-LIMIT ?
-```
-
-## clauseOffset
-Пропускает указанное количество строк перед возвратом результатов. Используется для постраничной навигации вместе с Limit.
-```go
-offset := Offset(20)
-```
-Output MariaDB:
-```text
-OFFSET ?
-```
-Output MySQL:
-```text
-OFFSET ?
-```
-Output PostgreSQL:
-```text
-OFFSET $1
-```
-Output SQLite:
-```text
-OFFSET ?
-```
-
 ## clauseOrderBy
 ### Asc
 Указывает порядок сортировки по возрастанию (сначала наименьшие, от А до Я). Используется для сортировки строк в запросе или в рамках оконной функции.
@@ -320,6 +276,28 @@ Output PostgreSQL:
 Output SQLite:
 ```text
 "t"."string" DESC
+```
+
+## clausePagination
+Определяет пагинацию для оператора SELECT с помощью `Pagination(limit, offset)`. `limit` задаёт максимальное количество возвращаемых строк. `offset` указывает количество строк, которые нужно пропустить перед возвратом результатов. Порядок отрисовки и синтаксис автоматически адаптируются к каждому диалекту.
+```go
+pagination := Pagination(10,0)
+```
+Output MariaDB:
+```text
+LIMIT ? OFFSET ?
+```
+Output MySQL:
+```text
+LIMIT ? OFFSET ?
+```
+Output PostgreSQL:
+```text
+LIMIT $1 OFFSET $2
+```
+Output SQLite:
+```text
+LIMIT ? OFFSET ?
 ```
 
 ## clauseReturning

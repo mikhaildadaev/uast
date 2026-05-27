@@ -233,50 +233,6 @@ Output SQLite:
 // Not supported
 ```
 
-## clauseLimit
-限制查询返回的行数。
-```go
-limit := Limit(10)
-```
-Output MariaDB:
-```text
-LIMIT ?
-```
-Output MySQL:
-```text
-LIMIT ?
-```
-Output PostgreSQL:
-```text
-LIMIT $1
-```
-Output SQLite:
-```text
-LIMIT ?
-```
-
-## clauseOffset
-在返回结果之前跳过指定数量的行。与 Limit 一起用于分页。
-```go
-offset := Offset(20)
-```
-Output MariaDB:
-```text
-OFFSET ?
-```
-Output MySQL:
-```text
-OFFSET ?
-```
-Output PostgreSQL:
-```text
-OFFSET $1
-```
-Output SQLite:
-```text
-OFFSET ?
-```
-
 ## clauseOrderBy
 ### Asc
 指定升序排序（最小的在前，A 到 Z）。用于对查询中的行或窗口函数内的行进行排序。
@@ -320,6 +276,28 @@ Output PostgreSQL:
 Output SQLite:
 ```text
 "t"."string" DESC
+```
+
+## clausePagination
+使用 `Pagination(limit, offset)` 为 SELECT `limit` `offset` 指定在返回结果之前要跳过的行数。渲染顺序和语法会自动适应每种方言。
+```go
+pagination := Pagination(10,0)
+```
+Output MariaDB:
+```text
+LIMIT ? OFFSET ?
+```
+Output MySQL:
+```text
+LIMIT ? OFFSET ?
+```
+Output PostgreSQL:
+```text
+LIMIT $1 OFFSET $2
+```
+Output SQLite:
+```text
+LIMIT ? OFFSET ?
 ```
 
 ## clauseReturning

@@ -233,50 +233,6 @@ Output SQLite:
 // Not supported
 ```
 
-## clauseLimit
-Limits the number of rows returned by the query.
-```go
-limit := Limit(10)
-```
-Output MariaDB:
-```text
-LIMIT ?
-```
-Output MySQL:
-```text
-LIMIT ?
-```
-Output PostgreSQL:
-```text
-LIMIT $1
-```
-Output SQLite:
-```text
-LIMIT ?
-```
-
-## clauseOffset
-Skips a specified number of rows before returning results. Used for pagination with Limit.
-```go
-offset := Offset(20)
-```
-Output MariaDB:
-```text
-OFFSET ?
-```
-Output MySQL:
-```text
-OFFSET ?
-```
-Output PostgreSQL:
-```text
-OFFSET $1
-```
-Output SQLite:
-```text
-OFFSET ?
-```
-
 ## clauseOrderBy
 ### Asc
 Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
@@ -320,6 +276,28 @@ Output PostgreSQL:
 Output SQLite:
 ```text
 "t"."string" DESC
+```
+
+## clausePagination
+Specifies pagination for a SELECT statement using `Pagination(limit, offset)`. The `limit` sets the maximum number of rows to return. The `offset` specifies the number of rows to skip before returning results. The rendering order and syntax adapts to each dialect automatically.
+```go
+pagination := Pagination(10,0)
+```
+Output MariaDB:
+```text
+LIMIT ? OFFSET ?
+```
+Output MySQL:
+```text
+LIMIT ? OFFSET ?
+```
+Output PostgreSQL:
+```text
+LIMIT $1 OFFSET $2
+```
+Output SQLite:
+```text
+LIMIT ? OFFSET ?
 ```
 
 ## clauseReturning

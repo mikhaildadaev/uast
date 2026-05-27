@@ -493,6 +493,9 @@ func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDe
 	if err := baseRenderer.renderWhere(stmtDelete.where); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderOutput(stmtDelete.returning); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mssqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
@@ -519,6 +522,9 @@ func (strateger *mssqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 		return err
 	}
 	if err := baseRenderer.renderValues(stmtInsert.values); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderOutput(stmtInsert.returning); err != nil {
 		return err
 	}
 	return nil
@@ -554,10 +560,7 @@ func (strateger *mssqlStrateger) renderSelect(baseRenderer *baseRenderer, stmtSe
 	if err := baseRenderer.renderOrderBy(stmtSelect.orderBy); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderLimit(stmtSelect.limit); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderOffset(stmtSelect.offset); err != nil {
+	if err := baseRenderer.renderPagination(stmtSelect.pagination); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderUnions(stmtSelect.unions); err != nil {
@@ -591,6 +594,9 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 		return err
 	}
 	if err := baseRenderer.renderWhere(stmtUpdate.where); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderOutput(stmtUpdate.returning); err != nil {
 		return err
 	}
 	return nil
@@ -657,6 +663,9 @@ func (strateger *mssqlStrateger) validateDelete(baseValidator *baseValidator, st
 	if err := baseValidator.validateJoin(stmtDelete.join); err != nil {
 		return err
 	}
+	if err := baseValidator.validateReturning(stmtDelete.returning); err != nil {
+		return err
+	}
 	if err := baseValidator.validateWhere(stmtDelete.where); err != nil {
 		return err
 	}
@@ -674,6 +683,9 @@ func (strateger *mssqlStrateger) validateInsert(baseValidator *baseValidator, st
 		return err
 	}
 	if err := baseValidator.validateColumns(stmtInsert.columns); err != nil {
+		return err
+	}
+	if err := baseValidator.validateReturning(stmtInsert.returning); err != nil {
 		return err
 	}
 	if (stmtInsert.source == nil && stmtInsert.values == nil) || (stmtInsert.source != nil && stmtInsert.values != nil) {
@@ -712,10 +724,7 @@ func (strateger *mssqlStrateger) validateSelect(baseValidator *baseValidator, st
 	if err := baseValidator.validateOrderBy(stmtSelect.orderBy); err != nil {
 		return err
 	}
-	if err := baseValidator.validateLimit(stmtSelect.limit); err != nil {
-		return err
-	}
-	if err := baseValidator.validateOffset(stmtSelect.offset); err != nil {
+	if err := baseValidator.validatePagination(stmtSelect.pagination); err != nil {
 		return err
 	}
 	if err := baseValidator.validateUnions(stmtSelect.unions); err != nil {
@@ -740,6 +749,9 @@ func (strateger *mssqlStrateger) validateUpdate(baseValidator *baseValidator, st
 		return err
 	}
 	if err := baseValidator.validateSet(stmtUpdate.set); err != nil {
+		return err
+	}
+	if err := baseValidator.validateReturning(stmtUpdate.returning); err != nil {
 		return err
 	}
 	if err := baseValidator.validateWhere(stmtUpdate.where); err != nil {

@@ -540,10 +540,7 @@ func (strateger *mariadbStrateger) renderSelect(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderOrderBy(stmtSelect.orderBy); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderLimit(stmtSelect.limit); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderOffset(stmtSelect.offset); err != nil {
+	if err := baseRenderer.renderPagination(stmtSelect.pagination); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderUnions(stmtSelect.unions); err != nil {
@@ -722,10 +719,7 @@ func (strateger *mariadbStrateger) validateSelect(baseValidator *baseValidator, 
 	if err := baseValidator.validateOrderBy(stmtSelect.orderBy); err != nil {
 		return err
 	}
-	if err := baseValidator.validateLimit(stmtSelect.limit); err != nil {
-		return err
-	}
-	if err := baseValidator.validateOffset(stmtSelect.offset); err != nil {
+	if err := baseValidator.validatePagination(stmtSelect.pagination); err != nil {
 		return err
 	}
 	if err := baseValidator.validateUnions(stmtSelect.unions); err != nil {

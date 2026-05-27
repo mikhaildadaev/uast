@@ -363,30 +363,6 @@ func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderLimit(limit *clauseLimit) error {
-	if limit == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementLimit)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := limit.render(renderer); err != nil {
-		return err
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderOffset(offset *clauseOffset) error {
-	if offset == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementOffset)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := offset.render(renderer); err != nil {
-		return err
-	}
-	return nil
-}
 func (renderer *baseRenderer) renderOnColumn(column markExpressable, comment string) error {
 	if column == nil {
 		return nil
@@ -448,6 +424,42 @@ func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
 		if i < ordersCount {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderOutput(returnings []markReturnable) error {
+	if returnings == nil {
+		return nil
+	}
+	returningsCount := len(returnings) - 1
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastManagementOutput)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	for i, returning := range returnings {
+		if err := returning.render(renderer); err != nil {
+			return err
+		}
+		if i < returningsCount {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderPagination(pagination *clausePagination) error {
+	if pagination == nil {
+		return nil
+	}
+	if pagination.limit > 0 {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastManagementLimit)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderValue(pagination.limit)
+	}
+	if pagination.offset > 0 {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastManagementOffset)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderValue(pagination.offset)
 	}
 	return nil
 }

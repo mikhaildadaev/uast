@@ -293,6 +293,7 @@ const (
 	uastManagementLimit       managementService = "LIMIT"
 	uastManagementOffset      managementService = "OFFSET"
 	uastManagementOrderBy     managementService = "ORDER BY"
+	uastManagementOutput      managementService = "OUTPUT"
 	uastManagementPartitionBy managementService = "PARTITION BY"
 	uastManagementReturning   managementService = "RETURNING"
 	uastManagementUsing       managementService = "USING"

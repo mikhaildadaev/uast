@@ -34,11 +34,17 @@ func (stmt *stmtSelect) Join(joins ...*clauseJoin) *stmtSelect {
 	return stmt
 }
 func (stmt *stmtSelect) Limit(limit int) *stmtSelect {
-	stmt.limit = &clauseLimit{value: limit}
+	if stmt.pagination == nil {
+		stmt.pagination = &clausePagination{}
+	}
+	stmt.pagination.limit = limit
 	return stmt
 }
 func (stmt *stmtSelect) Offset(offset int) *stmtSelect {
-	stmt.offset = &clauseOffset{value: offset}
+	if stmt.pagination == nil {
+		stmt.pagination = &clausePagination{}
+	}
+	stmt.pagination.offset = offset
 	return stmt
 }
 func (stmt *stmtSelect) OrderBy(orderbys ...markOrderable) *stmtSelect {
@@ -60,19 +66,18 @@ func (stmt *stmtSelect) With(withs ...*clauseWith) *stmtSelect {
 
 // Приватные структуры
 type stmtSelect struct {
-	command  managementService
-	distinct bool
-	fields   []markExpressable
-	from     SourceBase
-	groupBy  []markGroupable
-	having   markPredicable
-	join     []*clauseJoin
-	limit    *clauseLimit
-	offset   *clauseOffset
-	orderBy  []markOrderable
-	unions   []*clauseUnions
-	where    markPredicable
-	with     []*clauseWith
+	command    managementService
+	distinct   bool
+	fields     []markExpressable
+	from       SourceBase
+	groupBy    []markGroupable
+	having     markPredicable
+	join       []*clauseJoin
+	pagination *clausePagination
+	orderBy    []markOrderable
+	unions     []*clauseUnions
+	where      markPredicable
+	with       []*clauseWith
 }
 
 // Приватные методы

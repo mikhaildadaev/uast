@@ -28,12 +28,12 @@ type componentRenderer interface {
 	renderIfExists(ifExists bool) error
 	renderInto(into SourceBase) error
 	renderJoin(joins []*clauseJoin) error
-	renderLimit(limit *clauseLimit) error
-	renderOffset(offset *clauseOffset) error
 	renderOnColumn(column markExpressable, comment string) error
 	renderOnTable(table *TableSource, comment string) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
+	renderOutput(returnings []markReturnable) error
+	renderPagination(pagination *clausePagination) error
 	renderRestartIdentity(restartIdentity bool) error
 	renderReturning(returnings []markReturnable) error
 	renderSet(sets []*clauseSet) error
@@ -103,12 +103,11 @@ type componentValidator interface {
 	validateHaving(having ExpressionBase) error
 	validateInto(into SourceBase) error
 	validateJoin(joins []*clauseJoin) error
-	validateLimit(limit *clauseLimit) error
-	validateOffset(offset *clauseOffset) error
 	validateOnColumn(column markExpressable, comment string) error
 	validateOnTable(table *TableSource, comment string) error
 	validateOnto(onto SourceBase) error
 	validateOrderBy(orders []markOrderable) error
+	validatePagination(pagination *clausePagination) error
 	validateReturning(returnings []markReturnable) error
 	validateSet(sets []*clauseSet) error
 	validateSource(source statement) error

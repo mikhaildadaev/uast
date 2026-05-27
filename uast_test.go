@@ -277,7 +277,7 @@ func Test_Core_clauseReturning(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlDeleteQuery, "RETURNING `t`.`id`, `t`.`string`", "RETURNING")
 		case DialectMsSQL:
-			// Внимание находится в стадии разработки
+			assertContains(t, sqlDeleteQuery, "OUTPUT [t].[id], [t].[string]", "RETURNING")
 		case DialectMySQL:
 			// Not support
 		case DialectPostgreSQL:

@@ -402,24 +402,21 @@ func (validator *baseValidator) validateJoin(joins []*clauseJoin) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validateLimit(limit *clauseLimit) error {
-	if limit == nil {
+func (validator *baseValidator) validatePagination(pagination *clausePagination) error {
+	if pagination == nil {
 		return nil
 	}
-	if limit.value > validator.config.lengthMaxLimit {
+	if pagination.limit > validator.config.lengthMaxLimit {
 		return ErrOverflowLimit
 	}
-	if err := limit.validate(validator); err != nil {
-		return err
+	if pagination.limit > uastCountMaxLimit {
+		return ErrExcessMaxLimit
 	}
-	return nil
-}
-func (validator *baseValidator) validateOffset(offset *clauseOffset) error {
-	if offset == nil {
-		return nil
+	if pagination.limit < 0 {
+		return ErrInvalidStatementLimit
 	}
-	if err := offset.validate(validator); err != nil {
-		return err
+	if pagination.offset < 0 {
+		return ErrInvalidStatementOffset
 	}
 	return nil
 }

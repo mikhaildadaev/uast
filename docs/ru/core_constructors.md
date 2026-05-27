@@ -74,7 +74,7 @@ INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
 ```
 
 ## NewSelect
-Создаёт новый экземпляр оператора SELECT. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Distinct`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
+Создаёт новый экземпляр оператора SELECT. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Distinct`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
 ```go
 statement := uast.NewSelect(uast.Table("test")).
     Field(

@@ -74,7 +74,7 @@ INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
 ```
 
 ## NewSelect
-创建一个新的 SELECT 语句实例。接受字段，返回一个可使用 `Distinct`、`GroupBy`、`Having`、`Join`、`Limit`、`Offset`、`OrderBy`、`Unions`、`Where`、`With` 进行配置的语句。
+创建一个新的 SELECT 语句实例。接受字段，返回一个可使用 `Distinct`、`GroupBy`、`Having`、`Join`、`OrderBy`、`Pagination`、`Unions`、`Where`、`With` 进行配置的语句。
 ```go
 statement := uast.NewSelect(uast.Table("test")).
     Field(

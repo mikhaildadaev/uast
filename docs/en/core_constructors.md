@@ -68,7 +68,7 @@ INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
 ```
 
 ## NewSelect
-Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `GroupBy`, `Having`, `Join`, `Limit`, `Offset`, `OrderBy`, `Unions`, `Where`, `With`.
+Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
 ```go
 statement := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(

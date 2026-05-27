@@ -18,6 +18,10 @@ Output MariaDB:
 ```text
 `t`.`string` AS `alias`
 ```
+Output MsSQL:
+```text
+[t].[string] AS [alias]
+```
 Output MySQL:
 ```text
 `t`.`string` AS `alias`
@@ -40,6 +44,10 @@ function := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
 Output MariaDB:
 ```text
 AVG(`t`.`number`) AS `alias`
+```
+Output MsSQL:
+```text
+AVG([t].[number]) AS [alias]
 ```
 Output MySQL:
 ```text
@@ -66,6 +74,10 @@ Output MariaDB:
 ```text
 AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
+Output MsSQL:
+```text
+AVG([t].[number]) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+```
 Output MySQL:
 ```text
 AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -88,6 +100,10 @@ subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).F
 Output MariaDB:
 ```text
 (SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
+```
+Output MsSQL:
+```text
+(SELECT [t].[id] FROM [test] AS [t]) AS [alias]
 ```
 Output MySQL:
 ```text

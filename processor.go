@@ -34,12 +34,12 @@ type componentRenderer interface {
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
 	renderRestartIdentity(restartIdentity bool) error
-	renderReturning(returnings []markReturnable) error
+	renderReturning(returnings *clauseReturning) error
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
 	renderTable(table *TableSource) error
 	renderUnions(unions []*clauseUnions) error
-	renderValues(values [][]ExpressionBase) error
+	renderValues(values *clauseValues) error
 	renderWhere(where ExpressionBase) error
 	renderWith(withs []*clauseWith) error
 }
@@ -107,12 +107,12 @@ type componentValidator interface {
 	validateOnto(onto SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validatePagination(pagination *clausePagination) error
-	validateReturning(returnings []markReturnable) error
+	validateReturning(returnings *clauseReturning) error
 	validateSet(sets []*clauseSet) error
 	validateSource(source statement) error
 	validateTable(table *TableSource) error
 	validateUnions(unions []*clauseUnions) error
-	validateValues(values [][]ExpressionBase) error
+	validateValues(values *clauseValues) error
 	validateWhere(where ExpressionBase) error
 	validateWith(withs []*clauseWith) error
 }

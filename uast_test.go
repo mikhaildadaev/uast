@@ -2154,7 +2154,7 @@ func Test_Transformer_Comparison(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
 		case DialectMsSQL:
-			// Внимание находится в стадии разработки
+			assertContains(t, sqlSelectQuery, "(LOWER([t].[string]) LIKE LOWER(@p1) AND LOWER([t].[string]) LIKE LOWER(@p2) AND LOWER([t].[string]) LIKE LOWER(@p3))", "ILIKE")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "(LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?) AND LOWER(`t`.`string`) LIKE LOWER(?))", "ILIKE")
 		case DialectPostgreSQL:
@@ -2178,7 +2178,7 @@ func Test_Transformer_Function(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "TRUNCATE(CEILING(`t`.`number`), ?)", "TRUNC→TRUNCATE, CEIL→CEILING")
 		case DialectMsSQL:
-			// Внимание находится в стадии разработки
+			assertContains(t, sqlSelectQuery, "ROUND(CEILING([t].[number]), @p1, 1)", "TRUNC→TRUNCATE, CEIL→CEILING")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "TRUNCATE(CEILING(`t`.`number`), ?)", "TRUNC→TRUNCATE, CEIL→CEILING")
 		case DialectPostgreSQL:

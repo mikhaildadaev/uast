@@ -645,15 +645,6 @@ func (strateger *mssqlStrateger) transformUpdate(baseTransformer *baseTransforme
 	return nil
 }
 func (strateger *mssqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	if stmtComment.column == nil && stmtComment.table == nil {
-		return ErrInvalidStatement
-	}
-	if err := baseValidator.validateOnColumn(stmtComment.column, stmtComment.comment); err != nil {
-		return err
-	}
-	if err := baseValidator.validateOnTable(stmtComment.table, stmtComment.comment); err != nil {
-		return err
-	}
 	return nil
 }
 func (strateger *mssqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {

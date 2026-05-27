@@ -223,7 +223,7 @@ func Test_Core_clausePagination(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlSelectQuery, "LIMIT ? OFFSET ?", "PAGINATION")
 		case DialectMsSQL:
-			// Внимание находится в стадии разработки
+			assertContains(t, sqlSelectQuery, "OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY", "PAGINATION")
 		case DialectMySQL:
 			assertContains(t, sqlSelectQuery, "LIMIT ? OFFSET ?", "PAGINATION")
 		case DialectPostgreSQL:

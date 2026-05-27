@@ -18,6 +18,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS BINARY)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS BINARY)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS BINARY)
@@ -39,6 +43,10 @@ binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS VARBINARY)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS VARBINARY)
 ```
 Output MySQL:
 ```text
@@ -63,6 +71,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS DATE)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS DATE)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS DATE)
@@ -84,6 +96,10 @@ datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS DATETIME)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS DATETIME2)
 ```
 Output MySQL:
 ```text
@@ -107,6 +123,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS TIME)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS TIME)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS TIME)
@@ -128,6 +148,10 @@ datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS TIMESTAMP)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS DATETIME2)
 ```
 Output MySQL:
 ```text
@@ -152,6 +176,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS SIGNED)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS BIGINT)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS SIGNED)
@@ -173,6 +201,10 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS DECIMAL)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS DECIMAL)
 ```
 Output MySQL:
 ```text
@@ -196,6 +228,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS DECIMAL)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS FLOAT)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS DECIMAL)
@@ -217,6 +253,10 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS DECIMAL)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS REAL)
 ```
 Output MySQL:
 ```text
@@ -240,6 +280,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS SIGNED)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS INT)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS SIGNED)
@@ -261,6 +305,10 @@ math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS SIGNED)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS SMALLINT)
 ```
 Output MySQL:
 ```text
@@ -285,6 +333,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS CHAR)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS CHAR)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS CHAR)
@@ -306,6 +358,10 @@ str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS VARCHAR)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS NVARCHAR)
 ```
 Output MySQL:
 ```text
@@ -329,6 +385,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS TEXT)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS NVARCHAR(MAX))
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS TEXT)
@@ -350,6 +410,10 @@ str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS VARCHAR)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS NVARCHAR)
 ```
 Output MySQL:
 ```text
@@ -374,6 +438,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS JSON)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS NVARCHAR(MAX))
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS JSON)
@@ -395,6 +463,10 @@ special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS TINYINT(1))
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS BIT)
 ```
 Output MySQL:
 ```text
@@ -418,6 +490,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS JSON)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS NVARCHAR(MAX))
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS JSON)
@@ -440,6 +516,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS UUID)
 ```
+Output MsSQL:
+```text
+CAST([t].[number] AS UNIQUEIDENTIFIER)
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS CHAR(36))
@@ -461,6 +541,10 @@ special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
 Output MariaDB:
 ```text
 CAST(`t`.`number` AS TEXT)
+```
+Output MsSQL:
+```text
+CAST([t].[number] AS XML)
 ```
 Output MySQL:
 ```text

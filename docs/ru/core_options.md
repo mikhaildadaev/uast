@@ -19,6 +19,10 @@ Output MariaDB:
 ```text
 GROUP BY `t`.`string`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 GROUP BY `t`.`string`
@@ -43,6 +47,10 @@ Output MariaDB:
 ```text
 HAVING COUNT(`t`.`id`) > ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 HAVING COUNT(`t`.`id`) > ?
@@ -66,6 +74,10 @@ Output MariaDB:
 ```text
 CROSS JOIN `test` AS `t`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 CROSS JOIN `test` AS `t`
@@ -87,6 +99,10 @@ join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("
 Output MariaDB:
 ```text
 FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -110,6 +126,10 @@ Output MariaDB:
 ```text
 FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
@@ -131,6 +151,10 @@ join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64](
 Output MariaDB:
 ```text
 INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -154,6 +178,10 @@ Output MariaDB:
 ```text
 LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
@@ -175,6 +203,10 @@ join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int
 Output MariaDB:
 ```text
 LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -198,6 +230,10 @@ Output MariaDB:
 ```text
 RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
@@ -219,6 +255,10 @@ join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[in
 Output MariaDB:
 ```text
 RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -243,6 +283,10 @@ Output MariaDB:
 ```text
 `t`.`string` ASC
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`string` ASC
@@ -265,6 +309,10 @@ Output MariaDB:
 ```text
 `t`.`string` DESC
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`string` DESC
@@ -286,6 +334,10 @@ pagination := Pagination(10,0)
 Output MariaDB:
 ```text
 LIMIT ? OFFSET ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -312,6 +364,10 @@ Output MariaDB:
 ```text
 RETURNING `t`.`id`, `t`.`string`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 // Not support
@@ -336,6 +392,10 @@ set := Set(
 Output MariaDB:
 ```text
 UPDATE `test` AS `t` SET `t`.`string` = ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -364,6 +424,10 @@ Output MariaDB:
 ```text
 UNION SELECT `t`.`string` FROM `test` AS `t` 
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 UNION SELECT `t`.`string` FROM `test` AS `t`
@@ -389,6 +453,10 @@ unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
 Output MariaDB:
 ```text
 UNION ALL SELECT `t`.`string` FROM `test` AS `t`
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -416,6 +484,10 @@ Output MariaDB:
 ```text
 EXCEPT SELECT `t`.`string` FROM `test` AS `t`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 EXCEPT SELECT `t`.`string` FROM `test` AS `t`
@@ -442,6 +514,10 @@ Output MariaDB:
 ```text
 INTERSECT SELECT `t`.`string` FROM `test` AS `t`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 INTERSECT SELECT `t`.`string` FROM `test` AS `t`
@@ -467,6 +543,10 @@ values := Values(
 Output MariaDB:
 ```text
 VALUES (?, ?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -496,6 +576,10 @@ Output MariaDB:
 ```text
 VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
@@ -519,6 +603,10 @@ where = Where(
 Output MariaDB:
 ```text
 WHERE `t`.`string` = ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -551,6 +639,10 @@ with := WithN("cte_norecursive", NewSelect(uast.NewTable("test").As("t")).
 Output MariaDB:
 ```text
 WITH `cte_norecursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -594,6 +686,10 @@ Output MariaDB:
 ```text
 WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ? UNION ALL SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` INNER JOIN `cte_recursive` AS `rec` ON `t`.`id` = `rec`.`id`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ? UNION ALL SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` INNER JOIN `cte_recursive` AS `rec` ON `t`.`id` = `rec`.`id`)
@@ -617,6 +713,10 @@ Output MariaDB:
 ```text
 ARRAY[?, ?, ?]
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 ARRAY[?, ?, ?]
@@ -635,6 +735,10 @@ ARRAY[?, ?, ?]
 ```go
 binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` & ?
@@ -652,6 +756,10 @@ binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
 Output MariaDB:
 ```text
 `t`.`number` | ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -675,6 +783,10 @@ Output MariaDB:
 ```text
 `t`.`number` ^ ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` ^ ?
@@ -696,6 +808,10 @@ binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` / ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -719,6 +835,10 @@ Output MariaDB:
 ```text
 `t`.`number` - ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` - ?
@@ -740,6 +860,10 @@ binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` % ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -763,6 +887,10 @@ Output MariaDB:
 ```text
 `t`.`number` * ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` * ?
@@ -784,6 +912,10 @@ binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` + ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -807,6 +939,10 @@ Output MariaDB:
 ```text
 `t`.`number` << ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` << ?
@@ -828,6 +964,10 @@ binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` >> ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -852,6 +992,10 @@ Output MariaDB:
 ```text
 `t`.`string`
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`string`
@@ -875,6 +1019,10 @@ Output MariaDB:
 ```text
 `t`.`number` BETWEEN ? AND ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` BETWEEN ? AND ?
@@ -896,6 +1044,10 @@ comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` = ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -919,6 +1071,10 @@ Output MariaDB:
 ```text
 EXISTS (SELECT 1 FROM `test` AS `t`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 EXISTS (SELECT 1 FROM `test` AS `t`)
@@ -940,6 +1096,10 @@ comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` > ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -963,6 +1123,10 @@ Output MariaDB:
 ```text
 `t`.`number` >= ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` >= ?
@@ -984,6 +1148,10 @@ comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"
 Output MariaDB:
 ```text
 LOWER(`t`.`string`) LIKE LOWER(?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1007,6 +1175,10 @@ Output MariaDB:
 ```text
 `t`.`string` IN (?, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`string` IN (?, ?)
@@ -1028,6 +1200,10 @@ comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
 Output MariaDB:
 ```text
 `t`.`string` IS NOT NULL
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1051,6 +1227,10 @@ Output MariaDB:
 ```text
 `t`.`string` IS NULL
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`string` IS NULL
@@ -1072,6 +1252,10 @@ comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` < ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1095,6 +1279,10 @@ Output MariaDB:
 ```text
 `t`.`number` <= ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` <= ?
@@ -1116,6 +1304,10 @@ comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%")
 Output MariaDB:
 ```text
 `t`.`string` LIKE ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1139,6 +1331,10 @@ Output MariaDB:
 ```text
 `t`.`number` NOT BETWEEN ? AND ?
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`number` NOT BETWEEN ? AND ?
@@ -1160,6 +1356,10 @@ comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 `t`.`number` != ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1183,6 +1383,10 @@ Output MariaDB:
 ```text
 NOT EXISTS (SELECT 1 FROM `test` AS `t`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 NOT EXISTS (SELECT 1 FROM `test` AS `t`)
@@ -1204,6 +1408,10 @@ comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%iva
 Output MariaDB:
 ```text
 LOWER(`t`.`string`) NOT LIKE LOWER(?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1227,6 +1435,10 @@ Output MariaDB:
 ```text
 `t`.`string` NOT IN (?, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 `t`.`string` NOT IN (?, ?)
@@ -1248,6 +1460,10 @@ comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan
 Output MariaDB:
 ```text
 `t`.`string` NOT LIKE ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1436,6 +1652,10 @@ Output MariaDB:
 AVG(`t`.`number`)
 AVG(DISTINCT `t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 AVG(`t`.`number`)
@@ -1462,6 +1682,10 @@ Output MariaDB:
 ```text
 BIT_AND(`t`.`number`)
 BIT_AND(DISTINCT `t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1490,6 +1714,10 @@ Output MariaDB:
 BIT_OR(`t`.`number`)
 BIT_OR(DISTINCT `t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 BIT_OR(`t`.`number`)
@@ -1516,6 +1744,10 @@ Output MariaDB:
 ```text
 BIT_XOR(`t`.`number`)
 BIT_XOR(DISTINCT `t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1544,6 +1776,10 @@ Output MariaDB:
 COUNT(`t`.`string`)
 COUNT(DISTINCT `t`.`string`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 COUNT(`t`.`string`)
@@ -1570,6 +1806,10 @@ Output MariaDB:
 ```text
 GROUP_CONCAT(`t`.`string` SEPARATOR ',')
 GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ',')
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1598,6 +1838,10 @@ Output MariaDB:
 MAX(`t`.`number`)
 MAX(DISTINCT `t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 MAX(`t`.`number`)
@@ -1624,6 +1868,10 @@ Output MariaDB:
 ```text
 MIN(`t`.`number`)
 MIN(DISTINCT `t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1652,6 +1900,10 @@ Output MariaDB:
 STDDEV(`t`.`number`)
 STDDEV(DISTINCT `t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 STDDEV(`t`.`number`)
@@ -1679,6 +1931,10 @@ Output MariaDB:
 SUM(`t`.`number`)
 SUM(DISTINCT `t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 SUM(`t`.`number`)
@@ -1705,6 +1961,10 @@ Output MariaDB:
 ```text
 VARIANCE(`t`.`number`)
 VARIANCE(DISTINCT "t"."number")
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1735,6 +1995,10 @@ Output MariaDB:
 ```text
 FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -1759,6 +2023,10 @@ function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
 Output MariaDB:
 ```text
 LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1786,6 +2054,10 @@ Output MariaDB:
 ```text
 LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
@@ -1810,6 +2082,10 @@ function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
 Output MariaDB:
 ```text
 LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1836,6 +2112,10 @@ function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
 Output MariaDB:
 ```text
 NTH_VALUE(`t`.`string`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1867,6 +2147,10 @@ Output MariaDB:
 ```text
 CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
@@ -1888,6 +2172,10 @@ function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[t
 Output MariaDB:
 ```text
 COALESCE(`t`.`createat`, `t`.`updateat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1911,6 +2199,10 @@ Output MariaDB:
 ```text
 GREATEST(`t`.`createat`, `t`.`updateat`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 GREATEST(`t`.`createat`, `t`.`updateat`)
@@ -1933,6 +2225,10 @@ Output MariaDB:
 ```text
 LEAST(`t`.`createat`, `t`.`updateat`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 LEAST(`t`.`createat`, `t`.`updateat`)
@@ -1954,6 +2250,10 @@ function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[tim
 Output MariaDB:
 ```text
 NULLIF(`t`.`createat`, `t`.`updateat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -1978,6 +2278,10 @@ Output MariaDB:
 ```text
 CAST(`t`.`number` AS CHAR)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 CAST(`t`.`number` AS CHAR)
@@ -1999,6 +2303,10 @@ function := uast.CharLength(uast.Column[string]("t", "string"))
 Output MariaDB:
 ```text
 CHAR_LENGTH(`t`.`string`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2022,6 +2330,10 @@ Output MariaDB:
 ```text
 DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
@@ -2043,6 +2355,10 @@ function := uast.Degrees(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 DEGREES(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2066,6 +2382,10 @@ Output MariaDB:
 ```text
 LENGTH(`t`.`string`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 LENGTH(`t`.`string`)
@@ -2088,6 +2408,10 @@ Output MariaDB:
 ```text
 POSITION(? IN `t`.`string`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 POSITION(? IN `t`.`string`)
@@ -2109,6 +2433,10 @@ function := uast.Radians(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 RADIANS(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2133,6 +2461,10 @@ Output MariaDB:
 ```text
 CURDATE()
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 CURDATE()
@@ -2154,6 +2486,10 @@ function := uast.CurTime()
 Output MariaDB:
 ```text
 CURTIME()
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2177,6 +2513,10 @@ Output MariaDB:
 ```text
 DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
@@ -2198,6 +2538,10 @@ function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[t
 Output MariaDB:
 ```text
 DATEDIFF(`t`.`updateat`, `t`.`createat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2221,6 +2565,10 @@ Output MariaDB:
 ```text
 DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
@@ -2242,6 +2590,10 @@ function := uast.Day(uast.Column[time.Time]("t", "createat"))
 Output MariaDB:
 ```text
 DAY(`t`.`createat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2265,6 +2617,10 @@ Output MariaDB:
 ```text
 DAYNAME(`t`.`createat`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 DAYNAME(`t`.`createat`)
@@ -2286,6 +2642,10 @@ function := uast.Hour(uast.Column[time.Time]("t", "createat"))
 Output MariaDB:
 ```text
 HOUR(`t`.`createat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2309,6 +2669,10 @@ Output MariaDB:
 ```text
 MINUTE(`t`.`createat`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 MINUTE(`t`.`createat`)
@@ -2330,6 +2694,10 @@ function := uast.Month(uast.Column[time.Time]("t", "createat"))
 Output MariaDB:
 ```text
 MONTH(`t`.`createat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2353,6 +2721,10 @@ Output MariaDB:
 ```text
 MONTHNAME(`t`.`createat`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 MONTHNAME(`t`.`createat`)
@@ -2374,6 +2746,10 @@ function := uast.Now()
 Output MariaDB:
 ```text
 NOW()
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2397,6 +2773,10 @@ Output MariaDB:
 ```text
 QUARTER(`t`.`createat`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 QUARTER(`t`.`createat`)
@@ -2418,6 +2798,10 @@ function := uast.Second(uast.Column[time.Time]("t", "createat"))
 Output MariaDB:
 ```text
 SECOND(`t`.`createat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2441,6 +2825,10 @@ Output MariaDB:
 ```text
 TIME_ADD(`t`.`createat`, '2 HOUR')
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 TIME_ADD(`t`.`createat`, '2 HOUR')
@@ -2462,6 +2850,10 @@ function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[t
 Output MariaDB:
 ```text
 TIMEDIFF(`t`.`updateat`, `t`.`createat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2485,6 +2877,10 @@ Output MariaDB:
 ```text
 TIME_SUB(`t`.`createat`, '2 HOUR')
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 TIME_SUB(`t`.`createat`, '2 HOUR')
@@ -2507,6 +2903,10 @@ Output MariaDB:
 ```text
 WEEK(`t`.`createat`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 WEEK(`t`.`createat`)
@@ -2528,6 +2928,10 @@ function := uast.Year(uast.Column[time.Time]("t", "createat"))
 Output MariaDB:
 ```text
 YEAR(`t`.`createat`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2556,6 +2960,10 @@ Output MariaDB:
 ```text
 JSON_ARRAY(`t`.`json`, ?, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 JSON_ARRAY(`t`.`json`, ?, ?)
@@ -2579,6 +2987,10 @@ function := uast.JsonArrayAgg(
 Output MariaDB:
 ```text
 JSON_ARRAYAGG(`t`.`json`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2604,6 +3016,10 @@ function := uast.JsonContains(
 Output MariaDB:
 ```text
 JSON_CONTAINS(`t`.`json`, '{"key":"val"}')
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2637,6 +3053,10 @@ Output MariaDB:
 ```text
 (`t`.`json` ->> '$.parent[0].child')
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 (`t`.`json` ->> '$.parent[0].child')
@@ -2664,6 +3084,10 @@ Output MariaDB:
 ```text
 JSON_OBJECT('key', COUNT(`t`.`json`))
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 JSON_OBJECT('key', COUNT(`t`.`json`))
@@ -2688,6 +3112,10 @@ function := uast.JsonObjectAgg(
 Output MariaDB:
 ```text
 JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2722,6 +3150,10 @@ function := uast.JsonRemove(
 Output MariaDB:
 ```text
 JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2759,6 +3191,10 @@ Output MariaDB:
 ```text
 JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
@@ -2780,6 +3216,10 @@ function := uast.JsonType(uast.Column[string]("t", "json"))
 Output MariaDB:
 ```text
 JSON_TYPE(`t`.`json`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2804,6 +3244,10 @@ Output MariaDB:
 ```text
 ABS(`t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 ABS(`t`.`number`)
@@ -2825,6 +3269,10 @@ function := uast.ACos(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 ACOS(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2848,6 +3296,10 @@ Output MariaDB:
 ```text
 ASIN(`t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 ASIN(`t`.`number`)
@@ -2869,6 +3321,10 @@ function := uast.ATan(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 ATAN(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2892,6 +3348,10 @@ Output MariaDB:
 ```text
 ATAN2(`t`.`y`, `t`.`x`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 ATAN2(`t`.`y`, `t`.`x`)
@@ -2913,6 +3373,10 @@ function := uast.Cbrt(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 CBRT(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2936,6 +3400,10 @@ Output MariaDB:
 ```text
 CEILING(`t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 CEILING(`t`.`number`)
@@ -2957,6 +3425,10 @@ function := uast.Cos(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 COS(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -2980,6 +3452,10 @@ Output MariaDB:
 ```text
 EXP(`t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 EXP(`t`.`number`)
@@ -3001,6 +3477,10 @@ function := uast.Floor(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 FLOOR(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3024,6 +3504,10 @@ Output MariaDB:
 ```text
 LN(`t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 LN(`t`.`number`)
@@ -3045,6 +3529,10 @@ function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 LOG(`t`.`number`, ?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3068,6 +3556,10 @@ Output MariaDB:
 ```text
 MOD(`t`.`number`, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 MOD(`t`.`number`, ?)
@@ -3089,6 +3581,10 @@ function := uast.Pi()
 Output MariaDB:
 ```text
 PI()
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3112,6 +3608,10 @@ Output MariaDB:
 ```text
 POWER(`t`.`number`, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 POWER(`t`.`number`, ?)
@@ -3133,6 +3633,10 @@ function := uast.Rand()
 Output MariaDB:
 ```text
 RAND()
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3156,6 +3660,10 @@ Output MariaDB:
 ```text
 ROUND(`t`.`number`, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 ROUND(`t`.`number`, ?)
@@ -3177,6 +3685,10 @@ function := uast.Sin(uast.Column[int]("t", "number"))
 Output MariaDB:
 ```text
 SIN(`t`.`number`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3200,6 +3712,10 @@ Output MariaDB:
 ```text
 SQRT(`t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 SQRT(`t`.`number`)
@@ -3222,6 +3738,10 @@ Output MariaDB:
 ```text
 TAN(`t`.`number`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 TAN(`t`.`number`)
@@ -3243,6 +3763,10 @@ function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
 Output MariaDB:
 ```text
 TRUNCATE(`t`.`number`, ?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3270,6 +3794,10 @@ Output MariaDB:
 ```text
 CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -3294,6 +3822,10 @@ function := uast.DenseRank().Over(
 Output MariaDB:
 ```text
 DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3320,6 +3852,10 @@ Output MariaDB:
 ```text
 NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -3344,6 +3880,10 @@ function := uast.PercentRank().Over(
 Output MariaDB:
 ```text
 PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3370,6 +3910,10 @@ Output MariaDB:
 ```text
 RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -3395,6 +3939,10 @@ Output MariaDB:
 ```text
 ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
@@ -3418,6 +3966,10 @@ Output MariaDB:
 ```text
 CONCAT(`t`.`string`, ?, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 CONCAT(`t`.`string`, ?, ?)
@@ -3439,6 +3991,10 @@ function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), u
 Output MariaDB:
 ```text
 CONCAT_WS(?, `t`.`string`, ?, ?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3462,6 +4018,10 @@ Output MariaDB:
 ```text
 LEFT(`t`.`string`, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 LEFT(`t`.`string`, ?)
@@ -3483,6 +4043,10 @@ function := uast.Lower(uast.Column[string]("t", "string"))
 Output MariaDB:
 ```text
 LOWER(`t`.`string`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3506,6 +4070,10 @@ Output MariaDB:
 ```text
 LPAD(`t`.`string`, ?, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 LPAD(`t`.`string`, ?, ?)
@@ -3527,6 +4095,10 @@ function := uast.LTrim(uast.Column[string]("t", "string"))
 Output MariaDB:
 ```text
 LTRIM(`t`.`string`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3550,6 +4122,10 @@ Output MariaDB:
 ```text
 REPEAT(`t`.`string`, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 REPEAT(`t`.`string`, ?)
@@ -3571,6 +4147,10 @@ function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), 
 Output MariaDB:
 ```text
 REPLACE(`t`.`string`, ?, ?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3594,6 +4174,10 @@ Output MariaDB:
 ```text
 REVERSE(`t`.`string`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 REVERSE(`t`.`string`)
@@ -3615,6 +4199,10 @@ function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
 Output MariaDB:
 ```text
 RIGHT(`t`.`string`, ?)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3638,6 +4226,10 @@ Output MariaDB:
 ```text
 RPAD(`t`.`string`, ?, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 RPAD(`t`.`string`, ?, ?)
@@ -3659,6 +4251,10 @@ function := uast.RTrim(uast.Column[string]("t", "string"))
 Output MariaDB:
 ```text
 RTRIM(`t`.`string`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3682,6 +4278,10 @@ Output MariaDB:
 ```text
 SUBSTRING(`t`.`string`, ?, ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 SUBSTRING(`t`.`string`, ?, ?)
@@ -3704,6 +4304,10 @@ Output MariaDB:
 ```text
 TRIM(`t`.`string`)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 TRIM(`t`.`string`)
@@ -3725,6 +4329,10 @@ function := uast.Upper(uast.Column[string]("t", "string"))
 Output MariaDB:
 ```text
 UPPER(`t`.`string`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3763,6 +4371,10 @@ Output MariaDB:
 ```text
 (`t`.`string` = ? AND `t`.`number` > ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 (`t`.`string` = ? AND `t`.`number` > ?)
@@ -3788,6 +4400,10 @@ Output MariaDB:
 ```text
 (`t`.`string` = ? OR `t`.`number` > ?)
 ```
+Output MsSQL:
+```text
+
+```
 Output MySQL:
 ```text
 (`t`.`string` = ? OR `t`.`number` > ?)
@@ -3810,6 +4426,10 @@ subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).F
 Output MariaDB:
 ```text
 (SELECT `t`.`id` FROM `test` AS `t`)
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text
@@ -3834,6 +4454,10 @@ value := uast.Value(data)
 Output MariaDB:
 ```text
 ?
+```
+Output MsSQL:
+```text
+
 ```
 Output MySQL:
 ```text

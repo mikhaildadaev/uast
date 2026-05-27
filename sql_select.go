@@ -33,22 +33,18 @@ func (stmt *stmtSelect) Join(joins ...*clauseJoin) *stmtSelect {
 	stmt.join = joins
 	return stmt
 }
-func (stmt *stmtSelect) Limit(limit int) *stmtSelect {
-	if stmt.pagination == nil {
-		stmt.pagination = &clausePagination{}
-	}
-	stmt.pagination.limit = limit
-	return stmt
-}
-func (stmt *stmtSelect) Offset(offset int) *stmtSelect {
-	if stmt.pagination == nil {
-		stmt.pagination = &clausePagination{}
-	}
-	stmt.pagination.offset = offset
-	return stmt
-}
 func (stmt *stmtSelect) OrderBy(orderbys ...markOrderable) *stmtSelect {
 	stmt.orderBy = orderbys
+	return stmt
+}
+func (stmt *stmtSelect) Pagination(limit, offset int) *stmtSelect {
+	stmt.pagination = &clausePagination{
+		process:       false,
+		serviceLimit:  uastManagementLimit,
+		serviceOffset: uastManagementOffset,
+		valueLimit:    limit,
+		valueOffset:   offset,
+	}
 	return stmt
 }
 func (stmt *stmtSelect) Unions(unions ...*clauseUnions) *stmtSelect {

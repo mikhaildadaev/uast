@@ -406,16 +406,16 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	if pagination == nil {
 		return nil
 	}
-	if pagination.limit > validator.config.lengthMaxLimit {
+	if pagination.valueLimit > validator.config.lengthMaxLimit {
 		return ErrOverflowLimit
 	}
-	if pagination.limit > uastCountMaxLimit {
+	if pagination.valueLimit > uastCountMaxLimit {
 		return ErrExcessMaxLimit
 	}
-	if pagination.limit < 0 {
+	if pagination.valueLimit < 0 {
 		return ErrInvalidStatementLimit
 	}
-	if pagination.offset < 0 {
+	if pagination.valueOffset < 0 {
 		return ErrInvalidStatementOffset
 	}
 	return nil

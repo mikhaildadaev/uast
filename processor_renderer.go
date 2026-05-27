@@ -449,17 +449,17 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 	if pagination == nil {
 		return nil
 	}
-	if pagination.limit > 0 {
+	if pagination.valueLimit > 0 {
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastManagementLimit)
+		renderer.renderService(pagination.serviceLimit)
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderValue(pagination.limit)
+		renderer.renderValue(pagination.valueLimit)
 	}
-	if pagination.offset > 0 {
+	if pagination.valueOffset >= 0 {
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastManagementOffset)
+		renderer.renderService(pagination.serviceOffset)
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderValue(pagination.offset)
+		renderer.renderValue(pagination.valueOffset)
 	}
 	return nil
 }

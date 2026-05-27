@@ -72,6 +72,7 @@ var (
 	ErrInvalidStatementOffset             = errors.New("invalid statement offset")
 	ErrInvalidStatementOnto               = errors.New("invalid statement onto")
 	ErrInvalidStatementOrderBy            = errors.New("invalid statement orderby")
+	ErrInvalidStatementPagination         = errors.New("invalid statement pagination")
 	ErrInvalidStatementReturning          = errors.New("invalid statement returning")
 	ErrInvalidStatementSet                = errors.New("invalid statement set")
 	ErrInvalidStatementTarget             = errors.New("invalid statement target")

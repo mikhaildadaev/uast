@@ -85,7 +85,7 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 					Desc(Data.Column.Number),
 					Asc(Data.Column.ID),
 				).
-				Limit(48)
+				Pagination(48, 0)
 			b.ResetTimer()
 			b.RunParallel(func(pb *testing.PB) {
 				i := 0
@@ -173,7 +173,7 @@ func Benchmark_Immutable_Single(b *testing.B) {
 					Desc(Data.Column.Number),
 					Asc(Data.Column.ID),
 				).
-				Limit(48)
+				Pagination(48, 0)
 			for i := 0; i < b.N; i++ {
 				builder.Build(stmt)
 			}
@@ -262,7 +262,7 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 					Desc(Data.Column.Number),
 					Asc(Data.Column.ID),
 				).
-				Limit(48)
+				Pagination(48, 0)
 			b.ResetTimer()
 			b.RunParallel(func(pb *testing.PB) {
 				i := 0
@@ -352,7 +352,7 @@ func Benchmark_Mutable_Single(b *testing.B) {
 					Desc(Data.Column.Number),
 					Asc(Data.Column.ID),
 				).
-				Limit(48)
+				Pagination(48, 0)
 			for i := 0; i < b.N; i++ {
 				builder.Build(stmt)
 			}

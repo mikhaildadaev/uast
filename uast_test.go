@@ -167,60 +167,6 @@ func Test_Core_clauseJoin(t *testing.T) {
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
 }
-func Test_Core_clauseLimit(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).
-			Field(
-				Test.Column.ID,
-			).
-			Limit(10)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "LIMIT ?", "LIMIT")
-		case DialectMsSQL:
-			// Внимание находится в стадии разработки
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "LIMIT ?", "LIMIT")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `LIMIT $1`, "LIMIT")
-		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `LIMIT ?`, "LIMIT")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
-func Test_Core_clauseOffset(t *testing.T) {
-	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-		sql := NewSQL(
-			WithDialect(supportDialect),
-		)
-		defer sql.Close()
-		stmtSelect := NewSelect(Test.Table).
-			Field(
-				Test.Column.ID,
-			).
-			Offset(20)
-		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-		switch supportDialect {
-		case DialectMariaDB:
-			assertContains(t, sqlSelectQuery, "OFFSET ?", "OFFSET")
-		case DialectMsSQL:
-			// Внимание находится в стадии разработки
-		case DialectMySQL:
-			assertContains(t, sqlSelectQuery, "OFFSET ?", "OFFSET")
-		case DialectPostgreSQL:
-			assertContains(t, sqlSelectQuery, `OFFSET $1`, "OFFSET")
-		case DialectSQLite:
-			assertContains(t, sqlSelectQuery, `OFFSET ?`, "OFFSET")
-		}
-		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-	})
-}
 func Test_Core_clauseOrderBy(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(
@@ -257,6 +203,33 @@ func Test_Core_clauseOrderBy(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `ORDER BY`, "ORDER BY")
 			assertContains(t, sqlSelectQuery, `"t"."string" ASC`, "ORDER BY ASC")
 			assertContains(t, sqlSelectQuery, `"t"."string" DESC`, "ORDER BY DESC")
+		}
+		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+	})
+}
+func Test_Core_clausePagination(t *testing.T) {
+	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+		sql := NewSQL(
+			WithDialect(supportDialect),
+		)
+		defer sql.Close()
+		stmtSelect := NewSelect(Test.Table).
+			Field(
+				Test.Column.ID,
+			).
+			Pagination(10, 0)
+		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+		switch supportDialect {
+		case DialectMariaDB:
+			assertContains(t, sqlSelectQuery, "LIMIT ? OFFSET ?", "PAGINATION")
+		case DialectMsSQL:
+			// Внимание находится в стадии разработки
+		case DialectMySQL:
+			assertContains(t, sqlSelectQuery, "LIMIT ? OFFSET ?", "PAGINATION")
+		case DialectPostgreSQL:
+			assertContains(t, sqlSelectQuery, `LIMIT $1 OFFSET $2`, "PAGINATION")
+		case DialectSQLite:
+			assertContains(t, sqlSelectQuery, `LIMIT ? OFFSET ?`, "PAGINATION")
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})

@@ -23,6 +23,8 @@ sql := uast.NewSQL(
 )
 defer sql.Close()
 mariadbQuery, mariadbArgs, _ := sql.Build(stmt)
+sql.SetDialect(uast.DialectMsSQL)
+mssqlQuery, mssqlArgs, _ := sql.Build(stmt)
 sql.SetDialect(uast.DialectMySQL)
 mysqlQuery, mysqlArgs, _ := sql.Build(stmt)
 sql.SetDialect(uast.DialectPostgreSQL)
@@ -33,6 +35,10 @@ sqliteQuery, sqliteArgs, _ := sql.Build(stmt)
 Output MariaDB:
 ```text
 SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
+```
+Output MsSQL:
+```text
+SELECT [t].[string] FROM [test] AS [t] WHERE [t].[id] = @p1
 ```
 Output MySQL:
 ```text

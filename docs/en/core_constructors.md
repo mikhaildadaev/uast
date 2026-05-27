@@ -20,6 +20,10 @@ Output MariaDB:
 ```text
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
+Output MsSQL:
+```text
+DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1
+```
 Output MySQL:
 ```text
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
@@ -46,6 +50,10 @@ Output MariaDB:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
+Output MsSQL:
+```text
+INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
+```
 Output MySQL:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
@@ -70,6 +78,10 @@ statement := uast.NewSelect(uast.NewTable("test").As("t")).
 Output MariaDB:
 ```text
 SELECT `t`.`string` FROM `test` AS `t`
+```
+Output MsSQL:
+```text
+SELECT [t].[string] FROM [test] AS [t]
 ```
 Output MySQL:
 ```text
@@ -98,6 +110,10 @@ statement := uast.NewUpdate(uast.NewTable("test").As("t")).
 Output MariaDB:
 ```text
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
+```
+Output MsSQL:
+```text
+UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2
 ```
 Output MySQL:
 ```text

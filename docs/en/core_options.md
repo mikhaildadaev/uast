@@ -1003,7 +1003,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string]
 ```
 Output MySQL:
 ```text
@@ -1030,7 +1030,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] BETWEEN @p1 AND @p2
 ```
 Output MySQL:
 ```text
@@ -1056,7 +1056,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] = @p1
 ```
 Output MySQL:
 ```text
@@ -1082,7 +1082,7 @@ EXISTS (SELECT 1 FROM `test` AS `t`)
 ```
 Output MsSQL:
 ```text
-
+EXISTS (SELECT 1 FROM [test] AS [t])
 ```
 Output MySQL:
 ```text
@@ -1108,7 +1108,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] > @p1
 ```
 Output MySQL:
 ```text
@@ -1134,7 +1134,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] >= @p1
 ```
 Output MySQL:
 ```text
@@ -1160,7 +1160,7 @@ LOWER(`t`.`string`) LIKE LOWER(?)
 ```
 Output MsSQL:
 ```text
-
+LOWER([t].[string]) LIKE LOWER(@p1)
 ```
 Output MySQL:
 ```text
@@ -1186,7 +1186,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] IN (@p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -1212,7 +1212,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] IS NOT NULL
 ```
 Output MySQL:
 ```text
@@ -1238,7 +1238,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] IS NULL
 ```
 Output MySQL:
 ```text
@@ -1264,7 +1264,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] < @p1
 ```
 Output MySQL:
 ```text
@@ -1290,7 +1290,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] <= @p1
 ```
 Output MySQL:
 ```text
@@ -1316,7 +1316,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] LIKE @p1
 ```
 Output MySQL:
 ```text
@@ -1342,7 +1342,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] NOT BETWEEN @p1 AND @p2
 ```
 Output MySQL:
 ```text
@@ -1368,7 +1368,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] != @p1
 ```
 Output MySQL:
 ```text
@@ -1394,7 +1394,7 @@ NOT EXISTS (SELECT 1 FROM `test` AS `t`)
 ```
 Output MsSQL:
 ```text
-
+NOT EXISTS (SELECT 1 FROM [test] AS [t])
 ```
 Output MySQL:
 ```text
@@ -1420,7 +1420,7 @@ LOWER(`t`.`string`) NOT LIKE LOWER(?)
 ```
 Output MsSQL:
 ```text
-
+LOWER([t].[string]) NOT LIKE LOWER(@p1)
 ```
 Output MySQL:
 ```text
@@ -1446,7 +1446,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] NOT IN (@p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -1472,7 +1472,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] NOT LIKE @p1
 ```
 Output MySQL:
 ```text
@@ -4382,7 +4382,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+([t].[string] = @p1 AND [t].[number] > @p2)
 ```
 Output MySQL:
 ```text
@@ -4411,7 +4411,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+([t].[string] = @p1 OR [t].[number] > @p2)
 ```
 Output MySQL:
 ```text
@@ -4438,7 +4438,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+(SELECT [t].[id] FROM [test] AS [t])
 ```
 Output MySQL:
 ```text
@@ -4467,7 +4467,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+@p1
 ```
 Output MySQL:
 ```text

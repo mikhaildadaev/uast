@@ -21,7 +21,7 @@ GROUP BY `t`.`string`
 ```
 Output MsSQL:
 ```text
-
+GROUP BY [t].[string]
 ```
 Output MySQL:
 ```text
@@ -49,7 +49,7 @@ HAVING COUNT(`t`.`id`) > ?
 ```
 Output MsSQL:
 ```text
-
+HAVING COUNT([t].[id]) > @p1
 ```
 Output MySQL:
 ```text
@@ -76,7 +76,7 @@ CROSS JOIN `test` AS `t`
 ```
 Output MsSQL:
 ```text
-
+CROSS JOIN [test] AS [t]
 ```
 Output MySQL:
 ```text
@@ -102,7 +102,7 @@ FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-
+FULL JOIN [test] AS [t] ON [t].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
@@ -128,7 +128,7 @@ FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-
+FULL OUTER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
@@ -154,7 +154,7 @@ INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-
+INNER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
@@ -180,7 +180,7 @@ LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-
+LEFT JOIN [test] AS [t] ON [t].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
@@ -206,7 +206,7 @@ LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-
+LEFT OUTER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
@@ -232,7 +232,7 @@ RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-
+RIGHT JOIN [test] AS [t] ON [t].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
@@ -258,7 +258,7 @@ RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-
+RIGHT OUTER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
@@ -285,7 +285,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] ASC
 ```
 Output MySQL:
 ```text
@@ -311,7 +311,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] DESC
 ```
 Output MySQL:
 ```text
@@ -337,7 +337,7 @@ LIMIT ? OFFSET ?
 ```
 Output MsSQL:
 ```text
-
+OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY
 ```
 Output MySQL:
 ```text
@@ -366,7 +366,7 @@ RETURNING `t`.`id`, `t`.`string`
 ```
 Output MsSQL:
 ```text
-
+OUTPUT [t].[id], [t].[string]
 ```
 Output MySQL:
 ```text
@@ -395,7 +395,7 @@ UPDATE `test` AS `t` SET `t`.`string` = ?
 ```
 Output MsSQL:
 ```text
-
+UPDATE [test] AS [t] SET [t].[string] = @p1
 ```
 Output MySQL:
 ```text
@@ -426,7 +426,7 @@ UNION SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MsSQL:
 ```text
-
+UNION SELECT [t].[string] FROM [test] AS [t]
 ```
 Output MySQL:
 ```text
@@ -456,7 +456,7 @@ UNION ALL SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MsSQL:
 ```text
-
+UNION ALL SELECT [t].[string] FROM [test] AS [t]
 ```
 Output MySQL:
 ```text
@@ -486,7 +486,7 @@ EXCEPT SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MsSQL:
 ```text
-
+EXCEPT SELECT [t].[string] FROM [test] AS [t]
 ```
 Output MySQL:
 ```text
@@ -516,7 +516,7 @@ INTERSECT SELECT `t`.`string` FROM `test` AS `t`
 ```
 Output MsSQL:
 ```text
-
+INTERSECT SELECT [t].[string] FROM [test] AS [t]
 ```
 Output MySQL:
 ```text
@@ -546,7 +546,7 @@ VALUES (?, ?)
 ```
 Output MsSQL:
 ```text
-
+VALUES (@p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -578,7 +578,7 @@ VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
 ```
 Output MsSQL:
 ```text
-
+// Not supported
 ```
 Output MySQL:
 ```text
@@ -606,7 +606,7 @@ WHERE `t`.`string` = ?
 ```
 Output MsSQL:
 ```text
-
+WHERE [t].[string] = @p1
 ```
 Output MySQL:
 ```text
@@ -642,7 +642,7 @@ WITH `cte_norecursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `
 ```
 Output MsSQL:
 ```text
-
+WITH [cte_norecursive] ([id], [string]) AS (SELECT [t].[id], [t].[string] FROM [test] AS [t] WHERE [t].[string] = @p1)
 ```
 Output MySQL:
 ```text
@@ -688,7 +688,7 @@ WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string
 ```
 Output MsSQL:
 ```text
-
+WITH RECURSIVE [cte_recursive] ([id], [string]) AS (SELECT [t].[id], [t].[string] FROM [test] AS [t] WHERE [t].[string] = @p1 UNION ALL SELECT [t].[id], [t].[string] FROM [test] AS [t] INNER JOIN [cte_recursive] AS [rec] ON [t].[id] = [rec].[id])
 ```
 Output MySQL:
 ```text
@@ -715,7 +715,7 @@ ARRAY[?, ?, ?]
 ```
 Output MsSQL:
 ```text
-
+ARRAY[@p1, @p2, @p3]
 ```
 Output MySQL:
 ```text
@@ -742,7 +742,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] & @p1
 ```
 Output MySQL:
 ```text
@@ -768,7 +768,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] | @p1
 ```
 Output MySQL:
 ```text
@@ -794,7 +794,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] ^ @p1
 ```
 Output MySQL:
 ```text
@@ -820,7 +820,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] / @p1
 ```
 Output MySQL:
 ```text
@@ -846,7 +846,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] - @p1
 ```
 Output MySQL:
 ```text
@@ -872,7 +872,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] % @p1
 ```
 Output MySQL:
 ```text
@@ -898,7 +898,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] * @p1
 ```
 Output MySQL:
 ```text
@@ -924,7 +924,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] + @p1
 ```
 Output MySQL:
 ```text
@@ -950,7 +950,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] << @p1
 ```
 Output MySQL:
 ```text
@@ -976,7 +976,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] >> @p1
 ```
 Output MySQL:
 ```text
@@ -1003,7 +1003,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string]
 ```
 Output MySQL:
 ```text
@@ -1030,7 +1030,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] BETWEEN @p1 AND @p2
 ```
 Output MySQL:
 ```text
@@ -1056,7 +1056,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] = @p1
 ```
 Output MySQL:
 ```text
@@ -1082,7 +1082,7 @@ EXISTS (SELECT 1 FROM `test` AS `t`)
 ```
 Output MsSQL:
 ```text
-
+EXISTS (SELECT 1 FROM [test] AS [t])
 ```
 Output MySQL:
 ```text
@@ -1108,7 +1108,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] > @p1
 ```
 Output MySQL:
 ```text
@@ -1134,7 +1134,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] >= @p1
 ```
 Output MySQL:
 ```text
@@ -1160,7 +1160,7 @@ LOWER(`t`.`string`) LIKE LOWER(?)
 ```
 Output MsSQL:
 ```text
-
+LOWER([t].[string]) LIKE LOWER(@p1)
 ```
 Output MySQL:
 ```text
@@ -1186,7 +1186,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] IN (@p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -1212,7 +1212,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] IS NOT NULL
 ```
 Output MySQL:
 ```text
@@ -1238,7 +1238,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] IS NULL
 ```
 Output MySQL:
 ```text
@@ -1264,7 +1264,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] < @p1
 ```
 Output MySQL:
 ```text
@@ -1290,7 +1290,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] <= @p1
 ```
 Output MySQL:
 ```text
@@ -1316,7 +1316,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] LIKE @p1
 ```
 Output MySQL:
 ```text
@@ -1342,7 +1342,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] NOT BETWEEN @p1 AND @p2
 ```
 Output MySQL:
 ```text
@@ -1368,7 +1368,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[number] != @p1
 ```
 Output MySQL:
 ```text
@@ -1394,7 +1394,7 @@ NOT EXISTS (SELECT 1 FROM `test` AS `t`)
 ```
 Output MsSQL:
 ```text
-
+NOT EXISTS (SELECT 1 FROM [test] AS [t])
 ```
 Output MySQL:
 ```text
@@ -1420,7 +1420,7 @@ LOWER(`t`.`string`) NOT LIKE LOWER(?)
 ```
 Output MsSQL:
 ```text
-
+LOWER([t].[string]) NOT LIKE LOWER(@p1)
 ```
 Output MySQL:
 ```text
@@ -1446,7 +1446,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] NOT IN (@p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -1472,7 +1472,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+[t].[string] NOT LIKE @p1
 ```
 Output MySQL:
 ```text
@@ -4382,7 +4382,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+([t].[string] = @p1 AND [t].[number] > @p2)
 ```
 Output MySQL:
 ```text
@@ -4411,7 +4411,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+([t].[string] = @p1 OR [t].[number] > @p2)
 ```
 Output MySQL:
 ```text
@@ -4438,7 +4438,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+(SELECT [t].[id] FROM [test] AS [t])
 ```
 Output MySQL:
 ```text
@@ -4467,7 +4467,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+@p1
 ```
 Output MySQL:
 ```text

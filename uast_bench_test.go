@@ -184,7 +184,7 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
 		builder := NewSQL(
 			WithDialect(supportDialect),
-			WithMutable(),
+			WithMutate(true),
 		)
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
@@ -281,7 +281,7 @@ func Benchmark_Mutable_Single(b *testing.B) {
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
 		builder := NewSQL(
 			WithDialect(supportDialect),
-			WithMutable(),
+			WithMutate(true),
 		)
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {

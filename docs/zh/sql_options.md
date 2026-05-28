@@ -5,7 +5,7 @@ outline: deep
 # API / SQL / 选项
 
 ::: info **关于**
-本页涵盖所有配置选项：`Dialect`。每个选项都附有可运行的代码示例和预期输出。
+本页面涵盖 SQL 构建器的配置选项：用于创建时设置的 `WithDialect` 和 `WithMutate`，以及用于运行时修改的 `SetDialect` 和 `SetMutate`。每个选项都配有可运行的代码示例和预期输出。
 :::
 
 ## WithDialect/SetDialect

@@ -5,7 +5,7 @@ outline: deep
 # API / SQL / Options
 
 ::: info **Info**
-This page covers all configuration options: `Dialect`. Each option is shown with a working code example and expected output.
+This page covers SQL builder configuration options: `WithDialect` and `WithMutate` for constructor-time setup, and `SetDialect` and `SetMutate` for runtime modification. Each option is shown with a working code example and expected output.
 :::
 
 ## WithDialect/SetDialect

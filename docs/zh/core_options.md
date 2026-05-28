@@ -2483,7 +2483,7 @@ CURDATE()
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -2509,7 +2509,7 @@ CURTIME()
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -2535,7 +2535,7 @@ DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -2587,7 +2587,7 @@ DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -2847,7 +2847,7 @@ TIME_ADD(`t`.`createat`, '2 HOUR')
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -2899,7 +2899,7 @@ TIME_SUB(`t`.`createat`, '2 HOUR')
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -2982,7 +2982,7 @@ JSON_ARRAY(`t`.`json`, ?, ?)
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3010,7 +3010,7 @@ JSON_ARRAYAGG(`t`.`json`)
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3039,7 +3039,7 @@ JSON_CONTAINS(`t`.`json`, '{"key":"val"}')
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3075,7 +3075,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3106,7 +3106,7 @@ JSON_OBJECT('key', COUNT(`t`.`json`))
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3135,7 +3135,7 @@ JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3173,7 +3173,7 @@ JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3213,7 +3213,7 @@ JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text
@@ -3239,7 +3239,7 @@ JSON_TYPE(`t`.`json`)
 ```
 Output MsSQL:
 ```text
-
+// In development
 ```
 Output MySQL:
 ```text

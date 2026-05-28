@@ -8,8 +8,8 @@ import (
 // Публичные конструкторы
 func NewSQL(options ...SQLOption) *SQLBuilder {
 	sqlBuilder := &SQLBuilder{
-		config:  DialectDefault.config,
-		mutable: false,
+		config: DialectDefault.config,
+		mutate: false,
 		pool: &sync.Pool{
 			New: func() any {
 				return newContext()
@@ -34,9 +34,9 @@ func WithDialect(dialect *SupportDialect) SQLOption {
 		}
 	}
 }
-func WithMutable() SQLOption {
+func WithMutate(mutate bool) SQLOption {
 	return func(sqlBuilder *SQLBuilder) {
-		sqlBuilder.mutable = true
+		sqlBuilder.mutate = mutate
 	}
 }
 
@@ -51,7 +51,7 @@ func (sqlBuilder *SQLBuilder) Build(statement statement) (string, []any, error) 
 		sqlBuilder.pool.Put(contexter)
 	}()
 	stmt := statement
-	if !sqlBuilder.mutable {
+	if !sqlBuilder.mutate {
 		stmt = statement.clone()
 	}
 	baseRenderer := sqlBuilder.processor.createRenderer(sqlBuilder.config, contexter, sqlBuilder.strateger)
@@ -79,15 +79,15 @@ func (sqlBuilder *SQLBuilder) Exec(stmt statement, db *sql.DB) (sql.Result, erro
 	return db.Exec(query, args...)
 }
 func (sqlBuilder *SQLBuilder) SetDialect(dialect *SupportDialect) {
-	if sqlBuilder.mutable {
+	if sqlBuilder.mutate {
 		return
 	}
 	sqlBuilder.config = dialect.config
 	sqlBuilder.processor = dialect.processor
 	sqlBuilder.strateger = dialect.strateger
 }
-func (sqlBuilder *SQLBuilder) SetMutable() {
-	sqlBuilder.mutable = true
+func (sqlBuilder *SQLBuilder) SetMutate(mutate bool) {
+	sqlBuilder.mutate = mutate
 }
 func (sqlBuilder *SQLBuilder) Query(stmt statement, db *sql.DB) (*sql.Rows, error) {
 	query, args, err := sqlBuilder.Build(stmt)
@@ -115,7 +115,7 @@ type statement interface {
 // Приватные структуры
 type SQLBuilder struct {
 	config    *config
-	mutable   bool
+	mutate    bool
 	pool      *sync.Pool
 	processor processor
 	strateger strateger

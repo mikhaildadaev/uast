@@ -65,15 +65,15 @@ stmt1 := uast.NewSelect(uast.NewTable("test").As("t")).
     Where(
         uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
     )
-immutableSQL := uast.NewSQL(
+immutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
 )
-defer immutableSQL.Close()
-query1, _, _ := immutableSQL.Build(stmt1)
-query2, _, _ := immutableSQL.Build(stmt1)
-immutableSQL.SetMutate(true)
-query3, _, _ := immutableSQL.Build(stmt1)
-query4, _, _ := immutableSQL.Build(stmt1)
+defer immutableBuilder.Close()
+query1, _, _ := immutableBuilder.Build(stmt1)
+query2, _, _ := immutableBuilder.Build(stmt1)
+immutableBuilder.SetMutate(true)
+query3, _, _ := immutableBuilder.Build(stmt1)
+query4, _, _ := immutableBuilder.Build(stmt1)
 stmt2 := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
         uast.Column[string]("t", "string"),
@@ -88,16 +88,16 @@ stmt3 := uast.NewSelect(uast.NewTable("test").As("t")).
     Where(
         uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
     )
-mutableSQL := uast.NewSQL(
+mutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
     uast.WithMutate(true),
 )
-defer mutableSQL.Close()
-query5, _, _ := mutableSQL.Build(stmt2)
-query6, _, _ := mutableSQL.Build(stmt2)
-mutableSQL.SetMutate(false)
-query7, _, _ := mutableSQL.Build(stmt2)
-query8, _, _ := mutableSQL.Build(stmt3)
+defer mutableBuilder.Close()
+query5, _, _ := mutableBuilder.Build(stmt2)
+query6, _, _ := mutableBuilder.Build(stmt2)
+mutableBuilder.SetMutate(false)
+query7, _, _ := mutableBuilder.Build(stmt2)
+query8, _, _ := mutableBuilder.Build(stmt3)
 ```
 Output Query1:
 ```text

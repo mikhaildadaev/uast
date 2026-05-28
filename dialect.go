@@ -7,6 +7,10 @@ var (
 	// Cовместимые с MariaDB
 	DialectDoltDB      = DialectMariaDB
 	DialectSingleStore = DialectMariaDB
+	// Cовместимые с MsSQL
+	DialectAmazonRDS = DialectMsSQL
+	DialectAzureSQL  = DialectMsSQL
+	DialectSynapse   = DialectMsSQL
 	// Cовместимые с MySQL
 	DialectAuroraMySQL = DialectMySQL
 	DialectAzureMySQL  = DialectMySQL

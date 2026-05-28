@@ -53,92 +53,54 @@ Output SQLite:
 SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
 ```
 
-## WithMutable
-`WithMutable` marks the builder as mutable. When mutable, `Build()` mutates the original statement instead of cloning it, improving performance for single-use statements. `SetDialect` is blocked for mutable builders.
+## WithMutable/SetMutable
+`WithMutable` marks the builder as mutable at creation time. `SetMutable` switches an existing builder to mutable mode. When mutable, `Build()` mutates the original statement instead of cloning it, improving performance for single-use statements. `SetDialect` is blocked for mutable builders. Once a statement is built in mutable mode, it is modified and cannot be safely reused — subsequent builds produce undefined results.
 ```go
-mariadbStmt := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
         uast.Column[string]("t", "string"),
     ).
     Where(
         uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
     )
-mssqlStmt := uast.NewSelect(uast.NewTable("test").As("t")).
-    Field(
-        uast.Column[string]("t", "string"),
-    ).
-    Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
-    )
-mysqlStmt := uast.NewSelect(uast.NewTable("test").As("t")).
-    Field(
-        uast.Column[string]("t", "string"),
-    ).
-    Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
-    )
-postgresqlStmt := uast.NewSelect(uast.NewTable("test").As("t")).
-    Field(
-        uast.Column[string]("t", "string"),
-    ).
-    Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
-    )
-sqliteStmt := uast.NewSelect(uast.NewTable("test").As("t")).
-    Field(
-        uast.Column[string]("t", "string"),
-    ).
-    Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
-    )
-mariadbBuilder := uast.NewSQL(
-    uast.WithDialect(uast.DialectMariaDB),
-    uast.WithMutable(),
+immutableSQL := uast.NewSQL(
+    uast.WithDialect(uast.DialectPostgreSQL),
 )
-defer mariadbBuilder.Close()
-mssqlBuilder := uast.NewSQL(
-    uast.WithDialect(uast.DialectMsSQL),
-    uast.WithMutable(),
-)
-defer mssqlBuilder.Close()
-mysqlBuilder := uast.NewSQL(
-    uast.WithDialect(uast.DialectMySQL),
-    uast.WithMutable(),
-)
-defer mysqlBuilder.Close()
-postgresqlBuilder := uast.NewSQL(
+defer immutableSQL.Close()
+query1, _, _ := immutableSQL.Build(stmt)
+query2, _, _ := immutableSQL.Build(stmt)
+immutableSQL.SetMutable()
+query3, _, _ := immutableSQL.Build(stmt)
+query4, _, _ := immutableSQL.Build(stmt)
+mutableSQL := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
     uast.WithMutable(),
 )
-defer postgresqlBuilder.Close()
-sqliteBuilder := uast.NewSQL(
-    uast.WithDialect(uast.DialectSQLite),
-    uast.WithMutable(),
-)
-defer sqliteBuilder.Close()
-mariadbQuery, mariadbArgs, _ := mariadbBuilder.Build(mariadbStmt)
-mssqlQuery, mssqlArgs, _ := mssqlBuilder.Build(mssqlStmt)
-mysqlQuery, mysqlArgs, _ := mysqlBuilder.Build(mysqlStmt)
-postgresqlQuery, postgresqlArgs, _ := postgresqlBuilder.Build(postgresqlStmt)
-sqliteQuery, sqliteArgs, _ := sqliteBuilder.Build(sqliteStmt)
+defer mutableSQL.Close()
+query5, _, _ := mutableSQL.Build(stmt)
+query6, _, _ := mutableSQL.Build(stmt)
 ```
-Output MariaDB:
-```text
-SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
-```
-Output MsSQL:
-```text
-SELECT [t].[string] FROM [test] AS [t] WHERE [t].[id] = @p1
-```
-Output MySQL:
-```text
-SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
-```
-Output PostgreSQL:
+Output Query1:
 ```text
 SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
 ```
-Output SQLite:
+Output Query2:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
+SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+```
+Output Query3:
+```text
+SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+```
+Output Query4:
+```text
+// Undefined result — stmt was mutated
+```
+Output Query5:
+```text
+SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+```
+Output Query6:
+```text
+// Undefined result — stmt was mutated
 ```

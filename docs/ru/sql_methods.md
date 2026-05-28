@@ -33,7 +33,7 @@ Output:
 ```
 
 ### Query
-Builds the statement and executes it via `db.Exec()`. Returns `sql.Result` and any error. Suitable for INSERT, UPDATE, DELETE statements that do not return rows.
+Собирает оператор и выполняет его через `db.Query()`. Возвращает `*sql.Rows` и ошибку. Подходит для операторов SELECT, которые возвращают несколько строк.
 ```go
 sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer sql.Close()

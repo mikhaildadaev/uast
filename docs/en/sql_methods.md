@@ -33,7 +33,7 @@ Output:
 ```
 
 ### Query
-Собирает оператор и выполняет его через `db.Query()`. Возвращает `*sql.Rows` и ошибку. Подходит для операторов SELECT, которые возвращают несколько строк.
+Builds the statement and executes it via `db.Query()`. Returns `*sql.Rows` and any error. Suitable for SELECT statements that return multiple rows.
 ```go
 sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer sql.Close()

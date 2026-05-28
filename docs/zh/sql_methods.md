@@ -12,15 +12,15 @@ outline: deep
 ### Exec
 构建语句并通过 `db.Exec()` 执行。返回 `sql.Result` 和错误。适用于不返回行的 INSERT、UPDATE、DELETE 语句。
 ```go
-sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
-defer sql.Close()
-db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
-defer db.Close()
 stmt := uast.NewInsert(uast.NewTable("test").As("t")).
     Values(
         uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
     )
-result, err := sql.Exec(stmt, db)
+builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
+defer builder.Close()
+db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
+defer db.Close()
+result, err := builder.Exec(stmt, db)
 if err != nil {
     log.Fatal(err)
 }
@@ -35,10 +35,6 @@ Output:
 ### Query
 构建语句并通过 `db.Query()` 执行。返回 `*sql.Rows` 和错误。适用于返回多行的 SELECT 语句。
 ```go
-sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
-defer sql.Close()
-db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
-defer db.Close()
 stmt := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
         uast.Column[int64]("t", "id"),
@@ -47,7 +43,11 @@ stmt := uast.NewSelect(uast.NewTable("test").As("t")).
     Where(
         uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
-rows, err := sql.Query(stmt, db)
+builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
+defer sbuilderql.Close()
+db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
+defer db.Close()
+rows, err := builder.Query(stmt, db)
 if err != nil {
     log.Fatal(err)
 }
@@ -68,10 +68,6 @@ Output:
 ### QueryRow
 构建语句并通过 `db.QueryRow()` 执行。返回 `*sql.Row` 和来自 `Build()` 的错误。适用于返回单行的 SELECT 语句。
 ```go
-sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
-defer sql.Close()
-db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
-defer db.Close()
 stmt := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
         uast.Column[int64]("t", "id"),
@@ -80,7 +76,11 @@ stmt := uast.NewSelect(uast.NewTable("test").As("t")).
     Where(
         uast.Equal(uast.Column[int64]("t", "id"), uast.Value(1)),
     )
-row, err := sql.QueryRow(stmt, db)
+builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
+defer builder.Close()
+db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
+defer db.Close()
+row, err := builder.QueryRow(stmt, db)
 if err != nil {
     log.Fatal(err)
 }

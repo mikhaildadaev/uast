@@ -11,7 +11,7 @@ This page describes how to create a sql instance, configure all the settings, an
 ## NewSQL
 SQL instance configured for the specified dialect
 ```go
-builder, err := uast.NewSQL()
+builder := uast.NewSQL()
 defer builder.Close()
 ```
 Output:

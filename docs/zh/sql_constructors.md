@@ -11,8 +11,8 @@ outline: deep
 ## NewSQL
 为指定方言配置的 SQL 实例
 ```go
-sql, err := uast.NewSQL()
-defer sql.Close()
+builder := uast.NewSQL()
+defer builder.Close()
 ```
 Output:
 ```text

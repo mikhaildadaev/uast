@@ -11,8 +11,8 @@ outline: deep
 ## NewSQL
 SQL-инстанс, сконфигурированный под указанный диалект
 ```go
-sql, err := uast.NewSQL()
-defer sql.Close()
+builder := uast.NewSQL()
+defer builder.Close()
 ```
 Output:
 ```text

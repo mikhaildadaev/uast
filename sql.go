@@ -86,6 +86,9 @@ func (sqlBuilder *SQLBuilder) SetDialect(dialect *SupportDialect) {
 	sqlBuilder.processor = dialect.processor
 	sqlBuilder.strateger = dialect.strateger
 }
+func (sqlBuilder *SQLBuilder) SetMutable() {
+	sqlBuilder.mutable = true
+}
 func (sqlBuilder *SQLBuilder) Query(stmt statement, db *sql.DB) (*sql.Rows, error) {
 	query, args, err := sqlBuilder.Build(stmt)
 	if err != nil {

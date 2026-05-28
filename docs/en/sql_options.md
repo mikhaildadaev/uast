@@ -53,10 +53,12 @@ Output SQLite:
 SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
 ```
 
-## WithMutable/SetMutable
-`WithMutable` marks the builder as mutable at creation time. `SetMutable` switches an existing builder to mutable mode. When mutable, `Build()` mutates the original statement instead of cloning it, improving performance for single-use statements. `SetDialect` is blocked for mutable builders. Once a statement is built in mutable mode, it is modified and cannot be safely reused — subsequent builds produce undefined results.
+## WithMutate/SetMutate
+`WithMutate` marks the builder as mutable at creation time. `SetMutate` switches mutation mode on or off at runtime. When mutation is enabled, `Build()` mutates the original statement instead of cloning it, improving performance for single-use statements. When mutation is disabled, `Build()` clones the statement before building, preserving the original for reuse. `SetDialect` is blocked while mutation is enabled.
+
+Once a statement is built with mutation enabled, it is modified and cannot be safely reused — subsequent builds produce undefined results. To safely reuse a statement after mutation mode, create a new statement instance.
 ```go
-stmt := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt1 := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
         uast.Column[string]("t", "string"),
     ).
@@ -67,18 +69,35 @@ immutableSQL := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
 )
 defer immutableSQL.Close()
-query1, _, _ := immutableSQL.Build(stmt)
-query2, _, _ := immutableSQL.Build(stmt)
-immutableSQL.SetMutable()
-query3, _, _ := immutableSQL.Build(stmt)
-query4, _, _ := immutableSQL.Build(stmt)
+query1, _, _ := immutableSQL.Build(stmt1)
+query2, _, _ := immutableSQL.Build(stmt1)
+immutableSQL.SetMutate(true)
+query3, _, _ := immutableSQL.Build(stmt1)
+query4, _, _ := immutableSQL.Build(stmt1)
+stmt2 := uast.NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[string]("t", "string"),
+    ).
+    Where(
+        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
+    )
+stmt3 := uast.NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[string]("t", "string"),
+    ).
+    Where(
+        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
+    )
 mutableSQL := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
-    uast.WithMutable(),
+    uast.WithMutate(true),
 )
 defer mutableSQL.Close()
-query5, _, _ := mutableSQL.Build(stmt)
-query6, _, _ := mutableSQL.Build(stmt)
+query5, _, _ := mutableSQL.Build(stmt2)
+query6, _, _ := mutableSQL.Build(stmt2)
+mutableSQL.SetMutate(false)
+query7, _, _ := mutableSQL.Build(stmt2)
+query8, _, _ := mutableSQL.Build(stmt3)
 ```
 Output Query1:
 ```text
@@ -103,4 +122,12 @@ SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
 Output Query6:
 ```text
 // Undefined result — stmt was mutated
+```
+Output Query7:
+```text
+// Undefined result — stmt was mutated
+```
+Output Query8:
+```text
+SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
 ```

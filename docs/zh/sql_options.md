@@ -55,8 +55,6 @@ SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
 
 ## WithMutate/SetMutate
 `WithMutate` 在创建时将构建器标记为可变。`SetMutate` 在运行时打开或关闭可变模式。启用可变模式时，`Build()` 直接修改原始语句而不是克隆它，从而提高一次性查询的性能。禁用可变模式时，`Build()` 在构建之前克隆语句，保留原始语句以供重用。可变模式启用时，`SetDialect` 被阻止。
-
-一旦在可变模式下构建了语句，该语句已被修改，无法安全重用 — 后续构建会产生未定义的结果。要在可变模式后安全重用语句，请创建一个新的语句实例。
 ```go
 stmt1 := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -131,3 +129,7 @@ Output Query8:
 ```text
 SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
 ```
+
+::: tip 注
+一旦在可变模式下构建了语句，该语句已被修改，无法安全重用 — 后续构建会产生未定义的结果。要在可变模式后安全重用语句，请创建一个新的语句实例。
+:::

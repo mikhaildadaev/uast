@@ -55,8 +55,6 @@ SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
 
 ## WithMutate/SetMutate
 `WithMutate` marks the builder as mutable at creation time. `SetMutate` switches mutation mode on or off at runtime. When mutation is enabled, `Build()` mutates the original statement instead of cloning it, improving performance for single-use statements. When mutation is disabled, `Build()` clones the statement before building, preserving the original for reuse. `SetDialect` is blocked while mutation is enabled.
-
-Once a statement is built with mutation enabled, it is modified and cannot be safely reused — subsequent builds produce undefined results. To safely reuse a statement after mutation mode, create a new statement instance.
 ```go
 stmt1 := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
@@ -131,3 +129,7 @@ Output Query8:
 ```text
 SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
 ```
+
+::: tip Note
+Once a statement is built with mutation enabled, it is modified and cannot be safely reused — subsequent builds produce undefined results. To safely reuse a statement after mutation mode, create a new statement instance.
+:::

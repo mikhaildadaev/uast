@@ -28,7 +28,7 @@ mssqlQuery, mssqlArgs, _ := sql.Build(stmt)
 sql.SetDialect(uast.DialectMySQL)
 mysqlQuery, mysqlArgs, _ := sql.Build(stmt)
 sql.SetDialect(uast.DialectPostgreSQL)
-pgsqlQuery, pgsqlArgs, _ := sql.Build(stmt)
+postgresqlQuery, postgresqlArgs, _ := sql.Build(stmt)
 sql.SetDialect(uast.DialectSQLite)
 sqliteQuery, sqliteArgs, _ := sql.Build(stmt)
 ```

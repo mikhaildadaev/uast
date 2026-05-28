@@ -929,7 +929,7 @@ func Test_Core_exprFunction(t *testing.T) {
 				NullIf(Test.Column.CreateAt, Test.Column.UpdateAt).As("condition_if"),
 				// Функции конвертации
 				Cast(Test.Column.Number, TypeString).As("convert_cast"),
-				CharLength(Test.Column.String).As("convert_length"),
+				CharLength(Test.Column.String).As("convert_charlength"),
 				DateFormat(Test.Column.CreateAt, Literal("%Y-%m-%d")).As("convert_dateformat"),
 				Degrees(Test.Column.Number).As("convert_degrees"),
 				Length(Test.Column.String).As("convert_length"),

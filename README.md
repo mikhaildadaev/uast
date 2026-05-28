@@ -37,7 +37,7 @@ go test -race ./...
 - **150+ functions** — Aggregate, analytical, conditional, conversion, date/time, JSON, math, ranking, string.
 
 ### Limits
-- **No DDL yet**: CREATE, ALTER, DROP, TRUNCATE, COMMENT coming in v2.
+- **No DDL yet**: ALTER, CREATE, COMMENT, DROP, TRUNCATE coming in v2.
 - **No code generation**: Table schemas are defined manually (code-gen planned).
 - **MySQL**: `RETURNING` clause not supported (MySQL limitation).
 - **SQLite**: `RIGHT JOIN` / `RIGHT OUTER JOIN` not supported (SQLite limitation).

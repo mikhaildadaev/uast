@@ -5,32 +5,99 @@ outline: deep
 # API / SQL / Methods
 
 ::: info **Info**
-This page documents methods available on expressions: `As` for assigning aliases and `Over` for adding window specifications. Each method is shown with a working code example and expected SQL output.
+This page documents shortcut methods available on the SQL builder instance: `Exec`, `Query`, and `QueryRow`. These methods combine `Build()` with the corresponding `database/sql` methods, reducing boilerplate code. Each method is shown with a working code example and expected behavior.
 :::
 
-## exprColumn
-### As
-Assigns an alias to a column expression.
+## sqlBuilder
+### Exec
+Builds the statement and executes it via `db.Exec()`. Returns `sql.Result` and any error. Suitable for INSERT, UPDATE, DELETE statements that do not return rows.
 ```go
-column := uast.Column[string]("t", "string").As("alias")
+sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
+defer sql.Close()
+db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
+defer db.Close()
+stmt := uast.NewInsert(uast.NewTable("test").As("t")).
+    Values(
+        uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+    )
+result, err := sql.Exec(stmt, db)
+if err != nil {
+    log.Fatal(err)
+}
+rowsAffected, _ := result.RowsAffected()
 ```
-Output MariaDB:
+Output:
 ```text
-`t`.`string` AS `alias`
+// Executes: INSERT INTO "test" AS "t" ("string") VALUES ($1)
+// Returns: sql.Result with LastInsertId and RowsAffected
 ```
-Output MsSQL:
+
+### Query
+Собирает оператор и выполняет его через `db.Query()`. Возвращает `*sql.Rows` и ошибку. Подходит для операторов SELECT, которые возвращают несколько строк.
+```go
+sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
+defer sql.Close()
+db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
+defer db.Close()
+stmt := uast.NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[int64]("t", "id"),
+        uast.Column[string]("t", "string"),
+    ).
+    Where(
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    )
+rows, err := sql.Query(stmt, db)
+if err != nil {
+    log.Fatal(err)
+}
+defer rows.Close()
+for rows.Next() {
+    var id int64
+    var str string
+    rows.Scan(&id, &str)
+    fmt.Printf("id: %d, string: %s\n", id, str)
+}
+```
+Output:
 ```text
-[t].[string] AS [alias]
+// Executes: SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
+// Returns: *sql.Rows iterator
 ```
-Output MySQL:
+
+### QueryRow
+Builds the statement and executes it via `db.QueryRow()`. Returns `*sql.Row` and any error from `Build()`. Suitable for SELECT statements that return a single row.
+```go
+sql := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
+defer sql.Close()
+db, _ := sql.Open("postgres", "postgres://user:pass@localhost/db")
+defer db.Close()
+stmt := uast.NewSelect(uast.NewTable("test").As("t")).
+    Field(
+        uast.Column[int64]("t", "id"),
+        uast.Column[string]("t", "string"),
+    ).
+    Where(
+        uast.Equal(uast.Column[int64]("t", "id"), uast.Value(1)),
+    )
+row, err := sql.QueryRow(stmt, db)
+if err != nil {
+    log.Fatal(err)
+}
+var id int64
+var str string
+err = row.Scan(&id, &str)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("id: %d, string: %s\n", id, str)
+```
+Output:
 ```text
-`t`.`string` AS `alias`
+// Executes: SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+// Returns: *sql.Row, scanned via row.Scan()
 ```
-Output PostgreSQL:
-```text
-"t"."string" AS "alias"
-```
-Output SQLite:
-```text
-"t"."string" AS "alias"
-```
+
+::: tip Note
+These methods are shortcuts that combine `Build()` with d`atabase/sql` execution. For full control, use `Build()` directly and execute with your own `*sql.DB` or `*sql.Tx`. `QueryRow` returns `*sql.Row` — always call `Scan()` on the result. If `Build()` fails, the error is returned before any database call is made.
+:::

@@ -1663,7 +1663,8 @@ AVG(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+AVG([t].[number])
+AVG(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1694,7 +1695,8 @@ BIT_AND(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+BIT_AND([t].[number])
+BIT_AND(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1725,7 +1727,8 @@ BIT_OR(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+BIT_OR([t].[number])
+BIT_OR(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1756,7 +1759,8 @@ BIT_XOR(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+BIT_XOR([t].[number])
+BIT_XOR(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1787,7 +1791,8 @@ COUNT(DISTINCT `t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+COUNT([t].[string])
+COUNT(DISTINCT [t].[string])
 ```
 Output MySQL:
 ```text
@@ -1818,7 +1823,8 @@ GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ',')
 ```
 Output MsSQL:
 ```text
-
+GROUP_CONCAT([t].[string], ',')
+GROUP_CONCAT(DISTINCT [t].[string], ',')
 ```
 Output MySQL:
 ```text
@@ -1849,7 +1855,8 @@ MAX(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+MAX([t].[number])
+MAX(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1880,7 +1887,8 @@ MIN(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+MIN([t].[number])
+MIN(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1911,7 +1919,8 @@ STDDEV(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+STDEV([t].[number])
+STDEV(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1942,7 +1951,8 @@ SUM(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+SUM([t].[number])
+SUM(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -1969,11 +1979,12 @@ functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
 Output MariaDB:
 ```text
 VARIANCE(`t`.`number`)
-VARIANCE(DISTINCT "t"."number")
+VARIANCE(DISTINCT `t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+VAR([t].[number])
+VAR(DISTINCT [t].[number])
 ```
 Output MySQL:
 ```text
@@ -2006,7 +2017,7 @@ FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC
 ```
 Output MsSQL:
 ```text
-
+FIRST_VALUE([t].[string]) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
 ```
 Output MySQL:
 ```text
@@ -2035,7 +2046,7 @@ LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
 ```
 Output MsSQL:
 ```text
-
+LAG([t].[number], 2) OVER (PARTITION BY [t].[id] ORDER BY [t].[date] ASC)
 ```
 Output MySQL:
 ```text
@@ -2065,7 +2076,7 @@ LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC R
 ```
 Output MsSQL:
 ```text
-
+LAST_VALUE([t].[string]) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 Output MySQL:
 ```text
@@ -2094,7 +2105,7 @@ LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
 ```
 Output MsSQL:
 ```text
-
+LEAD([t].[number], 2) OVER (PARTITION BY [t].[id] ORDER BY [t].[date] ASC)
 ```
 Output MySQL:
 ```text
@@ -2124,7 +2135,7 @@ NTH_VALUE(`t`.`string`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DES
 ```
 Output MsSQL:
 ```text
-
+NTH_VALUE([t].[string], 2) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 Output MySQL:
 ```text
@@ -2158,7 +2169,7 @@ CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
 ```
 Output MsSQL:
 ```text
-
+CASE WHEN [t].[number] < @p1 THEN @p2 ELSE @p3 END
 ```
 Output MySQL:
 ```text
@@ -2184,7 +2195,7 @@ COALESCE(`t`.`createat`, `t`.`updateat`)
 ```
 Output MsSQL:
 ```text
-
+COALESCE([t].[createat], [t].[updateat])
 ```
 Output MySQL:
 ```text
@@ -2210,7 +2221,7 @@ GREATEST(`t`.`createat`, `t`.`updateat`)
 ```
 Output MsSQL:
 ```text
-
+GREATEST([t].[createat], [t].[updateat])
 ```
 Output MySQL:
 ```text
@@ -2236,7 +2247,7 @@ LEAST(`t`.`createat`, `t`.`updateat`)
 ```
 Output MsSQL:
 ```text
-
+LEAST([t].[createat], [t].[updateat])
 ```
 Output MySQL:
 ```text
@@ -2262,7 +2273,7 @@ NULLIF(`t`.`createat`, `t`.`updateat`)
 ```
 Output MsSQL:
 ```text
-
+NULLIF([t].[createat], [t].[updateat])
 ```
 Output MySQL:
 ```text
@@ -2289,7 +2300,7 @@ CAST(`t`.`number` AS CHAR)
 ```
 Output MsSQL:
 ```text
-
+CAST([t].[number] AS NVARCHAR)
 ```
 Output MySQL:
 ```text
@@ -2315,7 +2326,7 @@ CHAR_LENGTH(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+CHAR_LENGTH([t].[string])
 ```
 Output MySQL:
 ```text
@@ -2341,7 +2352,7 @@ DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
 ```
 Output MsSQL:
 ```text
-
+FORMAT([t].[createat], '%Y-%m-%d')
 ```
 Output MySQL:
 ```text
@@ -2367,7 +2378,7 @@ DEGREES(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+DEGREES([t].[number])
 ```
 Output MySQL:
 ```text
@@ -2393,7 +2404,7 @@ LENGTH(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+LEN([t].[string])
 ```
 Output MySQL:
 ```text
@@ -2419,7 +2430,7 @@ POSITION(? IN `t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+CHARINDEX(@p1, [t].[string])
 ```
 Output MySQL:
 ```text
@@ -2445,7 +2456,7 @@ RADIANS(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+RADIANS([t].[number])
 ```
 Output MySQL:
 ```text
@@ -2550,7 +2561,7 @@ DATEDIFF(`t`.`updateat`, `t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATEDIFF([t].[updateat], [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2602,7 +2613,7 @@ DAY(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DAY([t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2628,7 +2639,7 @@ DAYNAME(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATENAME(WEEKDAY, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2654,7 +2665,7 @@ HOUR(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATEPART(HOUR, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2680,7 +2691,7 @@ MINUTE(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATEPART(MINUTE, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2706,7 +2717,7 @@ MONTH(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+MONTH([t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2732,7 +2743,7 @@ MONTHNAME(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATENAME(MONTH, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2758,7 +2769,7 @@ NOW()
 ```
 Output MsSQL:
 ```text
-
+GETDATE()
 ```
 Output MySQL:
 ```text
@@ -2784,7 +2795,7 @@ QUARTER(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATEPART(QUARTER, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2810,7 +2821,7 @@ SECOND(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATEPART(SECOND, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2862,7 +2873,7 @@ TIMEDIFF(`t`.`updateat`, `t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+TIMEDIFF([t].[updateat], [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2914,7 +2925,7 @@ WEEK(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+DATEPART(WEEK, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2940,7 +2951,7 @@ YEAR(`t`.`createat`)
 ```
 Output MsSQL:
 ```text
-
+YEAR([t].[createat])
 ```
 Output MySQL:
 ```text
@@ -3255,7 +3266,7 @@ ABS(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+ABS([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3281,7 +3292,7 @@ ACOS(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+ACOS([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3307,7 +3318,7 @@ ASIN(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+ASIN([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3333,7 +3344,7 @@ ATAN(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+ATAN([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3359,7 +3370,7 @@ ATAN2(`t`.`y`, `t`.`x`)
 ```
 Output MsSQL:
 ```text
-
+ATAN2([t].[y], [t].[x])
 ```
 Output MySQL:
 ```text
@@ -3385,7 +3396,7 @@ CBRT(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+CBRT([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3411,7 +3422,7 @@ CEILING(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+CEILING([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3437,7 +3448,7 @@ COS(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+COS([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3463,7 +3474,7 @@ EXP(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+EXP([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3489,7 +3500,7 @@ FLOOR(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+FLOOR([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3515,7 +3526,7 @@ LN(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+LN([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3541,7 +3552,7 @@ LOG(`t`.`number`, ?)
 ```
 Output MsSQL:
 ```text
-
+LOG([t].[number], @p1)
 ```
 Output MySQL:
 ```text
@@ -3567,7 +3578,7 @@ MOD(`t`.`number`, ?)
 ```
 Output MsSQL:
 ```text
-
+MOD([t].[number], @p1)
 ```
 Output MySQL:
 ```text
@@ -3593,7 +3604,7 @@ PI()
 ```
 Output MsSQL:
 ```text
-
+PI()
 ```
 Output MySQL:
 ```text
@@ -3619,7 +3630,7 @@ POWER(`t`.`number`, ?)
 ```
 Output MsSQL:
 ```text
-
+POWER([t].[number], @p1)
 ```
 Output MySQL:
 ```text
@@ -3645,7 +3656,7 @@ RAND()
 ```
 Output MsSQL:
 ```text
-
+RAND()
 ```
 Output MySQL:
 ```text
@@ -3671,7 +3682,7 @@ ROUND(`t`.`number`, ?)
 ```
 Output MsSQL:
 ```text
-
+ROUND([t].[number], @p1)
 ```
 Output MySQL:
 ```text
@@ -3697,7 +3708,7 @@ SIN(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+SIN([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3723,7 +3734,7 @@ SQRT(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+SQRT([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3749,7 +3760,7 @@ TAN(`t`.`number`)
 ```
 Output MsSQL:
 ```text
-
+TAN([t].[number])
 ```
 Output MySQL:
 ```text
@@ -3775,7 +3786,7 @@ TRUNCATE(`t`.`number`, ?)
 ```
 Output MsSQL:
 ```text
-
+ROUND([t].[number], @p1, 1)
 ```
 Output MySQL:
 ```text
@@ -3805,7 +3816,7 @@ CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-
+CUME_DIST() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
 ```
 Output MySQL:
 ```text
@@ -3834,7 +3845,7 @@ DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-
+DENSE_RANK() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
 ```
 Output MySQL:
 ```text
@@ -3863,7 +3874,7 @@ NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-
+NTILE(2) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
 ```
 Output MySQL:
 ```text
@@ -3892,7 +3903,7 @@ PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-
+PERCENT_RANK() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
 ```
 Output MySQL:
 ```text
@@ -3921,7 +3932,7 @@ RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-
+RANK() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
 ```
 Output MySQL:
 ```text
@@ -3950,7 +3961,7 @@ ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-
+ROW_NUMBER() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
 ```
 Output MySQL:
 ```text
@@ -3977,7 +3988,7 @@ CONCAT(`t`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-
+CONCAT([t].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -4003,7 +4014,7 @@ CONCAT_WS(?, `t`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-
+CONCAT_WS(@p1, [t].[string], @p2, @p3)
 ```
 Output MySQL:
 ```text
@@ -4029,7 +4040,7 @@ LEFT(`t`.`string`, ?)
 ```
 Output MsSQL:
 ```text
-
+LEFT([t].[string], @p1)
 ```
 Output MySQL:
 ```text
@@ -4055,7 +4066,7 @@ LOWER(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+LOWER([t].[string])
 ```
 Output MySQL:
 ```text
@@ -4081,7 +4092,7 @@ LPAD(`t`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-
+LPAD([t].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -4107,7 +4118,7 @@ LTRIM(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+LTRIM([t].[string])
 ```
 Output MySQL:
 ```text
@@ -4133,7 +4144,7 @@ REPEAT(`t`.`string`, ?)
 ```
 Output MsSQL:
 ```text
-
+REPEAT([t].[string], @p1)
 ```
 Output MySQL:
 ```text
@@ -4159,7 +4170,7 @@ REPLACE(`t`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-
+REPLACE([t].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -4185,7 +4196,7 @@ REVERSE(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+REVERSE([t].[string])
 ```
 Output MySQL:
 ```text
@@ -4211,7 +4222,7 @@ RIGHT(`t`.`string`, ?)
 ```
 Output MsSQL:
 ```text
-
+RIGHT([t].[string], @p1)
 ```
 Output MySQL:
 ```text
@@ -4237,7 +4248,7 @@ RPAD(`t`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-
+RPAD([t].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -4263,7 +4274,7 @@ RTRIM(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+RTRIM([t].[string])
 ```
 Output MySQL:
 ```text
@@ -4289,7 +4300,7 @@ SUBSTRING(`t`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-
+SUBSTRING([t].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -4315,7 +4326,7 @@ TRIM(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+TRIM([t].[string])
 ```
 Output MySQL:
 ```text
@@ -4341,7 +4352,7 @@ UPPER(`t`.`string`)
 ```
 Output MsSQL:
 ```text
-
+UPPER([t].[string])
 ```
 Output MySQL:
 ```text

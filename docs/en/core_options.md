@@ -374,11 +374,11 @@ Output MySQL:
 ```
 Output PostgreSQL:
 ```text
-RETURNING `t`.`id`, `t`.`string`
+RETURNING "t"."id", "t"."string"
 ```
 Output SQLite:
 ```text
-RETURNING `t`.`id`, `t`.`string`
+RETURNING "t"."id", "t"."string"
 ```
 
 ## clauseSet
@@ -1989,7 +1989,7 @@ VAR(DISTINCT [t].[number])
 Output MySQL:
 ```text
 VARIANCE(`t`.`number`)
-VARIANCE(DISTINCT "t"."number")
+VARIANCE(DISTINCT `t`.`number`)
 ```
 Output PostgreSQL:
 ```text
@@ -3118,7 +3118,7 @@ JSON_BUILD_OBJECT('key', COUNT("t"."json"))
 ```
 Output SQLite:
 ```text
-JSON_OBJECT('key', COUNT(`t`.`json`))
+JSON_OBJECT('key', COUNT("t"."json"))
 ```
 
 #### JsonObjectAgg

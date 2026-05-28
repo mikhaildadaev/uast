@@ -374,11 +374,11 @@ Output MySQL:
 ```
 Output PostgreSQL:
 ```text
-RETURNING `t`.`id`, `t`.`string`
+RETURNING "t"."id", "t"."string"
 ```
 Output SQLite:
 ```text
-RETURNING `t`.`id`, `t`.`string`
+RETURNING "t"."id", "t"."string"
 ```
 
 ## clauseSet
@@ -3118,7 +3118,7 @@ JSON_BUILD_OBJECT('key', COUNT("t"."json"))
 ```
 Output SQLite:
 ```text
-JSON_OBJECT('key', COUNT(`t`.`json`))
+JSON_OBJECT('key', COUNT("t"."json"))
 ```
 
 #### JsonObjectAgg

@@ -315,7 +315,7 @@ func mssqlFunctionDateSub(baseTransformer *baseTransformer, expr transformFuncti
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(interval),
-			serviceString("-" + number),
+			serviceString(string(uastBinaryMinus) + number),
 		},
 		operator: uastCompositeCommaSpace,
 	}
@@ -425,7 +425,7 @@ func mssqlFunctionTimeSub(baseTransformer *baseTransformer, expr transformFuncti
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(interval),
-			serviceString("-" + number),
+			serviceString(string(uastBinaryMinus) + number),
 		},
 		operator: uastCompositeCommaSpace,
 	}

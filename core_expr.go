@@ -100,6 +100,7 @@ type exprFunction[InLT, InRT, T typeScalar] struct {
 	window     *WindowSpec
 }
 type exprJson struct {
+	children    []*exprJson
 	expressions []ExpressionBase
 	operator    compositeOperator
 	values      []ExpressionBase
@@ -584,6 +585,23 @@ func (expr *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRenderer) erro
 				baseRenderer.renderOperator(expr.operator)
 			}
 		}
+		baseRenderer.renderOperator(uastCompositeParenRight)
+	case uastProcessJsonRecurcive:
+		current := expr.json[0]
+		baseRenderer.renderService(expr.service)
+		baseRenderer.renderOperator(uastCompositeParenLeft)
+		if current.children != nil {
+			savedJson := expr.json
+			expr.json = current.children
+			expr.render(baseRenderer)
+			expr.json = savedJson
+		} else {
+			expr.left.render(baseRenderer)
+		}
+		baseRenderer.renderOperator(uastCompositeCommaSpace)
+		current.expressions[0].render(baseRenderer)
+		baseRenderer.renderOperator(uastCompositeCommaSpace)
+		current.values[0].render(baseRenderer)
 		baseRenderer.renderOperator(uastCompositeParenRight)
 	case uastProcessWindow:
 		baseRenderer.renderService(expr.service)

@@ -2535,7 +2535,7 @@ DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
 ```
 Output MsSQL:
 ```text
-// In development
+DATEADD(DAY, 2, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2587,7 +2587,7 @@ DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
 ```
 Output MsSQL:
 ```text
-// In development
+DATEADD(DAY, -2, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2847,7 +2847,7 @@ TIME_ADD(`t`.`createat`, '2 HOUR')
 ```
 Output MsSQL:
 ```text
-// In development
+DATEADD(HOUR, 2, [t].[createat])
 ```
 Output MySQL:
 ```text
@@ -2899,7 +2899,7 @@ TIME_SUB(`t`.`createat`, '2 HOUR')
 ```
 Output MsSQL:
 ```text
-// In development
+DATEADD(HOUR, -2, [t].[createat])
 ```
 Output MySQL:
 ```text

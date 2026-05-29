@@ -2538,7 +2538,7 @@ Output PostgreSQL:
 ```
 Output SQLite:
 ```text
-DATETIME("t"."createat",  '+2 DAY')
+DATETIME("t"."createat", '+2 DAY')
 ```
 
 #### DateDiff

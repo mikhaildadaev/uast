@@ -45,20 +45,22 @@ const (
 	uastMssqlFunctionCast       functionService = "CAST"
 	uastMssqlFunctionDateFormat functionService = "FORMAT"
 	// Функции даты и времени
-	uastMssqlFunctionCurDate   functionService = "GETDATE"
-	uastMssqlFunctionCurTime   functionService = "GETDATE"
-	uastMssqlFunctionDateAdd   functionService = "DATEADD"
-	uastMssqlFunctionDateSub   functionService = "DATEADD"
-	uastMssqlFunctionDayName   functionService = "DATENAME"
-	uastMssqlFunctionHour      functionService = "DATEPART"
-	uastMssqlFunctionMinute    functionService = "DATEPART"
-	uastMssqlFunctionNow       functionService = "GETDATE"
-	uastMssqlFunctionMonthName functionService = "DATENAME"
-	uastMssqlFunctionQuarter   functionService = "DATEPART"
-	uastMssqlFunctionSecond    functionService = "DATEPART"
-	uastMssqlFunctionTimeAdd   functionService = "DATEADD"
-	uastMssqlFunctionTimeSub   functionService = "DATEADD"
-	uastMssqlFunctionWeek      functionService = "DATEPART"
+	uastMssqlFunctionCurDate     functionService = "GETDATE()"
+	uastMssqlFunctionCurDateCast functionService = "CAST"
+	uastMssqlFunctionCurTime     functionService = "GETDATE()"
+	uastMssqlFunctionCurTimeCast functionService = "CAST"
+	uastMssqlFunctionDateAdd     functionService = "DATEADD"
+	uastMssqlFunctionDateSub     functionService = "DATEADD"
+	uastMssqlFunctionDayName     functionService = "DATENAME"
+	uastMssqlFunctionHour        functionService = "DATEPART"
+	uastMssqlFunctionMinute      functionService = "DATEPART"
+	uastMssqlFunctionNow         functionService = "GETDATE"
+	uastMssqlFunctionMonthName   functionService = "DATENAME"
+	uastMssqlFunctionQuarter     functionService = "DATEPART"
+	uastMssqlFunctionSecond      functionService = "DATEPART"
+	uastMssqlFunctionTimeAdd     functionService = "DATEADD"
+	uastMssqlFunctionTimeSub     functionService = "DATEADD"
+	uastMssqlFunctionWeek        functionService = "DATEPART"
 	// Функции обмена данными
 	// Функции математические
 	uastMssqlFunctionCeil  functionService = "CEILING"
@@ -250,13 +252,29 @@ func mssqlFunctionDateFormat(baseTransformer *baseTransformer, expr transformFun
 	return nil
 }
 func mssqlFunctionCurDate(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetProcess(uastProcessEmpty)
-	expr.transformSetService(uastMssqlFunctionCurDate)
+	expr.transformSetLeft(&exprComposite[string]{
+		expressions: []ExpressionSafe[string]{
+			serviceString(uastMssqlFunctionCurDate),
+			serviceString(uastModifierAs),
+			serviceString(uastMssqlTypeDate),
+		},
+		operator: uastCompositeSingleSpace,
+	})
+	expr.transformSetProcess(uastProcessDirect)
+	expr.transformSetService(uastMssqlFunctionCurDateCast)
 	return nil
 }
 func mssqlFunctionCurTime(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetProcess(uastProcessEmpty)
-	expr.transformSetService(uastMssqlFunctionCurTime)
+	expr.transformSetLeft(&exprComposite[string]{
+		expressions: []ExpressionSafe[string]{
+			serviceString(uastMssqlFunctionCurTime),
+			serviceString(uastModifierAs),
+			serviceString(uastMssqlTypeTime),
+		},
+		operator: uastCompositeSingleSpace,
+	})
+	expr.transformSetProcess(uastProcessDirect)
+	expr.transformSetService(uastMssqlFunctionCurTimeCast)
 	return nil
 }
 func mssqlFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {

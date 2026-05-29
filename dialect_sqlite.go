@@ -42,17 +42,17 @@ const (
 	// Функции условий
 	uastSQLiteFunctionCast functionService = "CAST"
 	// Функции конвертации
-	uastSQLiteFunctionDateFormat functionService = "strftime"
+	uastSQLiteFunctionDateFormat functionService = "STRFTIME"
 	// Функции даты и времени
-	uastSQLiteFunctionCurDate   functionService = "date"
-	uastSQLiteFunctionCurTime   functionService = "time"
-	uastSQLiteFunctionDateAdd   functionService = "datetime"
-	uastSQLiteFunctionDateSub   functionService = "datetime"
-	uastSQLiteFunctionDayName   functionService = "strftime"
-	uastSQLiteFunctionNow       functionService = "datetime"
-	uastSQLiteFunctionMonthName functionService = "strftime"
-	uastSQLiteFunctionTimeAdd   functionService = "time"
-	uastSQLiteFunctionTimeSub   functionService = "time"
+	uastSQLiteFunctionCurDate   functionService = "DATE"
+	uastSQLiteFunctionCurTime   functionService = "TIME"
+	uastSQLiteFunctionDateAdd   functionService = "DATETIME"
+	uastSQLiteFunctionDateSub   functionService = "DATETIME"
+	uastSQLiteFunctionDayName   functionService = "STRFTIME"
+	uastSQLiteFunctionNow       functionService = "DATETIME"
+	uastSQLiteFunctionMonthName functionService = "STRFTIME"
+	uastSQLiteFunctionTimeAdd   functionService = "TIME"
+	uastSQLiteFunctionTimeSub   functionService = "TIME"
 	// Функции обмена данными
 	uastSQLiteFunctionJsonArrayAgg    functionService = "JSON_GROUP_ARRAY"
 	uastSQLiteFunctionJsonExtract     functionService = ""

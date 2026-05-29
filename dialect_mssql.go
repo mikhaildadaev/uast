@@ -1,6 +1,7 @@
 package uast
 
 import (
+	"strings"
 	"time"
 )
 
@@ -282,14 +283,18 @@ func mssqlFunctionDateAdd(baseTransformer *baseTransformer, expr transformFuncti
 	if !exists {
 		return ErrUntransformFunction
 	}
-	param := function.right
+	number, interval, ok := strings.Cut(function.right.(*exprLiteral[string]).value, " ")
+	if !ok {
+		return ErrUntransformParam
+	}
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
-			serviceString(uastModifierInterval),
-			param,
+			serviceString(interval),
+			serviceString(number),
 		},
-		operator: uastCompositeSingleSpace,
+		operator: uastCompositeCommaSpace,
 	}
+	function.process = uastProcessInvert
 	function.service = uastMssqlFunctionDateAdd
 	return nil
 }
@@ -298,14 +303,18 @@ func mssqlFunctionDateSub(baseTransformer *baseTransformer, expr transformFuncti
 	if !exists {
 		return ErrUntransformFunction
 	}
-	param := function.right
+	number, interval, ok := strings.Cut(function.right.(*exprLiteral[string]).value, " ")
+	if !ok {
+		return ErrUntransformParam
+	}
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
-			serviceString(uastModifierInterval),
-			param,
+			serviceString(interval),
+			serviceString("-" + number),
 		},
-		operator: uastCompositeSingleSpace,
+		operator: uastCompositeCommaSpace,
 	}
+	function.process = uastProcessInvert
 	function.service = uastMssqlFunctionDateSub
 	return nil
 }
@@ -384,14 +393,18 @@ func mssqlFunctionTimeAdd(baseTransformer *baseTransformer, expr transformFuncti
 	if !exists {
 		return ErrUntransformFunction
 	}
-	param := function.right
+	number, interval, ok := strings.Cut(function.right.(*exprLiteral[string]).value, " ")
+	if !ok {
+		return ErrUntransformParam
+	}
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
-			serviceString(uastModifierInterval),
-			param,
+			serviceString(interval),
+			serviceString(number),
 		},
-		operator: uastCompositeSingleSpace,
+		operator: uastCompositeCommaSpace,
 	}
+	function.process = uastProcessInvert
 	function.service = uastMssqlFunctionTimeAdd
 	return nil
 }
@@ -400,14 +413,18 @@ func mssqlFunctionTimeSub(baseTransformer *baseTransformer, expr transformFuncti
 	if !exists {
 		return ErrUntransformFunction
 	}
-	param := function.right
+	number, interval, ok := strings.Cut(function.right.(*exprLiteral[string]).value, " ")
+	if !ok {
+		return ErrUntransformParam
+	}
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
-			serviceString(uastModifierInterval),
-			param,
+			serviceString(interval),
+			serviceString("-" + number),
 		},
-		operator: uastCompositeSingleSpace,
+		operator: uastCompositeCommaSpace,
 	}
+	function.process = uastProcessInvert
 	function.service = uastMssqlFunctionTimeSub
 	return nil
 }

@@ -2483,7 +2483,7 @@ CURDATE()
 ```
 Output MsSQL:
 ```text
-// In development
+CAST(GETDATE() AS DATE)
 ```
 Output MySQL:
 ```text
@@ -2509,7 +2509,7 @@ CURTIME()
 ```
 Output MsSQL:
 ```text
-// In development
+CAST(GETDATE() AS TIME)
 ```
 Output MySQL:
 ```text

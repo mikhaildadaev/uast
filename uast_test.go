@@ -1199,8 +1199,8 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "JSON_VALUE([t].[json], '$.parent[0].child')", "FUNCTION JSONEXTRACT")
 			assertContains(t, sqlSelectQuery, "JSON_OBJECT('key', COUNT([t].[json]))", "FUNCTION JSONOBJECT")
 			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG([t].[json], [t].[number])", "FUNCTION JSONOBJECTAGG")
-			//assertContains(t, sqlSelectQuery, "JSON_MODIFY([t].[json], '$.key1', '$.key2')", "FUNCTION JSONREMOVE")
-			//assertContains(t, sqlSelectQuery, "JSON_MODIFY([t].[json], '$.key1', ?, '$.key2', ?)", "FUNCTION JSONSET")
+			assertContains(t, sqlSelectQuery, "JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', NULL), '$.key2', NULL)", "FUNCTION JSONREMOVE")
+			assertContains(t, sqlSelectQuery, "JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', @p1), '$.key2', @p2)", "FUNCTION JSONSET")
 			//assertContains(t, sqlSelectQuery, "JSON_TYPE([t].[json])", "FUNCTION JSONTYPE")
 			// Функции математические
 			assertContains(t, sqlSelectQuery, "ABS([t].[number])", "FUNCTION ABS")

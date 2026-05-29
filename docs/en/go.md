@@ -47,5 +47,5 @@ go test -race ./...
 | **SQLite**     | 3.35.0+ | CloudflareD1, LiteFS, Turso                                                                                                                                                        |
 
 ::: tip **Note** 
-The library does not verify the server version at runtime. Using features on older versions will result in SQL errors from the database. Ensure your database meets the minimum version requirements.
+The library does not verify the database version at runtime. Using features on older versions will result in SQL errors from the database. Ensure your database meets the minimum version requirements.
 :::

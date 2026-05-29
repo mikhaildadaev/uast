@@ -2355,7 +2355,7 @@ TO_CHAR("t"."createat", '%Y-%m-%d')
 ```
 Output SQLite:
 ```text
-strftime("t"."createat", '%Y-%m-%d')
+STRFTIME("t"."createat", '%Y-%m-%d')
 ```
 
 #### Degrees
@@ -2486,7 +2486,7 @@ CURRENT_DATE
 ```
 Output SQLite:
 ```text
-date('now')
+DATE('now')
 ```
 
 #### CurTime
@@ -2512,7 +2512,7 @@ CURRENT_TIME
 ```
 Output SQLite:
 ```text
-time('now')
+TIME('now')
 ```
 
 #### DateAdd
@@ -2538,7 +2538,7 @@ Output PostgreSQL:
 ```
 Output SQLite:
 ```text
-datetime("t"."createat",  '+2 DAY')
+DATETIME("t"."createat",  '+2 DAY')
 ```
 
 #### DateDiff
@@ -2590,7 +2590,7 @@ Output PostgreSQL:
 ```
 Output SQLite:
 ```text
-datetime("t"."createat", '-2 DAY')
+DATETIME("t"."createat", '-2 DAY')
 ```
 
 #### Day
@@ -2642,7 +2642,7 @@ TO_CHAR("t"."createat", 'Day')
 ```
 Output SQLite:
 ```text
-strftime('%w', "t"."createat")
+STRFTIME('%w', "t"."createat")
 ```
 
 #### Hour
@@ -2746,7 +2746,7 @@ TO_CHAR("t"."createat", 'Month')
 ```
 Output SQLite:
 ```text
-strftime('%m', "t"."createat")
+STRFTIME('%m', "t"."createat")
 ```
 
 #### Now
@@ -2772,7 +2772,7 @@ CURRENT_TIMESTAMP
 ```
 Output SQLite:
 ```text
-datetime('now')
+DATETIME('now')
 ```
 
 #### Quarter
@@ -2850,7 +2850,7 @@ Output PostgreSQL:
 ```
 Output SQLite:
 ```text
-time("t"."createat", '+2 HOUR')
+TIME("t"."createat", '+2 HOUR')
 ```
 
 #### TimeDiff
@@ -2902,7 +2902,7 @@ Output PostgreSQL:
 ```
 Output SQLite:
 ```text
-time("t"."createat", '-2 HOUR')
+TIME("t"."createat", '-2 HOUR')
 ```
 
 #### Week

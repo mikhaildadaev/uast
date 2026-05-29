@@ -1,6 +1,7 @@
 package uast
 
 import (
+	"strconv"
 	"strings"
 	"time"
 )
@@ -63,6 +64,9 @@ const (
 	uastMssqlFunctionTimeSub     functionService = "DATEADD"
 	uastMssqlFunctionWeek        functionService = "DATEPART"
 	// Функции обмена данными
+	uastMssqlFunctionJsonExtract      functionService = ""
+	uastMssqlFunctionJsonExtractQuery functionService = "JSON_QUERY"
+	uastMssqlFunctionJsonExtractValue functionService = "JSON_VALUE"
 	// Функции математические
 	uastMssqlFunctionCeil  functionService = "CEILING"
 	uastMssqlFunctionTrunc functionService = "ROUND"
@@ -133,6 +137,7 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionTimeSub:   mssqlFunctionTimeSub,
 	uastFunctionWeek:      mssqlFunctionWeek,
 	// Функции обмена данными
+	uastFunctionJsonExtract: mssqlFunctionJsonExtract,
 	// Функции математические
 	uastFunctionCeil:  mssqlFunctionCeil,
 	uastFunctionTrunc: mssqlFunctionTrunc,
@@ -437,6 +442,72 @@ func mssqlFunctionWeek(baseTransformer *baseTransformer, expr transformFunction)
 	function.operator = uastCompositeCommaSpace
 	function.process = uastProcessInvert
 	function.service = uastMssqlFunctionWeek
+	return nil
+}
+func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
+	json := expr.transformGetJson()
+	path := string(uastCompositeDollarPoint)
+	for j, expression := range json[0].expressions {
+		switch e := expression.(type) {
+		case *exprLiteral[int]:
+			path += string(uastCompositeBrackLeft) + strconv.Itoa(e.value) + string(uastCompositeBrackRight)
+		case *exprLiteral[string]:
+			if j > 0 {
+				path += string(uastCompositeSinglePoint)
+			}
+			path += e.value
+		default:
+			return ErrInvalidLiteral
+		}
+	}
+	valueType := expr.transformGetValueType()
+	typeService, exists := listTypeMysql[valueType]
+	if !exists {
+		return ErrUntransformType
+	}
+	switch valueType {
+	case TypeJSON:
+		expr.transformSetJson([]*exprJson{
+			{
+				expressions: []ExpressionBase{
+					&exprLiteral[string]{
+						value: path,
+					},
+				},
+				operator: uastCompositeSingleSpace,
+			},
+		})
+		expr.transformSetOperator(uastCompositeCommaSpace)
+		expr.transformSetService(uastMssqlFunctionJsonExtractQuery)
+	case TypeString:
+		expr.transformSetJson([]*exprJson{
+			{
+				expressions: []ExpressionBase{
+					&exprLiteral[string]{
+						value: path,
+					},
+				},
+				operator: uastCompositeSingleSpace,
+			},
+		})
+		expr.transformSetOperator(uastCompositeCommaSpace)
+		expr.transformSetService(uastMssqlFunctionJsonExtractValue)
+	default:
+		expr.transformSetJson([]*exprJson{
+			{
+				expressions: []ExpressionBase{
+					&exprLiteral[string]{
+						value: path,
+					},
+					serviceString(uastModifierAs),
+					serviceString(typeService),
+				},
+				operator: uastCompositeSingleSpace,
+			},
+		})
+		expr.transformSetOperator(uastCompositeCommaSpace)
+		expr.transformSetService(uastMssqlFunctionJsonExtractValue)
+	}
 	return nil
 }
 func mssqlFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {

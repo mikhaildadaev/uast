@@ -3075,7 +3075,7 @@ Output MariaDB:
 ```
 Output MsSQL:
 ```text
-// In development
+JSON_VALUE([t].[json], '$.parent[0].child')
 ```
 Output MySQL:
 ```text

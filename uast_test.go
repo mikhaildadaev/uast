@@ -1416,7 +1416,7 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `JSON_BUILD_OBJECT('key', COUNT("t"."json"))`, "FUNCTION JSONOBJECT")
 			assertContains(t, sqlSelectQuery, `JSON_OBJECT_AGG("t"."json", "t"."number")`, "FUNCTION JSONOBJECTAGG")
 			assertContains(t, sqlSelectQuery, `("t"."json" - '{key1}' - '{key2}')`, "FUNCTION JSONREMOVE")
-			//assertContains(t, sqlSelectQuery, `jsonb_set`, "FUNCTION JSONSET")
+			assertContains(t, sqlSelectQuery, `jsonb_set(jsonb_set("t"."json", '{key1}', $1), '{key2}', $2)`, "FUNCTION JSONSET")
 			assertContains(t, sqlSelectQuery, `jsonb_typeof("t"."json")`, "FUNCTION JSONTYPE")
 			// Функции математические
 			assertContains(t, sqlSelectQuery, `ABS("t"."number")`, "FUNCTION ABS")

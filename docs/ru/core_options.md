@@ -2973,7 +2973,7 @@ JSON_ARRAY(`t`.`json`, ?, ?)
 ```
 Output MsSQL:
 ```text
-// In development
+JSON_ARRAY([t].[json], @p1, @p2)
 ```
 Output MySQL:
 ```text
@@ -3001,7 +3001,7 @@ JSON_ARRAYAGG(`t`.`json`)
 ```
 Output MsSQL:
 ```text
-// In development
+JSON_ARRAYAGG([t].[json])
 ```
 Output MySQL:
 ```text
@@ -3097,7 +3097,7 @@ JSON_OBJECT('key', COUNT(`t`.`json`))
 ```
 Output MsSQL:
 ```text
-// In development
+JSON_OBJECT('key', COUNT([t].[json]))
 ```
 Output MySQL:
 ```text
@@ -3126,7 +3126,7 @@ JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
 ```
 Output MsSQL:
 ```text
-// In development
+JSON_OBJECTAGG([t].[json], [t].[number])
 ```
 Output MySQL:
 ```text

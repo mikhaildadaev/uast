@@ -43,6 +43,17 @@ go test -race ./...
 - **SQLite**: `RIGHT JOIN` / `RIGHT OUTER JOIN` not supported (SQLite limitation).
 - **PostgreSQL**: `JsonSet` in development.
 
+### Supported Databases
+| Database       | Version |
+|----------------|---------|
+| **MariaDB**    | 10.5.0+ |
+| **MsSQL**      | 16.0.0+ |
+| **MySQL**      | 8.0.31+ |
+| **PostgreSQL** | 9.5.0+  |
+| **SQLite**     | 3.35.0+ |
+
+> **Note:** The library does not verify the server version at runtime. Using features on older versions will result in SQL errors from the database. Ensure your database meets the minimum version requirements.
+
 ## Benchmarks
 > **Info**
 >

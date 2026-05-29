@@ -35,7 +35,6 @@ go test -race ./...
 - **无代码生成**：表结构需手动定义（代码生成已列入计划）。
 - **MySQL**：不支持 `RETURNING` 子句（MySQL 限制）。
 - **SQLite**：不支持 `RIGHT JOIN` / `RIGHT OUTER JOIN`（SQLite 限制）。
-- **PostgreSQL**：`JsonSet` 正在开发中。
 
 ## Supported Databases
 | Database       | Version | Compatible                                                                                                                                                                         |

@@ -35,7 +35,6 @@ go test -race ./...
 - **Нет кодогенерации**: Схемы таблиц определяются вручную (кодогенерация запланирована).
 - **MySQL**: Клауза `RETURNING` не поддерживается (ограничение MySQL).
 - **SQLite**: `RIGHT JOIN` / `RIGHT OUTER JOIN` не поддерживаются (ограничение SQLite).
-- **PostgreSQL**: `JsonSet` в разработке.
 
 ## Supported Databases
 | Database       | Version | Compatible                                                                                                                                                                         |

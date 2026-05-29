@@ -35,7 +35,6 @@ go test -race ./...
 - **No code generation**: Table schemas are defined manually (code-gen planned).
 - **MySQL**: `RETURNING` clause not supported (MySQL limitation).
 - **SQLite**: `RIGHT JOIN` / `RIGHT OUTER JOIN` not supported (SQLite limitation).
-- **PostgreSQL**: `JsonSet` in development.
 
 ## Supported Databases
 | Database       | Version | Compatible                                                                                                                                                                         |

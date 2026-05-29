@@ -67,6 +67,8 @@ const (
 	uastMssqlFunctionJsonExtract      functionService = ""
 	uastMssqlFunctionJsonExtractQuery functionService = "JSON_QUERY"
 	uastMssqlFunctionJsonExtractValue functionService = "JSON_VALUE"
+	uastMssqlFunctionJsonRemove       functionService = "JSON_MODIFY"
+	uastMssqlFunctionJsonSet          functionService = "JSON_MODIFY"
 	// Функции математические
 	uastMssqlFunctionCeil  functionService = "CEILING"
 	uastMssqlFunctionTrunc functionService = "ROUND"
@@ -138,6 +140,8 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionWeek:      mssqlFunctionWeek,
 	// Функции обмена данными
 	uastFunctionJsonExtract: mssqlFunctionJsonExtract,
+	uastFunctionJsonRemove:  mssqlFunctionJsonRemove,
+	uastFunctionJsonSet:     mssqlFunctionJsonSet,
 	// Функции математические
 	uastFunctionCeil:  mssqlFunctionCeil,
 	uastFunctionTrunc: mssqlFunctionTrunc,
@@ -508,6 +512,88 @@ func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 		expr.transformSetOperator(uastCompositeCommaSpace)
 		expr.transformSetService(uastMssqlFunctionJsonExtractValue)
 	}
+	return nil
+}
+func mssqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
+	json := expr.transformGetJson()
+	last := len(json)
+	groups := make([]*exprJson, last)
+	for i, group := range json {
+		path := string(uastCompositeDollarPoint)
+		for j, expression := range group.expressions {
+			if j > 0 {
+				path += string(uastCompositeSinglePoint)
+			}
+			switch e := expression.(type) {
+			case *exprLiteral[int]:
+				path += strconv.Itoa(e.value)
+			case *exprLiteral[string]:
+				path += e.value
+			default:
+				return ErrInvalidLiteral
+			}
+		}
+		groups[i] = &exprJson{
+			expressions: []ExpressionBase{
+				&exprLiteral[string]{value: path},
+			},
+			operator: uastCompositeCommaSpace,
+			values: []ExpressionBase{
+				ConstStringNull(),
+			},
+		}
+	}
+	if last >= 2 {
+		for i := last - 1; i > 0; i-- {
+			groups[i].children = []*exprJson{groups[i-1]}
+		}
+		expr.transformSetJson([]*exprJson{groups[last-1]})
+	} else {
+		expr.transformSetJson([]*exprJson{groups[0]})
+	}
+	expr.transformSetOperator(uastCompositeCommaSpace)
+	expr.transformSetProcess(uastProcessJsonRecurcive)
+	expr.transformSetService(uastMssqlFunctionJsonRemove)
+	return nil
+}
+func mssqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
+	json := expr.transformGetJson()
+	last := len(json)
+	groups := make([]*exprJson, last)
+	for i, group := range json {
+		path := string(uastCompositeDollarPoint)
+		for j, expression := range group.expressions {
+			if j > 0 {
+				path += string(uastCompositeSinglePoint)
+			}
+			switch e := expression.(type) {
+			case *exprLiteral[int]:
+				path += strconv.Itoa(e.value)
+			case *exprLiteral[string]:
+				path += e.value
+			default:
+				return ErrInvalidLiteral
+			}
+		}
+		groups[i] = &exprJson{
+			expressions: []ExpressionBase{
+				&exprLiteral[string]{value: path},
+			},
+			operator: uastCompositeCommaSpace,
+			values:   group.values,
+		}
+	}
+	if last >= 2 {
+		for i := last - 1; i > 0; i-- {
+			groups[i].children = []*exprJson{groups[i-1]}
+		}
+		expr.transformSetJson([]*exprJson{groups[last-1]})
+	} else {
+		expr.transformSetJson([]*exprJson{groups[0]})
+	}
+	expr.transformSetOperator(uastCompositeCommaSpace)
+	expr.transformSetProcess(uastProcessJsonRecurcive)
+	expr.transformSetService(uastMssqlFunctionJsonSet)
 	return nil
 }
 func mssqlFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {

@@ -1173,8 +1173,8 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "CHARINDEX(@p1, [t].[string])", "FUNCTION POSITION")
 			assertContains(t, sqlSelectQuery, "RADIANS([t].[number])", "FUNCTION RADIANS")
 			// Функции даты и времени
-			//assertContains(t, sqlSelectQuery, "CAST(GETDATE() AS DATE)", "FUNCTION CURDATE")
-			//assertContains(t, sqlSelectQuery, "CAST(GETDATE() AS TIME)", "FUNCTION CURTIME")
+			assertContains(t, sqlSelectQuery, "CAST(GETDATE() AS DATE)", "FUNCTION CURDATE")
+			assertContains(t, sqlSelectQuery, "CAST(GETDATE() AS TIME)", "FUNCTION CURTIME")
 			//assertContains(t, sqlSelectQuery, "DATE_ADD(DAY, 2, [t].[createat])", "FUNCTION DATEADD")
 			assertContains(t, sqlSelectQuery, "DATEDIFF([t].[updateat], [t].[createat])", "FUNCTION DATEDIFF")
 			//assertContains(t, sqlSelectQuery, "DATE_ADD(DAY, -2, [t].[createat])", "FUNCTION DATESUB")

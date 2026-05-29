@@ -3164,7 +3164,7 @@ JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
 ```
 Output MsSQL:
 ```text
-// In development
+JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', NULL), '$.key2', NULL)
 ```
 Output MySQL:
 ```text
@@ -3204,7 +3204,7 @@ JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
 ```
 Output MsSQL:
 ```text
-// In development
+JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', @p1), '$.key2', @p2)
 ```
 Output MySQL:
 ```text
@@ -3212,7 +3212,7 @@ JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
 ```
 Output PostgreSQL:
 ```text
-// In development
+jsonb_set(jsonb_set("t"."json", '{key1}', $1), '{key2}', $2)
 ```
 Output SQLite:
 ```text

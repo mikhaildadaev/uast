@@ -335,12 +335,13 @@ const (
 	uastFormatName    formattingStage = "NAME"
 	uastFormatLiteral formattingStage = "LITERAL"
 	// Уровень обработки
-	uastProcessСross  processingStage = "CROSS"
-	uastProcessDirect processingStage = "DIRECT"
-	uastProcessEmpty  processingStage = "EMPTY"
-	uastProcessInvert processingStage = "INVERT"
-	uastProcessJson   processingStage = "JSON"
-	uastProcessWindow processingStage = "WINDOW"
+	uastProcessСross         processingStage = "CROSS"
+	uastProcessDirect        processingStage = "DIRECT"
+	uastProcessEmpty         processingStage = "EMPTY"
+	uastProcessInvert        processingStage = "INVERT"
+	uastProcessJson          processingStage = "JSON"
+	uastProcessJsonRecurcive processingStage = "JSONRECURCIVE"
+	uastProcessWindow        processingStage = "WINDOW"
 )
 
 // Приватные переменные

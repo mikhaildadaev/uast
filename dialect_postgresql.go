@@ -635,7 +635,43 @@ func postgresqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transfo
 	return nil
 }
 func postgresqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	// !!! Внимание, необходимо дописать реализацию
+	json := expr.transformGetJson()
+	groups := make([]*exprJson, len(json))
+	for i, group := range json {
+		path := string(uastCompositeBraceLeft)
+		for j, expression := range group.expressions {
+			if j > 0 {
+				path += string(uastCompositeSingleComma)
+			}
+			switch e := expression.(type) {
+			case *exprLiteral[int]:
+				path += strconv.Itoa(e.value)
+			case *exprLiteral[string]:
+				path += e.value
+			default:
+				return ErrInvalidLiteral
+			}
+		}
+		path += string(uastCompositeBraceRight)
+		groups[i] = &exprJson{
+			expressions: []ExpressionBase{
+				&exprLiteral[string]{value: path},
+			},
+			operator: uastCompositeCommaSpace,
+			values:   group.values,
+		}
+	}
+	last := len(json)
+	if last >= 2 {
+		for i := last - 1; i > 0; i-- {
+			groups[i].children = []*exprJson{groups[i-1]}
+		}
+		expr.transformSetJson([]*exprJson{groups[last-1]})
+	} else {
+		expr.transformSetJson([]*exprJson{groups[0]})
+	}
+	expr.transformSetOperator(uastCompositeCommaSpace)
+	expr.transformSetProcess(uastProcessJsonRecurcive)
 	expr.transformSetService(uastPostgresqlFunctionJsonSet)
 	return nil
 }

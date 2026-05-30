@@ -12,7 +12,7 @@ outline: deep
 创建一个新的 COMMENT 语句实例。接受注释文本，并返回一个可以使用 `OnColumn` 或 `OnTable` 进行配置的语句。
 ```go
 stmtCommentColumn := uast.NewComment("Test comment").
-    OnColumn(uast.Column[int64]("test", "id"))
+    OnColumn(uast.Column[int64]("t", "id"))
 stmtCommentTable := uast.NewComment("Test comment").
     OnTable(uast.NewTable("test", "t"))
 ```
@@ -47,7 +47,7 @@ COMMENT ON TABLE "test" AS "t" IS 'Test comment'
 ```go
 stmtDeleteDefault := uast.NewDelete(uast.NewTable("test", "t")).
     Where(
-        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
 ```
 Output MariaDB:
@@ -76,17 +76,17 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ```go
 stmtInsertDefault := uast.NewInsert(uast.NewTable("test", "t")).
     Values(
-		uast.Pair(uast.Column[string]("test", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Column[int]("test", "number"), uast.Value(2)),
+		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
 stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
 	Source(NewSelect(uast.NewTable("test", "t")).
 		Field(
-			uast.Column[string]("test", "string"),
-			uast.Column[int]("test", "number"),
+			uast.Column[string]("t", "string"),
+			uast.Column[int]("t", "number"),
 		).
 		Where(
-			uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+			uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
 		),
 	)
 ```
@@ -121,18 +121,18 @@ INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number"
 ```go
 stmtSelectDefault := uast.NewSelect(uast.NewTable("test", "t")).
     Field(
-        uast.Column[int64]("test", "id"),
+        uast.Column[int64]("t", "id"),
     ).
     Where(
-		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
 stmtSelectDistinct := uast.NewSelect(uast.NewTable("test", "t")).
     Distinct().
     Field(
-        uast.Column[int64]("test", "id"),
+        uast.Column[int64]("t", "id"),
     ).
     Where(
-		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
 ```
 Output MariaDB:
@@ -207,10 +207,10 @@ TRUNCATE TABLE "test"
 ```go
 stmtUpdateDefault := uast.NewUpdate(uast.NewTable("test", "t")).
     Set(
-        Pair(uast.Column[string]("test", "string"), uast.Value("active")),
+        Pair(uast.Column[string]("t", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
     )
 ```
 Output MariaDB:

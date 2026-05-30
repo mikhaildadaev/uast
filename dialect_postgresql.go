@@ -689,38 +689,6 @@ func postgresqlFunctionATan2(baseTransformer *baseTransformer, expr transformFun
 	expr.transformSetService(uastPostgresqlFunctionATan2)
 	return nil
 }
-func postgresqlUsingAndWhere(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderService(uastManagementUsing)
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	for i, join := range stmtDelete.join {
-		if err := join.source.render(baseRenderer); err != nil {
-			return err
-		}
-		if i < len(stmtDelete.join)-1 {
-			baseRenderer.renderOperator(uastCompositeCommaSpace)
-		}
-	}
-	allConditions := make([]markPredicable, 0)
-	for _, join := range stmtDelete.join {
-		if join.operator != uastJoinCross && join.expression != nil {
-			allConditions = append(allConditions, join.expression)
-		}
-	}
-	if stmtDelete.where != nil {
-		allConditions = append(allConditions, stmtDelete.where)
-	}
-	if len(allConditions) > 0 {
-		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		baseRenderer.renderService(uastManagementWhere)
-		baseRenderer.renderOperator(uastCompositeSingleSpace)
-		conditionUsingWhere := And(allConditions...)
-		if err := conditionUsingWhere.render(baseRenderer); err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 // Приватные методы
 func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
@@ -745,7 +713,10 @@ func (strateger *postgresqlStrateger) renderDelete(baseRenderer *baseRenderer, s
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {
 		return err
 	}
-	if err := postgresqlUsingAndWhere(baseRenderer, stmtDelete); err != nil {
+	if err := baseRenderer.renderUsing(stmtDelete.join); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderWhere(stmtDelete.where); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderReturning(stmtDelete.returning); err != nil {
@@ -871,6 +842,18 @@ func (strateger *postgresqlStrateger) transformDelete(baseTransformer *baseTrans
 	}
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
+	}
+	if len(stmtDelete.join) > 0 {
+		conditions := make([]markPredicable, 0)
+		for _, join := range stmtDelete.join {
+			if join.operator != uastJoinCross && join.expression != nil {
+				conditions = append(conditions, join.expression)
+			}
+		}
+		if stmtDelete.where != nil {
+			conditions = append(conditions, stmtDelete.where)
+		}
+		stmtDelete.where = And(conditions...)
 	}
 	return nil
 }

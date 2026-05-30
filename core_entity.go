@@ -31,7 +31,8 @@ func (target *targetSchema) isEntityTarget() {}
 func (target *targetSchema) Name() string {
 	return target.name
 }
-func (target *targetView) isEntityTarget() {}
+func (target *targetTable) isEntityTarget() {}
+func (target *targetView) isEntityTarget()  {}
 
 // Приватные структуры
 type targetIndex struct {
@@ -40,6 +41,7 @@ type targetIndex struct {
 type targetSchema struct {
 	name string
 }
+type targetTable = TableSource
 type targetView struct {
 	*TableSource
 }

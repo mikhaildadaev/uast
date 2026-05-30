@@ -11,7 +11,7 @@ outline: deep
 ## NewDelete
 创建一个新的 DELETE 语句实例。接受一个表源，返回一个可使用 `Join`、`Returning`、`Where`、`With` 进行配置的语句。
 ```go
-statement := uast.NewDelete(uast.Table("test")).
+stmtDefault := uast.NewDelete(uast.Table("test")).
     Where(
         uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
     )
@@ -40,75 +40,97 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ## NewInsert
 创建一个新的 INSERT 语句实例。接受表源并返回一个可使用 `Returning`、`Source/Values`、`With`进行配置的语句。
 ```go
-statement := uast.NewInsert(uast.Table("test")).
-    Column(
-        uast.Column[string]("test", "string"), 
-        uast.Column[int]("test", "number"),
-    ).
+stmtDefault := uast.NewInsert(uast.Table("test")).
     Values(
-        uast.Row(
-            uast.Value("ivan"), 
-            uast.Value(2),
-        ),
-    )
+		uast.Pair(uast.Column[string]("test", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
+stmtSource := uast.NewInsert(uast.Table("test")).
+	Source(NewSelect(uast.Table("test")).
+		Field(
+			uast.Column[string]("test", "string"),
+			uast.Column[int]("test", "number"),
+		).
+		Where(
+			uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+		),
+	)
 ```
 Output MariaDB:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output MsSQL:
 ```text
 INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
+INSERT INTO [test] AS [t] ([string], [number]) SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1
 ```
 Output MySQL:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
+INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 Output SQLite:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
+INSERT INTO "test" AS "d" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?
 ```
 
 ## NewSelect
 创建一个新的 SELECT 语句实例。接受字段，返回一个可使用 `Distinct`、`GroupBy`、`Having`、`Join`、`OrderBy`、`Pagination`、`Unions`、`Where`、`With` 进行配置的语句。
 ```go
-statement := uast.NewSelect(uast.Table("test")).
+stmtDefault := uast.NewSelect(uast.Table("test")).
     Field(
-        uast.Column[string]("test", "string"),
+        uast.Column[int64]("test", "id"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
-    )
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
+stmtDefault := uast.NewSelect(uast.Table("test")).
+    Distinct().
+    Field(
+        uast.Column[int64]("test", "id"),
+    ).
+    Where(
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 ```
 Output MsSQL:
 ```text
-SELECT [t].[string] FROM [test] AS [t]
+SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
+SELECT DISTINCT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
+SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
+SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 ```
 
 ## NewUpdate
 创建一个新的 UPDATE 语句实例。接受表源并返回一个可使用 `Join`、`Returning`、`Set`、`Where`、`With` 进行配置的语句。
 ```go
-statement := uast.NewUpdate(uast.Table("test")).
+stmtDefault := uast.NewUpdate(uast.Table("test")).
     Set(
         Pair(uast.Column[string]("test", "string"), uast.Value("active")),
     ).

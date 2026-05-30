@@ -11,9 +11,9 @@ This page covers the four statement constructors: `NewDelete`, `NewInsert`, `New
 ## NewDelete
 Creates a new DELETE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Where`, `With`.
 ```go
-statement := uast.NewDelete(uast.NewTable("test").As("t")).
+stmtDefault := uast.NewDelete(uast.Table("test")).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
     )
 ```
 Output MariaDB:
@@ -40,71 +40,102 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ## NewInsert
 Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source/Values`, `With`.
 ```go
-statement := uast.NewInsert(uast.NewTable("test").As("t")).
+stmtDefault := uast.NewInsert(uast.Table("test")).
     Values(
-        uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-        uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
-    )
+		uast.Pair(uast.Column[string]("test", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
+stmtSource := uast.NewInsert(uast.Table("test")).
+	Source(NewSelect(uast.Table("test")).
+		Field(
+			uast.Column[string]("test", "string"),
+			uast.Column[int]("test", "number"),
+		).
+		Where(
+			uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
+		),
+	)
 ```
 Output MariaDB:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output MsSQL:
 ```text
 INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
+INSERT INTO [test] AS [t] ([string], [number]) SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1
 ```
 Output MySQL:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
+INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 Output SQLite:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
+INSERT INTO "test" AS "d" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?
 ```
 
 ## NewSelect
 Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
 ```go
-statement := uast.NewSelect(uast.NewTable("test").As("t")).
+stmtDefault := uast.NewSelect(uast.Table("test")).
     Field(
-        uast.Column[string]("t", "string"),
-    )
+        uast.Column[int64]("test", "id"),
+    ).
+    Where(
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
+stmtDefault := uast.NewSelect(uast.Table("test")).
+    Distinct().
+    Field(
+        uast.Column[int64]("test", "id"),
+    ).
+    Where(
+		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
+	)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 ```
 Output MsSQL:
 ```text
-SELECT [t].[string] FROM [test] AS [t]
+SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
+SELECT DISTINCT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
+SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
+SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 ```
 
 ## NewUpdate
 Creates a new UPDATE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go
-statement := uast.NewUpdate(uast.NewTable("test").As("t")).
+stmtDefault := uast.NewUpdate(uast.Table("test")).
     Set(
-        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+        Pair(uast.Column[string]("test", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
     )
 ```
 Output MariaDB:

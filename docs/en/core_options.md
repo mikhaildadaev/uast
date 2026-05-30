@@ -3258,105 +3258,105 @@ JSON_TYPE("t"."json")
 #### Abs
 Returns the absolute (non-negative) value of a numeric expression.
 ```go
-function := uast.Abs(uast.Column[int]("t", "number"))
+function := uast.Abs(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-ABS(`t`.`number`)
+ABS(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-ABS([t].[number])
+ABS([t].[x])
 ```
 Output MySQL:
 ```text
-ABS(`t`.`number`)
+ABS(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ABS("t"."number")
+ABS("t"."x")
 ```
 Output SQLite:
 ```text
-ABS("t"."number")
+ABS("t"."x")
 ```
 
 #### ACos
 Returns the arc cosine (inverse cosine) of the expression, in radians.
 ```go
-function := uast.ACos(uast.Column[int]("t", "number"))
+function := uast.ACos(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-ACOS(`t`.`number`)
+ACOS(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-ACOS([t].[number])
+ACOS([t].[x])
 ```
 Output MySQL:
 ```text
-ACOS(`t`.`number`)
+ACOS(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ACOS("t"."number")
+ACOS("t"."x")
 ```
 Output SQLite:
 ```text
-ACOS("t"."number")
+ACOS("t"."x")
 ```
 
 #### ASin
 Returns the arc sine (inverse sine) of the expression, in radians.
 ```go
-function := uast.ASin(uast.Column[int]("t", "number"))
+function := uast.ASin(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-ASIN(`t`.`number`)
+ASIN(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-ASIN([t].[number])
+ASIN([t].[x])
 ```
 Output MySQL:
 ```text
-ASIN(`t`.`number`)
+ASIN(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ASIN("t"."number")
+ASIN("t"."x")
 ```
 Output SQLite:
 ```text
-ASIN("t"."number")
+ASIN("t"."x")
 ```
 
 #### ATan
 Returns the arc tangent (inverse tangent) of the expression, in radians.
 ```go
-function := uast.ATan(uast.Column[int]("t", "number"))
+function := uast.ATan(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-ATAN(`t`.`number`)
+ATAN(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-ATAN([t].[number])
+ATAN([t].[x])
 ```
 Output MySQL:
 ```text
-ATAN(`t`.`number`)
+ATAN(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ATAN("t"."number")
+ATAN("t"."x")
 ```
 Output SQLite:
 ```text
-ATAN("t"."number")
+ATAN("t"."x")
 ```
 
 #### ATan2
@@ -3388,209 +3388,209 @@ ATAN2("t"."y", "t"."x")
 #### Cbrt
 Returns the cube root of a numeric expression.
 ```go
-function := uast.Cbrt(uast.Column[int]("t", "number"))
+function := uast.Cbrt(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-CBRT(`t`.`number`)
+CBRT(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-CBRT([t].[number])
+CBRT([t].[x])
 ```
 Output MySQL:
 ```text
-CBRT(`t`.`number`)
+CBRT(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-CBRT("t"."number")
+CBRT("t"."x")
 ```
 Output SQLite:
 ```text
-CBRT("t"."number")
+CBRT("t"."x")
 ```
 
 #### Ceil
 Returns the smallest integer value not less than the argument (rounds up).
 ```go
-function := uast.Ceil(uast.Column[int]("t", "number"))
+function := uast.Ceil(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-CEILING(`t`.`number`)
+CEILING(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-CEILING([t].[number])
+CEILING([t].[x])
 ```
 Output MySQL:
 ```text
-CEILING(`t`.`number`)
+CEILING(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-CEIL("t"."number")
+CEIL("t"."x")
 ```
 Output SQLite:
 ```text
-CEIL("t"."number")
+CEIL("t"."x")
 ```
 
 #### Cos
 Returns the cosine of the expression, where the expression is in radians.
 ```go
-function := uast.Cos(uast.Column[int]("t", "number"))
+function := uast.Cos(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-COS(`t`.`number`)
+COS(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-COS([t].[number])
+COS([t].[x])
 ```
 Output MySQL:
 ```text
-COS(`t`.`number`)
+COS(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-COS("t"."number")
+COS("t"."x")
 ```
 Output SQLite:
 ```text
-COS("t"."number")
+COS("t"."x")
 ```
 
 #### Exp
 Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
 ```go
-function := uast.Exp(uast.Column[int]("t", "number"))
+function := uast.Exp(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-EXP(`t`.`number`)
+EXP(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-EXP([t].[number])
+EXP([t].[x])
 ```
 Output MySQL:
 ```text
-EXP(`t`.`number`)
+EXP(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-EXP("t"."number")
+EXP("t"."x")
 ```
 Output SQLite:
 ```text
-EXP("t"."number")
+EXP("t"."x")
 ```
 
 #### Floor
 Returns the largest integer value not greater than the argument (rounds down).
 ```go
-function := uast.Floor(uast.Column[int]("t", "number"))
+function := uast.Floor(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-FLOOR(`t`.`number`)
+FLOOR(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-FLOOR([t].[number])
+FLOOR([t].[x])
 ```
 Output MySQL:
 ```text
-FLOOR(`t`.`number`)
+FLOOR(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-FLOOR("t"."number")
+FLOOR("t"."x")
 ```
 Output SQLite:
 ```text
-FLOOR("t"."number")
+FLOOR("t"."x")
 ```
 
 #### Ln
 Returns the natural logarithm (base `e`) of the expression.
 ```go
-function := uast.Ln(uast.Column[int]("t", "number"))
+function := uast.Ln(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-LN(`t`.`number`)
+LN(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-LN([t].[number])
+LN([t].[x])
 ```
 Output MySQL:
 ```text
-LN(`t`.`number`)
+LN(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-LN("t"."number")
+LN("t"."x")
 ```
 Output SQLite:
 ```text
-LN("t"."number")
+LN("t"."x")
 ```
 
 #### Log
 Returns the logarithm of the expression to the specified base.
 ```go
-function := uast.Log(uast.Column[int]("t", "number"), uast.Value(2))
+function := uast.Log(uast.Column[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-LOG(`t`.`number`, ?)
+LOG(`t`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-LOG([t].[number], @p1)
+LOG([t].[x], @p1)
 ```
 Output MySQL:
 ```text
-LOG(`t`.`number`, ?)
+LOG(`t`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-LOG("t"."number", $1)
+LOG("t"."x", $1)
 ```
 Output SQLite:
 ```text
-LOG("t"."number", ?)
+LOG("t"."x", ?)
 ```
 
 #### Mod
 Returns the remainder (modulo) of the division of the first expression by the second.
 ```go
-function := uast.Mod(uast.Column[int]("t", "number"), uast.Value(2))
+function := uast.Mod(uast.Column[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-MOD(`t`.`number`, ?)
+MOD(`t`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-MOD([t].[number], @p1)
+MOD([t].[x], @p1)
 ```
 Output MySQL:
 ```text
-MOD(`t`.`number`, ?)
+MOD(`t`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-MOD("t"."number", $1)
+MOD("t"."x", $1)
 ```
 Output SQLite:
 ```text
-MOD("t"."number", ?)
+MOD("t"."x", ?)
 ```
 
 #### Pi
@@ -3622,27 +3622,27 @@ PI()
 #### Power
 Returns the expression raised to the power of the exponent.
 ```go
-function := uast.Power(uast.Column[int]("t", "number"), uast.Value(2))
+function := uast.Power(uast.Column[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-POWER(`t`.`number`, ?)
+POWER(`t`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-POWER([t].[number], @p1)
+POWER([t].[x], @p1)
 ```
 Output MySQL:
 ```text
-POWER(`t`.`number`, ?)
+POWER(`t`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-POWER("t"."number", $1)
+POWER("t"."x", $1)
 ```
 Output SQLite:
 ```text
-POWER("t"."number", ?)
+POWER("t"."x", ?)
 ```
 
 #### Rand
@@ -3674,131 +3674,131 @@ RANDOM()
 #### Round
 Rounds the expression to the specified number of decimal places.
 ```go
-function := uast.Round(uast.Column[int]("t", "number"), uast.Value(2))
+function := uast.Round(uast.Column[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-ROUND(`t`.`number`, ?)
+ROUND(`t`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-ROUND([t].[number], @p1)
+ROUND([t].[x], @p1)
 ```
 Output MySQL:
 ```text
-ROUND(`t`.`number`, ?)
+ROUND(`t`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-ROUND("t"."number", $1)
+ROUND("t"."x", $1)
 ```
 Output SQLite:
 ```text
-ROUND("t"."number", ?)
+ROUND("t"."x", ?)
 ```
 
 #### Sin
 Returns the sine of the expression, where the expression is in radians.
 ```go
-function := uast.Sin(uast.Column[int]("t", "number"))
+function := uast.Sin(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-SIN(`t`.`number`)
+SIN(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-SIN([t].[number])
+SIN([t].[x])
 ```
 Output MySQL:
 ```text
-SIN(`t`.`number`)
+SIN(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-SIN("t"."number")
+SIN("t"."x")
 ```
 Output SQLite:
 ```text
-SIN("t"."number")
+SIN("t"."x")
 ```
 
 #### Sqrt
 Returns the square root of the expression.
 ```go
-function := uast.Sqrt(uast.Column[int]("t", "number"))
+function := uast.Sqrt(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-SQRT(`t`.`number`)
+SQRT(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-SQRT([t].[number])
+SQRT([t].[x])
 ```
 Output MySQL:
 ```text
-SQRT(`t`.`number`)
+SQRT(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-SQRT("t"."number")
+SQRT("t"."x")
 ```
 Output SQLite:
 ```text
-SQRT("t"."number")
+SQRT("t"."x")
 ```
 
 #### Tan
 Returns the tangent of the expression, where the expression is in radians.
 ```go
-function := uast.Tan(uast.Column[int]("t", "number"))
+function := uast.Tan(uast.Column[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
-TAN(`t`.`number`)
+TAN(`t`.`x`)
 ```
 Output MsSQL:
 ```text
-TAN([t].[number])
+TAN([t].[x])
 ```
 Output MySQL:
 ```text
-TAN(`t`.`number`)
+TAN(`t`.`x`)
 ```
 Output PostgreSQL:
 ```text
-TAN("t"."number")
+TAN("t"."x")
 ```
 Output SQLite:
 ```text
-TAN("t"."number")
+TAN("t"."x")
 ```
 
 #### Trunc
 Truncates the numeric expression to the specified number of decimal places (without rounding).
 ```go
-function := uast.Trunc(uast.Column[int]("t", "number"), uast.Value(2))
+function := uast.Trunc(uast.Column[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-TRUNCATE(`t`.`number`, ?)
+TRUNCATE(`t`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-ROUND([t].[number], @p1, 1)
+ROUND([t].[x], @p1, 1)
 ```
 Output MySQL:
 ```text
-TRUNCATE(`t`.`number`, ?)
+TRUNCATE(`t`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-TRUNC("t"."number", $1)
+TRUNC("t"."x", $1)
 ```
 Output SQLite:
 ```text
-TRUNC("t"."number", ?)
+TRUNC("t"."x", ?)
 ```
 
 ### Ranking

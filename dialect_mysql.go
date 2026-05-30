@@ -27,6 +27,13 @@ var DialectMySQL = &SupportDialect{
 		symbolMarkRight:      "'",
 		symbolQuoteLeft:      "`",
 		symbolQuoteRight:     "`",
+		supportCascade:       false,
+		supportIfExists: map[string]bool{
+			"INDEX":  false,
+			"SCHEMA": false,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 	},
 	name:      "MySQL",
 	strateger: &mysqlStrateger{},

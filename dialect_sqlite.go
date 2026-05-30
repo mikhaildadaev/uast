@@ -27,6 +27,13 @@ var DialectSQLite = &SupportDialect{
 		symbolMarkRight:      "'",
 		symbolQuoteLeft:      "\"",
 		symbolQuoteRight:     "\"",
+		supportCascade:       false,
+		supportIfExists: map[string]bool{
+			"INDEX":  true,
+			"SCHEMA": false,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 	},
 	name:      "SQLite",
 	strateger: &sqliteStrateger{},

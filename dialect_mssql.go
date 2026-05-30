@@ -28,6 +28,13 @@ var DialectMsSQL = &SupportDialect{
 		symbolMarkRight:      "'",
 		symbolQuoteLeft:      "[",
 		symbolQuoteRight:     "]",
+		supportCascade:       false,
+		supportIfExists: map[string]bool{
+			"INDEX":  false,
+			"SCHEMA": true,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 	},
 	name:      "MsSQL",
 	strateger: &mssqlStrateger{},

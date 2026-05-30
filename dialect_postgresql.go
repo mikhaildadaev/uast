@@ -27,6 +27,13 @@ var DialectPostgreSQL = &SupportDialect{
 		symbolMarkRight:      "'",
 		symbolQuoteLeft:      `"`,
 		symbolQuoteRight:     `"`,
+		supportCascade:       true,
+		supportIfExists: map[string]bool{
+			"INDEX":  true,
+			"SCHEMA": true,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 	},
 	name:      "PostgreSQL",
 	strateger: &postgresqlStrateger{},

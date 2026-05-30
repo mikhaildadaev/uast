@@ -347,12 +347,12 @@ func (validator *baseValidator) validateEntity(entity EntityTarget) error {
 		return ErrInvalidStatement
 	}
 	switch e := entity.(type) {
-	case *TableSource:
-		return e.validate(validator)
 	case *targetIndex:
 		return validator.validateName(e.Name())
 	case *targetSchema:
 		return validator.validateName(e.Name())
+	case *targetTable:
+		return e.validate(validator)
 	case *targetView:
 		return e.TableSource.validate(validator)
 	default:

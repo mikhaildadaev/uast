@@ -288,7 +288,7 @@ func (renderer *baseRenderer) renderEntity(entity EntityTarget, ifExists bool) e
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderName(e.Name())
-	case *TableSource:
+	case *targetTable:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierTable)
 		if renderer.config.supportIfExists["TABLE"] {

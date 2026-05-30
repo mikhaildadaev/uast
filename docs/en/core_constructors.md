@@ -14,7 +14,7 @@ Creates a new COMMENT statement instance. Accepts a comment text and returns a s
 stmtCommentColumn := uast.NewComment("Test comment").
     OnColumn(uast.Column[int64]("test", "id"))
 stmtCommentTable := uast.NewComment("Test comment").
-    OnTable(uast.Table("test"))
+    OnTable(uast.NewTable("test", "t"))
 ```
 Output MariaDB:
 ```text
@@ -45,7 +45,7 @@ COMMENT ON TABLE "test" AS "t" IS 'Test comment'
 ## NewDelete
 Creates a new DELETE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Where`, `With`.
 ```go
-stmtDeleteDefault := uast.NewDelete(uast.Table("test")).
+stmtDeleteDefault := uast.NewDelete(uast.NewTable("test", "t")).
     Where(
         uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
     )
@@ -74,13 +74,13 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ## NewInsert
 Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source/Values`, `With`.
 ```go
-stmtInsertDefault := uast.NewInsert(uast.Table("test")).
+stmtInsertDefault := uast.NewInsert(uast.NewTable("test", "t")).
     Values(
 		uast.Pair(uast.Column[string]("test", "string"), uast.Value("ivan")),
 		uast.Pair(uast.Column[int]("test", "number"), uast.Value(2)),
 	)
-stmtInsertSource := uast.NewInsert(uast.Table("test")).
-	Source(NewSelect(uast.Table("test")).
+stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
+	Source(NewSelect(uast.NewTable("test", "t")).
 		Field(
 			uast.Column[string]("test", "string"),
 			uast.Column[int]("test", "number"),
@@ -119,14 +119,14 @@ INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number"
 ## NewSelect
 Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
 ```go
-stmtSelectDefault := uast.NewSelect(uast.Table("test")).
+stmtSelectDefault := uast.NewSelect(uast.NewTable("test", "t")).
     Field(
         uast.Column[int64]("test", "id"),
     ).
     Where(
 		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
 	)
-stmtSelectDistinct := uast.NewSelect(uast.Table("test")).
+stmtSelectDistinct := uast.NewSelect(uast.NewTable("test", "t")).
     Distinct().
     Field(
         uast.Column[int64]("test", "id"),
@@ -164,10 +164,10 @@ SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 ## NewTruncate
 Creates a new TRUNCATE statement instance. Accepts a table source and returns a statement that can be configured with `Cascade()` or `RestartIdentity()`.
 ```go
-stmtTruncateDefault := uast.NewTruncate(uast.Table("test"))
-stmtTruncateCascade := uast.NewTruncate(uast.Table("test")).
+stmtTruncateDefault := uast.NewTruncate(uast.NewTable("test", "t"))
+stmtTruncateCascade := uast.NewTruncate(uast.NewTable("test", "t")).
     Cascade()
-stmtTruncateRestartIdentity := uast.NewTruncate(uast.Table("test")).
+stmtTruncateRestartIdentity := uast.NewTruncate(uast.NewTable("test", "t")).
     RestartIdentity()
 ```
 Output MariaDB:
@@ -205,7 +205,7 @@ TRUNCATE TABLE "test"
 ## NewUpdate
 Creates a new UPDATE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go
-stmtUpdateDefault := uast.NewUpdate(uast.Table("test")).
+stmtUpdateDefault := uast.NewUpdate(uast.NewTable("test", "t")).
     Set(
         Pair(uast.Column[string]("test", "string"), uast.Value("active")),
     ).

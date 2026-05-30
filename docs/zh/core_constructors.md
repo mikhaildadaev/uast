@@ -14,7 +14,7 @@ outline: deep
 stmtCommentColumn := uast.NewComment("Test comment").
     OnColumn(uast.Column[int64]("test", "id"))
 stmtCommentTable := uast.NewComment("Test comment").
-    OnTable(uast.Table("test"))
+    OnTable(uast.NewTable("test", "t"))
 ```
 Output MariaDB:
 ```text
@@ -45,7 +45,7 @@ COMMENT ON TABLE "test" AS "t" IS 'Test comment'
 ## NewDelete
 创建一个新的 DELETE 语句实例。接受一个表源，返回一个可使用 `Join`、`Returning`、`Where`、`With` 进行配置的语句。
 ```go
-stmtDeleteDefault := uast.NewDelete(uast.Table("test")).
+stmtDeleteDefault := uast.NewDelete(uast.NewTable("test", "t")).
     Where(
         uast.Equal(uast.Column[string]("test", "string"), uast.Value("active")),
     )
@@ -74,13 +74,13 @@ DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ## NewInsert
 创建一个新的 INSERT 语句实例。接受表源并返回一个可使用 `Returning`、`Source/Values`、`With`进行配置的语句。
 ```go
-stmtInsertDefault := uast.NewInsert(uast.Table("test")).
+stmtInsertDefault := uast.NewInsert(uast.NewTable("test", "t")).
     Values(
 		uast.Pair(uast.Column[string]("test", "string"), uast.Value("ivan")),
 		uast.Pair(uast.Column[int]("test", "number"), uast.Value(2)),
 	)
-stmtInsertSource := uast.NewInsert(uast.Table("test")).
-	Source(NewSelect(uast.Table("test")).
+stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
+	Source(NewSelect(uast.NewTable("test", "t")).
 		Field(
 			uast.Column[string]("test", "string"),
 			uast.Column[int]("test", "number"),
@@ -119,14 +119,14 @@ INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number"
 ## NewSelect
 创建一个新的 SELECT 语句实例。接受字段，返回一个可使用 `Distinct`、`GroupBy`、`Having`、`Join`、`OrderBy`、`Pagination`、`Unions`、`Where`、`With` 进行配置的语句。
 ```go
-stmtSelectDefault := uast.NewSelect(uast.Table("test")).
+stmtSelectDefault := uast.NewSelect(uast.NewTable("test", "t")).
     Field(
         uast.Column[int64]("test", "id"),
     ).
     Where(
 		uast.Equal(uast.Column[int]("test", "number"), uast.Value(2)),
 	)
-stmtSelectDistinct := uast.NewSelect(uast.Table("test")).
+stmtSelectDistinct := uast.NewSelect(uast.NewTable("test", "t")).
     Distinct().
     Field(
         uast.Column[int64]("test", "id"),
@@ -164,10 +164,10 @@ SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 ## NewTruncate
 创建一个新的 TRUNCATE 语句实例。接受表源，并返回一个可以使用 `Cascade()` 或 `RestartIdentity()` 进行配置的语句。
 ```go
-stmtTruncateDefault := uast.NewTruncate(uast.Table("test"))
-stmtTruncateCascade := uast.NewTruncate(uast.Table("test")).
+stmtTruncateDefault := uast.NewTruncate(uast.NewTable("test", "t"))
+stmtTruncateCascade := uast.NewTruncate(uast.NewTable("test", "t")).
     Cascade()
-stmtTruncateRestartIdentity := uast.NewTruncate(uast.Table("test")).
+stmtTruncateRestartIdentity := uast.NewTruncate(uast.NewTable("test", "t")).
     RestartIdentity()
 ```
 Output MariaDB:
@@ -205,7 +205,7 @@ TRUNCATE TABLE "test"
 ## NewUpdate
 创建一个新的 UPDATE 语句实例。接受表源并返回一个可使用 `Join`、`Returning`、`Set`、`Where`、`With` 进行配置的语句。
 ```go
-stmtUpdateDefault := uast.NewUpdate(uast.Table("test")).
+stmtUpdateDefault := uast.NewUpdate(uast.NewTable("test", "t")).
     Set(
         Pair(uast.Column[string]("test", "string"), uast.Value("active")),
     ).

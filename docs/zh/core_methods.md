@@ -95,7 +95,7 @@ AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ### As
 为子查询表达式分配别名。
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.Table("test"))).As("alias")
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test", "t"))).As("alias")
 ```
 Output MariaDB:
 ```text

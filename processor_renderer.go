@@ -529,6 +529,25 @@ func (renderer *baseRenderer) renderTable(table *TableSource) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderTarget(source SourceBase) error {
+	if source == nil {
+		return nil
+	}
+	var aliasName string
+	switch target := source.(type) {
+	case *CteSource:
+		aliasName = target.aliasName
+	case *TableSource:
+		aliasName = target.aliasName
+	case *QuerySource:
+		aliasName = target.aliasName
+	default:
+		return ErrInvalidAlias
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderAlias(aliasName)
+	return nil
+}
 func (renderer *baseRenderer) renderUnions(unions []*clauseUnions) error {
 	if unions == nil {
 		return nil

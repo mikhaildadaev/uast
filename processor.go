@@ -38,6 +38,7 @@ type componentRenderer interface {
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
 	renderTable(table *TableSource) error
+	renderTarget(source SourceBase) error
 	renderUnions(unions []*clauseUnions) error
 	renderValues(values *clauseValues) error
 	renderWhere(where ExpressionBase) error

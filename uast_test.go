@@ -163,6 +163,8 @@ func Test_Core_clauseJoin(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `INNER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "INNER JOIN")
 			assertContains(t, sqlSelectQuery, `LEFT JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "LEFT JOIN")
 			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "d"."id"`, "LEFT OUTER JOIN")
+			// Not supported - RIGHT JOIN
+			// Not supported - RIGHT OUTER JOIN
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -252,7 +254,7 @@ func Test_Core_clauseReturning(t *testing.T) {
 		case DialectMsSQL:
 			assertContains(t, sqlDeleteQuery, "OUTPUT [t].[id], [t].[string]", "RETURNING")
 		case DialectMySQL:
-			// Not support
+			// Not supported - RETURNING
 		case DialectPostgreSQL:
 			assertContains(t, sqlDeleteQuery, `RETURNING "t"."id", "t"."string"`, "RETURNING")
 		case DialectSQLite:
@@ -1195,13 +1197,13 @@ func Test_Core_exprFunction(t *testing.T) {
 			// Функции обмена данными
 			assertContains(t, sqlSelectQuery, "JSON_ARRAY([t].[json], @p1, @p2)", "FUNCTION JSONARRAY")
 			assertContains(t, sqlSelectQuery, "JSON_ARRAYAGG([t].[json])", "FUNCTION JSONARRAYAGG")
-			//assertContains(t, sqlSelectQuery, "JSON_CONTAINS([t].[json], ?)", "FUNCTION JSONCONTAINS")
+			// Not supported - FUNCTION JSONCONTAINS
 			assertContains(t, sqlSelectQuery, "JSON_VALUE([t].[json], '$.parent[0].child')", "FUNCTION JSONEXTRACT")
 			assertContains(t, sqlSelectQuery, "JSON_OBJECT('key', COUNT([t].[json]))", "FUNCTION JSONOBJECT")
 			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG([t].[json], [t].[number])", "FUNCTION JSONOBJECTAGG")
 			assertContains(t, sqlSelectQuery, "JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', NULL), '$.key2', NULL)", "FUNCTION JSONREMOVE")
 			assertContains(t, sqlSelectQuery, "JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', @p1), '$.key2', @p2)", "FUNCTION JSONSET")
-			//assertContains(t, sqlSelectQuery, "JSON_TYPE([t].[json])", "FUNCTION JSONTYPE")
+			// Not supported - FUNCTION JSONTYPE
 			// Функции математические
 			assertContains(t, sqlSelectQuery, "ABS([t].[number])", "FUNCTION ABS")
 			assertContains(t, sqlSelectQuery, "ACOS([t].[number])", "FUNCTION ACOS")
@@ -1860,7 +1862,7 @@ func Test_SQL_Comment(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
 		case DialectMsSQL:
-			// Not supported
+			// Not supported - COMMENT
 		case DialectMySQL:
 			assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `t`.`id` IS 'Test comment'", "COMMENT")
 		case DialectPostgreSQL:
@@ -1883,7 +1885,7 @@ func Test_SQL_Comment_Table(t *testing.T) {
 		case DialectMariaDB:
 			assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `test` AS `t` IS 'Test comment'", "COMMENT")
 		case DialectMsSQL:
-			// Not supported
+			// Not supported - COMMENT
 		case DialectMySQL:
 			assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `test` AS `t` IS 'Test comment'", "COMMENT")
 		case DialectPostgreSQL:

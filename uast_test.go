@@ -1851,7 +1851,7 @@ func Test_SQL(t *testing.T) {
 	})
 }
 func Test_SQL_Comment(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
+	t.Run("Column", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
 				WithDialect(supportDialect),

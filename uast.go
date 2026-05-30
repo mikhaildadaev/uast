@@ -451,6 +451,8 @@ type config struct {
 	symbolMarkRight      string
 	symbolQuoteLeft      string
 	symbolQuoteRight     string
+	supportCascade       bool
+	supportIfExists      map[string]bool
 }
 type casePair[T typeScalar] struct {
 	then ExpressionSafe[T]

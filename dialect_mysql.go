@@ -465,7 +465,6 @@ func (strateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDe
 	return nil
 }
 func (strateger *mysqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
@@ -586,7 +585,6 @@ func (strateger *mysqlStrateger) transformDelete(baseTransformer *baseTransforme
 	return nil
 }
 func (strateger *mysqlStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mysqlStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
@@ -650,7 +648,6 @@ func (strateger *mysqlStrateger) validateDelete(baseValidator *baseValidator, st
 	return nil
 }
 func (strateger *mysqlStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseValidator.validateEntity(stmtDrop.entity); err != nil {
 		return err
 	}

@@ -520,7 +520,6 @@ func (strateger *sqliteStrateger) renderDelete(baseRenderer *baseRenderer, stmtD
 	return nil
 }
 func (strateger *sqliteStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
@@ -647,7 +646,6 @@ func (strateger *sqliteStrateger) transformDelete(baseTransformer *baseTransform
 	return nil
 }
 func (strateger *sqliteStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *sqliteStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
@@ -723,7 +721,6 @@ func (strateger *sqliteStrateger) validateDelete(baseValidator *baseValidator, s
 	return nil
 }
 func (strateger *sqliteStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseValidator.validateEntity(stmtDrop.entity); err != nil {
 		return err
 	}

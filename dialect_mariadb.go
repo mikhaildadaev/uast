@@ -468,7 +468,6 @@ func (strateger *mariadbStrateger) renderDelete(baseRenderer *baseRenderer, stmt
 	return nil
 }
 func (strateger *mariadbStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
@@ -595,7 +594,6 @@ func (strateger *mariadbStrateger) transformDelete(baseTransformer *baseTransfor
 	return nil
 }
 func (strateger *mariadbStrateger) transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariadbStrateger) transformInsert(baseTransformer *baseTransformer, stmtInsert *stmtInsert) error {
@@ -662,7 +660,6 @@ func (strateger *mariadbStrateger) validateDelete(baseValidator *baseValidator, 
 	return nil
 }
 func (strateger *mariadbStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
-	// !!! Внимание, находится в стадии разработки
 	if err := baseValidator.validateEntity(stmtDrop.entity); err != nil {
 		return err
 	}

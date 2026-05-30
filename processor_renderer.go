@@ -235,7 +235,7 @@ func (renderer *baseRenderer) renderValue(value any) error {
 	return nil
 }
 func (renderer *baseRenderer) renderCascade(cascade bool) error {
-	if cascade {
+	if cascade && renderer.config.supportCascade {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierCascade)
 	}
@@ -272,28 +272,36 @@ func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
 }
 func (renderer *baseRenderer) renderEntity(entity EntityTarget, ifExists bool) error {
 	switch e := entity.(type) {
-	case *TableSource:
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierTable)
-		renderer.renderIfExists(ifExists)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		e.render(renderer)
 	case *targetIndex:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierIndex)
-		renderer.renderIfExists(ifExists)
+		if renderer.config.supportIfExists["INDEX"] {
+			renderer.renderIfExists(ifExists)
+		}
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderName(e.Name())
 	case *targetSchema:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierSchema)
-		renderer.renderIfExists(ifExists)
+		if renderer.config.supportIfExists["SCHEMA"] {
+			renderer.renderIfExists(ifExists)
+		}
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderName(e.Name())
+	case *TableSource:
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierTable)
+		if renderer.config.supportIfExists["TABLE"] {
+			renderer.renderIfExists(ifExists)
+		}
+		renderer.renderOperator(uastCompositeSingleSpace)
+		e.render(renderer)
 	case *targetView:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierView)
-		renderer.renderIfExists(ifExists)
+		if renderer.config.supportIfExists["VIEW"] {
+			renderer.renderIfExists(ifExists)
+		}
 		renderer.renderOperator(uastCompositeSingleSpace)
 		e.TableSource.render(renderer)
 	default:
@@ -496,7 +504,7 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 	return nil
 }
 func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error {
-	if restartIdentity {
+	if restartIdentity && renderer.config.supportRestartIdentity {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierRestartIdentity)
 	}

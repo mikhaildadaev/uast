@@ -34,6 +34,7 @@ var DialectMySQL = &SupportDialect{
 			"TABLE":  true,
 			"VIEW":   true,
 		},
+		supportRestartIdentity: false,
 	},
 	name:      "MySQL",
 	strateger: &mysqlStrateger{},
@@ -471,6 +472,9 @@ func (strateger *mysqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop
 	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderCascade(stmtDrop.cascade); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
@@ -538,6 +542,12 @@ func (strateger *mysqlStrateger) renderTruncate(baseRenderer *baseRenderer, stmt
 		return err
 	}
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderRestartIdentity(stmtTruncate.restartIdentity); err != nil {
 		return err
 	}
 	return nil

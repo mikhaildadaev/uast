@@ -34,6 +34,7 @@ var DialectSQLite = &SupportDialect{
 			"TABLE":  true,
 			"VIEW":   true,
 		},
+		supportRestartIdentity: false,
 	},
 	name:      "SQLite",
 	strateger: &sqliteStrateger{},
@@ -526,6 +527,9 @@ func (strateger *sqliteStrateger) renderDrop(baseRenderer *baseRenderer, stmtDro
 	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderCascade(stmtDrop.cascade); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *sqliteStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
@@ -596,6 +600,12 @@ func (strateger *sqliteStrateger) renderTruncate(baseRenderer *baseRenderer, stm
 		return err
 	}
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderRestartIdentity(stmtTruncate.restartIdentity); err != nil {
 		return err
 	}
 	return nil

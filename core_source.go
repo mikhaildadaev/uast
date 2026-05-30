@@ -112,7 +112,8 @@ func (source *sourceTable) clone() SourceBase {
 	copy := *source
 	return &copy
 }
-func (source *sourceTable) isSourceBase() {}
+func (source *sourceTable) isEntityTarget() {}
+func (source *sourceTable) isSourceBase()   {}
 func (source *sourceTable) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.tableName)
 	if source.withAlias {

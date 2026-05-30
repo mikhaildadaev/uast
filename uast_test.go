@@ -1933,7 +1933,7 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop()
+			stmtDrop := NewDrop(Test.Table)
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:

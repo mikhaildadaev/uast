@@ -329,7 +329,7 @@ func (validator *baseValidator) validateValue(value any) error {
 	return ErrUnsupportValue
 }
 func (validator *baseValidator) validateColumns(columns []markExpressable) error {
-	if columns == nil {
+	if len(columns) == 0 {
 		return nil
 	}
 	for _, column := range columns {
@@ -343,7 +343,7 @@ func (validator *baseValidator) validateCommand(command managementService) error
 	return nil
 }
 func (validator *baseValidator) validateFields(fields []markExpressable) error {
-	if fields == nil {
+	if len(fields) == 0 {
 		return ErrInvalidStatementField
 	}
 	for _, field := range fields {
@@ -363,7 +363,7 @@ func (validator *baseValidator) validateFrom(from SourceBase) error {
 	return nil
 }
 func (validator *baseValidator) validateGroupBy(groups []markGroupable) error {
-	if groups == nil {
+	if len(groups) == 0 {
 		return nil
 	}
 	for _, group := range groups {
@@ -392,7 +392,7 @@ func (validator *baseValidator) validateInto(into SourceBase) error {
 	return nil
 }
 func (validator *baseValidator) validateJoin(joins []*clauseJoin) error {
-	if joins == nil {
+	if len(joins) == 0 {
 		return nil
 	}
 	for _, join := range joins {
@@ -454,7 +454,7 @@ func (validator *baseValidator) validateOnto(onto SourceBase) error {
 	return nil
 }
 func (validator *baseValidator) validateOrderBy(orders []markOrderable) error {
-	if orders == nil {
+	if len(orders) == 0 {
 		return nil
 	}
 	for _, order := range orders {
@@ -476,7 +476,7 @@ func (validator *baseValidator) validateReturning(returnings *clauseReturning) e
 	return nil
 }
 func (validator *baseValidator) validateSet(sets []*clauseSet) error {
-	if sets == nil {
+	if len(sets) == 0 {
 		return ErrInvalidStatementSet
 	}
 	for _, set := range sets {
@@ -505,7 +505,7 @@ func (validator *baseValidator) validateTable(table *TableSource) error {
 	return nil
 }
 func (validator *baseValidator) validateUnions(unions []*clauseUnions) error {
-	if unions == nil {
+	if len(unions) == 0 {
 		return nil
 	}
 	validator.contexter.countMaxUnions += len(unions)
@@ -545,7 +545,7 @@ func (validator *baseValidator) validateWhere(where ExpressionBase) error {
 	return nil
 }
 func (validator *baseValidator) validateWith(withs []*clauseWith) error {
-	if withs == nil {
+	if len(withs) == 0 {
 		return nil
 	}
 	validator.contexter.countMaxWith += len(withs)

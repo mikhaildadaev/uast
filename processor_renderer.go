@@ -253,7 +253,7 @@ func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	return nil
 }
 func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
-	if columns == nil {
+	if len(columns) == 0 {
 		return nil
 	}
 	columnsCount := len(columns) - 1
@@ -271,7 +271,7 @@ func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
 	return nil
 }
 func (renderer *baseRenderer) renderFields(fields []markExpressable) error {
-	if fields == nil {
+	if len(fields) == 0 {
 		return nil
 	}
 	fieldsCount := len(fields) - 1
@@ -299,7 +299,7 @@ func (renderer *baseRenderer) renderFrom(from SourceBase) error {
 	return nil
 }
 func (renderer *baseRenderer) renderGroupBy(groups []markGroupable) error {
-	if groups == nil {
+	if len(groups) == 0 {
 		return nil
 	}
 	groupsCount := len(groups) - 1
@@ -348,7 +348,7 @@ func (renderer *baseRenderer) renderInto(into SourceBase) error {
 	return nil
 }
 func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {
-	if joins == nil {
+	if len(joins) == 0 {
 		return nil
 	}
 	joinsCount := len(joins) - 1
@@ -410,7 +410,7 @@ func (renderer *baseRenderer) renderOnto(onto SourceBase) error {
 	return nil
 }
 func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
-	if orders == nil {
+	if len(orders) == 0 {
 		return nil
 	}
 	ordersCount := len(orders) - 1
@@ -490,7 +490,7 @@ func (renderer *baseRenderer) renderReturning(returnings *clauseReturning) error
 	return nil
 }
 func (renderer *baseRenderer) renderSet(sets []*clauseSet) error {
-	if sets == nil {
+	if len(sets) == 0 {
 		return nil
 	}
 	setsCount := len(sets) - 1
@@ -549,7 +549,7 @@ func (renderer *baseRenderer) renderTarget(source SourceBase) error {
 	return nil
 }
 func (renderer *baseRenderer) renderUnions(unions []*clauseUnions) error {
-	if unions == nil {
+	if len(unions) == 0 {
 		return nil
 	}
 	unionsCount := len(unions) - 1
@@ -560,6 +560,23 @@ func (renderer *baseRenderer) renderUnions(unions []*clauseUnions) error {
 		}
 		if i < unionsCount {
 			renderer.renderOperator(uastCompositeSingleSpace)
+		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderUsing(joins []*clauseJoin) error {
+	if len(joins) == 0 {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastManagementUsing)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	for i, join := range joins {
+		if err := join.source.render(renderer); err != nil {
+			return err
+		}
+		if i < len(joins)-1 {
+			renderer.renderOperator(uastCompositeCommaSpace)
 		}
 	}
 	return nil
@@ -599,7 +616,7 @@ func (renderer *baseRenderer) renderWhere(where ExpressionBase) error {
 	return nil
 }
 func (renderer *baseRenderer) renderWith(withs []*clauseWith) error {
-	if withs == nil {
+	if len(withs) == 0 {
 		return nil
 	}
 	renderer.renderService(uastManagementWith)

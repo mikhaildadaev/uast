@@ -40,6 +40,7 @@ type componentRenderer interface {
 	renderTable(table *TableSource) error
 	renderTarget(source SourceBase) error
 	renderUnions(unions []*clauseUnions) error
+	renderUsing(joins []*clauseJoin) error
 	renderValues(values *clauseValues) error
 	renderWhere(where ExpressionBase) error
 	renderWith(withs []*clauseWith) error

@@ -1,9 +1,10 @@
 package uast
 
 // Публичные конструкторы
-func NewDrop() *stmtDrop {
+func NewDrop(entity EntityTarget) *stmtDrop {
 	return &stmtDrop{
 		command: uastManagementDrop,
+		entity:  entity,
 	}
 }
 
@@ -21,6 +22,7 @@ func (stmt *stmtDrop) IfExists() *stmtDrop {
 type stmtDrop struct {
 	command  managementService
 	cascade  bool
+	entity   EntityTarget
 	ifExists bool
 }
 

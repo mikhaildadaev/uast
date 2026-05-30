@@ -1918,7 +1918,7 @@ func Test_SQL_Delete(t *testing.T) {
 			case DialectMySQL:
 				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?", "DELETE")
 			case DialectPostgreSQL:
-				//sassertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = $1`, "DELETE")
+				//assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = $1`, "DELETE")
 			case DialectSQLite:
 				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = ?`, "DELETE")
 			}

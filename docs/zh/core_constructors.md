@@ -113,7 +113,7 @@ INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number"
 Output SQLite:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
-INSERT INTO "test" AS "d" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?
+INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?
 ```
 
 ## NewSelect

@@ -161,6 +161,47 @@ SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 ```
 
+## NewTruncate
+Создаёт новый экземпляр оператора TRUNCATE. Принимает источник таблицы и возвращает оператор, который можно настроить с помощью `Cascade()` или `RestartIdentity()`.
+```go
+stmtTruncateDefault := uast.NewTruncate(uast.Table("test"))
+stmtTruncateCascade := uast.NewTruncate(uast.Table("test")).
+    Cascade()
+stmtTruncateRestartIdentity := uast.NewTruncate(uast.Table("test")).
+    RestartIdentity()
+```
+Output MariaDB:
+```text
+TRUNCATE TABLE `test`
+TRUNCATE TABLE `test` CASCADE
+TRUNCATE TABLE `test` RESTART IDENTITY
+```
+Output MsSQL:
+```text
+TRUNCATE TABLE [test]
+// Not supported
+// Not supported
+```
+Output MySQL:
+```text
+TRUNCATE TABLE `test`
+// Not supported
+// Not supported
+```
+Output PostgreSQL:
+```text
+TRUNCATE TABLE "test"
+TRUNCATE TABLE "test" CASCADE
+TRUNCATE TABLE "test" RESTART IDENTITY
+
+```
+Output SQLite:
+```text
+TRUNCATE TABLE "test"
+// Not supported
+// Not supported
+```
+
 ## NewUpdate
 Создаёт новый экземпляр оператора UPDATE. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go

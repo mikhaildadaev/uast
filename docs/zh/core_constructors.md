@@ -161,6 +161,47 @@ SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 ```
 
+## NewTruncate
+创建一个新的 TRUNCATE 语句实例。接受表源，并返回一个可以使用 `Cascade()` 或 `RestartIdentity()` 进行配置的语句。
+```go
+stmtTruncateDefault := uast.NewTruncate(uast.Table("test"))
+stmtTruncateCascade := uast.NewTruncate(uast.Table("test")).
+    Cascade()
+stmtTruncateRestartIdentity := uast.NewTruncate(uast.Table("test")).
+    RestartIdentity()
+```
+Output MariaDB:
+```text
+TRUNCATE TABLE `test`
+TRUNCATE TABLE `test` CASCADE
+TRUNCATE TABLE `test` RESTART IDENTITY
+```
+Output MsSQL:
+```text
+TRUNCATE TABLE [test]
+// Not supported
+// Not supported
+```
+Output MySQL:
+```text
+TRUNCATE TABLE `test`
+// Not supported
+// Not supported
+```
+Output PostgreSQL:
+```text
+TRUNCATE TABLE "test"
+TRUNCATE TABLE "test" CASCADE
+TRUNCATE TABLE "test" RESTART IDENTITY
+
+```
+Output SQLite:
+```text
+TRUNCATE TABLE "test"
+// Not supported
+// Not supported
+```
+
 ## NewUpdate
 创建一个新的 UPDATE 语句实例。接受表源并返回一个可使用 `Join`、`Returning`、`Set`、`Where`、`With` 进行配置的语句。
 ```go

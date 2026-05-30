@@ -432,27 +432,28 @@ type typeString interface {
 
 // Приватные структуры
 type config struct {
-	lengthMaxArray       int
-	lengthMaxConst       int
-	lengthMaxFunc        int
-	lengthMaxIdent       int
-	lengthMaxLimit       int
-	lengthMaxParam       int
-	lengthMaxQuery       int
-	lengthMaxValueByte   int
-	lengthMaxValueString int
-	listComparisons      map[comparisonOperator]comparisonTransform
-	listFunctions        map[functionService]functionTransform
-	parensFunction       bool
-	placeholderNumber    int
-	placeholderStyle     string
-	placeholderType      bool
-	symbolMarkLeft       string
-	symbolMarkRight      string
-	symbolQuoteLeft      string
-	symbolQuoteRight     string
-	supportCascade       bool
-	supportIfExists      map[string]bool
+	lengthMaxArray         int
+	lengthMaxConst         int
+	lengthMaxFunc          int
+	lengthMaxIdent         int
+	lengthMaxLimit         int
+	lengthMaxParam         int
+	lengthMaxQuery         int
+	lengthMaxValueByte     int
+	lengthMaxValueString   int
+	listComparisons        map[comparisonOperator]comparisonTransform
+	listFunctions          map[functionService]functionTransform
+	parensFunction         bool
+	placeholderNumber      int
+	placeholderStyle       string
+	placeholderType        bool
+	symbolMarkLeft         string
+	symbolMarkRight        string
+	symbolQuoteLeft        string
+	symbolQuoteRight       string
+	supportCascade         bool
+	supportIfExists        map[string]bool
+	supportRestartIdentity bool
 }
 type casePair[T typeScalar] struct {
 	then ExpressionSafe[T]

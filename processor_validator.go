@@ -342,6 +342,23 @@ func (validator *baseValidator) validateColumns(columns []markExpressable) error
 func (validator *baseValidator) validateCommand(command managementService) error {
 	return nil
 }
+func (validator *baseValidator) validateEntity(entity EntityTarget) error {
+	if entity == nil {
+		return ErrInvalidStatement
+	}
+	switch e := entity.(type) {
+	case *TableSource:
+		return e.validate(validator)
+	case *targetIndex:
+		return validator.validateName(e.Name())
+	case *targetSchema:
+		return validator.validateName(e.Name())
+	case *targetView:
+		return e.TableSource.validate(validator)
+	default:
+		return ErrInvalidStatement
+	}
+}
 func (validator *baseValidator) validateFields(fields []markExpressable) error {
 	if len(fields) == 0 {
 		return ErrInvalidStatementField

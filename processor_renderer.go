@@ -270,6 +270,37 @@ func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
+func (renderer *baseRenderer) renderEntity(entity EntityTarget, ifExists bool) error {
+	switch e := entity.(type) {
+	case *TableSource:
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierTable)
+		renderer.renderIfExists(ifExists)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		e.render(renderer)
+	case *targetIndex:
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierIndex)
+		renderer.renderIfExists(ifExists)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(e.Name())
+	case *targetSchema:
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierSchema)
+		renderer.renderIfExists(ifExists)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(e.Name())
+	case *targetView:
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierView)
+		renderer.renderIfExists(ifExists)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		e.TableSource.render(renderer)
+	default:
+		return ErrInvalidStatement
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderFields(fields []markExpressable) error {
 	if len(fields) == 0 {
 		return nil

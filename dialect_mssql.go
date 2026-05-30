@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-// Внимание, находится в стадии разработки
-
 // Публичные переменные
 var DialectMsSQL = &SupportDialect{
 	config: &config{

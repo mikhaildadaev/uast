@@ -729,6 +729,12 @@ func (strateger *postgresqlStrateger) renderDrop(baseRenderer *baseRenderer, stm
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderCascade(stmtDrop.cascade); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *postgresqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
@@ -926,6 +932,9 @@ func (strateger *postgresqlStrateger) validateDelete(baseValidator *baseValidato
 }
 func (strateger *postgresqlStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
 	// !!! Внимание, находится в стадии разработки
+	if err := baseValidator.validateEntity(stmtDrop.entity); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *postgresqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {

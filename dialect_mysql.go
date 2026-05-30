@@ -461,6 +461,9 @@ func (strateger *mysqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtInsert *stmtInsert) error {
@@ -631,6 +634,9 @@ func (strateger *mysqlStrateger) validateDelete(baseValidator *baseValidator, st
 }
 func (strateger *mysqlStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
 	// !!! Внимание, находится в стадии разработки
+	if err := baseValidator.validateEntity(stmtDrop.entity); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {

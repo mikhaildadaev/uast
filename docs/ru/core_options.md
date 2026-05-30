@@ -3030,7 +3030,7 @@ JSON_CONTAINS(`t`.`json`, '{"key":"val"}')
 ```
 Output MsSQL:
 ```text
-// In development
+// Not supported
 ```
 Output MySQL:
 ```text
@@ -3230,7 +3230,7 @@ JSON_TYPE(`t`.`json`)
 ```
 Output MsSQL:
 ```text
-// In development
+// Not supported
 ```
 Output MySQL:
 ```text

@@ -1927,29 +1927,6 @@ func Test_SQL_Delete(t *testing.T) {
 	})
 }
 func Test_SQL_Drop(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-			sql := NewSQL(
-				WithDialect(supportDialect),
-			)
-			defer sql.Close()
-			stmtDrop := NewDrop(Test.Table)
-			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
-			switch supportDialect {
-			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP TABLE `test` AS `t`", "DROP")
-			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP TABLE [test] AS [t]", "DROP")
-			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP TABLE `test` AS `t`", "DROP")
-			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP TABLE "test" AS "t"`, "DROP")
-			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP TABLE "test" AS "t"`, "DROP")
-			}
-			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
-		})
-	})
 	t.Run("Cascade", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
@@ -1969,6 +1946,98 @@ func Test_SQL_Drop(t *testing.T) {
 				assertContains(t, sqlDropQuery, `DROP TABLE "test" AS "t" CASCADE`, "DROP")
 			case DialectSQLite:
 				assertContains(t, sqlDropQuery, `DROP TABLE "test" AS "t"`, "DROP")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+		})
+	})
+	t.Run("IndexIfExists", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDrop := NewDrop(NewIndex("test")).IfExists()
+			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDropQuery, "DROP INDEX IF EXISTS `test`", "DROP")
+			case DialectMsSQL:
+				assertContains(t, sqlDropQuery, "DROP INDEX [test]", "DROP")
+			case DialectMySQL:
+				assertContains(t, sqlDropQuery, "DROP INDEX `test`", "DROP")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDropQuery, `DROP INDEX IF EXISTS "test"`, "DROP")
+			case DialectSQLite:
+				assertContains(t, sqlDropQuery, `DROP INDEX IF EXISTS "test"`, "DROP")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+		})
+	})
+	t.Run("SchemaIfExists", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDrop := NewDrop(NewSchema("test")).IfExists()
+			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDropQuery, "DROP SCHEMA IF EXISTS `test`", "DROP")
+			case DialectMsSQL:
+				assertContains(t, sqlDropQuery, "DROP SCHEMA IF EXISTS [test]", "DROP")
+			case DialectMySQL:
+				assertContains(t, sqlDropQuery, "DROP SCHEMA `test`", "DROP")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDropQuery, `DROP SCHEMA IF EXISTS "test"`, "DROP")
+			case DialectSQLite:
+				assertContains(t, sqlDropQuery, `DROP SCHEMA "test"`, "DROP")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+		})
+	})
+	t.Run("TableIfExists", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDrop := NewDrop(Test.Table).IfExists()
+			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS `test` AS `t`", "DROP")
+			case DialectMsSQL:
+				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS [test] AS [t]", "DROP")
+			case DialectMySQL:
+				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS `test` AS `t`", "DROP")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDropQuery, `DROP TABLE IF EXISTS "test" AS "t"`, "DROP")
+			case DialectSQLite:
+				assertContains(t, sqlDropQuery, `DROP TABLE IF EXISTS "test" AS "t"`, "DROP")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+		})
+	})
+	t.Run("ViewIfExists", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDrop := NewDrop(NewView("test", "t")).IfExists()
+			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test` AS `t`", "DROP")
+			case DialectMsSQL:
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS [test] AS [t]", "DROP")
+			case DialectMySQL:
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test` AS `t`", "DROP")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test" AS "t"`, "DROP")
+			case DialectSQLite:
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test" AS "t"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})

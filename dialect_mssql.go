@@ -631,25 +631,6 @@ func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunct
 	expr.transformSetService(uastMssqlFunctionPosition)
 	return nil
 }
-func mssqlTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
-	if stmtDelete.from == nil {
-		return ErrInvalidStatementTarget
-	}
-	var targetAlias string
-	switch source := stmtDelete.from.(type) {
-	case *CteSource:
-		targetAlias = source.aliasName
-	case *TableSource:
-		targetAlias = source.aliasName
-	case *QuerySource:
-		targetAlias = source.aliasName
-	default:
-		return ErrInvalidAlias
-	}
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(targetAlias)
-	return nil
-}
 
 // Приватные методы
 func (strateger *mssqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
@@ -671,7 +652,7 @@ func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDe
 	if err := baseRenderer.renderCommand(stmtDelete.command); err != nil {
 		return err
 	}
-	if err := mssqlTarget(baseRenderer, stmtDelete); err != nil {
+	if err := baseRenderer.renderTarget(stmtDelete.from); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {

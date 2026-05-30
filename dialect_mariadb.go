@@ -421,25 +421,6 @@ func mariadbFunctionTrunc(baseTransformer *baseTransformer, expr transformFuncti
 	expr.transformSetService(uastMariadbFunctionTrunc)
 	return nil
 }
-func mariadbTarget(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
-	if stmtDelete.from == nil {
-		return ErrInvalidStatementTarget
-	}
-	var targetAlias string
-	switch source := stmtDelete.from.(type) {
-	case *CteSource:
-		targetAlias = source.aliasName
-	case *TableSource:
-		targetAlias = source.aliasName
-	case *QuerySource:
-		targetAlias = source.aliasName
-	default:
-		return ErrInvalidAlias
-	}
-	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderAlias(targetAlias)
-	return nil
-}
 
 // Приватные методы
 func (strateger *mariadbStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
@@ -461,7 +442,7 @@ func (strateger *mariadbStrateger) renderDelete(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderCommand(stmtDelete.command); err != nil {
 		return err
 	}
-	if err := mariadbTarget(baseRenderer, stmtDelete); err != nil {
+	if err := baseRenderer.renderTarget(stmtDelete.from); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {

@@ -849,7 +849,7 @@ func (strateger *mssqlStrateger) transformUpdate(baseTransformer *baseTransforme
 	return nil
 }
 func (strateger *mssqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	return nil
+	return ErrUnsupportStatement
 }
 func (strateger *mssqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
 	if err := baseValidator.validateWith(stmtDelete.with); err != nil {

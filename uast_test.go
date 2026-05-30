@@ -2080,21 +2080,67 @@ func Test_SQL_Truncate(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtTruncate := NewTruncate(Test.Table).
-				Cascade().
-				RestartIdentity()
+			stmtTruncate := NewTruncate(Test.Table)
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test` CASCADE RESTART IDENTITY", "TRUNCATE")
+				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test`", "TRUNCATE")
 			case DialectMsSQL:
 				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE [test]", "TRUNCATE")
 			case DialectMySQL:
 				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test`", "TRUNCATE")
 			case DialectPostgreSQL:
-				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test" CASCADE RESTART IDENTITY`, "TRUNCATE")
+				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test"`, "TRUNCATE")
 			case DialectSQLite:
 				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test"`, "TRUNCATE")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
+		})
+	})
+	t.Run("Cascade", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtTruncate := NewTruncate(Test.Table).
+				Cascade()
+			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test` CASCADE", "TRUNCATE")
+			case DialectMsSQL:
+				// Not supported - CASCADE
+			case DialectMySQL:
+				// Not supported - CASCADE
+			case DialectPostgreSQL:
+				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test" CASCADE`, "TRUNCATE")
+			case DialectSQLite:
+				// Not supported - CASCADE
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
+		})
+	})
+	t.Run("RestartIdentity", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtTruncate := NewTruncate(Test.Table).
+				RestartIdentity()
+			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test` RESTART IDENTITY", "TRUNCATE")
+			case DialectMsSQL:
+				// Not supported - RESTART IDENTITY
+			case DialectMySQL:
+				// Not supported - RESTART IDENTITY
+			case DialectPostgreSQL:
+				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test" RESTART IDENTITY`, "TRUNCATE")
+			case DialectSQLite:
+				// Not supported - RESTART IDENTITY
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
 		})

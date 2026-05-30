@@ -642,15 +642,6 @@ func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunct
 
 // Приватные методы
 func (strateger *mssqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
-	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderOnColumn(stmtComment.column, stmtComment.comment); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderOnTable(stmtComment.table, stmtComment.comment); err != nil {
-		return err
-	}
 	return nil
 }
 func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {

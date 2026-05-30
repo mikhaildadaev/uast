@@ -8,6 +8,40 @@ outline: deep
 This page covers the four statement constructors: `NewDelete`, `NewInsert`, `NewSelect`, `NewUpdate`. Each constructor creates a new statement instance that can be configured with methods and built into SQL using `Build()`.
 :::
 
+## NewComment
+Creates a new COMMENT statement instance. Accepts a comment text and returns a statement that can be configured with `OnColumn` or `OnTable`.
+```go
+stmtColumn := uast.NewComment("Test comment").
+    OnColumn(uast.Column[int64]("test", "id"))
+stmtTable := uast.NewComment("Test comment").
+    OnTable(uast.Table("test"))
+```
+Output MariaDB:
+```text
+COMMENT ON COLUMN `t`.`id` IS 'Test comment'
+COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+```
+Output MsSQL:
+```text
+// Not supported
+// Not supported
+```
+Output MySQL:
+```text
+COMMENT ON COLUMN `t`.`id` IS 'Test comment'
+COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+```
+Output PostgreSQL:
+```text
+COMMENT ON COLUMN "t"."id" IS 'Test comment'
+COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+```
+Output SQLite:
+```text
+COMMENT ON COLUMN "t"."id" IS 'Test comment'
+COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+```
+
 ## NewDelete
 Creates a new DELETE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Where`, `With`.
 ```go

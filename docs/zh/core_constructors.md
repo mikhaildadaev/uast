@@ -8,6 +8,40 @@ outline: deep
 本页面涵盖四个语句构造函数：`NewDelete`、`NewInsert`、`NewSelect`、`NewUpdate`。每个构造函数创建一个新的语句实例，可使用方法进行配置，并通过 `Build()` 编译为 SQL。
 :::
 
+## NewComment
+创建一个新的 COMMENT 语句实例。接受注释文本，并返回一个可以使用 `OnColumn` 或 `OnTable` 进行配置的语句。
+```go
+stmtColumn := uast.NewComment("Test comment").
+    OnColumn(uast.Column[int64]("test", "id"))
+stmtTable := uast.NewComment("Test comment").
+    OnTable(uast.Table("test"))
+```
+Output MariaDB:
+```text
+COMMENT ON COLUMN `t`.`id` IS 'Test comment'
+COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+```
+Output MsSQL:
+```text
+// Not supported
+// Not supported
+```
+Output MySQL:
+```text
+COMMENT ON COLUMN `t`.`id` IS 'Test comment'
+COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+```
+Output PostgreSQL:
+```text
+COMMENT ON COLUMN "t"."id" IS 'Test comment'
+COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+```
+Output SQLite:
+```text
+COMMENT ON COLUMN "t"."id" IS 'Test comment'
+COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+```
+
 ## NewDelete
 创建一个新的 DELETE 语句实例。接受一个表源，返回一个可使用 `Join`、`Returning`、`Where`、`With` 进行配置的语句。
 ```go

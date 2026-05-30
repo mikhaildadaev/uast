@@ -8,6 +8,40 @@ outline: deep
 Эта страница охватывает четыре конструктора операторов: `NewDelete`, `NewInsert`, `NewSelect`, `NewUpdate`. Каждый конструктор создаёт новый экземпляр оператора, который может быть настроен с помощью методов и скомпилирован в SQL с помощью `Build()`.
 :::
 
+## NewComment
+Создаёт новый экземпляр оператора COMMENT. Принимает текст комментария и возвращает оператор, который можно настроить с помощью `OnColumn` или `OnTable`.
+```go
+stmtColumn := uast.NewComment("Test comment").
+    OnColumn(uast.Column[int64]("test", "id"))
+stmtTable := uast.NewComment("Test comment").
+    OnTable(uast.Table("test"))
+```
+Output MariaDB:
+```text
+COMMENT ON COLUMN `t`.`id` IS 'Test comment'
+COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+```
+Output MsSQL:
+```text
+// Not supported
+// Not supported
+```
+Output MySQL:
+```text
+COMMENT ON COLUMN `t`.`id` IS 'Test comment'
+COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+```
+Output PostgreSQL:
+```text
+COMMENT ON COLUMN "t"."id" IS 'Test comment'
+COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+```
+Output SQLite:
+```text
+COMMENT ON COLUMN "t"."id" IS 'Test comment'
+COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+```
+
 ## NewDelete
 Создаёт новый экземпляр оператора DELETE. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Join`, `Returning`, `Where`, `With`.
 ```go

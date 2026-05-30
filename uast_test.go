@@ -968,27 +968,27 @@ func Test_Core_exprFunction(t *testing.T) {
 				JsonSet(Test.Column.Json, JsonGroup(JsonPath(JsonKey("key1")), Value("val1")), JsonGroup(JsonPath(JsonKey("key2")), Value("val2"))).As("json_jsonset"),
 				JsonType(Test.Column.Json).As("json_jsontype"),
 				// Функции математические
-				Abs(Test.Column.Number).As("math_abs"),
-				ACos(Test.Column.Number).As("math_acos"),
-				ASin(Test.Column.Number).As("math_asin"),
-				ATan(Test.Column.Number).As("math_atan"),
+				Abs(Test.Column.X).As("math_abs"),
+				ACos(Test.Column.X).As("math_acos"),
+				ASin(Test.Column.X).As("math_asin"),
+				ATan(Test.Column.X).As("math_atan"),
 				ATan2(Test.Column.Y, Test.Column.X).As("math_atan2"),
-				Cbrt(Test.Column.Number).As("math_cbrt"),
-				Ceil(Test.Column.Number).As("math_ceil"),
-				Cos(Test.Column.Number).As("math_cos"),
-				Exp(Test.Column.Number).As("math_exp"),
-				Floor(Test.Column.Number).As("math_floor"),
-				Ln(Test.Column.Number).As("math_ln"),
-				Log(Test.Column.Number, Value(2)).As("math_log"),
-				Mod(Test.Column.Number, Value(2)).As("math_mod"),
+				Cbrt(Test.Column.X).As("math_cbrt"),
+				Ceil(Test.Column.X).As("math_ceil"),
+				Cos(Test.Column.X).As("math_cos"),
+				Exp(Test.Column.X).As("math_exp"),
+				Floor(Test.Column.X).As("math_floor"),
+				Ln(Test.Column.X).As("math_ln"),
+				Log(Test.Column.X, Value(2)).As("math_log"),
+				Mod(Test.Column.X, Value(2)).As("math_mod"),
 				Pi().As("math_pi"),
-				Power(Test.Column.Number, Value(2)).As("math_power"),
+				Power(Test.Column.X, Value(2)).As("math_power"),
 				Rand().As("math_rand"),
-				Round(Test.Column.Number, Value(2)).As("math_round"),
-				Sin(Test.Column.Number).As("math_sin"),
-				Sqrt(Test.Column.Number).As("math_sqrt"),
-				Tan(Test.Column.Number).As("math_tan"),
-				Trunc(Test.Column.Number, Value(2)).As("math_trunc"),
+				Round(Test.Column.X, Value(2)).As("math_round"),
+				Sin(Test.Column.X).As("math_sin"),
+				Sqrt(Test.Column.X).As("math_sqrt"),
+				Tan(Test.Column.X).As("math_tan"),
+				Trunc(Test.Column.X, Value(2)).As("math_trunc"),
 				// Функции ранжирующие
 				CumeDist().Over(
 					PartitionBy(Test.Column.ID),
@@ -1097,27 +1097,27 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)", "FUNCTION JSONSET")
 			assertContains(t, sqlSelectQuery, "JSON_TYPE(`t`.`json`)", "FUNCTION JSONTYPE")
 			// Функции математические
-			assertContains(t, sqlSelectQuery, "ABS(`t`.`number`)", "FUNCTION ABS")
-			assertContains(t, sqlSelectQuery, "ACOS(`t`.`number`)", "FUNCTION ACOS")
-			assertContains(t, sqlSelectQuery, "ASIN(`t`.`number`)", "FUNCTION ASIN")
-			assertContains(t, sqlSelectQuery, "ATAN(`t`.`number`)", "FUNCTION ATAN")
+			assertContains(t, sqlSelectQuery, "ABS(`t`.`x`)", "FUNCTION ABS")
+			assertContains(t, sqlSelectQuery, "ACOS(`t`.`x`)", "FUNCTION ACOS")
+			assertContains(t, sqlSelectQuery, "ASIN(`t`.`x`)", "FUNCTION ASIN")
+			assertContains(t, sqlSelectQuery, "ATAN(`t`.`x`)", "FUNCTION ATAN")
 			assertContains(t, sqlSelectQuery, "ATAN2(`t`.`y`, `t`.`x`)", "FUNCTION ATAN2")
-			assertContains(t, sqlSelectQuery, "CBRT(`t`.`number`)", "FUNCTION CBRT")
-			assertContains(t, sqlSelectQuery, "CEILING(`t`.`number`)", "FUNCTION CEIL")
-			assertContains(t, sqlSelectQuery, "COS(`t`.`number`)", "FUNCTION COS")
-			assertContains(t, sqlSelectQuery, "EXP(`t`.`number`)", "FUNCTION EXP")
-			assertContains(t, sqlSelectQuery, "FLOOR(`t`.`number`)", "FUNCTION FLOOR")
-			assertContains(t, sqlSelectQuery, "LN(`t`.`number`)", "FUNCTION LN")
-			assertContains(t, sqlSelectQuery, "LOG(`t`.`number`, ?)", "FUNCTION LOG")
-			assertContains(t, sqlSelectQuery, "MOD(`t`.`number`, ?)", "FUNCTION MOD")
+			assertContains(t, sqlSelectQuery, "CBRT(`t`.`x`)", "FUNCTION CBRT")
+			assertContains(t, sqlSelectQuery, "CEILING(`t`.`x`)", "FUNCTION CEIL")
+			assertContains(t, sqlSelectQuery, "COS(`t`.`x`)", "FUNCTION COS")
+			assertContains(t, sqlSelectQuery, "EXP(`t`.`x`)", "FUNCTION EXP")
+			assertContains(t, sqlSelectQuery, "FLOOR(`t`.`x`)", "FUNCTION FLOOR")
+			assertContains(t, sqlSelectQuery, "LN(`t`.`x`)", "FUNCTION LN")
+			assertContains(t, sqlSelectQuery, "LOG(`t`.`x`, ?)", "FUNCTION LOG")
+			assertContains(t, sqlSelectQuery, "MOD(`t`.`x`, ?)", "FUNCTION MOD")
 			assertContains(t, sqlSelectQuery, "PI()", "FUNCTION PI")
-			assertContains(t, sqlSelectQuery, "POWER(`t`.`number`, ?)", "FUNCTION POWER")
+			assertContains(t, sqlSelectQuery, "POWER(`t`.`x`, ?)", "FUNCTION POWER")
 			assertContains(t, sqlSelectQuery, "RAND()", "FUNCTION RAND")
-			assertContains(t, sqlSelectQuery, "ROUND(`t`.`number`, ?)", "FUNCTION ROUND")
-			assertContains(t, sqlSelectQuery, "SIN(`t`.`number`)", "FUNCTION SIN")
-			assertContains(t, sqlSelectQuery, "SQRT(`t`.`number`)", "FUNCTION SQRT")
-			assertContains(t, sqlSelectQuery, "TAN(`t`.`number`)", "FUNCTION TAN")
-			assertContains(t, sqlSelectQuery, "TRUNCATE(`t`.`number`, ?)", "FUNCTION TRUNC")
+			assertContains(t, sqlSelectQuery, "ROUND(`t`.`x`, ?)", "FUNCTION ROUND")
+			assertContains(t, sqlSelectQuery, "SIN(`t`.`x`)", "FUNCTION SIN")
+			assertContains(t, sqlSelectQuery, "SQRT(`t`.`x`)", "FUNCTION SQRT")
+			assertContains(t, sqlSelectQuery, "TAN(`t`.`x`)", "FUNCTION TAN")
+			assertContains(t, sqlSelectQuery, "TRUNCATE(`t`.`x`, ?)", "FUNCTION TRUNC")
 			// Функции ранжирующие
 			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION CUMEDIST")
 			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION DENSERANK")
@@ -1205,27 +1205,27 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', @p1), '$.key2', @p2)", "FUNCTION JSONSET")
 			// Not supported - FUNCTION JSONTYPE
 			// Функции математические
-			assertContains(t, sqlSelectQuery, "ABS([t].[number])", "FUNCTION ABS")
-			assertContains(t, sqlSelectQuery, "ACOS([t].[number])", "FUNCTION ACOS")
-			assertContains(t, sqlSelectQuery, "ASIN([t].[number])", "FUNCTION ASIN")
-			assertContains(t, sqlSelectQuery, "ATAN([t].[number])", "FUNCTION ATAN")
+			assertContains(t, sqlSelectQuery, "ABS([t].[x])", "FUNCTION ABS")
+			assertContains(t, sqlSelectQuery, "ACOS([t].[x])", "FUNCTION ACOS")
+			assertContains(t, sqlSelectQuery, "ASIN([t].[x])", "FUNCTION ASIN")
+			assertContains(t, sqlSelectQuery, "ATAN([t].[x])", "FUNCTION ATAN")
 			assertContains(t, sqlSelectQuery, "ATAN2([t].[y], [t].[x])", "FUNCTION ATAN2")
-			assertContains(t, sqlSelectQuery, "CBRT([t].[number])", "FUNCTION CBRT")
-			assertContains(t, sqlSelectQuery, "CEILING([t].[number])", "FUNCTION CEIL")
-			assertContains(t, sqlSelectQuery, "COS([t].[number])", "FUNCTION COS")
-			assertContains(t, sqlSelectQuery, "EXP([t].[number])", "FUNCTION EXP")
-			assertContains(t, sqlSelectQuery, "FLOOR([t].[number])", "FUNCTION FLOOR")
-			assertContains(t, sqlSelectQuery, "LN([t].[number])", "FUNCTION LN")
-			assertContains(t, sqlSelectQuery, "LOG([t].[number], @p1)", "FUNCTION LOG")
-			assertContains(t, sqlSelectQuery, "MOD([t].[number], @p1)", "FUNCTION MOD")
+			assertContains(t, sqlSelectQuery, "CBRT([t].[x])", "FUNCTION CBRT")
+			assertContains(t, sqlSelectQuery, "CEILING([t].[x])", "FUNCTION CEIL")
+			assertContains(t, sqlSelectQuery, "COS([t].[x])", "FUNCTION COS")
+			assertContains(t, sqlSelectQuery, "EXP([t].[x])", "FUNCTION EXP")
+			assertContains(t, sqlSelectQuery, "FLOOR([t].[x])", "FUNCTION FLOOR")
+			assertContains(t, sqlSelectQuery, "LN([t].[x])", "FUNCTION LN")
+			assertContains(t, sqlSelectQuery, "LOG([t].[x], @p1)", "FUNCTION LOG")
+			assertContains(t, sqlSelectQuery, "MOD([t].[x], @p1)", "FUNCTION MOD")
 			assertContains(t, sqlSelectQuery, "PI()", "FUNCTION PI")
-			assertContains(t, sqlSelectQuery, "POWER([t].[number], @p1)", "FUNCTION POWER")
+			assertContains(t, sqlSelectQuery, "POWER([t].[x], @p1)", "FUNCTION POWER")
 			assertContains(t, sqlSelectQuery, "RAND()", "FUNCTION RAND")
-			assertContains(t, sqlSelectQuery, "ROUND([t].[number], @p1)", "FUNCTION ROUND")
-			assertContains(t, sqlSelectQuery, "SIN([t].[number])", "FUNCTION SIN")
-			assertContains(t, sqlSelectQuery, "SQRT([t].[number])", "FUNCTION SQRT")
-			assertContains(t, sqlSelectQuery, "TAN([t].[number])", "FUNCTION TAN")
-			assertContains(t, sqlSelectQuery, "ROUND([t].[number], @p1, 1)", "FUNCTION TRUNC")
+			assertContains(t, sqlSelectQuery, "ROUND([t].[x], @p1)", "FUNCTION ROUND")
+			assertContains(t, sqlSelectQuery, "SIN([t].[x])", "FUNCTION SIN")
+			assertContains(t, sqlSelectQuery, "SQRT([t].[x])", "FUNCTION SQRT")
+			assertContains(t, sqlSelectQuery, "TAN([t].[x])", "FUNCTION TAN")
+			assertContains(t, sqlSelectQuery, "ROUND([t].[x], @p1, 1)", "FUNCTION TRUNC")
 			// Функции ранжирующие
 			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)", "FUNCTION CUMEDIST")
 			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)", "FUNCTION DENSERANK")
@@ -1313,27 +1313,27 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, "JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)", "FUNCTION JSONSET")
 			assertContains(t, sqlSelectQuery, "JSON_TYPE(`t`.`json`)", "FUNCTION JSONTYPE")
 			// Функции математические
-			assertContains(t, sqlSelectQuery, "ABS(`t`.`number`)", "FUNCTION ABS")
-			assertContains(t, sqlSelectQuery, "ACOS(`t`.`number`)", "FUNCTION ACOS")
-			assertContains(t, sqlSelectQuery, "ASIN(`t`.`number`)", "FUNCTION ASIN")
-			assertContains(t, sqlSelectQuery, "ATAN(`t`.`number`)", "FUNCTION ATAN")
+			assertContains(t, sqlSelectQuery, "ABS(`t`.`x`)", "FUNCTION ABS")
+			assertContains(t, sqlSelectQuery, "ACOS(`t`.`x`)", "FUNCTION ACOS")
+			assertContains(t, sqlSelectQuery, "ASIN(`t`.`x`)", "FUNCTION ASIN")
+			assertContains(t, sqlSelectQuery, "ATAN(`t`.`x`)", "FUNCTION ATAN")
 			assertContains(t, sqlSelectQuery, "ATAN2(`t`.`y`, `t`.`x`)", "FUNCTION ATAN2")
-			assertContains(t, sqlSelectQuery, "CBRT(`t`.`number`)", "FUNCTION CBRT")
-			assertContains(t, sqlSelectQuery, "CEILING(`t`.`number`)", "FUNCTION CEIL")
-			assertContains(t, sqlSelectQuery, "COS(`t`.`number`)", "FUNCTION COS")
-			assertContains(t, sqlSelectQuery, "EXP(`t`.`number`)", "FUNCTION EXP")
-			assertContains(t, sqlSelectQuery, "FLOOR(`t`.`number`)", "FUNCTION FLOOR")
-			assertContains(t, sqlSelectQuery, "LN(`t`.`number`)", "FUNCTION LN")
-			assertContains(t, sqlSelectQuery, "LOG(`t`.`number`, ?)", "FUNCTION LOG")
-			assertContains(t, sqlSelectQuery, "MOD(`t`.`number`, ?)", "FUNCTION MOD")
+			assertContains(t, sqlSelectQuery, "CBRT(`t`.`x`)", "FUNCTION CBRT")
+			assertContains(t, sqlSelectQuery, "CEILING(`t`.`x`)", "FUNCTION CEIL")
+			assertContains(t, sqlSelectQuery, "COS(`t`.`x`)", "FUNCTION COS")
+			assertContains(t, sqlSelectQuery, "EXP(`t`.`x`)", "FUNCTION EXP")
+			assertContains(t, sqlSelectQuery, "FLOOR(`t`.`x`)", "FUNCTION FLOOR")
+			assertContains(t, sqlSelectQuery, "LN(`t`.`x`)", "FUNCTION LN")
+			assertContains(t, sqlSelectQuery, "LOG(`t`.`x`, ?)", "FUNCTION LOG")
+			assertContains(t, sqlSelectQuery, "MOD(`t`.`x`, ?)", "FUNCTION MOD")
 			assertContains(t, sqlSelectQuery, "PI()", "FUNCTION PI")
-			assertContains(t, sqlSelectQuery, "POWER(`t`.`number`, ?)", "FUNCTION POWER")
+			assertContains(t, sqlSelectQuery, "POWER(`t`.`x`, ?)", "FUNCTION POWER")
 			assertContains(t, sqlSelectQuery, "RAND()", "FUNCTION RAND")
-			assertContains(t, sqlSelectQuery, "ROUND(`t`.`number`, ?)", "FUNCTION ROUND")
-			assertContains(t, sqlSelectQuery, "SIN(`t`.`number`)", "FUNCTION SIN")
-			assertContains(t, sqlSelectQuery, "SQRT(`t`.`number`)", "FUNCTION SQRT")
-			assertContains(t, sqlSelectQuery, "TAN(`t`.`number`)", "FUNCTION TAN")
-			assertContains(t, sqlSelectQuery, "TRUNCATE(`t`.`number`, ?)", "FUNCTION TRUNC")
+			assertContains(t, sqlSelectQuery, "ROUND(`t`.`x`, ?)", "FUNCTION ROUND")
+			assertContains(t, sqlSelectQuery, "SIN(`t`.`x`)", "FUNCTION SIN")
+			assertContains(t, sqlSelectQuery, "SQRT(`t`.`x`)", "FUNCTION SQRT")
+			assertContains(t, sqlSelectQuery, "TAN(`t`.`x`)", "FUNCTION TAN")
+			assertContains(t, sqlSelectQuery, "TRUNCATE(`t`.`x`, ?)", "FUNCTION TRUNC")
 			// Функции ранжирующие
 			assertContains(t, sqlSelectQuery, "CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION CUMEDIST")
 			assertContains(t, sqlSelectQuery, "DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)", "FUNCTION DENSERANK")
@@ -1421,27 +1421,27 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `jsonb_set(jsonb_set("t"."json", '{key1}', $1), '{key2}', $2)`, "FUNCTION JSONSET")
 			assertContains(t, sqlSelectQuery, `jsonb_typeof("t"."json")`, "FUNCTION JSONTYPE")
 			// Функции математические
-			assertContains(t, sqlSelectQuery, `ABS("t"."number")`, "FUNCTION ABS")
-			assertContains(t, sqlSelectQuery, `ACOS("t"."number")`, "FUNCTION ACOS")
-			assertContains(t, sqlSelectQuery, `ASIN("t"."number")`, "FUNCTION ASIN")
-			assertContains(t, sqlSelectQuery, `ATAN("t"."number")`, "FUNCTION ATAN")
+			assertContains(t, sqlSelectQuery, `ABS("t"."x")`, "FUNCTION ABS")
+			assertContains(t, sqlSelectQuery, `ACOS("t"."x")`, "FUNCTION ACOS")
+			assertContains(t, sqlSelectQuery, `ASIN("t"."x")`, "FUNCTION ASIN")
+			assertContains(t, sqlSelectQuery, `ATAN("t"."x")`, "FUNCTION ATAN")
 			assertContains(t, sqlSelectQuery, `ATAN2("t"."y", "t"."x")`, "FUNCTION ATAN2")
-			assertContains(t, sqlSelectQuery, `CBRT("t"."number")`, "FUNCTION CBRT")
-			assertContains(t, sqlSelectQuery, `CEIL("t"."number")`, "FUNCTION CEIL")
-			assertContains(t, sqlSelectQuery, `COS("t"."number")`, "FUNCTION COS")
-			assertContains(t, sqlSelectQuery, `EXP("t"."number")`, "FUNCTION EXP")
-			assertContains(t, sqlSelectQuery, `FLOOR("t"."number")`, "FUNCTION FLOOR")
-			assertContains(t, sqlSelectQuery, `LN("t"."number")`, "FUNCTION LN")
-			assertContains(t, sqlSelectQuery, `LOG("t"."number", $1)`, "FUNCTION LOG")
-			assertContains(t, sqlSelectQuery, `MOD("t"."number", $1)`, "FUNCTION MOD")
+			assertContains(t, sqlSelectQuery, `CBRT("t"."x")`, "FUNCTION CBRT")
+			assertContains(t, sqlSelectQuery, `CEIL("t"."x")`, "FUNCTION CEIL")
+			assertContains(t, sqlSelectQuery, `COS("t"."x")`, "FUNCTION COS")
+			assertContains(t, sqlSelectQuery, `EXP("t"."x")`, "FUNCTION EXP")
+			assertContains(t, sqlSelectQuery, `FLOOR("t"."x")`, "FUNCTION FLOOR")
+			assertContains(t, sqlSelectQuery, `LN("t"."x")`, "FUNCTION LN")
+			assertContains(t, sqlSelectQuery, `LOG("t"."x", $1)`, "FUNCTION LOG")
+			assertContains(t, sqlSelectQuery, `MOD("t"."x", $1)`, "FUNCTION MOD")
 			assertContains(t, sqlSelectQuery, `PI()`, "FUNCTION PI")
-			assertContains(t, sqlSelectQuery, `POWER("t"."number", $1)`, "FUNCTION POWER")
+			assertContains(t, sqlSelectQuery, `POWER("t"."x", $1)`, "FUNCTION POWER")
 			assertContains(t, sqlSelectQuery, `RANDOM`, "FUNCTION RAND")
-			assertContains(t, sqlSelectQuery, `ROUND("t"."number", $1)`, "FUNCTION ROUND")
-			assertContains(t, sqlSelectQuery, `SIN("t"."number")`, "FUNCTION SIN")
-			assertContains(t, sqlSelectQuery, `SQRT("t"."number")`, "FUNCTION SQRT")
-			assertContains(t, sqlSelectQuery, `TAN("t"."number")`, "FUNCTION TAN")
-			assertContains(t, sqlSelectQuery, `TRUNC("t"."number", $1)`, "FUNCTION TRUNC")
+			assertContains(t, sqlSelectQuery, `ROUND("t"."x", $1)`, "FUNCTION ROUND")
+			assertContains(t, sqlSelectQuery, `SIN("t"."x")`, "FUNCTION SIN")
+			assertContains(t, sqlSelectQuery, `SQRT("t"."x")`, "FUNCTION SQRT")
+			assertContains(t, sqlSelectQuery, `TAN("t"."x")`, "FUNCTION TAN")
+			assertContains(t, sqlSelectQuery, `TRUNC("t"."x", $1)`, "FUNCTION TRUNC")
 			// Функции ранжирующие
 			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION CUMEDIST")
 			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "DFUNCTION ENSERANK")
@@ -1529,27 +1529,27 @@ func Test_Core_exprFunction(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)`, "FUNCTION JSONSET")
 			assertContains(t, sqlSelectQuery, `JSON_TYPE("t"."json")`, "FUNCTION JSONTYPE")
 			// Функции математические
-			assertContains(t, sqlSelectQuery, `ABS("t"."number")`, "FUNCTION ABS")
-			assertContains(t, sqlSelectQuery, `ACOS("t"."number")`, "FUNCTION ACOS")
-			assertContains(t, sqlSelectQuery, `ASIN("t"."number")`, "FUNCTION ASIN")
-			assertContains(t, sqlSelectQuery, `ATAN("t"."number")`, "FUNCTION ATAN")
+			assertContains(t, sqlSelectQuery, `ABS("t"."x")`, "FUNCTION ABS")
+			assertContains(t, sqlSelectQuery, `ACOS("t"."x")`, "FUNCTION ACOS")
+			assertContains(t, sqlSelectQuery, `ASIN("t"."x")`, "FUNCTION ASIN")
+			assertContains(t, sqlSelectQuery, `ATAN("t"."x")`, "FUNCTION ATAN")
 			assertContains(t, sqlSelectQuery, `ATAN2("t"."y", "t"."x")`, "FUNCTION ATAN2")
-			assertContains(t, sqlSelectQuery, `CBRT("t"."number")`, "FUNCTION CBRT")
-			assertContains(t, sqlSelectQuery, `CEIL("t"."number")`, "FUNCTION CEIL")
-			assertContains(t, sqlSelectQuery, `COS("t"."number")`, "FUNCTION COS")
-			assertContains(t, sqlSelectQuery, `EXP("t"."number")`, "FUNCTION EXP")
-			assertContains(t, sqlSelectQuery, `FLOOR("t"."number")`, "FUNCTION FLOOR")
-			assertContains(t, sqlSelectQuery, `LN("t"."number")`, "FUNCTION LN")
-			assertContains(t, sqlSelectQuery, `LOG("t"."number", ?)`, "FUNCTION LOG")
-			assertContains(t, sqlSelectQuery, `MOD("t"."number", ?)`, "FUNCTION MOD")
+			assertContains(t, sqlSelectQuery, `CBRT("t"."x")`, "FUNCTION CBRT")
+			assertContains(t, sqlSelectQuery, `CEIL("t"."x")`, "FUNCTION CEIL")
+			assertContains(t, sqlSelectQuery, `COS("t"."x")`, "FUNCTION COS")
+			assertContains(t, sqlSelectQuery, `EXP("t"."x")`, "FUNCTION EXP")
+			assertContains(t, sqlSelectQuery, `FLOOR("t"."x")`, "FUNCTION FLOOR")
+			assertContains(t, sqlSelectQuery, `LN("t"."x")`, "FUNCTION LN")
+			assertContains(t, sqlSelectQuery, `LOG("t"."x", ?)`, "FUNCTION LOG")
+			assertContains(t, sqlSelectQuery, `MOD("t"."x", ?)`, "FUNCTION MOD")
 			assertContains(t, sqlSelectQuery, `PI()`, "FUNCTION PI")
-			assertContains(t, sqlSelectQuery, `POWER("t"."number", ?)`, "FUNCTION POWER")
+			assertContains(t, sqlSelectQuery, `POWER("t"."x", ?)`, "FUNCTION POWER")
 			assertContains(t, sqlSelectQuery, `RANDOM`, "FUNCTION RAND")
-			assertContains(t, sqlSelectQuery, `ROUND("t"."number", ?)`, "FUNCTION ROUND")
-			assertContains(t, sqlSelectQuery, `SIN("t"."number")`, "FUNCTION SIN")
-			assertContains(t, sqlSelectQuery, `SQRT("t"."number")`, "FUNCTION SQRT")
-			assertContains(t, sqlSelectQuery, `TAN("t"."number")`, "FUNCTION TAN")
-			assertContains(t, sqlSelectQuery, `TRUNC("t"."number", ?)`, "FUNCTION TRUNC")
+			assertContains(t, sqlSelectQuery, `ROUND("t"."x", ?)`, "FUNCTION ROUND")
+			assertContains(t, sqlSelectQuery, `SIN("t"."x")`, "FUNCTION SIN")
+			assertContains(t, sqlSelectQuery, `SQRT("t"."x")`, "FUNCTION SQRT")
+			assertContains(t, sqlSelectQuery, `TAN("t"."x")`, "FUNCTION TAN")
+			assertContains(t, sqlSelectQuery, `TRUNC("t"."x", ?)`, "FUNCTION TRUNC")
 			// Функции ранжирующие
 			assertContains(t, sqlSelectQuery, `CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "FUNCTION CUMEDIST")
 			assertContains(t, sqlSelectQuery, `DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)`, "DFUNCTION ENSERANK")

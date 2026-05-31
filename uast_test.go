@@ -2158,6 +2158,35 @@ func Test_SQL_Insert(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 		})
 	})
+	t.Run("Returning", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtInsert := NewInsert(Test.Table).
+				Values(
+					Pair(Test.Column.String, Value("ivan")),
+					Pair(Test.Column.Number, Value(2)),
+				).
+				Returning(
+					Test.Column.ID,
+					Test.Column.String,
+				)
+			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) RETURNING `t`.`id`, `t`.`string`", "INSERT RETURNING")
+			case DialectMsSQL:
+				assertContains(t, sqlInsertQuery, "INSERT INTO [test] AS [t] ([string], [number]) OUTPUT [t].[id], [t].[string] VALUES (@p1, @p2)", "INSERT RETURNING")
+			case DialectMySQL:
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)", "INSERT WITHOUT RETURNING")
+			case DialectPostgreSQL:
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) RETURNING "t"."id", "t"."string"`, "INSERT RETURNING")
+			case DialectSQLite:
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) RETURNING "t"."id", "t"."string"`, "INSERT RETURNING")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
+		})
+	})
 	t.Run("Source", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
@@ -2177,15 +2206,72 @@ func Test_SQL_Insert(t *testing.T) {
 			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "SOURCE")
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "INSERT SOURCE")
 			case DialectMsSQL:
-				assertContains(t, sqlInsertQuery, "INSERT INTO [test] AS [t] ([string], [number]) SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1", "SOURCE")
+				assertContains(t, sqlInsertQuery, "INSERT INTO [test] AS [t] ([string], [number]) SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1", "INSERT SOURCE")
 			case DialectMySQL:
-				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "SOURCE")
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?", "INSERT SOURCE")
 			case DialectPostgreSQL:
-				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1`, "SOURCE")
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1`, "INSERT SOURCE")
 			case DialectSQLite:
-				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?`, "SOURCE")
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?`, "INSERT SOURCE")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
+		})
+	})
+	t.Run("Upsert", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtInsert := NewInsert(Test.Table).
+				Values(
+					Pair(Test.Column.String, Value("ivan")),
+					Pair(Test.Column.Number, Value(2)),
+				).
+				Upsert(
+					Pair(Test.Column.String, Value("updated")),
+				)
+			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?", "INSERT UPSERT")
+			case DialectMsSQL:
+				assertContains(t, sqlInsertQuery, "INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)", "INSERT WITHOUT UPSERT")
+			case DialectMySQL:
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?", "INSERT UPSERT")
+			case DialectPostgreSQL:
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3`, "INSERT UPSERT")
+			case DialectSQLite:
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?`, "INSERT UPSERT")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
+		})
+	})
+	t.Run("With", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			cte := WithN("old_users", NewSelect(Test.Table).
+				Field(Test.Column.ID).
+				Where(Less(Test.Column.Number, Value(2))),
+			)
+			stmtInsert := NewInsert(Test.Table).
+				Source(NewSelect(NewCTE("old_users", "ou")).
+					Field(Column[int64]("ou", "id")),
+				).
+				With(cte)
+			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlInsertQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) INSERT INTO `test` AS `t` (`id`) SELECT `ou`.`id` FROM `old_users` AS `ou`", "INSERT WITH")
+			case DialectMsSQL:
+				assertContains(t, sqlInsertQuery, "WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) INSERT INTO [test] AS [t] ([id]) SELECT [ou].[id] FROM [old_users] AS [ou]", "INSERT WITH")
+			case DialectMySQL:
+				assertContains(t, sqlInsertQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) INSERT INTO `test` AS `t` (`id`) SELECT `ou`.`id` FROM `old_users` AS `ou`", "INSERT WITH")
+			case DialectPostgreSQL:
+				assertContains(t, sqlInsertQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) INSERT INTO "test" AS "t" ("id") SELECT "ou"."id" FROM "old_users" AS "ou"`, "INSERT WITH")
+			case DialectSQLite:
+				assertContains(t, sqlInsertQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) INSERT INTO "test" AS "t" ("id") SELECT "ou"."id" FROM "old_users" AS "ou"`, "INSERT WITH")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 		})
@@ -2238,15 +2324,15 @@ func Test_SQL_Select(t *testing.T) {
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlSelectQuery, "SELECT DISTINCT `t`.`id` FROM `test` AS `t`", "DISTINCT")
+				assertContains(t, sqlSelectQuery, "SELECT DISTINCT `t`.`id` FROM `test` AS `t`", "SELECT DISTINCT")
 			case DialectMsSQL:
-				assertContains(t, sqlSelectQuery, "SELECT DISTINCT [t].[id] FROM [test] AS [t]", "DISTINCT")
+				assertContains(t, sqlSelectQuery, "SELECT DISTINCT [t].[id] FROM [test] AS [t]", "SELECT DISTINCT")
 			case DialectMySQL:
-				assertContains(t, sqlSelectQuery, "SELECT DISTINCT `t`.`id` FROM `test` AS `t`", "DISTINCT")
+				assertContains(t, sqlSelectQuery, "SELECT DISTINCT `t`.`id` FROM `test` AS `t`", "SELECT DISTINCT")
 			case DialectPostgreSQL:
-				assertContains(t, sqlSelectQuery, `SELECT DISTINCT "t"."id" FROM "test" AS "t"`, "DISTINCT")
+				assertContains(t, sqlSelectQuery, `SELECT DISTINCT "t"."id" FROM "test" AS "t"`, "SELECT DISTINCT")
 			case DialectSQLite:
-				assertContains(t, sqlSelectQuery, `SELECT DISTINCT "t"."id" FROM "test" AS "t"`, "DISTINCT")
+				assertContains(t, sqlSelectQuery, `SELECT DISTINCT "t"."id" FROM "test" AS "t"`, "SELECT DISTINCT")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 		})
@@ -2287,13 +2373,13 @@ func Test_SQL_Truncate(t *testing.T) {
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test` CASCADE", "TRUNCATE")
+				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test` CASCADE", "TRUNCATE CASCADE")
 			case DialectMsSQL:
 				// Not supported - CASCADE
 			case DialectMySQL:
 				// Not supported - CASCADE
 			case DialectPostgreSQL:
-				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test" CASCADE`, "TRUNCATE")
+				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test" CASCADE`, "TRUNCATE CASCADE")
 			case DialectSQLite:
 				// Not supported - CASCADE
 			}
@@ -2311,13 +2397,13 @@ func Test_SQL_Truncate(t *testing.T) {
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test` RESTART IDENTITY", "TRUNCATE")
+				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `test` RESTART IDENTITY", "TRUNCATE RESTART IDENTITY")
 			case DialectMsSQL:
 				// Not supported - RESTART IDENTITY
 			case DialectMySQL:
 				// Not supported - RESTART IDENTITY
 			case DialectPostgreSQL:
-				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test" RESTART IDENTITY`, "TRUNCATE")
+				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "test" RESTART IDENTITY`, "TRUNCATE RESTART IDENTITY")
 			case DialectSQLite:
 				// Not supported - RESTART IDENTITY
 			}
@@ -2438,15 +2524,15 @@ func Test_SQL_Update(t *testing.T) {
 			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlUpdateQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "WITH")
+				assertContains(t, sqlUpdateQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "UPDATE WITH")
 			case DialectMsSQL:
-				assertContains(t, sqlUpdateQuery, "WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) UPDATE [test] AS [t] SET [t].[string] = @p2 WHERE [t].[id] IN (SELECT [ou].[id] FROM [old_users] AS [ou])", "WITH")
+				assertContains(t, sqlUpdateQuery, "WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) UPDATE [test] AS [t] SET [t].[string] = @p2 WHERE [t].[id] IN (SELECT [ou].[id] FROM [old_users] AS [ou])", "UPDATE WITH")
 			case DialectMySQL:
-				assertContains(t, sqlUpdateQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "WITH")
+				assertContains(t, sqlUpdateQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "UPDATE WITH")
 			case DialectPostgreSQL:
-				assertContains(t, sqlUpdateQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) UPDATE "test" AS "t" SET "t"."string" = $2 WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou")`, "WITH")
+				assertContains(t, sqlUpdateQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) UPDATE "test" AS "t" SET "t"."string" = $2 WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou")`, "UPDATE WITH")
 			case DialectSQLite:
-				assertContains(t, sqlUpdateQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou")`, "WITH")
+				assertContains(t, sqlUpdateQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou")`, "UPDATE WITH")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 		})

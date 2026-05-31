@@ -31,7 +31,7 @@ go test -race ./...
 - **Secure by design** — Three-level `Constant` / `Literal` / `Value` system prevents SQL injection.
 - **High performance** — `sync.Pool` for context reuse, ~360 ns/op for simple queries.
 - **Zero dependencies** — Only Go standard library.
-- **Quad outputs** — Every function documented with SQL output for all 4 dialects.
+- **Cross-dialect docs** — Every function documented with SQL output for each supported dialect.
 - **Hot dialect switch** — `SetDialect()` changes dialect at runtime without recreating the pool.
 - **Partial DDL** — COMMENT, DROP, TRUNCATE.
 - **Complete DML** — SELECT, INSERT, UPDATE, DELETE with all standard clauses (JOIN, CTE, UPSERT, window functions, JSON).

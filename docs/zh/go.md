@@ -25,7 +25,7 @@ go test -race ./...
 - **架构级安全** — 三级 `Value` / `Literal` / `Constant` 系统防止 SQL 注入。
 - **高性能** — `sync.Pool` 重用上下文，简单查询约 360 ns/op。
 - **零依赖** — 仅使用 Go 标准库。
-- **四方言输出** — 每个函数都附有全部 4 种方言的 SQL 输出文档。
+- **跨数据库文档** — 每个函数都附带了在所有支持的数据库方言中的 SQL 输出示例。
 - **热切换方言** — `SetDialect()` 在运行时切换方言，无需重建连接池。
 - **部分 DDL 支持** — COMMENT、DROP、TRUNCATE。
 - **完整的 DML** — DELETE, INSERT, SELECT, UPDATE 支持所有标准子句（JOIN、CTE、UPSERT、窗口函数、JSON）。

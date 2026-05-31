@@ -1925,6 +1925,93 @@ func Test_SQL_Delete(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 		})
 	})
+	t.Run("Join", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtDelete := NewDelete(Test.Table).
+				Join(
+					Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				).
+				Where(
+					Equal(Test.Column.String, Value("active")),
+				)
+			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?", "DELETE JOIN")
+			case DialectMsSQL:
+				assertContains(t, sqlDeleteQuery, "DELETE [t] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] WHERE [t].[string] = @p1", "DELETE JOIN")
+			case DialectMySQL:
+				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?", "DELETE JOIN")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" USING "data" AS "d" WHERE ("t"."id" = "d"."id" AND "t"."string" = $1)`, "DELETE JOIN")
+			case DialectSQLite:
+				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" WHERE "t"."string" = ?`, "DELETE JOIN")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+		})
+	})
+	t.Run("Returning", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtDelete := NewDelete(Test.Table).
+				Where(
+					Equal(Test.Column.String, Value("active")),
+				).
+				Returning(
+					Test.Column.ID,
+					Test.Column.String,
+				)
+			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ? RETURNING `t`.`id`, `t`.`string`", "DELETE RETURNING")
+			case DialectMsSQL:
+				assertContains(t, sqlDeleteQuery, "DELETE [t] FROM [test] AS [t] OUTPUT [t].[id], [t].[string] WHERE [t].[string] = @p1", "DELETE RETURNING")
+			case DialectMySQL:
+				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?", "DELETE WITHOUT RETURNING")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id", "t"."string"`, "DELETE RETURNING")
+			case DialectSQLite:
+				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = ? RETURNING "t"."id", "t"."string"`, "DELETE RETURNING")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+		})
+	})
+	t.Run("With", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			cte := WithN("old_users", NewSelect(Test.Table).
+				Field(Test.Column.ID).
+				Where(Less(Test.Column.Number, Value(2))),
+			)
+			stmtDelete := NewDelete(Test.Table).
+				Where(
+					In(Test.Column.ID, Subquery[int64](
+						NewSelect(NewCTE("old_users", "ou")).
+							Field(Column[int64]("ou", "id")),
+					)),
+				).
+				With(cte)
+			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDeleteQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) DELETE `t` FROM `test` AS `t` WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "WITH")
+			case DialectMsSQL:
+				assertContains(t, sqlDeleteQuery, "WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) DELETE [t] FROM [test] AS [t] WHERE [t].[id] IN (SELECT [ou].[id] FROM [old_users] AS [ou])", "WITH")
+			case DialectMySQL:
+				assertContains(t, sqlDeleteQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) DELETE `t` FROM `test` AS `t` WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "WITH")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDeleteQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) DELETE FROM "test" AS "t" WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou"`, "WITH")
+			case DialectSQLite:
+				assertContains(t, sqlDeleteQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) DELETE FROM "test" AS "t" WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou")`, "WITH")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+		})
+	})
 }
 func Test_SQL_Drop(t *testing.T) {
 	t.Run("Cascade", func(t *testing.T) {
@@ -2264,6 +2351,102 @@ func Test_SQL_Update(t *testing.T) {
 				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2`, "UPDATE")
 			case DialectSQLite:
 				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?`, "UPDATE")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
+		})
+	})
+	t.Run("Join", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtUpdate := NewUpdate(Test.Table).
+				Set(
+					Assign(Test.Column.String, Value("active")),
+				).
+				Join(
+					Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				).
+				Where(
+					Equal(Data.Column.String, Value("active")),
+				)
+			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`string` = ? WHERE `d`.`string` = ?", "UPDATE JOIN")
+			case DialectMsSQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] SET [t].[string] = @p1 WHERE [d].[string] = @p2", "UPDATE JOIN")
+			case DialectMySQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`string` = ? WHERE `d`.`string` = ?", "UPDATE JOIN")
+			case DialectPostgreSQL:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."string" = $1 WHERE "d"."string" = $2`, "UPDATE JOIN")
+			case DialectSQLite:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."string" = ? WHERE "d"."string" = ?`, "UPDATE JOIN")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
+		})
+	})
+	t.Run("Returning", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtUpdate := NewUpdate(Test.Table).
+				Set(
+					Assign(Test.Column.String, Value("active")),
+				).
+				Where(
+					Equal(Test.Column.Number, Value(2)),
+				).
+				Returning(
+					Test.Column.ID,
+					Test.Column.String,
+				)
+			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ? RETURNING `t`.`id`, `t`.`string`", "UPDATE RETURNING")
+			case DialectMsSQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE [test] AS [t] OUTPUT [t].[id], [t].[string] SET [t].[string] = @p1 WHERE [t].[number] = @p2", "UPDATE RETURNING")
+			case DialectMySQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?", "UPDATE WITHOUT RETURNING")
+			case DialectPostgreSQL:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"."id", "t"."string"`, "UPDATE RETURNING")
+			case DialectSQLite:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ? RETURNING "t"."id", "t"."string"`, "UPDATE RETURNING")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
+		})
+	})
+	t.Run("With", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			cte := WithN("old_users", NewSelect(Test.Table).
+				Field(Test.Column.ID).
+				Where(Less(Test.Column.Number, Value(2))),
+			)
+			stmtUpdate := NewUpdate(Test.Table).
+				Set(
+					Assign(Test.Column.String, Value("updated")),
+				).
+				Where(
+					In(Test.Column.ID, Subquery[int64](
+						NewSelect(NewCTE("old_users", "ou")).
+							Field(Column[int64]("ou", "id")),
+					)),
+				).
+				With(cte)
+			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlUpdateQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "WITH")
+			case DialectMsSQL:
+				assertContains(t, sqlUpdateQuery, "WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) UPDATE [test] AS [t] SET [t].[string] = @p2 WHERE [t].[id] IN (SELECT [ou].[id] FROM [old_users] AS [ou])", "WITH")
+			case DialectMySQL:
+				assertContains(t, sqlUpdateQuery, "WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`id` IN (SELECT `ou`.`id` FROM `old_users` AS `ou`)", "WITH")
+			case DialectPostgreSQL:
+				assertContains(t, sqlUpdateQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) UPDATE "test" AS "t" SET "t"."string" = $2 WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou")`, "WITH")
+			case DialectSQLite:
+				assertContains(t, sqlUpdateQuery, `WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."id" IN (SELECT "ou"."id" FROM "old_users" AS "ou")`, "WITH")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 		})

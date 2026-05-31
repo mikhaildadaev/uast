@@ -637,7 +637,7 @@ func (renderer *baseRenderer) renderValues(values *clauseValues) error {
 		}
 	}
 	renderer.renderOperator(uastCompositeParenRight)
-	if values.upsert != nil {
+	if values.upsert != nil && renderer.config.supportUpsert {
 		values.upsert.render(renderer)
 	}
 	return nil

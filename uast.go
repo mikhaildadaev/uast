@@ -455,6 +455,7 @@ type config struct {
 	supportIfExists        map[string]bool
 	supportRestartIdentity bool
 	supportReturning       bool
+	supportUpsert          bool
 }
 type casePair[T typeScalar] struct {
 	then ExpressionSafe[T]

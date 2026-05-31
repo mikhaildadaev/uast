@@ -142,7 +142,7 @@ var listFunctionsPostgresql = map[functionService]functionTransform{
 	uastFunctionDayName:   postgresqlFunctionDayName,
 	uastFunctionHour:      postgresqlFunctionHour,
 	uastFunctionMinute:    postgresqlFunctionMinute,
-	uastFunctionMonth:     postgresqlFunctionMounth,
+	uastFunctionMonth:     postgresqlFunctionMonth,
 	uastFunctionMonthName: postgresqlFunctionMonthName,
 	uastFunctionNow:       postgresqlFunctionNow,
 	uastFunctionQuarter:   postgresqlFunctionQuarter,
@@ -371,7 +371,7 @@ func postgresqlFunctionMinute(baseTransformer *baseTransformer, expr transformFu
 	function.service = uastPostgresqlFunctionMinute
 	return nil
 }
-func postgresqlFunctionMounth(baseTransformer *baseTransformer, expr transformFunction) error {
+func postgresqlFunctionMonth(baseTransformer *baseTransformer, expr transformFunction) error {
 	function, exists := expr.(*exprFunction[time.Time, string, int])
 	if !exists {
 		return ErrUntransformFunction

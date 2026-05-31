@@ -35,6 +35,7 @@ var DialectPostgreSQL = &SupportDialect{
 			"VIEW":   true,
 		},
 		supportRestartIdentity: true,
+		supportReturning:       true,
 	},
 	name:      "PostgreSQL",
 	strateger: &postgresqlStrateger{},

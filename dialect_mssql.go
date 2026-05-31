@@ -36,6 +36,7 @@ var DialectMsSQL = &SupportDialect{
 			"VIEW":   true,
 		},
 		supportRestartIdentity: false,
+		supportReturning:       true,
 	},
 	name:      "MsSQL",
 	strateger: &mssqlStrateger{},
@@ -657,13 +658,13 @@ func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDe
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderReturning(stmtDelete.returning); err != nil {
+		return err
+	}
 	if err := baseRenderer.renderJoin(stmtDelete.join); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderWhere(stmtDelete.where); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderReturning(stmtDelete.returning); err != nil {
 		return err
 	}
 	return nil
@@ -693,13 +694,13 @@ func (strateger *mssqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 	if err := baseRenderer.renderColumns(stmtInsert.columns); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderReturning(stmtInsert.returning); err != nil {
+		return err
+	}
 	if err := baseRenderer.renderSource(stmtInsert.source); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderValues(stmtInsert.values); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderReturning(stmtInsert.returning); err != nil {
 		return err
 	}
 	return nil
@@ -768,6 +769,9 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	if err := baseRenderer.renderOnto(stmtUpdate.onto); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderReturning(stmtUpdate.returning); err != nil {
+		return err
+	}
 	if err := baseRenderer.renderJoin(stmtUpdate.join); err != nil {
 		return err
 	}
@@ -775,9 +779,6 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 		return err
 	}
 	if err := baseRenderer.renderWhere(stmtUpdate.where); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderReturning(stmtUpdate.returning); err != nil {
 		return err
 	}
 	return nil
@@ -856,10 +857,10 @@ func (strateger *mssqlStrateger) validateDelete(baseValidator *baseValidator, st
 	if err := baseValidator.validateFrom(stmtDelete.from); err != nil {
 		return err
 	}
-	if err := baseValidator.validateJoin(stmtDelete.join); err != nil {
+	if err := baseValidator.validateReturning(stmtDelete.returning); err != nil {
 		return err
 	}
-	if err := baseValidator.validateReturning(stmtDelete.returning); err != nil {
+	if err := baseValidator.validateJoin(stmtDelete.join); err != nil {
 		return err
 	}
 	if err := baseValidator.validateWhere(stmtDelete.where); err != nil {
@@ -943,13 +944,13 @@ func (strateger *mssqlStrateger) validateUpdate(baseValidator *baseValidator, st
 	if err := baseValidator.validateOnto(stmtUpdate.onto); err != nil {
 		return err
 	}
+	if err := baseValidator.validateReturning(stmtUpdate.returning); err != nil {
+		return err
+	}
 	if err := baseValidator.validateJoin(stmtUpdate.join); err != nil {
 		return err
 	}
 	if err := baseValidator.validateSet(stmtUpdate.set); err != nil {
-		return err
-	}
-	if err := baseValidator.validateReturning(stmtUpdate.returning); err != nil {
 		return err
 	}
 	if err := baseValidator.validateWhere(stmtUpdate.where); err != nil {

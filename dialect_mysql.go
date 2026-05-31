@@ -35,6 +35,7 @@ var DialectMySQL = &SupportDialect{
 			"VIEW":   true,
 		},
 		supportRestartIdentity: false,
+		supportReturning:       false,
 	},
 	name:      "MySQL",
 	strateger: &mysqlStrateger{},
@@ -462,6 +463,9 @@ func (strateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDe
 	if err := baseRenderer.renderWhere(stmtDelete.where); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderReturning(stmtDelete.returning); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error {
@@ -493,6 +497,9 @@ func (strateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 		return err
 	}
 	if err := baseRenderer.renderValues(stmtInsert.values); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderReturning(stmtInsert.returning); err != nil {
 		return err
 	}
 	return nil
@@ -570,6 +577,9 @@ func (strateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	if err := baseRenderer.renderWhere(stmtUpdate.where); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderReturning(stmtUpdate.returning); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
@@ -645,6 +655,9 @@ func (strateger *mysqlStrateger) validateDelete(baseValidator *baseValidator, st
 	if err := baseValidator.validateWhere(stmtDelete.where); err != nil {
 		return err
 	}
+	if err := baseValidator.validateReturning(stmtDelete.returning); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error {
@@ -670,6 +683,9 @@ func (strateger *mysqlStrateger) validateInsert(baseValidator *baseValidator, st
 		return err
 	}
 	if err := baseValidator.validateValues(stmtInsert.values); err != nil {
+		return err
+	}
+	if err := baseValidator.validateReturning(stmtInsert.returning); err != nil {
 		return err
 	}
 	return nil
@@ -727,6 +743,9 @@ func (strateger *mysqlStrateger) validateUpdate(baseValidator *baseValidator, st
 		return err
 	}
 	if err := baseValidator.validateWhere(stmtUpdate.where); err != nil {
+		return err
+	}
+	if err := baseValidator.validateReturning(stmtUpdate.returning); err != nil {
 		return err
 	}
 	return nil

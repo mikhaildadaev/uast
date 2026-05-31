@@ -35,6 +35,7 @@ var DialectMariaDB = &SupportDialect{
 			"VIEW":   true,
 		},
 		supportRestartIdentity: true,
+		supportReturning:       true,
 	},
 	name:      "MariaDB",
 	strateger: &mariadbStrateger{},

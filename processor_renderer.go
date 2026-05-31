@@ -511,7 +511,7 @@ func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error 
 	return nil
 }
 func (renderer *baseRenderer) renderReturning(returnings *clauseReturning) error {
-	if returnings == nil {
+	if returnings == nil || !renderer.config.supportReturning {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)

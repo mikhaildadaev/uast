@@ -37,6 +37,7 @@ var DialectMsSQL = &SupportDialect{
 		},
 		supportRestartIdentity: false,
 		supportReturning:       true,
+		supportUpsert:          false,
 	},
 	name:      "MsSQL",
 	strateger: &mssqlStrateger{},

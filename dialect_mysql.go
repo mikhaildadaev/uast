@@ -36,6 +36,7 @@ var DialectMySQL = &SupportDialect{
 		},
 		supportRestartIdentity: false,
 		supportReturning:       false,
+		supportUpsert:          true,
 	},
 	name:      "MySQL",
 	strateger: &mysqlStrateger{},

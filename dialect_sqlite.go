@@ -36,6 +36,7 @@ var DialectSQLite = &SupportDialect{
 		},
 		supportRestartIdentity: false,
 		supportReturning:       true,
+		supportUpsert:          true,
 	},
 	name:      "SQLite",
 	strateger: &sqliteStrateger{},

@@ -36,6 +36,7 @@ var DialectPostgreSQL = &SupportDialect{
 		},
 		supportRestartIdentity: true,
 		supportReturning:       true,
+		supportUpsert:          true,
 	},
 	name:      "PostgreSQL",
 	strateger: &postgresqlStrateger{},

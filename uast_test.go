@@ -2337,6 +2337,194 @@ func Test_SQL_Select(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 		})
 	})
+	t.Run("GroupBy", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(
+					Test.Column.String,
+					Count(Test.Column.ID, false).As("cnt"),
+				).
+				GroupBy(
+					Test.Column.String,
+				)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`", "SELECT GROUP BY")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string]", "SELECT GROUP BY")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`", "SELECT GROUP BY")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"`, "SELECT GROUP BY")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"`, "SELECT GROUP BY")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
+	t.Run("Having", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(
+					Test.Column.String,
+					Count(Test.Column.ID, false).As("cnt"),
+				).
+				GroupBy(Test.Column.String).
+				Having(
+					Greater(Count(Test.Column.ID, false), Value[int64](2)),
+				)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?", "SELECT HAVING")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string] HAVING COUNT([t].[id]) > @p1", "SELECT HAVING")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?", "SELECT HAVING")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > $1`, "SELECT HAVING")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > ?`, "SELECT HAVING")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
+	t.Run("Join", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(
+					Test.Column.ID,
+					Data.Column.String,
+				).
+				Join(
+					Inner(Data.Table, Equal(Test.Column.ID, Data.Column.ID)),
+				)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`", "SELECT JOIN")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[id], [d].[string] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id]", "SELECT JOIN")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`", "SELECT JOIN")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"`, "SELECT JOIN")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"`, "SELECT JOIN")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
+	t.Run("OrderBy", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(Test.Column.ID).
+				OrderBy(
+					Desc(Test.Column.Number),
+					Asc(Test.Column.String),
+				)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC", "SELECT ORDER BY")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[id] FROM [test] AS [t] ORDER BY [t].[number] DESC, [t].[string] ASC", "SELECT ORDER BY")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC", "SELECT ORDER BY")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC`, "SELECT ORDER BY")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC`, "SELECT ORDER BY")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
+	t.Run("Pagination", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(Test.Column.ID).
+				Pagination(10, 20)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?", "SELECT PAGINATION")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[id] FROM [test] AS [t] OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY", "SELECT PAGINATION")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?", "SELECT PAGINATION")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" LIMIT $1 OFFSET $2`, "SELECT PAGINATION")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" LIMIT ? OFFSET ?`, "SELECT PAGINATION")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
+	t.Run("Unions", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(Test.Column.String).
+				Unions(
+					UnionAll(NewSelect(Data.Table).
+						Field(Data.Column.String),
+					),
+				)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`", "SELECT UNION ALL")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[string] FROM [test] AS [t] UNION ALL SELECT [d].[string] FROM [data] AS [d]", "SELECT UNION ALL")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`", "SELECT UNION ALL")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"`, "SELECT UNION ALL")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"`, "SELECT UNION ALL")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
+	t.Run("With", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			cte := WithN("cte_test", NewSelect(Test.Table).
+				Field(Test.Column.ID).
+				Where(Greater(Test.Column.Number, Value(2))),
+			)
+			stmtSelect := NewSelect(NewCTE("cte_test", "ct")).
+				Field(Column[int64]("ct", "id")).
+				With(cte)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`", "SELECT WITH")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "WITH [cte_test] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] > @p1) SELECT [ct].[id] FROM [cte_test] AS [ct]", "SELECT WITH")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`", "SELECT WITH")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > $1) SELECT "ct"."id" FROM "cte_test" AS "ct"`, "SELECT WITH")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > ?) SELECT "ct"."id" FROM "cte_test" AS "ct"`, "SELECT WITH")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
 }
 func Test_SQL_Truncate(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {

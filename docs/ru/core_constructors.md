@@ -267,31 +267,143 @@ stmtSelectField := uast.NewSelect(uast.NewTable("test", "t")).
     Where(
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
+stmtSelectGroupBy := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[string]("t", "string"),
+		uast.Count(uast.Column[int64]("t", "id"), false).As("cnt"),
+	).
+	GroupBy(
+		uast.Column[string]("t", "string"),
+	)
+stmtSelectHaving := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[string]("t", "string"),
+		uast.Count(uast.Column[int64]("t", "id"), false).As("cnt"),
+	).
+	GroupBy(
+        uast.Column[string]("t", "string"),
+    ).
+	Having(
+		uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
+	)
+stmtSelectJoin := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+		uast.Column[string]("d", "string"),
+	).
+	Join(
+		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
+	)
+stmtSelectOrderBy := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+	).
+	OrderBy(
+		uast.Desc(uast.Column[int]("t", "number")),
+		uast.Asc(uast.Column[string]("t", "string")),
+	)
+stmtSelectPagination := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+	).
+	Pagination(10, 20)
+stmtSelectUnions := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	).
+	Unions(
+		uast.UnionAll(uast.NewSelect(uast.NewTable("data", "d")).
+			Field(
+				uast.Column[string]("d", "string"),
+			),
+		),
+	)
+stmtSelectWhere := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+	).
+	Where(
+		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+	)
+stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_test", "ct")).
+	Field(
+		uast.Column[int64]("ct", "id"),
+	).
+	With(
+		uast.WithN("cte_test", NewSelect(uast.NewTable("test", "t")).
+			Field(
+                uast.Column[int64]("t", "id"),
+            ).
+			Where(
+                uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+            ),
+		),
+	)
 ```
 Output MariaDB:
 ```text
 SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
+SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`
+SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC
+SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?
+SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
 Output MsSQL:
 ```text
 SELECT DISTINCT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
 SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
+SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string]
+SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string] HAVING COUNT([t].[id]) > @p1
+SELECT [t].[id], [d].[string] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id]
+SELECT [t].[id] FROM [test] AS [t] ORDER BY [t].[number] DESC, [t].[string] ASC
+SELECT [t].[id] FROM [test] AS [t] ORDER BY 1 ASC OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY
+SELECT [t].[string] FROM [test] AS [t] UNION ALL SELECT [d].[string] FROM [data] AS [d]
+SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
+WITH [cte_test] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] > @p1) SELECT [ct].[id] FROM [cte_test] AS [ct]
 ```
 Output MySQL:
 ```text
 SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
+SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`
+SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC
+SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?
+SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
 Output PostgreSQL:
 ```text
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
 SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > $1
+SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"
+SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC
+SELECT "t"."id" FROM "test" AS "t" LIMIT $1 OFFSET $2
+SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
+WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > $1) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
 Output SQLite:
 ```text
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > ?
+SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"
+SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC
+SELECT "t"."id" FROM "test" AS "t" LIMIT ? OFFSET ?
+SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
+WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > ?) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
 
 ## NewTruncate

@@ -267,6 +267,78 @@ stmtSelectField := uast.NewSelect(uast.NewTable("test", "t")).
     Where(
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
+stmtSelectGroupBy := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[string]("t", "string"),
+		uast.Count(uast.Column[int64]("t", "id"), false).As("cnt"),
+	).
+	GroupBy(
+		uast.Column[string]("t", "string"),
+	)
+stmtSelectHaving := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[string]("t", "string"),
+		uast.Count(uast.Column[int64]("t", "id"), false).As("cnt"),
+	).
+	GroupBy(
+        uast.Column[string]("t", "string"),
+    ).
+	Having(
+		uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
+	)
+stmtSelectJoin := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+		uast.Column[string]("d", "string"),
+	).
+	Join(
+		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
+	)
+stmtSelectOrderBy := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+	).
+	OrderBy(
+		uast.Desc(uast.Column[int]("t", "number")),
+		uast.Asc(uast.Column[string]("t", "string")),
+	)
+stmtSelectPagination := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+	).
+	Pagination(10, 20)
+stmtSelectUnions := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[string]("t", "string"),
+	).
+	Unions(
+		uast.UnionAll(uast.NewSelect(uast.NewTable("data", "d")).
+			Field(
+				uast.Column[string]("d", "string"),
+			),
+		),
+	)
+stmtSelectWhere := uast.NewSelect(uast.NewTable("test", "t")).
+	Field(
+		uast.Column[int64]("t", "id"),
+	).
+	Where(
+		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+	)
+stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_test", "ct")).
+	Field(
+		uast.Column[int64]("ct", "id"),
+	).
+	With(
+		uast.WithN("cte_test", NewSelect(uast.NewTable("test", "t")).
+			Field(
+                uast.Column[int64]("t", "id"),
+            ).
+			Where(
+                uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+            ),
+		),
+	)
 ```
 Output MariaDB:
 ```text

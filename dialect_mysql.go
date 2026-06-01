@@ -456,6 +456,12 @@ func (strateger *mysqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderReplace(stmtCreate.replace); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderUnique(stmtCreate.unique); err != nil {
+		return err
+	}
 	if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 		return err
 	}

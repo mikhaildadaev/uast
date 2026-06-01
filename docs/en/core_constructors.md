@@ -272,26 +272,66 @@ Output MariaDB:
 ```text
 SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
+SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`
+SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC
+SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?
+SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
 Output MsSQL:
 ```text
 SELECT DISTINCT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
 SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
+SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string]
+SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string] HAVING COUNT([t].[id]) > @p1
+SELECT [t].[id], [d].[string] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id]
+SELECT [t].[id] FROM [test] AS [t] ORDER BY [t].[number] DESC, [t].[string] ASC
+SELECT [t].[id] FROM [test] AS [t] ORDER BY 1 ASC OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY
+SELECT [t].[string] FROM [test] AS [t] UNION ALL SELECT [d].[string] FROM [data] AS [d]
+SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
+WITH [cte_test] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] > @p1) SELECT [ct].[id] FROM [cte_test] AS [ct]
 ```
 Output MySQL:
 ```text
 SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`
+SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
+SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`
+SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC
+SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?
+SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
 Output PostgreSQL:
 ```text
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
 SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > $1
+SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"
+SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC
+SELECT "t"."id" FROM "test" AS "t" LIMIT $1 OFFSET $2
+SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
+WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > $1) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
 Output SQLite:
 ```text
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"
+SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > ?
+SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"
+SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC
+SELECT "t"."id" FROM "test" AS "t" LIMIT ? OFFSET ?
+SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
+WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > ?) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
 
 ## NewTruncate

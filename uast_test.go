@@ -2460,7 +2460,7 @@ func Test_SQL_Select(t *testing.T) {
 			case DialectMariaDB:
 				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?", "SELECT PAGINATION")
 			case DialectMsSQL:
-				assertContains(t, sqlSelectQuery, "SELECT [t].[id] FROM [test] AS [t] OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY", "SELECT PAGINATION")
+				assertContains(t, sqlSelectQuery, "SELECT [t].[id] FROM [test] AS [t] ORDER BY 1 ASC OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY", "SELECT PAGINATION")
 			case DialectMySQL:
 				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?", "SELECT PAGINATION")
 			case DialectPostgreSQL:

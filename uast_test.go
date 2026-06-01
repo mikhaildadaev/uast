@@ -2476,6 +2476,35 @@ func Test_SQL_Select(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 		})
 	})
+	t.Run("Where", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(
+					Test.Column.ID,
+				).
+				Where(
+					Equal(Test.Column.Number, Value(2)),
+				)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?", "SELECT")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1", "SELECT")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?", "SELECT")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1`, "SELECT")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?`, "SELECT")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
 	t.Run("With", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))

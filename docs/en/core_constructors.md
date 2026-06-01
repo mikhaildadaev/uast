@@ -45,10 +45,6 @@ COMMENT ON TABLE "test" AS "t" IS 'Test comment'
 ## NewDelete
 Creates a new DELETE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Where`, `With`.
 ```go
-stmtDeleteDefault := uast.NewDelete(uast.NewTable("test", "t")).
-    Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    )
 stmtDeleteJoin := uast.NewDelete(uast.NewTable("test", "t")).
     Join(
 		Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
@@ -64,36 +60,40 @@ stmtDeleteReturning := uast.NewDelete(uast.NewTable("test", "t")).
 		uast.Column[int64]("t", "id"),
 		uast.Column[string]("t", "string"),
 	)
+stmtDeleteWhere := uast.NewDelete(uast.NewTable("test", "t")).
+    Where(
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    )
 ```
 Output MariaDB:
 ```text
-DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ? RETURNING `t`.`id`, `t`.`string`
+DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output MsSQL:
 ```text
-DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1
 DELETE [t] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] WHERE [t].[string] = @p1
 DELETE [t] FROM [test] AS [t] OUTPUT [t].[id], [t].[string] WHERE [t].[string] = @p1
+DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1
 ```
 Output MySQL:
 ```text
-DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
+DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 DELETE FROM "test" AS "t" USING "data" AS "d" WHERE ("t"."id" = "d"."id" AND "t"."string" = $1)
 DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id", "t"."string"
+DELETE FROM "test" AS "t" WHERE "t"."string" = $1
 ```
 Output SQLite:
 ```text
-DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 DELETE FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" WHERE "t"."string" = ?
 DELETE FROM "test" AS "t" WHERE "t"."string" = ? RETURNING "t"."id", "t"."string"
+DELETE FROM "test" AS "t" WHERE "t"."string" = ?
 ```
 
 ## NewDrop
@@ -101,13 +101,13 @@ Creates a new DROP statement instance. Accepts a `Index/Schema/Table/View` sourc
 ```go
 stmtDropCascade := uast.NewDrop(uast.NewTable("test", "t")).
     Cascade()
-stmtDropIndexIfExists := uast.NewDrop(uast.NewIndex("test")).
+stmtDropIfExistsIndex := uast.NewDrop(uast.NewIndex("test")).
     IfExists()
-stmtDropSchemaIfExists := uast.NewDrop(uast.NewSchema("test")).
+stmtDropIfExistsSchema := uast.NewDrop(uast.NewSchema("test")).
     IfExists()
-stmtDropTableIfExists := uast.NewDrop(uast.NewTable("test", "t")).
+stmtDropIfExistsTable := uast.NewDrop(uast.NewTable("test", "t")).
     IfExists()
-stmtDropViewIfExists := uast.NewDrop(uast.NewView("test", "t")).
+stmtDropIfExistsView := uast.NewDrop(uast.NewView("test", "t")).
     IfExists()
 ```
 Output MariaDB:
@@ -154,10 +154,14 @@ DROP VIEW IF EXISTS "test"
 ## NewInsert
 Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source/Values`, `With`.
 ```go
-stmtInsertDefault := uast.NewInsert(uast.NewTable("test", "t")).
+stmtInsertReturning := uast.NewInsert(uast.NewTable("test", "t")).
     Values(
 		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
 		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+	).
+	Returning(
+		uast.Column[int64]("t", "id"),
+		uast.Column[string]("t", "string"),
 	)
 stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
 	Source(NewSelect(uast.NewTable("test", "t")).
@@ -169,43 +173,59 @@ stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
 			uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
 		),
 	)
+stmtInsertUpsert := NewInsert(Test.Table).
+	Values(
+		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+	).
+	Upsert(
+		uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
+	)
+stmtInsertValues := uast.NewInsert(uast.NewTable("test", "t")).
+    Values(
+		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+	)
 ```
 Output MariaDB:
 ```text
-INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) RETURNING `t`.`id`, `t`.`string`
 INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
 Output MsSQL:
 ```text
-INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
+INSERT INTO [test] AS [t] ([string], [number]) OUTPUT [t].[id], [t].[string] VALUES (@p1, @p2)
 INSERT INTO [test] AS [t] ([string], [number]) SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1
+INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
+INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
 ```
 Output MySQL:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
+INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
 Output PostgreSQL:
 ```text
-INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
+INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) RETURNING "t"."id", "t"."string"
 INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1
+INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3
+INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
 ```
 Output SQLite:
 ```text
-INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
+INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) RETURNING "t"."id", "t"."string"
 INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?
+INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
+INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
 ```
 
 ## NewSelect
-Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
+Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `Field`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
 ```go
-stmtSelectDefault := uast.NewSelect(uast.NewTable("test", "t")).
-    Field(
-        uast.Column[int64]("t", "id"),
-    ).
-    Where(
-		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
-	)
 stmtSelectDistinct := uast.NewSelect(uast.NewTable("test", "t")).
     Distinct().
     Field(
@@ -214,31 +234,38 @@ stmtSelectDistinct := uast.NewSelect(uast.NewTable("test", "t")).
     Where(
 		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
 	)
+stmtSelectField := uast.NewSelect(uast.NewTable("test", "t")).
+    Field(
+        uast.Column[int64]("t", "id"),
+    ).
+    Where(
+		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+	)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 ```
 Output MsSQL:
 ```text
-SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
 SELECT DISTINCT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
+SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
 ```
 Output MySQL:
 ```text
-SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
+SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
 ```
 Output SQLite:
 ```text
-SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
+SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
 ```
 
 ## NewTruncate
@@ -285,9 +312,37 @@ TRUNCATE TABLE "test"
 ## NewUpdate
 Creates a new UPDATE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go
-stmtUpdateDefault := uast.NewUpdate(uast.NewTable("test", "t")).
+stmtUpdateJoin := uast.NewUpdate(uast.NewTable("test", "t")).
+    Join(
+		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
+    ).
     Set(
-        Pair(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+    ).
+    Where(
+        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+    ).
+stmtUpdateReturning := uast.NewUpdate(uast.NewTable("test", "t")).
+    Set(
+        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+    ).
+    Where(
+        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+    ).
+    Returning(
+        uast.Column[int64]("t", "id"),
+        uast.Column[string]("t", "string")
+    )
+stmtUpdateSet := uast.NewUpdate(uast.NewTable("test", "t")).
+    Set(
+        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+    ).
+    Where(
+        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+    )
+stmtUpdateWhere := uast.NewUpdate(uast.NewTable("test", "t")).
+    Set(
+        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
     ).
     Where(
         uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
@@ -295,21 +350,37 @@ stmtUpdateDefault := uast.NewUpdate(uast.NewTable("test", "t")).
 ```
 Output MariaDB:
 ```text
+UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`string` = ? WHERE `d`.`string` = ?
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ? RETURNING `t`.`id`, `t`.`string`
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
+
 ```
 Output MsSQL:
 ```text
+UPDATE [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] SET [t].[string] = @p1 WHERE [d].[string] = @p2
+UPDATE [test] AS [t] OUTPUT [t].[id], [t].[string] SET [t].[string] = @p1 WHERE [t].[number] = @p2
+UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2
 UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2
 ```
 Output MySQL:
 ```text
+UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`string` = ? WHERE `d`.`string` = ?
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
+UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
+UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."string" = $1 WHERE "d"."string" = $2
+UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"."id", "t"."string"
+UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 ```
 Output SQLite:
 ```text
+UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."string" = ? WHERE "d"."string" = ?
+UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ? RETURNING "t"."id", "t"."string"
+UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
 UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
 ```

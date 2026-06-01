@@ -295,7 +295,7 @@ func (renderer *baseRenderer) renderEntity(entity EntityTarget, ifExists bool) e
 			renderer.renderIfExists(ifExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
-		e.render(renderer)
+		renderer.renderName(e.Name())
 	case *targetView:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierView)
@@ -303,7 +303,7 @@ func (renderer *baseRenderer) renderEntity(entity EntityTarget, ifExists bool) e
 			renderer.renderIfExists(ifExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
-		e.TableSource.render(renderer)
+		renderer.renderName(e.Name())
 	default:
 		return ErrInvalidStatement
 	}

@@ -21,7 +21,7 @@ func newTransformer(config *config, contexter *contexter, strateger strateger) *
 }
 
 // Приватные методы
-func (transformer *baseTransformer) transformColumns(fields []markExpressable, columns *[]string) error {
+func (transformer *baseTransformer) transformColumn(fields []markExpressable, columns *[]string) error {
 	*columns = make([]string, 0, len(fields))
 	for _, field := range fields {
 		if column, ok := field.(transformColumn); ok {

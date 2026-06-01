@@ -69,11 +69,11 @@ type transformer interface {
 	statementTransformer
 }
 type elementTransformer interface {
+	transformColumn(fields []markExpressable, columns *[]string) error
 	transformComparison() error
 	transformFunction() error
 }
 type componentTransformer interface {
-	transformFields(fields []markExpressable, columns *[]string) error
 }
 type statementTransformer interface {
 	// DDL

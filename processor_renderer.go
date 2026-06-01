@@ -374,6 +374,13 @@ func (renderer *baseRenderer) renderIfExists(ifExists bool) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderIfNotExists(ifNotExists bool) error {
+	if ifNotExists {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierIfNotExists)
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderInto(into SourceBase) error {
 	if into == nil {
 		return nil
@@ -503,6 +510,13 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderReplace(replace bool) error {
+	if replace {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierReplace)
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error {
 	if restartIdentity && renderer.config.supportRestartIdentity {
 		renderer.renderOperator(uastCompositeSingleSpace)
@@ -600,6 +614,13 @@ func (renderer *baseRenderer) renderUnions(unions []*clauseUnions) error {
 		if i < unionsCount {
 			renderer.renderOperator(uastCompositeSingleSpace)
 		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderUnique(unique bool) error {
+	if unique {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierUnique)
 	}
 	return nil
 }

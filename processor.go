@@ -27,6 +27,7 @@ type componentRenderer interface {
 	renderGroupBy(groups []markGroupable) error
 	renderHaving(having ExpressionBase) error
 	renderIfExists(ifExists bool) error
+	renderIfNotExists(ifNotExists bool) error
 	renderInto(into SourceBase) error
 	renderJoin(joins []*clauseJoin) error
 	renderOnColumn(column markExpressable, comment string) error
@@ -34,6 +35,7 @@ type componentRenderer interface {
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
+	renderReplace(replace bool) error
 	renderRestartIdentity(restartIdentity bool) error
 	renderReturning(returnings *clauseReturning) error
 	renderSet(sets []*clauseSet) error
@@ -41,6 +43,7 @@ type componentRenderer interface {
 	renderTable(table *TableSource) error
 	renderTarget(source SourceBase) error
 	renderUnions(unions []*clauseUnions) error
+	renderUnique(unique bool) error
 	renderUsing(joins []*clauseJoin) error
 	renderValues(values *clauseValues) error
 	renderWhere(where ExpressionBase) error
@@ -49,6 +52,7 @@ type componentRenderer interface {
 type statementRenderer interface {
 	// DDL
 	renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error
+	renderCreate(baseRenderer *baseRenderer, stmtCreate *stmtCreate) error
 	renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error
 	renderTruncate(baseRenderer *baseRenderer, stmtTruncate *stmtTruncate) error
 	// DML
@@ -71,6 +75,7 @@ type componentTransformer interface {
 type statementTransformer interface {
 	// DDL
 	transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error
+	transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error
 	transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error
 	transformTruncate(baseTransformer *baseTransformer, stmtTruncate *stmtTruncate) error
 	// DML
@@ -123,6 +128,7 @@ type componentValidator interface {
 type statementValidator interface {
 	// DDL
 	validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error
+	validateCreate(baseValidator *baseValidator, stmtCreate *stmtCreate) error
 	validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error
 	validateTruncate(baseValidator *baseValidator, stmtTruncate *stmtTruncate) error
 	// DML

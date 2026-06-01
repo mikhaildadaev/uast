@@ -814,7 +814,7 @@ func (strateger *mssqlStrateger) transformComment(baseTransformer *baseTransform
 }
 func (strateger *mssqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	if err := baseTransformer.transformColumns(stmtCreate.fields, &stmtCreate.columns); err != nil {
+	if err := baseTransformer.transformColumn(stmtCreate.fields, &stmtCreate.columns); err != nil {
 		return err
 	}
 	return nil

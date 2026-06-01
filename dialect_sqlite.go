@@ -668,7 +668,7 @@ func (strateger *sqliteStrateger) transformComment(baseTransformer *baseTransfor
 }
 func (strateger *sqliteStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	if err := baseTransformer.transformColumns(stmtCreate.fields, &stmtCreate.columns); err != nil {
+	if err := baseTransformer.transformColumn(stmtCreate.fields, &stmtCreate.columns); err != nil {
 		return err
 	}
 	return nil

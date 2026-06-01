@@ -29,7 +29,7 @@ var DialectMySQL = &SupportDialect{
 		symbolQuoteRight:     "`",
 		supportCascade:       false,
 		supportIfExists: map[string]bool{
-			"INDEX":  false,
+			"INDEX":  true,
 			"SCHEMA": false,
 			"TABLE":  true,
 			"VIEW":   true,

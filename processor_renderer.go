@@ -270,40 +270,40 @@ func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (renderer *baseRenderer) renderEntity(entity EntityTarget, ifExists bool) error {
+func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool) error {
 	switch e := entity.(type) {
-	case *targetIndex:
+	case *sourceIndex:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierIndex)
 		if renderer.config.supportIfExists["INDEX"] {
 			renderer.renderIfExists(ifExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.Name())
-	case *targetSchema:
+		renderer.renderName(e.name())
+	case *sourceSchema:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierSchema)
 		if renderer.config.supportIfExists["SCHEMA"] {
 			renderer.renderIfExists(ifExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.Name())
-	case *targetTable:
+		renderer.renderName(e.name())
+	case *sourceTable:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierTable)
 		if renderer.config.supportIfExists["TABLE"] {
 			renderer.renderIfExists(ifExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.Name())
-	case *targetView:
+		renderer.renderName(e.name())
+	case *sourceView:
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierView)
 		if renderer.config.supportIfExists["VIEW"] {
 			renderer.renderIfExists(ifExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.Name())
+		renderer.renderName(e.name())
 	default:
 		return ErrInvalidStatement
 	}

@@ -342,19 +342,19 @@ func (validator *baseValidator) validateColumns(columns []markExpressable) error
 func (validator *baseValidator) validateCommand(command managementService) error {
 	return nil
 }
-func (validator *baseValidator) validateEntity(entity EntityTarget) error {
+func (validator *baseValidator) validateEntity(entity SourceBase) error {
 	if entity == nil {
 		return ErrInvalidStatement
 	}
 	switch e := entity.(type) {
-	case *targetIndex:
-		return validator.validateName(e.Name())
-	case *targetSchema:
-		return validator.validateName(e.Name())
-	case *targetTable:
+	case *sourceIndex:
 		return e.validate(validator)
-	case *targetView:
-		return e.TableSource.validate(validator)
+	case *sourceSchema:
+		return e.validate(validator)
+	case *sourceTable:
+		return e.validate(validator)
+	case *sourceView:
+		return e.validate(validator)
 	default:
 		return ErrInvalidStatement
 	}

@@ -445,17 +445,23 @@ func (renderer *baseRenderer) renderOnColumn(column markExpressable) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderOnFields(table *TableSource, fields []markExpressable) error {
-	if table == nil || len(fields) == 0 {
+func (renderer *baseRenderer) renderOnColumns(table *TableSource, columns []string) error {
+	if table == nil || len(columns) == 0 {
 		return nil
 	}
+	columnsCount := len(columns) - 1
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierOn)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderName(table.name())
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
-	//
+	for i, column := range columns {
+		renderer.renderName(column)
+		if i < columnsCount {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }

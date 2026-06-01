@@ -21,6 +21,17 @@ func newTransformer(config *config, contexter *contexter, strateger strateger) *
 }
 
 // Приватные методы
+func (transformer *baseTransformer) transformColumns(fields []markExpressable, columns *[]string) error {
+	*columns = make([]string, 0, len(fields))
+	for _, field := range fields {
+		if column, ok := field.(transformColumn); ok {
+			*columns = append(*columns, column.transformGetName())
+		} else {
+			return ErrInvalidStatement
+		}
+	}
+	return nil
+}
 func (transformer *baseTransformer) transformComparison() error {
 	for _, expr := range transformer.contexter.collectionComparison {
 		if dialectComparison, exists := transformer.config.listComparisons[expr.transformGetOperator()]; exists {

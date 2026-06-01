@@ -73,6 +73,7 @@ type elementTransformer interface {
 	transformFunction() error
 }
 type componentTransformer interface {
+	transformFields(fields []markExpressable, columns *[]string) error
 }
 type statementTransformer interface {
 	// DDL

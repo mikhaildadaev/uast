@@ -523,7 +523,7 @@ func (strateger *sqliteStrateger) renderCreate(baseRenderer *baseRenderer, stmtC
 	if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnTable(stmtCreate.table); err != nil {
+	if err := baseRenderer.renderOnFields(stmtCreate.table, stmtCreate.fields); err != nil {
 		return err
 	}
 	return nil

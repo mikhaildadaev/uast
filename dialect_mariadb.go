@@ -445,6 +445,11 @@ func (strateger *mariadbStrateger) renderComment(baseRenderer *baseRenderer, stm
 	}
 	return nil
 }
+func (strateger *mariadbStrateger) renderCreate(baseRenderer *baseRenderer, stmt *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	baseRenderer.renderCommand(stmt.command)
+	return nil
+}
 func (strateger *mariadbStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
@@ -586,6 +591,10 @@ func (strateger *mariadbStrateger) renderUpdate(baseRenderer *baseRenderer, stmt
 func (strateger *mariadbStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
+func (strateger *mariadbStrateger) transformCreate(baseTransformer *baseTransformer, stmtDrop *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mariadbStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -640,6 +649,13 @@ func (strateger *mariadbStrateger) validateComment(baseValidator *baseValidator,
 	}
 	if err := baseValidator.validateOnTable(stmtComment.table, stmtComment.comment); err != nil {
 		return err
+	}
+	return nil
+}
+func (strateger *mariadbStrateger) validateCreate(baseValidator *baseValidator, stmt *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	if stmt.entity == nil {
+		return ErrInvalidStatement
 	}
 	return nil
 }

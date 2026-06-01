@@ -646,6 +646,11 @@ func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunct
 func (strateger *mssqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
 	return nil
 }
+func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmt *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	baseRenderer.renderCommand(stmt.command)
+	return nil
+}
 func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
@@ -787,6 +792,10 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 func (strateger *mssqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
+func (strateger *mssqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtDrop *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mssqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -858,6 +867,13 @@ func (strateger *mssqlStrateger) transformUpdate(baseTransformer *baseTransforme
 }
 func (strateger *mssqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
 	return ErrUnsupportStatement
+}
+func (strateger *mssqlStrateger) validateCreate(baseValidator *baseValidator, stmt *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	if stmt.entity == nil {
+		return ErrInvalidStatement
+	}
+	return nil
 }
 func (strateger *mssqlStrateger) validateDelete(baseValidator *baseValidator, stmtDelete *stmtDelete) error {
 	if err := baseValidator.validateWith(stmtDelete.with); err != nil {

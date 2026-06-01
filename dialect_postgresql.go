@@ -713,6 +713,11 @@ func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, 
 	}
 	return nil
 }
+func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, stmt *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	baseRenderer.renderCommand(stmt.command)
+	return nil
+}
 func (strateger *postgresqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
 	if err := baseRenderer.renderWith(stmtDelete.with); err != nil {
 		return err
@@ -851,6 +856,10 @@ func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, s
 func (strateger *postgresqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
+func (strateger *postgresqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtDrop *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *postgresqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
 	if err := baseTransformer.transformComparison(); err != nil {
 		return err
@@ -917,6 +926,13 @@ func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidat
 	}
 	if err := baseValidator.validateOnTable(stmtComment.table, stmtComment.comment); err != nil {
 		return err
+	}
+	return nil
+}
+func (strateger *postgresqlStrateger) validateCreate(baseValidator *baseValidator, stmt *stmtCreate) error {
+	// !!! Внимание, находится в стадии разработки
+	if stmt.entity == nil {
+		return ErrInvalidStatement
 	}
 	return nil
 }

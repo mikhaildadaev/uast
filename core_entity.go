@@ -32,7 +32,13 @@ func (target *targetSchema) Name() string {
 	return target.name
 }
 func (target *targetTable) isEntityTarget() {}
-func (target *targetView) isEntityTarget()  {}
+func (target *targetTable) Name() string {
+	return target.tableName
+}
+func (target *targetView) isEntityTarget() {}
+func (target *targetView) Name() string {
+	return target.tableName
+}
 
 // Приватные структуры
 type targetIndex struct {

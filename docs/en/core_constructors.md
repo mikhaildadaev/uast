@@ -64,36 +64,52 @@ stmtDeleteWhere := uast.NewDelete(uast.NewTable("test", "t")).
     Where(
         uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
+stmtDeleteWith := NewDelete(uast.NewTable("test", "t")).
+	With(
+		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
+			Field(
+                uast.Column[int64]("t", "id"),
+            ).
+			Where(
+                Less(uast.Column[int]("t", "number"), Value(2)),
+            ),
+		),
+	)
 ```
 Output MariaDB:
 ```text
 DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ? RETURNING `t`.`id`, `t`.`string`
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
+WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) DELETE `t` FROM `test` AS `t`
 ```
 Output MsSQL:
 ```text
 DELETE [t] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] WHERE [t].[string] = @p1
 DELETE [t] FROM [test] AS [t] OUTPUT [t].[id], [t].[string] WHERE [t].[string] = @p1
 DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1
+WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) DELETE [t] FROM [test] AS [t]
 ```
 Output MySQL:
 ```text
 DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
+WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) DELETE `t` FROM `test` AS `t`
 ```
 Output PostgreSQL:
 ```text
 DELETE FROM "test" AS "t" USING "data" AS "d" WHERE ("t"."id" = "d"."id" AND "t"."string" = $1)
 DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id", "t"."string"
 DELETE FROM "test" AS "t" WHERE "t"."string" = $1
+WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) DELETE FROM "test" AS "t"
 ```
 Output SQLite:
 ```text
 DELETE FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" WHERE "t"."string" = ?
 DELETE FROM "test" AS "t" WHERE "t"."string" = ? RETURNING "t"."id", "t"."string"
 DELETE FROM "test" AS "t" WHERE "t"."string" = ?
+WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) DELETE FROM "test" AS "t"
 ```
 
 ## NewDrop
@@ -173,18 +189,28 @@ stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
 			uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
 		),
 	)
-stmtInsertUpsert := NewInsert(Test.Table).
-	Values(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
-	).
-	Upsert(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
-	)
 stmtInsertValues := uast.NewInsert(uast.NewTable("test", "t")).
     Values(
 		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
 		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+	).
+    Upsert(
+		uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
+	)
+stmtInsertWith := NewInsert(uast.NewTable("test", "t")).
+	Values(
+		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+	).
+	With(
+		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
+			Field(
+                uast.Column[int64]("t", "id"),
+		    ).
+			Where(
+				uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+			),
+		),
 	)
 ```
 Output MariaDB:
@@ -192,35 +218,35 @@ Output MariaDB:
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) RETURNING `t`.`id`, `t`.`string`
 INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
-INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
 Output MsSQL:
 ```text
 INSERT INTO [test] AS [t] ([string], [number]) OUTPUT [t].[id], [t].[string] VALUES (@p1, @p2)
 INSERT INTO [test] AS [t] ([string], [number]) SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1
 INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
-INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
+WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p2, @p3)
 ```
 Output MySQL:
 ```text
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
 INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
-INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
 ```
 Output PostgreSQL:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) RETURNING "t"."id", "t"."string"
 INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1
 INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3
-INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2)
+WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) INSERT INTO "test" AS "t" ("string", "number") VALUES ($2, $3)
 ```
 Output SQLite:
 ```text
 INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) RETURNING "t"."id", "t"."string"
 INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?
 INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
-INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
+WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
 ```
 
 ## NewSelect
@@ -347,6 +373,20 @@ stmtUpdateWhere := uast.NewUpdate(uast.NewTable("test", "t")).
     Where(
         uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
     )
+stmtUpdateWith := NewUpdate(uast.NewTable("test", "t")).
+	Set(
+		uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+	).
+	With(
+		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
+			Field(
+                uast.Column[int64]("t", "id"),
+            ).
+			Where(
+                uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+            ),
+		),
+	)
 ```
 Output MariaDB:
 ```text
@@ -354,6 +394,7 @@ UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`st
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ? RETURNING `t`.`id`, `t`.`string`
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
+WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ?
 
 ```
 Output MsSQL:
@@ -362,6 +403,7 @@ UPDATE [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] SET [t].[st
 UPDATE [test] AS [t] OUTPUT [t].[id], [t].[string] SET [t].[string] = @p1 WHERE [t].[number] = @p2
 UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2
 UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2
+WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) UPDATE [test] AS [t] SET [t].[string] = @p2
 ```
 Output MySQL:
 ```text
@@ -369,6 +411,7 @@ UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`st
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
+WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
@@ -376,6 +419,7 @@ UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."st
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"."id", "t"."string"
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
 UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
+WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) UPDATE "test" AS "t" SET "t"."string" = $2
 ```
 Output SQLite:
 ```text
@@ -383,4 +427,5 @@ UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."st
 UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ? RETURNING "t"."id", "t"."string"
 UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
 UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
+WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) UPDATE "test" AS "t" SET "t"."string" = ?
 ```

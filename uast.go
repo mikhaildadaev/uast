@@ -306,28 +306,35 @@ const (
 	// Конструкции модификаторов
 	uastModifierAnd             modifierService = "AND"
 	uastModifierAs              modifierService = "AS"
+	uastModifierAutoIncrement   modifierService = "AUTOINCREMENT"
 	uastModifierCascade         modifierService = "CASCADE"
 	uastModifierColumn          modifierService = "COLUMN"
 	uastModifierBetween         modifierService = "BETWEEN"
+	uastModifierDefault         modifierService = "DEFAULT"
 	uastModifierDistinct        modifierService = "DISTINCT"
 	uastModifierElse            modifierService = "ELSE"
 	uastModifierEnd             modifierService = "END"
 	uastModifierIfExists        modifierService = "IF EXISTS"
+	uastModifierIfNotExists     modifierService = "IF NOT EXISTS"
 	uastModifierIn              modifierService = "IN"
 	uastModifierIndex           modifierService = "INDEX"
 	uastModifierInterval        modifierService = "INTERVAL"
 	uastModifierIs              modifierService = "IS"
 	uastModifierMonth           modifierService = "MONTH"
+	uastModifierNotNull         modifierService = "NOT NULL"
 	uastModifierOn              modifierService = "ON"
 	uastModifierOver            modifierService = "OVER"
+	uastModifierPrimaryKey      modifierService = "PRIMARY KEY"
 	uastModifierRestartIdentity modifierService = "RESTART IDENTITY"
 	uastModifierRecursive       modifierService = "RECURSIVE"
+	uastModifierReplace         modifierService = "REPLACE"
 	uastModifierRows            modifierService = "ROWS"
 	uastModifierRowsOnly        modifierService = "ROWS ONLY"
+	uastModifierSchema          modifierService = "SCHEMA"
 	uastModifierSeparator       modifierService = "SEPARATOR"
 	uastModifierTable           modifierService = "TABLE"
-	uastModifierSchema          modifierService = "SCHEMA"
 	uastModifierThen            modifierService = "THEN"
+	uastModifierUnique          modifierService = "UNIQUE"
 	uastModifierView            modifierService = "VIEW"
 	uastModifierWeekday         modifierService = "WEEKDAY"
 	uastModifierWhen            modifierService = "WHEN"
@@ -393,7 +400,7 @@ var listFunctionServices = []functionService{
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFetchNext, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementPartitionBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
-var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierCascade, uastModifierColumn, uastModifierBetween, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierOn, uastModifierOver, uastModifierRestartIdentity, uastModifierRecursive, uastModifierRows, uastModifierRowsOnly, uastModifierSeparator, uastModifierTable, uastModifierSchema, uastModifierThen, uastModifierView, uastModifierWeekday, uastModifierWhen}
+var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierCascade, uastModifierColumn, uastModifierBetween, uastModifierDefault, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOver, uastModifierPrimaryKey, uastModifierRestartIdentity, uastModifierRecursive, uastModifierReplace, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierUnique, uastModifierView, uastModifierWeekday, uastModifierWhen}
 var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMsSQL, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,

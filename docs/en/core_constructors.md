@@ -330,7 +330,7 @@ stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_test", "ct")).
 		uast.Column[int64]("ct", "id"),
 	).
 	With(
-		uast.WithN("cte_test", NewSelect(uast.NewTable("test", "t")).
+		uast.WithN("cte_test", uast.NewSelect(uast.NewTable("test", "t")).
 			Field(
                 uast.Column[int64]("t", "id"),
             ).

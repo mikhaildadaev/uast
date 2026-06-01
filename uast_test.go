@@ -1899,32 +1899,6 @@ func Test_SQL_Comment(t *testing.T) {
 	})
 }
 func Test_SQL_Delete(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-			sql := NewSQL(
-				WithDialect(supportDialect),
-			)
-			defer sql.Close()
-			stmtDelete := NewDelete(Test.Table).
-				Where(
-					Equal(Test.Column.String, Value("active")),
-				)
-			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
-			switch supportDialect {
-			case DialectMariaDB:
-				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?", "DELETE")
-			case DialectMsSQL:
-				assertContains(t, sqlDeleteQuery, "DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1", "DELETE")
-			case DialectMySQL:
-				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?", "DELETE")
-			case DialectPostgreSQL:
-				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = $1`, "DELETE")
-			case DialectSQLite:
-				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = ?`, "DELETE")
-			}
-			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
-		})
-	})
 	t.Run("Join", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
@@ -1976,6 +1950,32 @@ func Test_SQL_Delete(t *testing.T) {
 				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id", "t"."string"`, "DELETE RETURNING")
 			case DialectSQLite:
 				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = ? RETURNING "t"."id", "t"."string"`, "DELETE RETURNING")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
+		})
+	})
+	t.Run("Where", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDelete := NewDelete(Test.Table).
+				Where(
+					Equal(Test.Column.String, Value("active")),
+				)
+			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?", "DELETE")
+			case DialectMsSQL:
+				assertContains(t, sqlDeleteQuery, "DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1", "DELETE")
+			case DialectMySQL:
+				assertContains(t, sqlDeleteQuery, "DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?", "DELETE")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = $1`, "DELETE")
+			case DialectSQLite:
+				assertContains(t, sqlDeleteQuery, `DELETE FROM "test" AS "t" WHERE "t"."string" = ?`, "DELETE")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDeleteArguments, supportDialect.name, sqlDeleteQuery)
 		})
@@ -2037,7 +2037,7 @@ func Test_SQL_Drop(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
 	})
-	t.Run("IndexIfExists", func(t *testing.T) {
+	t.Run("IfExistsIndex", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
 				WithDialect(supportDialect),
@@ -2060,7 +2060,7 @@ func Test_SQL_Drop(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
 	})
-	t.Run("SchemaIfExists", func(t *testing.T) {
+	t.Run("IfExistsSchema", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
 				WithDialect(supportDialect),
@@ -2083,7 +2083,7 @@ func Test_SQL_Drop(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
 	})
-	t.Run("TableIfExists", func(t *testing.T) {
+	t.Run("IfExistsTable", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
 				WithDialect(supportDialect),
@@ -2106,7 +2106,7 @@ func Test_SQL_Drop(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
 	})
-	t.Run("ViewIfExists", func(t *testing.T) {
+	t.Run("IfExistsView", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
 				WithDialect(supportDialect),
@@ -2131,33 +2131,6 @@ func Test_SQL_Drop(t *testing.T) {
 	})
 }
 func Test_SQL_Insert(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-			sql := NewSQL(
-				WithDialect(supportDialect),
-			)
-			defer sql.Close()
-			stmtInsert := NewInsert(Test.Table).
-				Values(
-					Pair(Test.Column.String, Value("ivan")),
-					Pair(Test.Column.Number, Value(2)),
-				)
-			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
-			switch supportDialect {
-			case DialectMariaDB:
-				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
-			case DialectMsSQL:
-				assertContains(t, sqlInsertQuery, "INSERT INTO [test] AS [t] ([string], [number])", "INSERT")
-			case DialectMySQL:
-				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
-			case DialectPostgreSQL:
-				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
-			case DialectSQLite:
-				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
-			}
-			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
-		})
-	})
 	t.Run("Returning", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
@@ -2247,6 +2220,33 @@ func Test_SQL_Insert(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
 		})
 	})
+	t.Run("Values", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtInsert := NewInsert(Test.Table).
+				Values(
+					Pair(Test.Column.String, Value("ivan")),
+					Pair(Test.Column.Number, Value(2)),
+				)
+			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
+			case DialectMsSQL:
+				assertContains(t, sqlInsertQuery, "INSERT INTO [test] AS [t] ([string], [number])", "INSERT")
+			case DialectMySQL:
+				assertContains(t, sqlInsertQuery, "INSERT INTO `test` AS `t` (`string`, `number`)", "INSERT")
+			case DialectPostgreSQL:
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
+			case DialectSQLite:
+				assertContains(t, sqlInsertQuery, `INSERT INTO "test" AS "t" ("string", "number")`, "INSERT")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlInsertArguments, supportDialect.name, sqlInsertQuery)
+		})
+	})
 	t.Run("With", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
@@ -2278,35 +2278,6 @@ func Test_SQL_Insert(t *testing.T) {
 	})
 }
 func Test_SQL_Select(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-			sql := NewSQL(
-				WithDialect(supportDialect),
-			)
-			defer sql.Close()
-			stmtSelect := NewSelect(Test.Table).
-				Field(
-					Test.Column.ID,
-				).
-				Where(
-					Equal(Test.Column.Number, Value(2)),
-				)
-			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
-			switch supportDialect {
-			case DialectMariaDB:
-				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?", "SELECT")
-			case DialectMsSQL:
-				assertContains(t, sqlSelectQuery, "SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1", "SELECT")
-			case DialectMySQL:
-				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?", "SELECT")
-			case DialectPostgreSQL:
-				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1`, "SELECT")
-			case DialectSQLite:
-				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?`, "SELECT")
-			}
-			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
-		})
-	})
 	t.Run("Distinct", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
@@ -2333,6 +2304,35 @@ func Test_SQL_Select(t *testing.T) {
 				assertContains(t, sqlSelectQuery, `SELECT DISTINCT "t"."id" FROM "test" AS "t"`, "SELECT DISTINCT")
 			case DialectSQLite:
 				assertContains(t, sqlSelectQuery, `SELECT DISTINCT "t"."id" FROM "test" AS "t"`, "SELECT DISTINCT")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
+		})
+	})
+	t.Run("Field", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtSelect := NewSelect(Test.Table).
+				Field(
+					Test.Column.ID,
+				).
+				Where(
+					Equal(Test.Column.Number, Value(2)),
+				)
+			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?", "SELECT")
+			case DialectMsSQL:
+				assertContains(t, sqlSelectQuery, "SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1", "SELECT")
+			case DialectMySQL:
+				assertContains(t, sqlSelectQuery, "SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?", "SELECT")
+			case DialectPostgreSQL:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1`, "SELECT")
+			case DialectSQLite:
+				assertContains(t, sqlSelectQuery, `SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?`, "SELECT")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 		})
@@ -2600,35 +2600,6 @@ func Test_SQL_Truncate(t *testing.T) {
 	})
 }
 func Test_SQL_Update(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-			sql := NewSQL(
-				WithDialect(supportDialect),
-			)
-			defer sql.Close()
-			stmtUpdate := NewUpdate(Test.Table).
-				Set(
-					Assign(Test.Column.String, Value("active")),
-				).
-				Where(
-					Equal(Test.Column.Number, Value(2)),
-				)
-			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
-			switch supportDialect {
-			case DialectMariaDB:
-				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?", "UPDATE")
-			case DialectMsSQL:
-				assertContains(t, sqlUpdateQuery, "UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2", "UPDATE")
-			case DialectMySQL:
-				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?", "UPDATE")
-			case DialectPostgreSQL:
-				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2`, "UPDATE")
-			case DialectSQLite:
-				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?`, "UPDATE")
-			}
-			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
-		})
-	})
 	t.Run("Join", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
@@ -2686,6 +2657,64 @@ func Test_SQL_Update(t *testing.T) {
 				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"."id", "t"."string"`, "UPDATE RETURNING")
 			case DialectSQLite:
 				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ? RETURNING "t"."id", "t"."string"`, "UPDATE RETURNING")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
+		})
+	})
+	t.Run("Set", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtUpdate := NewUpdate(Test.Table).
+				Set(
+					Assign(Test.Column.String, Value("active")),
+				).
+				Where(
+					Equal(Test.Column.Number, Value(2)),
+				)
+			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?", "UPDATE")
+			case DialectMsSQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2", "UPDATE")
+			case DialectMySQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?", "UPDATE")
+			case DialectPostgreSQL:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2`, "UPDATE")
+			case DialectSQLite:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?`, "UPDATE")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
+		})
+	})
+	t.Run("Where", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtUpdate := NewUpdate(Test.Table).
+				Set(
+					Assign(Test.Column.String, Value("active")),
+				).
+				Where(
+					Equal(Test.Column.Number, Value(2)),
+				)
+			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?", "UPDATE")
+			case DialectMsSQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2", "UPDATE")
+			case DialectMySQL:
+				assertContains(t, sqlUpdateQuery, "UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?", "UPDATE")
+			case DialectPostgreSQL:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2`, "UPDATE")
+			case DialectSQLite:
+				assertContains(t, sqlUpdateQuery, `UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?`, "UPDATE")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlUpdateArguments, supportDialect.name, sqlUpdateQuery)
 		})

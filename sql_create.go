@@ -12,7 +12,7 @@ func NewCreate(entity SourceBase) *stmtCreate {
 
 // Публичные методы
 func (stmt *stmtCreate) Field(fields ...markExpressable) *stmtCreate {
-	stmt.fields = append(stmt.fields, fields...)
+	stmt.fields = fields
 	return stmt
 }
 func (stmt *stmtCreate) IfNotExists() *stmtCreate {

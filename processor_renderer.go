@@ -445,6 +445,20 @@ func (renderer *baseRenderer) renderOnColumn(column markExpressable) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderOnFields(table *TableSource, fields []markExpressable) error {
+	if table == nil || len(fields) == 0 {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierOn)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(table.name())
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderOperator(uastCompositeParenLeft)
+	//
+	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
 func (renderer *baseRenderer) renderOnTable(table *TableSource) error {
 	if table == nil {
 		return nil
@@ -454,9 +468,7 @@ func (renderer *baseRenderer) renderOnTable(table *TableSource) error {
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierTable)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := table.render(renderer); err != nil {
-		return err
-	}
+	renderer.renderName(table.name())
 	return nil
 }
 func (renderer *baseRenderer) renderOnto(onto SourceBase) error {

@@ -32,6 +32,7 @@ type componentRenderer interface {
 	renderIsComment(comment string) error
 	renderJoin(joins []*clauseJoin) error
 	renderOnColumn(column markExpressable) error
+	renderOnFields(table *TableSource, fields []markExpressable) error
 	renderOnTable(table *TableSource) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error

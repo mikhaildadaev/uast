@@ -2024,15 +2024,15 @@ func Test_SQL_Drop(t *testing.T) {
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP TABLE `test` AS `t` CASCADE", "DROP")
+				assertContains(t, sqlDropQuery, "DROP TABLE `test` CASCADE", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP TABLE [test] AS [t]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP TABLE [test]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP TABLE `test` AS `t`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP TABLE `test`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP TABLE "test" AS "t" CASCADE`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP TABLE "test" CASCADE`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP TABLE "test" AS "t"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP TABLE "test"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
@@ -2051,7 +2051,7 @@ func Test_SQL_Drop(t *testing.T) {
 			case DialectMsSQL:
 				assertContains(t, sqlDropQuery, "DROP INDEX [test]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP INDEX `test`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP INDEX IF EXISTS `test`", "DROP")
 			case DialectPostgreSQL:
 				assertContains(t, sqlDropQuery, `DROP INDEX IF EXISTS "test"`, "DROP")
 			case DialectSQLite:
@@ -2093,15 +2093,15 @@ func Test_SQL_Drop(t *testing.T) {
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS `test` AS `t`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS `test`", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS [test] AS [t]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS [test]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS `test` AS `t`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP TABLE IF EXISTS `test`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP TABLE IF EXISTS "test" AS "t"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP TABLE IF EXISTS "test"`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP TABLE IF EXISTS "test" AS "t"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP TABLE IF EXISTS "test"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
@@ -2116,15 +2116,15 @@ func Test_SQL_Drop(t *testing.T) {
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test` AS `t`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test`", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS [test] AS [t]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS [test]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test` AS `t`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test" AS "t"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test"`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test" AS "t"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})

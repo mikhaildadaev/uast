@@ -21,7 +21,7 @@ type componentRenderer interface {
 	renderCommand(command managementService) error
 	renderColumns(columns []markExpressable) error
 	renderDistinct(distinct bool) error
-	renderEntity(entity SourceBase, ifExists bool) error
+	renderEntity(entity SourceBase, ifExists bool, ifNotExists bool) error
 	renderFields(fields []markExpressable) error
 	renderFrom(from SourceBase) error
 	renderGroupBy(groups []markGroupable) error

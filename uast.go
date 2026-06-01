@@ -460,6 +460,7 @@ type config struct {
 	symbolQuoteRight       string
 	supportCascade         bool
 	supportIfExists        map[string]bool
+	supportIfNotExists     map[string]bool
 	supportRestartIdentity bool
 	supportReturning       bool
 	supportUpsert          bool

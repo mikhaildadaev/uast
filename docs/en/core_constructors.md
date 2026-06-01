@@ -49,26 +49,106 @@ stmtDeleteDefault := uast.NewDelete(uast.NewTable("test", "t")).
     Where(
         uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
     )
+stmtDeleteJoin := uast.NewDelete(uast.NewTable("test", "t")).
+    Join(
+		Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
+    ).
+    Where(
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    )
+stmtDeleteReturning := uast.NewDelete(uast.NewTable("test", "t")).
+    Where(
+        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+    ).
+    Returning(
+		uast.Column[int64]("t", "id"),
+		uast.Column[string]("t", "string"),
+	)
 ```
 Output MariaDB:
 ```text
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
+DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
+DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ? RETURNING `t`.`id`, `t`.`string`
 ```
 Output MsSQL:
 ```text
 DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1
+DELETE [t] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] WHERE [t].[string] = @p1
+DELETE [t] FROM [test] AS [t] OUTPUT [t].[id], [t].[string] WHERE [t].[string] = @p1
 ```
 Output MySQL:
 ```text
+DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
+DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
 DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
 DELETE FROM "test" AS "t" WHERE "t"."string" = $1
+DELETE FROM "test" AS "t" USING "data" AS "d" WHERE ("t"."id" = "d"."id" AND "t"."string" = $1)
+DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id", "t"."string"
 ```
 Output SQLite:
 ```text
 DELETE FROM "test" AS "t" WHERE "t"."string" = ?
+DELETE FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" WHERE "t"."string" = ?
+DELETE FROM "test" AS "t" WHERE "t"."string" = ? RETURNING "t"."id", "t"."string"
+```
+
+## NewDrop
+Creates a new DROP statement instance. Accepts a `Index/Schema/Table/View` source and returns a statement that can be configured with `Cascade()` or `IfExists()`.
+```go
+stmtDropCascade := uast.NewDrop(uast.NewTable("test", "t")).
+    Cascade()
+stmtDropIndexIfExists := uast.NewDrop(uast.NewIndex("test")).
+    IfExists()
+stmtDropSchemaIfExists := uast.NewDrop(uast.NewSchema("test")).
+    IfExists()
+stmtDropTableIfExists := uast.NewDrop(uast.NewTable("test", "t")).
+    IfExists()
+stmtDropViewIfExists := uast.NewDrop(uast.NewView("test", "t")).
+    IfExists()
+```
+Output MariaDB:
+```text
+DROP TABLE `test` CASCADE
+DROP INDEX IF EXISTS `test`
+DROP SCHEMA IF EXISTS `test`
+DROP TABLE IF EXISTS `test`
+DROP VIEW IF EXISTS `test`
+```
+Output MsSQL:
+```text
+DROP TABLE [test]
+DROP INDEX [test]
+DROP SCHEMA IF EXISTS [test]
+DROP TABLE IF EXISTS [test]
+DROP VIEW IF EXISTS [test]
+```
+Output MySQL:
+```text
+DROP TABLE `test`
+DROP INDEX IF EXISTS `test`
+DROP SCHEMA `test`
+DROP TABLE IF EXISTS `test`
+DROP VIEW IF EXISTS `test`
+```
+Output PostgreSQL:
+```text
+DROP TABLE "test" CASCADE
+DROP INDEX IF EXISTS "test"
+DROP SCHEMA IF EXISTS "test"
+DROP TABLE IF EXISTS "test"
+DROP VIEW IF EXISTS "test"
+```
+Output SQLite:
+```text
+DROP TABLE "test"
+DROP INDEX IF EXISTS "test"
+DROP SCHEMA "test"
+DROP TABLE IF EXISTS "test"
+DROP VIEW IF EXISTS "test"
 ```
 
 ## NewInsert

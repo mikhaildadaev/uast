@@ -2352,7 +2352,9 @@ func Test_SQL_Select(t *testing.T) {
 					Test.Column.String,
 					Count(Test.Column.ID, false).As("cnt"),
 				).
-				GroupBy(Test.Column.String).
+				GroupBy(
+					Test.Column.String,
+				).
 				Having(
 					Greater(Count(Test.Column.ID, false), Value[int64](2)),
 				)
@@ -2405,7 +2407,9 @@ func Test_SQL_Select(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtSelect := NewSelect(Test.Table).
-				Field(Test.Column.ID).
+				Field(
+					Test.Column.ID,
+				).
 				OrderBy(
 					Desc(Test.Column.Number),
 					Asc(Test.Column.String),
@@ -2431,7 +2435,9 @@ func Test_SQL_Select(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtSelect := NewSelect(Test.Table).
-				Field(Test.Column.ID).
+				Field(
+					Test.Column.ID,
+				).
 				Pagination(10, 20)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2454,10 +2460,14 @@ func Test_SQL_Select(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtSelect := NewSelect(Test.Table).
-				Field(Test.Column.String).
+				Field(
+					Test.Column.String,
+				).
 				Unions(
 					UnionAll(NewSelect(Data.Table).
-						Field(Data.Column.String),
+						Field(
+							Data.Column.String,
+						),
 					),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
@@ -2515,8 +2525,12 @@ func Test_SQL_Select(t *testing.T) {
 				).
 				With(
 					WithN("cte_test", NewSelect(Test.Table).
-						Field(Test.Column.ID).
-						Where(Greater(Test.Column.Number, Value(2))),
+						Field(
+							Test.Column.ID,
+						).
+						Where(
+							Greater(Test.Column.Number, Value(2)),
+						),
 					),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)

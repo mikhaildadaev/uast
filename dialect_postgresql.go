@@ -736,7 +736,7 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 	if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnFields(stmtCreate.table, stmtCreate.fields); err != nil {
+	if err := baseRenderer.renderOnColumns(stmtCreate.table, stmtCreate.columns); err != nil {
 		return err
 	}
 	return nil
@@ -881,6 +881,9 @@ func (strateger *postgresqlStrateger) transformComment(baseTransformer *baseTran
 }
 func (strateger *postgresqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
+	if err := baseTransformer.transformColumns(stmtCreate.fields, &stmtCreate.columns); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *postgresqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {

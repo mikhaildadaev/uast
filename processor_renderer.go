@@ -525,7 +525,7 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 func (renderer *baseRenderer) renderReplace(replace bool) error {
 	if replace {
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierReplace)
+		renderer.renderService(uastModifierOrReplace)
 	}
 	return nil
 }

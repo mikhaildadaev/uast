@@ -326,7 +326,6 @@ Output PostgreSQL:
 TRUNCATE TABLE "test"
 TRUNCATE TABLE "test" CASCADE
 TRUNCATE TABLE "test" RESTART IDENTITY
-
 ```
 Output SQLite:
 ```text
@@ -395,7 +394,6 @@ UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ? RETURNING `t`.`
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
 WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ?
-
 ```
 Output MsSQL:
 ```text

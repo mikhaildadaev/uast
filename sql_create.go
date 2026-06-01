@@ -39,6 +39,7 @@ func (stmt *stmtCreate) Unique() *stmtCreate {
 // Приватные структуры
 type stmtCreate struct {
 	command     managementService
+	columns     []string
 	entity      SourceBase
 	fields      []markExpressable
 	ifNotExists bool

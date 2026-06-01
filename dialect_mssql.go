@@ -825,6 +825,14 @@ func (strateger *mssqlStrateger) transformSelect(baseTransformer *baseTransforme
 		return err
 	}
 	if stmtSelect.pagination != nil {
+		if len(stmtSelect.orderBy) == 0 {
+			stmtSelect.orderBy = []markOrderable{
+				&clauseOrderBy{
+					direction:  false,
+					expression: &exprLiteral[int]{value: 1},
+				},
+			}
+		}
 		stmtSelect.pagination.reverse = true
 		stmtSelect.pagination.serviceLimit = uastManagementFetchNext
 		stmtSelect.pagination.serviceOffset = uastManagementOffset

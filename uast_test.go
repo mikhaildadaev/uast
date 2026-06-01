@@ -1918,20 +1918,15 @@ func Test_SQL_Create(t *testing.T) {
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX IF NOT EXISTS `idx_test` ON `test` (`string`, `number`)", "CREATE INDEX")
-				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX IF NOT EXISTS `idx_test` ON `test` ()", "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX IF NOT EXISTS `idx_test` ON `test` (`string`, `number`)", "CREATE INDEX")
 			case DialectMsSQL:
-				//assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX [idx_test] ON [test] ([string], [number])", "CREATE INDEX")
-				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX [idx_test] ON [test] ()", "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX [idx_test] ON [test] ([string], [number])", "CREATE INDEX")
 			case DialectMySQL:
-				//assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX `idx_test` ON `test` (`string`, `number`)", "CREATE INDEX")
-				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX `idx_test` ON `test` ()", "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX `idx_test` ON `test` (`string`, `number`)", "CREATE INDEX")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ("string", "number")`, "CREATE INDEX")
-				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ()`, "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ("string", "number")`, "CREATE INDEX")
 			case DialectSQLite:
-				//assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ("string", "number")`, "CREATE INDEX")
-				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ()`, "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ("string", "number")`, "CREATE INDEX")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})

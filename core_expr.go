@@ -27,6 +27,10 @@ type markPredicable interface {
 	ExpressionBase
 	isPredicable()
 }
+type transformColumn interface {
+	ExpressionBase
+	transformGetName() string
+}
 type transformComparison interface {
 	ExpressionBase
 	transformGetLeft() ExpressionBase
@@ -287,6 +291,9 @@ func (expr *exprColumn[T]) render(baseRenderer *baseRenderer) error {
 	}
 	baseRenderer.renderName(expr.name)
 	return nil
+}
+func (expr *exprColumn[T]) transformGetName() string {
+	return expr.name
 }
 func (expr *exprColumn[T]) validate(baseValidator *baseValidator) error {
 	if err := baseValidator.validateName(expr.name); err != nil {

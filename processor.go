@@ -29,9 +29,10 @@ type componentRenderer interface {
 	renderIfExists(ifExists bool) error
 	renderIfNotExists(ifNotExists bool) error
 	renderInto(into SourceBase) error
+	renderIsComment(comment string) error
 	renderJoin(joins []*clauseJoin) error
-	renderOnColumn(column markExpressable, comment string) error
-	renderOnTable(table *TableSource, comment string) error
+	renderOnColumn(column markExpressable) error
+	renderOnTable(table *TableSource) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
@@ -110,9 +111,10 @@ type componentValidator interface {
 	validateGroupBy(groups []markGroupable) error
 	validateHaving(having ExpressionBase) error
 	validateInto(into SourceBase) error
+	validateIsComment(comment string) error
 	validateJoin(joins []*clauseJoin) error
-	validateOnColumn(column markExpressable, comment string) error
-	validateOnTable(table *TableSource, comment string) error
+	validateOnColumn(column markExpressable) error
+	validateOnTable(table *TableSource) error
 	validateOnto(onto SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validatePagination(pagination *clausePagination) error

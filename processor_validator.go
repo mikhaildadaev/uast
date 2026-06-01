@@ -408,6 +408,15 @@ func (validator *baseValidator) validateInto(into SourceBase) error {
 	}
 	return nil
 }
+func (validator *baseValidator) validateIsComment(comment string) error {
+	if comment == "" {
+		return nil
+	}
+	if err := validator.validateLiteral(comment); err != nil {
+		return err
+	}
+	return nil
+}
 func (validator *baseValidator) validateJoin(joins []*clauseJoin) error {
 	if len(joins) == 0 {
 		return nil
@@ -437,26 +446,20 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	}
 	return nil
 }
-func (validator *baseValidator) validateOnColumn(column markExpressable, comment string) error {
+func (validator *baseValidator) validateOnColumn(column markExpressable) error {
 	if column == nil {
 		return nil
 	}
 	if err := column.validate(validator); err != nil {
 		return err
 	}
-	if err := validator.validateLiteral(comment); err != nil {
-		return err
-	}
 	return nil
 }
-func (validator *baseValidator) validateOnTable(table *TableSource, comment string) error {
+func (validator *baseValidator) validateOnTable(table *TableSource) error {
 	if table == nil {
 		return nil
 	}
 	if err := table.validate(validator); err != nil {
-		return err
-	}
-	if err := validator.validateLiteral(comment); err != nil {
 		return err
 	}
 	return nil

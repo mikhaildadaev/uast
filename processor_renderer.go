@@ -405,6 +405,16 @@ func (renderer *baseRenderer) renderInto(into SourceBase) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderIsComment(comment string) error {
+	if comment == "" {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierIs)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderLiteral(comment)
+	return nil
+}
 func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {
 	if len(joins) == 0 {
 		return nil
@@ -421,7 +431,7 @@ func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderOnColumn(column markExpressable, comment string) error {
+func (renderer *baseRenderer) renderOnColumn(column markExpressable) error {
 	if column == nil {
 		return nil
 	}
@@ -433,13 +443,9 @@ func (renderer *baseRenderer) renderOnColumn(column markExpressable, comment str
 	if err := column.render(renderer); err != nil {
 		return err
 	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierIs)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderLiteral(comment)
 	return nil
 }
-func (renderer *baseRenderer) renderOnTable(table *TableSource, comment string) error {
+func (renderer *baseRenderer) renderOnTable(table *TableSource) error {
 	if table == nil {
 		return nil
 	}
@@ -451,10 +457,6 @@ func (renderer *baseRenderer) renderOnTable(table *TableSource, comment string) 
 	if err := table.render(renderer); err != nil {
 		return err
 	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierIs)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderLiteral(comment)
 	return nil
 }
 func (renderer *baseRenderer) renderOnto(onto SourceBase) error {

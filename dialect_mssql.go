@@ -35,6 +35,12 @@ var DialectMsSQL = &SupportDialect{
 			"TABLE":  true,
 			"VIEW":   true,
 		},
+		supportIfNotExists: map[string]bool{
+			"INDEX":  false,
+			"SCHEMA": true,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 		supportRestartIdentity: false,
 		supportReturning:       true,
 		supportUpsert:          false,
@@ -646,9 +652,14 @@ func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunct
 func (strateger *mssqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
 	return nil
 }
-func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmt *stmtCreate) error {
+func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	baseRenderer.renderCommand(stmt.command)
+	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
@@ -679,7 +690,7 @@ func (strateger *mssqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists); err != nil {
+	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderCascade(stmtDrop.cascade); err != nil {
@@ -792,7 +803,7 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 func (strateger *mssqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
-func (strateger *mssqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtDrop *stmtCreate) error {
+func (strateger *mssqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
 	return nil
 }
@@ -868,10 +879,10 @@ func (strateger *mssqlStrateger) transformUpdate(baseTransformer *baseTransforme
 func (strateger *mssqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
 	return ErrUnsupportStatement
 }
-func (strateger *mssqlStrateger) validateCreate(baseValidator *baseValidator, stmt *stmtCreate) error {
+func (strateger *mssqlStrateger) validateCreate(baseValidator *baseValidator, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	if stmt.entity == nil {
-		return ErrInvalidStatement
+	if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
+		return err
 	}
 	return nil
 }

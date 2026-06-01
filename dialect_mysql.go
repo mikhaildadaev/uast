@@ -34,6 +34,12 @@ var DialectMySQL = &SupportDialect{
 			"TABLE":  true,
 			"VIEW":   true,
 		},
+		supportIfNotExists: map[string]bool{
+			"INDEX":  false,
+			"SCHEMA": false,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 		supportRestartIdentity: false,
 		supportReturning:       false,
 		supportUpsert:          true,
@@ -445,9 +451,14 @@ func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtC
 	}
 	return nil
 }
-func (strateger *mysqlStrateger) renderCreate(baseRenderer *baseRenderer, stmt *stmtCreate) error {
+func (strateger *mysqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	baseRenderer.renderCommand(stmt.command)
+	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
@@ -478,7 +489,7 @@ func (strateger *mysqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists); err != nil {
+	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderCascade(stmtDrop.cascade); err != nil {
@@ -591,7 +602,7 @@ func (strateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 func (strateger *mysqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
-func (strateger *mysqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtDrop *stmtCreate) error {
+func (strateger *mysqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
 	return nil
 }
@@ -652,10 +663,10 @@ func (strateger *mysqlStrateger) validateComment(baseValidator *baseValidator, s
 	}
 	return nil
 }
-func (strateger *mysqlStrateger) validateCreate(baseValidator *baseValidator, stmt *stmtCreate) error {
+func (strateger *mysqlStrateger) validateCreate(baseValidator *baseValidator, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	if stmt.entity == nil {
-		return ErrInvalidStatement
+	if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
+		return err
 	}
 	return nil
 }

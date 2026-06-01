@@ -34,6 +34,12 @@ var DialectPostgreSQL = &SupportDialect{
 			"TABLE":  true,
 			"VIEW":   true,
 		},
+		supportIfNotExists: map[string]bool{
+			"INDEX":  true,
+			"SCHEMA": true,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 		supportRestartIdentity: true,
 		supportReturning:       true,
 		supportUpsert:          true,
@@ -713,9 +719,14 @@ func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, 
 	}
 	return nil
 }
-func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, stmt *stmtCreate) error {
+func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	baseRenderer.renderCommand(stmt.command)
+	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *postgresqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDelete *stmtDelete) error {
@@ -743,7 +754,7 @@ func (strateger *postgresqlStrateger) renderDrop(baseRenderer *baseRenderer, stm
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists); err != nil {
+	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderCascade(stmtDrop.cascade); err != nil {
@@ -856,7 +867,7 @@ func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, s
 func (strateger *postgresqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
-func (strateger *postgresqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtDrop *stmtCreate) error {
+func (strateger *postgresqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
 	return nil
 }
@@ -929,10 +940,10 @@ func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidat
 	}
 	return nil
 }
-func (strateger *postgresqlStrateger) validateCreate(baseValidator *baseValidator, stmt *stmtCreate) error {
+func (strateger *postgresqlStrateger) validateCreate(baseValidator *baseValidator, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	if stmt.entity == nil {
-		return ErrInvalidStatement
+	if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
+		return err
 	}
 	return nil
 }

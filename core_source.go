@@ -9,6 +9,7 @@ import (
 type SourceBase interface {
 	alias() string
 	clone() SourceBase
+	format() modifierService
 	name() string
 	isSourceBase()
 	render(baseRenderer *baseRenderer) error
@@ -161,11 +162,14 @@ func (source *sourceColumn[T]) clone() SourceBase {
 	copy := *source
 	return &copy
 }
-func (source *sourceColumn[T]) name() string {
-	return source.column.transformGetName()
+func (source *sourceColumn[T]) format() modifierService {
+	return uastModifierColumn
 }
 func (source *sourceColumn[T]) isSourceBase() {}
 func (source *sourceColumn[T]) isColumnable() {}
+func (source *sourceColumn[T]) name() string {
+	return source.column.transformGetName()
+}
 func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.table.tableName)
 	baseRenderer.renderOperator(uastCompositeSinglePoint)
@@ -187,6 +191,9 @@ func (source *sourceCte) alias() string {
 func (source *sourceCte) clone() SourceBase {
 	copy := *source
 	return &copy
+}
+func (source *sourceCte) format() modifierService {
+	return uastModifierCTE
 }
 func (source *sourceCte) isSourceBase() {}
 func (source *sourceCte) name() string {
@@ -218,6 +225,9 @@ func (source *sourceIndex) clone() SourceBase {
 	copy := *source
 	return &copy
 }
+func (source *sourceIndex) format() modifierService {
+	return uastModifierIndex
+}
 func (source *sourceIndex) name() string {
 	return source.indexName
 }
@@ -242,6 +252,9 @@ func (source *sourceQuery) clone() SourceBase {
 	copy := *source
 	copy.statement = source.statement.clone()
 	return &copy
+}
+func (source *sourceQuery) format() modifierService {
+	return uastModifierQuery
 }
 func (source *sourceQuery) isSourceBase() {}
 func (source *sourceQuery) name() string {
@@ -280,6 +293,9 @@ func (source *sourceSchema) clone() SourceBase {
 	copy := *source
 	return &copy
 }
+func (source *sourceSchema) format() modifierService {
+	return uastModifierSchema
+}
 func (source *sourceSchema) name() string {
 	return source.schemaName
 }
@@ -303,6 +319,9 @@ func (source *sourceTable) alias() string {
 func (source *sourceTable) clone() SourceBase {
 	copy := *source
 	return &copy
+}
+func (source *sourceTable) format() modifierService {
+	return uastModifierTable
 }
 func (source *sourceTable) name() string {
 	return source.tableName
@@ -336,6 +355,9 @@ func (source *sourceView) alias() string {
 func (source *sourceView) clone() SourceBase {
 	copy := *source
 	return &copy
+}
+func (source *sourceView) format() modifierService {
+	return uastModifierView
 }
 func (source *sourceView) name() string {
 	return source.viewName

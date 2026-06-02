@@ -309,6 +309,7 @@ const (
 	uastModifierAutoIncrement   modifierService = "AUTOINCREMENT"
 	uastModifierCascade         modifierService = "CASCADE"
 	uastModifierColumn          modifierService = "COLUMN"
+	uastModifierCTE             modifierService = "CTE"
 	uastModifierBetween         modifierService = "BETWEEN"
 	uastModifierDefault         modifierService = "DEFAULT"
 	uastModifierDistinct        modifierService = "DISTINCT"
@@ -326,6 +327,7 @@ const (
 	uastModifierOrReplace       modifierService = "OR REPLACE"
 	uastModifierOver            modifierService = "OVER"
 	uastModifierPrimaryKey      modifierService = "PRIMARY KEY"
+	uastModifierQuery           modifierService = "QUERY"
 	uastModifierRestartIdentity modifierService = "RESTART IDENTITY"
 	uastModifierRecursive       modifierService = "RECURSIVE"
 	uastModifierRows            modifierService = "ROWS"
@@ -400,7 +402,7 @@ var listFunctionServices = []functionService{
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFetchNext, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementPartitionBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
-var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierCascade, uastModifierColumn, uastModifierBetween, uastModifierDefault, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOrReplace, uastModifierOver, uastModifierPrimaryKey, uastModifierRestartIdentity, uastModifierRecursive, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierUnique, uastModifierView, uastModifierWeekday, uastModifierWhen}
+var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierCascade, uastModifierColumn, uastModifierCTE, uastModifierBetween, uastModifierDefault, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOrReplace, uastModifierOver, uastModifierPrimaryKey, uastModifierQuery, uastModifierRestartIdentity, uastModifierRecursive, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierUnique, uastModifierView, uastModifierWeekday, uastModifierWhen}
 var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMsSQL, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,
@@ -459,6 +461,7 @@ type config struct {
 	symbolQuoteLeft        string
 	symbolQuoteRight       string
 	supportCascade         bool
+	supportComment         map[string]bool
 	supportIfExists        map[string]bool
 	supportIfNotExists     map[string]bool
 	supportRestartIdentity bool

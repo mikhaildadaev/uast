@@ -28,13 +28,22 @@ var DialectMariaDB = &SupportDialect{
 		symbolQuoteLeft:      "`",
 		symbolQuoteRight:     "`",
 		supportCascade:       true,
+		supportComment: map[string]bool{
+			"COLUMN": true,
+			"INDEX":  false,
+			"SCHEMA": false,
+			"TABLE":  true,
+			"VIEW":   false,
+		},
 		supportIfExists: map[string]bool{
+			"COLUMN": false,
 			"INDEX":  true,
 			"SCHEMA": true,
 			"TABLE":  true,
 			"VIEW":   true,
 		},
 		supportIfNotExists: map[string]bool{
+			"COLUMN": false,
 			"INDEX":  true,
 			"SCHEMA": true,
 			"TABLE":  true,

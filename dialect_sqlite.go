@@ -28,13 +28,22 @@ var DialectSQLite = &SupportDialect{
 		symbolQuoteLeft:      "\"",
 		symbolQuoteRight:     "\"",
 		supportCascade:       false,
+		supportComment: map[string]bool{
+			"COLUMN": true,
+			"INDEX":  false,
+			"SCHEMA": false,
+			"TABLE":  true,
+			"VIEW":   false,
+		},
 		supportIfExists: map[string]bool{
+			"COLUMN": false,
 			"INDEX":  true,
 			"SCHEMA": false,
 			"TABLE":  true,
 			"VIEW":   true,
 		},
 		supportIfNotExists: map[string]bool{
+			"COLUMN": false,
 			"INDEX":  true,
 			"SCHEMA": false,
 			"TABLE":  true,

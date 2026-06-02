@@ -28,13 +28,22 @@ var DialectPostgreSQL = &SupportDialect{
 		symbolQuoteLeft:      `"`,
 		symbolQuoteRight:     `"`,
 		supportCascade:       true,
+		supportComment: map[string]bool{
+			"COLUMN": true,
+			"INDEX":  true,
+			"SCHEMA": true,
+			"TABLE":  true,
+			"VIEW":   true,
+		},
 		supportIfExists: map[string]bool{
+			"COLUMN": true,
 			"INDEX":  true,
 			"SCHEMA": true,
 			"TABLE":  true,
 			"VIEW":   true,
 		},
 		supportIfNotExists: map[string]bool{
+			"COLUMN": true,
 			"INDEX":  true,
 			"SCHEMA": true,
 			"TABLE":  true,

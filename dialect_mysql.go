@@ -459,17 +459,35 @@ func (strateger *mysqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderReplace(stmtCreate.replace); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderUnique(stmtCreate.unique); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
-		return err
-	}
-	if err := baseRenderer.renderOnColumns(stmtCreate.table, stmtCreate.columns); err != nil {
-		return err
+	switch stmtCreate.entity.(type) {
+	case *sourceIndex:
+		if err := baseRenderer.renderUnique(stmtCreate.unique); err != nil {
+			return err
+		}
+		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
+			return err
+		}
+		if err := baseRenderer.renderOnColumns(stmtCreate.table, stmtCreate.columns); err != nil {
+			return err
+		}
+	case *sourceSchema:
+	case *sourceTable:
+		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
+			return err
+		}
+		if err := baseRenderer.renderColumns(stmtCreate.fields); err != nil {
+			return err
+		}
+	case *sourceView:
+		if err := baseRenderer.renderReplace(stmtCreate.replace); err != nil {
+			return err
+		}
+		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
+			return err
+		}
+		if err := baseRenderer.renderAsSource(stmtCreate.source); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -685,6 +703,21 @@ func (strateger *mysqlStrateger) validateCreate(baseValidator *baseValidator, st
 	// !!! Внимание, находится в стадии разработки
 	if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
 		return err
+	}
+	switch stmtCreate.entity.(type) {
+	case *sourceIndex:
+		if err := baseValidator.validateFields(stmtCreate.fields); err != nil {
+			return err
+		}
+	case *sourceSchema:
+	case *sourceTable:
+		if err := baseValidator.validateFields(stmtCreate.fields); err != nil {
+			return err
+		}
+	case *sourceView:
+		if err := baseValidator.validateSource(stmtCreate.source); err != nil {
+			return err
+		}
 	}
 	return nil
 }

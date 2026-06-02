@@ -1980,20 +1980,15 @@ func Test_SQL_Create(t *testing.T) {
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view`", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
 			case DialectMsSQL:
-				//assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW [test_view] AS SELECT [t].[id], [t].[string] FROM [test] AS [t]", "CREATE VIEW")
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW [test_view]", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW [test_view] AS SELECT [t].[id], [t].[string] FROM [test] AS [t]", "CREATE VIEW")
 			case DialectMySQL:
-				//assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view`", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
-				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view"`, "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
 			case DialectSQLite:
-				//assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
-				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view"`, "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})

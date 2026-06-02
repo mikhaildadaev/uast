@@ -449,24 +449,9 @@ func (renderer *baseRenderer) renderOn(on SourceBase) error {
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierOn)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	switch o := on.(type) {
-	case *sourceIndex:
-		renderer.renderService(uastModifierIndex)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(o.name())
-	case *sourceTable:
-		renderer.renderService(uastModifierTable)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(o.name())
-	case *sourceSchema:
-		renderer.renderService(uastModifierSchema)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(o.name())
-	case *sourceView:
-		renderer.renderService(uastModifierView)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(o.name())
-	}
+	renderer.renderService(on.format())
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(on.name())
 	return nil
 }
 func (renderer *baseRenderer) renderOnto(onto SourceBase) error {

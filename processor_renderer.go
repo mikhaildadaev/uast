@@ -416,14 +416,14 @@ func (renderer *baseRenderer) renderInto(into SourceBase) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderIsComment(comment string) error {
-	if comment == "" {
+func (renderer *baseRenderer) renderIsData(data string) error {
+	if data == "" {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierIs)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderLiteral(comment)
+	renderer.renderLiteral(data)
 	return nil
 }
 func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {

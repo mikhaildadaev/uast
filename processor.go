@@ -30,7 +30,7 @@ type componentRenderer interface {
 	renderIfExists(ifExists bool) error
 	renderIfNotExists(ifNotExists bool) error
 	renderInto(into SourceBase) error
-	renderIsComment(comment string) error
+	renderIsData(data string) error
 	renderJoin(joins []*clauseJoin) error
 	renderOn(on SourceBase) error
 	renderOnto(onto SourceBase) error
@@ -113,7 +113,7 @@ type componentValidator interface {
 	validateGroupBy(groups []markGroupable) error
 	validateHaving(having ExpressionBase) error
 	validateInto(into SourceBase) error
-	validateIsComment(comment string) error
+	validateIsData(data string) error
 	validateJoin(joins []*clauseJoin) error
 	validateOn(onsource SourceBase) error
 	validateOnto(onto SourceBase) error

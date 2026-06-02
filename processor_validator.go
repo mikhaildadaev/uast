@@ -408,11 +408,11 @@ func (validator *baseValidator) validateInto(into SourceBase) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validateIsComment(comment string) error {
-	if comment == "" {
+func (validator *baseValidator) validateIsData(data string) error {
+	if data == "" {
 		return nil
 	}
-	if err := validator.validateLiteral(comment); err != nil {
+	if err := validator.validateLiteral(data); err != nil {
 		return err
 	}
 	return nil

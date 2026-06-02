@@ -18,7 +18,6 @@ func (stmt *stmtComment) Is(comment string) *stmtComment {
 type stmtComment struct {
 	command managementService
 	comment string
-	column  markExpressable
 	on      SourceBase
 }
 

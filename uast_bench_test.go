@@ -13,10 +13,10 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
 				Field(
-					Test.Column.ID,
+					Test.Column.ID.Expr(),
 				).
 				Where(
-					Equal(Test.Column.Number, Value(0)),
+					Equal(Test.Column.Number.Expr(), Value(0)),
 				)
 			b.ResetTimer()
 			b.RunParallel(func(pb *testing.PB) {
@@ -31,59 +31,59 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
 				Field(
-					Data.Column.ID.As("test_id"),
-					Data.Column.String.As("test_string"),
-					Data.Column.Number.As("test_number"),
+					Data.Column.ID.Expr().As("test_id"),
+					Data.Column.String.Expr().As("test_string"),
+					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
 						Field(
-							Count(Test.Column.ID, false),
+							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.Column.Number, Data.Column.Number),
+							Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table, Equal(Data.Column.ID, Test.Column.ID)),
-					Left(Test.Table, Equal(Test.Column.String, Data.Column.String)),
+					Inner(Test.Table, Equal(Data.Column.ID.Expr(), Test.Column.ID.Expr())),
+					Left(Test.Table, Equal(Test.Column.String.Expr(), Data.Column.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.Column.String, Value("active")),
-						Greater(Test.Column.Number, Value(2)),
-						In(Test.Column.ID, Subquery[int64](
+						Equal(Test.Column.String.Expr(), Value("active")),
+						Greater(Test.Column.Number.Expr(), Value(2)),
+						In(Test.Column.ID.Expr(), Subquery[int64](
 							NewSelect(Test.Table).
 								Field(
-									Test.Column.ID.As("uid"),
+									Test.Column.ID.Expr().As("uid"),
 								).
 								Where(
-									Greater(Test.Column.Number, Value(10)),
+									Greater(Test.Column.Number.Expr(), Value(10)),
 								),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
 							Field(
-								Test.Column.ID,
+								Test.Column.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.Column.Number, Data.Column.Number),
-									Equal(Test.Column.String, Value("active")),
+									Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
+									Equal(Test.Column.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Data.Column.ID,
-					Data.Column.String,
-					Data.Column.Number,
+					Data.Column.ID.Expr(),
+					Data.Column.String.Expr(),
+					Data.Column.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.Column.ID, false), Value[int64](0)),
+					Greater(Count(Test.Column.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Data.Column.Number),
-					Asc(Data.Column.ID),
+					Desc(Data.Column.Number.Expr()),
+					Asc(Data.Column.ID.Expr()),
 				).
 				Pagination(48, 0)
 			b.ResetTimer()
@@ -108,10 +108,10 @@ func Benchmark_Immutable_Single(b *testing.B) {
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
 				Field(
-					Test.Column.ID,
+					Test.Column.ID.Expr(),
 				).
 				Where(
-					Equal(Test.Column.Number, Value(0)),
+					Equal(Test.Column.Number.Expr(), Value(0)),
 				)
 			for i := 0; i < b.N; i++ {
 				builder.Build(stmt)
@@ -120,58 +120,58 @@ func Benchmark_Immutable_Single(b *testing.B) {
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
 				Field(
-					Data.Column.ID.As("test_id"),
-					Data.Column.String.As("test_string"),
-					Data.Column.Number.As("test_number"),
+					Data.Column.ID.Expr().As("test_id"),
+					Data.Column.String.Expr().As("test_string"),
+					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
 						Field(
-							Count(Test.Column.ID, false),
+							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.Column.Number, Data.Column.Number),
+							Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table, Equal(Data.Column.ID, Test.Column.ID)),
-					Left(Test.Table, Equal(Test.Column.String, Test.Column.String)),
+					Inner(Test.Table, Equal(Data.Column.ID.Expr(), Test.Column.ID.Expr())),
+					Left(Test.Table, Equal(Test.Column.String.Expr(), Test.Column.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Data.Column.String, Value("active")),
-						Greater(Data.Column.Number, Value(2)),
-						In(Data.Column.ID, Subquery[int64](NewSelect(Test.Table).
+						Equal(Data.Column.String.Expr(), Value("active")),
+						Greater(Data.Column.Number.Expr(), Value(2)),
+						In(Data.Column.ID.Expr(), Subquery[int64](NewSelect(Test.Table).
 							Field(
-								Test.Column.ID.As("uid"),
+								Test.Column.ID.Expr().As("uid"),
 							).
 							Where(
-								Greater(Test.Column.Number, Value(10)),
+								Greater(Test.Column.Number.Expr(), Value(10)),
 							),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
 							Field(
-								Test.Column.ID,
+								Test.Column.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.Column.Number, Data.Column.Number),
-									Equal(Test.Column.String, Value("active")),
+									Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
+									Equal(Test.Column.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Data.Column.ID,
-					Data.Column.String,
-					Data.Column.Number,
+					Data.Column.ID.Expr(),
+					Data.Column.String.Expr(),
+					Data.Column.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.Column.ID, false), Value[int64](0)),
+					Greater(Count(Test.Column.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Data.Column.Number),
-					Asc(Data.Column.ID),
+					Desc(Data.Column.Number.Expr()),
+					Asc(Data.Column.ID.Expr()),
 				).
 				Pagination(48, 0)
 			for i := 0; i < b.N; i++ {
@@ -190,10 +190,10 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
 				Field(
-					Test.Column.ID,
+					Test.Column.ID.Expr(),
 				).
 				Where(
-					Equal(Test.Column.Number, Value(0)),
+					Equal(Test.Column.Number.Expr(), Value(0)),
 				)
 			b.ResetTimer()
 			b.RunParallel(func(pb *testing.PB) {
@@ -208,59 +208,59 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
 				Field(
-					Data.Column.ID.As("test_id"),
-					Data.Column.String.As("test_string"),
-					Data.Column.Number.As("test_number"),
+					Data.Column.ID.Expr().As("test_id"),
+					Data.Column.String.Expr().As("test_string"),
+					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
 						Field(
-							Count(Test.Column.ID, false),
+							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.Column.Number, Data.Column.Number),
+							Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table, Equal(Data.Column.ID, Test.Column.ID)),
-					Left(Test.Table, Equal(Test.Column.String, Data.Column.String)),
+					Inner(Test.Table, Equal(Data.Column.ID.Expr(), Test.Column.ID.Expr())),
+					Left(Test.Table, Equal(Test.Column.String.Expr(), Data.Column.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.Column.String, Value("active")),
-						Greater(Test.Column.Number, Value(2)),
-						In(Test.Column.ID, Subquery[int64](
+						Equal(Test.Column.String.Expr(), Value("active")),
+						Greater(Test.Column.Number.Expr(), Value(2)),
+						In(Test.Column.ID.Expr(), Subquery[int64](
 							NewSelect(Test.Table).
 								Field(
-									Test.Column.ID.As("uid"),
+									Test.Column.ID.Expr().As("uid"),
 								).
 								Where(
-									Greater(Test.Column.Number, Value(10)),
+									Greater(Test.Column.Number.Expr(), Value(10)),
 								),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
 							Field(
-								Test.Column.ID,
+								Test.Column.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.Column.Number, Data.Column.Number),
-									Equal(Test.Column.String, Value("active")),
+									Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
+									Equal(Test.Column.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Data.Column.ID,
-					Data.Column.String,
-					Data.Column.Number,
+					Data.Column.ID.Expr(),
+					Data.Column.String.Expr(),
+					Data.Column.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.Column.ID, false), Value[int64](0)),
+					Greater(Count(Test.Column.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Data.Column.Number),
-					Asc(Data.Column.ID),
+					Desc(Data.Column.Number.Expr()),
+					Asc(Data.Column.ID.Expr()),
 				).
 				Pagination(48, 0)
 			b.ResetTimer()
@@ -287,10 +287,10 @@ func Benchmark_Mutable_Single(b *testing.B) {
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
 				Field(
-					Test.Column.ID,
+					Test.Column.ID.Expr(),
 				).
 				Where(
-					Equal(Test.Column.Number, Value(0)),
+					Equal(Test.Column.Number.Expr(), Value(0)),
 				)
 			for i := 0; i < b.N; i++ {
 				builder.Build(stmt)
@@ -299,58 +299,58 @@ func Benchmark_Mutable_Single(b *testing.B) {
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
 				Field(
-					Data.Column.ID.As("test_id"),
-					Data.Column.String.As("test_string"),
-					Data.Column.Number.As("test_number"),
+					Data.Column.ID.Expr().As("test_id"),
+					Data.Column.String.Expr().As("test_string"),
+					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
 						Field(
-							Count(Test.Column.ID, false),
+							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.Column.Number, Data.Column.Number),
+							Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table, Equal(Data.Column.ID, Test.Column.ID)),
-					Left(Test.Table, Equal(Test.Column.String, Test.Column.String)),
+					Inner(Test.Table, Equal(Data.Column.ID.Expr(), Test.Column.ID.Expr())),
+					Left(Test.Table, Equal(Test.Column.String.Expr(), Test.Column.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Data.Column.String, Value("active")),
-						Greater(Data.Column.Number, Value(2)),
-						In(Data.Column.ID, Subquery[int64](NewSelect(Test.Table).
+						Equal(Data.Column.String.Expr(), Value("active")),
+						Greater(Data.Column.Number.Expr(), Value(2)),
+						In(Data.Column.ID.Expr(), Subquery[int64](NewSelect(Test.Table).
 							Field(
-								Test.Column.ID.As("uid"),
+								Test.Column.ID.Expr().As("uid"),
 							).
 							Where(
-								Greater(Test.Column.Number, Value(10)),
+								Greater(Test.Column.Number.Expr(), Value(10)),
 							),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
 							Field(
-								Test.Column.ID,
+								Test.Column.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.Column.Number, Data.Column.Number),
-									Equal(Test.Column.String, Value("active")),
+									Equal(Test.Column.Number.Expr(), Data.Column.Number.Expr()),
+									Equal(Test.Column.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Data.Column.ID,
-					Data.Column.String,
-					Data.Column.Number,
+					Data.Column.ID.Expr(),
+					Data.Column.String.Expr(),
+					Data.Column.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.Column.ID, false), Value[int64](0)),
+					Greater(Count(Test.Column.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Data.Column.Number),
-					Asc(Data.Column.ID),
+					Desc(Data.Column.Number.Expr()),
+					Asc(Data.Column.ID.Expr()),
 				).
 				Pagination(48, 0)
 			for i := 0; i < b.N; i++ {

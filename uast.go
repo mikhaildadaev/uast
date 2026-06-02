@@ -461,9 +461,9 @@ type config struct {
 	symbolQuoteLeft        string
 	symbolQuoteRight       string
 	supportCascade         bool
-	supportComment         map[string]bool
-	supportIfExists        map[string]bool
-	supportIfNotExists     map[string]bool
+	supportComment         map[modifierService]bool
+	supportIfExists        map[modifierService]bool
+	supportIfNotExists     map[modifierService]bool
 	supportRestartIdentity bool
 	supportReturning       bool
 	supportUpsert          bool

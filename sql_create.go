@@ -11,8 +11,8 @@ func NewCreate(entity SourceBase) *stmtCreate {
 }
 
 // Публичные методы
-func (stmt *stmtCreate) Field(fields ...markExpressable) *stmtCreate {
-	stmt.fields = fields
+func (stmt *stmtCreate) Columns(columns ...markSourceable) *stmtCreate {
+	stmt.columns = columns
 	return stmt
 }
 func (stmt *stmtCreate) IfNotExists() *stmtCreate {
@@ -39,9 +39,8 @@ func (stmt *stmtCreate) Unique() *stmtCreate {
 // Приватные структуры
 type stmtCreate struct {
 	command     managementService
-	columns     []string
+	columns     []markSourceable
 	entity      SourceBase
-	fields      []markExpressable
 	ifNotExists bool
 	replace     bool
 	source      statement

@@ -13,7 +13,7 @@ func (stmt *stmtSelect) Distinct() *stmtSelect {
 	stmt.distinct = true
 	return stmt
 }
-func (stmt *stmtSelect) Field(fields ...markExpressable) *stmtSelect {
+func (stmt *stmtSelect) Fields(fields ...markExpressable) *stmtSelect {
 	stmt.fields = fields
 	return stmt
 }

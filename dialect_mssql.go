@@ -928,6 +928,8 @@ func (strateger *mssqlStrateger) validateCreate(baseValidator *baseValidator, st
 		if err := baseValidator.validateSource(stmtCreate.source); err != nil {
 			return err
 		}
+	default:
+		return ErrInvalidStatement
 	}
 	return nil
 }
@@ -956,6 +958,9 @@ func (strateger *mssqlStrateger) validateDrop(baseValidator *baseValidator, stmt
 	return nil
 }
 func (strateger *mssqlStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
+	if (stmtInsert.source == nil && stmtInsert.values == nil) || (stmtInsert.source != nil && stmtInsert.values != nil) {
+		return ErrInvalidStatement
+	}
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -967,9 +972,6 @@ func (strateger *mssqlStrateger) validateInsert(baseValidator *baseValidator, st
 	}
 	if err := baseValidator.validateReturning(stmtInsert.returning); err != nil {
 		return err
-	}
-	if (stmtInsert.source == nil && stmtInsert.values == nil) || (stmtInsert.source != nil && stmtInsert.values != nil) {
-		return ErrInvalidStatement
 	}
 	if err := baseValidator.validateSource(stmtInsert.source); err != nil {
 		return err

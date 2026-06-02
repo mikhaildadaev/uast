@@ -785,6 +785,8 @@ func (strateger *sqliteStrateger) validateCreate(baseValidator *baseValidator, s
 		if err := baseValidator.validateSource(stmtCreate.source); err != nil {
 			return err
 		}
+	default:
+		return ErrInvalidStatement
 	}
 	return nil
 }
@@ -813,6 +815,9 @@ func (strateger *sqliteStrateger) validateDrop(baseValidator *baseValidator, stm
 	return nil
 }
 func (strateger *sqliteStrateger) validateInsert(baseValidator *baseValidator, stmtInsert *stmtInsert) error {
+	if (stmtInsert.source == nil && stmtInsert.values == nil) || (stmtInsert.source != nil && stmtInsert.values != nil) {
+		return ErrInvalidStatement
+	}
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
@@ -821,9 +826,6 @@ func (strateger *sqliteStrateger) validateInsert(baseValidator *baseValidator, s
 	}
 	if err := baseValidator.validateColumns(stmtInsert.columns); err != nil {
 		return err
-	}
-	if (stmtInsert.source == nil && stmtInsert.values == nil) || (stmtInsert.source != nil && stmtInsert.values != nil) {
-		return ErrInvalidStatement
 	}
 	if err := baseValidator.validateSource(stmtInsert.source); err != nil {
 		return err

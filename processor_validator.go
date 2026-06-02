@@ -446,20 +446,11 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	}
 	return nil
 }
-func (validator *baseValidator) validateOnColumn(column markExpressable) error {
-	if column == nil {
+func (validator *baseValidator) validateOn(on SourceBase) error {
+	if on == nil {
 		return nil
 	}
-	if err := column.validate(validator); err != nil {
-		return err
-	}
-	return nil
-}
-func (validator *baseValidator) validateOnTable(table *TableSource) error {
-	if table == nil {
-		return nil
-	}
-	if err := table.validate(validator); err != nil {
+	if err := on.validate(validator); err != nil {
 		return err
 	}
 	return nil

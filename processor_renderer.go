@@ -442,35 +442,31 @@ func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderOn(entity SourceBase) error {
-	if entity == nil {
+func (renderer *baseRenderer) renderOn(on SourceBase) error {
+	if on == nil {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierOn)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	switch e := entity.(type) {
+	switch o := on.(type) {
 	case *sourceIndex:
-		renderer.renderName(e.name())
+		renderer.renderService(uastModifierIndex)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(o.name())
 	case *sourceTable:
-		renderer.renderName(e.name())
+		renderer.renderService(uastModifierTable)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(o.name())
 	case *sourceSchema:
-		renderer.renderName(e.name())
+		renderer.renderService(uastModifierSchema)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(o.name())
 	case *sourceView:
-		renderer.renderName(e.name())
+		renderer.renderService(uastModifierView)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(o.name())
 	}
-	return nil
-}
-func (renderer *baseRenderer) renderOnTable(table *TableSource) error {
-	if table == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierOn)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierTable)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(table.name())
 	return nil
 }
 func (renderer *baseRenderer) renderOnto(onto SourceBase) error {
@@ -610,7 +606,26 @@ func (renderer *baseRenderer) renderTable(table *TableSource) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderTarget(source SourceBase) error {
+func (renderer *baseRenderer) renderTargetAlias(source SourceBase) error {
+	if source == nil {
+		return nil
+	}
+	var aliasName string
+	switch target := source.(type) {
+	case *CteSource:
+		aliasName = target.aliasName
+	case *TableSource:
+		aliasName = target.aliasName
+	case *QuerySource:
+		aliasName = target.aliasName
+	default:
+		return ErrInvalidAlias
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderAlias(aliasName)
+	return nil
+}
+func (renderer *baseRenderer) renderTargetName(source SourceBase) error {
 	if source == nil {
 		return nil
 	}

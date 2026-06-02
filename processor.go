@@ -32,7 +32,7 @@ type componentRenderer interface {
 	renderInto(into SourceBase) error
 	renderIsComment(comment string) error
 	renderJoin(joins []*clauseJoin) error
-	renderOn(table *TableSource) error
+	renderOn(on SourceBase) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
@@ -42,7 +42,8 @@ type componentRenderer interface {
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
 	renderTable(table *TableSource) error
-	renderTarget(source SourceBase) error
+	renderTargetAlias(source SourceBase) error
+	renderTargetName(source SourceBase) error
 	renderUnions(unions []*clauseUnions) error
 	renderUnique(unique bool) error
 	renderUsing(joins []*clauseJoin) error
@@ -114,8 +115,7 @@ type componentValidator interface {
 	validateInto(into SourceBase) error
 	validateIsComment(comment string) error
 	validateJoin(joins []*clauseJoin) error
-	validateOnColumn(column markExpressable) error
-	validateOnTable(table *TableSource) error
+	validateOn(onsource SourceBase) error
 	validateOnto(onto SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validatePagination(pagination *clausePagination) error

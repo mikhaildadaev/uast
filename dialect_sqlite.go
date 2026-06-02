@@ -498,9 +498,6 @@ func (strateger *sqliteStrateger) renderComment(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnColumn(stmtComment.column); err != nil {
-		return err
-	}
 	if err := baseRenderer.renderOnTable(stmtComment.table); err != nil {
 		return err
 	}
@@ -522,7 +519,7 @@ func (strateger *sqliteStrateger) renderCreate(baseRenderer *baseRenderer, stmtC
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderOnColumns(stmtCreate.table, stmtCreate.columns); err != nil {
+		if err := baseRenderer.renderOn(stmtCreate.table); err != nil {
 			return err
 		}
 	case *sourceSchema:
@@ -530,7 +527,7 @@ func (strateger *sqliteStrateger) renderCreate(baseRenderer *baseRenderer, stmtC
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderColumns(stmtCreate.fields); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -540,7 +537,10 @@ func (strateger *sqliteStrateger) renderCreate(baseRenderer *baseRenderer, stmtC
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderAsSource(stmtCreate.source); err != nil {
+		if err := baseRenderer.renderAs(); err != nil {
+			return err
+		}
+		if err := baseRenderer.renderSource(stmtCreate.source); err != nil {
 			return err
 		}
 	}
@@ -589,7 +589,7 @@ func (strateger *sqliteStrateger) renderInsert(baseRenderer *baseRenderer, stmtI
 	if err := baseRenderer.renderInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderColumns(stmtInsert.columns); err != nil {
+	if err := baseRenderer.renderFields(stmtInsert.fields, true); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderSource(stmtInsert.source); err != nil {
@@ -613,7 +613,7 @@ func (strateger *sqliteStrateger) renderSelect(baseRenderer *baseRenderer, stmtS
 	if err := baseRenderer.renderDistinct(stmtSelect.distinct); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderFields(stmtSelect.fields); err != nil {
+	if err := baseRenderer.renderFields(stmtSelect.fields, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtSelect.from); err != nil {
@@ -686,9 +686,6 @@ func (strateger *sqliteStrateger) transformComment(baseTransformer *baseTransfor
 }
 func (strateger *sqliteStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	if err := baseTransformer.transformColumn(stmtCreate.fields, &stmtCreate.columns); err != nil {
-		return err
-	}
 	return nil
 }
 func (strateger *sqliteStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
@@ -767,7 +764,7 @@ func (strateger *sqliteStrateger) validateCreate(baseValidator *baseValidator, s
 		if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
 			return err
 		}
-		if err := baseValidator.validateFields(stmtCreate.fields); err != nil {
+		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceSchema:
@@ -775,7 +772,7 @@ func (strateger *sqliteStrateger) validateCreate(baseValidator *baseValidator, s
 		if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
 			return err
 		}
-		if err := baseValidator.validateFields(stmtCreate.fields); err != nil {
+		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -824,7 +821,7 @@ func (strateger *sqliteStrateger) validateInsert(baseValidator *baseValidator, s
 	if err := baseValidator.validateInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseValidator.validateColumns(stmtInsert.columns); err != nil {
+	if err := baseValidator.validateFields(stmtInsert.fields); err != nil {
 		return err
 	}
 	if err := baseValidator.validateSource(stmtInsert.source); err != nil {

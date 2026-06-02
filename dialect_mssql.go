@@ -665,7 +665,7 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderOnColumns(stmtCreate.table, stmtCreate.columns); err != nil {
+		if err := baseRenderer.renderOn(stmtCreate.table); err != nil {
 			return err
 		}
 	case *sourceSchema:
@@ -673,7 +673,7 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderColumns(stmtCreate.fields); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -683,7 +683,10 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderAsSource(stmtCreate.source); err != nil {
+		if err := baseRenderer.renderAs(); err != nil {
+			return err
+		}
+		if err := baseRenderer.renderSource(stmtCreate.source); err != nil {
 			return err
 		}
 	}
@@ -735,7 +738,7 @@ func (strateger *mssqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 	if err := baseRenderer.renderInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderColumns(stmtInsert.columns); err != nil {
+	if err := baseRenderer.renderFields(stmtInsert.fields, true); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderReturning(stmtInsert.returning); err != nil {
@@ -759,7 +762,7 @@ func (strateger *mssqlStrateger) renderSelect(baseRenderer *baseRenderer, stmtSe
 	if err := baseRenderer.renderDistinct(stmtSelect.distinct); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderFields(stmtSelect.fields); err != nil {
+	if err := baseRenderer.renderFields(stmtSelect.fields, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtSelect.from); err != nil {
@@ -832,9 +835,6 @@ func (strateger *mssqlStrateger) transformComment(baseTransformer *baseTransform
 }
 func (strateger *mssqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
-	if err := baseTransformer.transformColumn(stmtCreate.fields, &stmtCreate.columns); err != nil {
-		return err
-	}
 	return nil
 }
 func (strateger *mssqlStrateger) transformDelete(baseTransformer *baseTransformer, stmtDelete *stmtDelete) error {
@@ -916,12 +916,12 @@ func (strateger *mssqlStrateger) validateCreate(baseValidator *baseValidator, st
 	}
 	switch stmtCreate.entity.(type) {
 	case *sourceIndex:
-		if err := baseValidator.validateFields(stmtCreate.fields); err != nil {
+		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseValidator.validateFields(stmtCreate.fields); err != nil {
+		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -967,7 +967,7 @@ func (strateger *mssqlStrateger) validateInsert(baseValidator *baseValidator, st
 	if err := baseValidator.validateInto(stmtInsert.into); err != nil {
 		return err
 	}
-	if err := baseValidator.validateColumns(stmtInsert.columns); err != nil {
+	if err := baseValidator.validateFields(stmtInsert.fields); err != nil {
 		return err
 	}
 	if err := baseValidator.validateReturning(stmtInsert.returning); err != nil {

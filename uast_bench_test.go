@@ -12,7 +12,7 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 		builder.SetDialect(supportDialect)
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
-				Field(
+				Fields(
 					Test.Column.ID.Expr(),
 				).
 				Where(
@@ -30,12 +30,12 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 		})
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
-				Field(
+				Fields(
 					Data.Column.ID.Expr().As("test_id"),
 					Data.Column.String.Expr().As("test_string"),
 					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
-						Field(
+						Fields(
 							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
@@ -53,7 +53,7 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 						Greater(Test.Column.Number.Expr(), Value(2)),
 						In(Test.Column.ID.Expr(), Subquery[int64](
 							NewSelect(Test.Table).
-								Field(
+								Fields(
 									Test.Column.ID.Expr().As("uid"),
 								).
 								Where(
@@ -61,7 +61,7 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 								),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
-							Field(
+							Fields(
 								Test.Column.ID.Expr(),
 							).
 							Where(
@@ -107,7 +107,7 @@ func Benchmark_Immutable_Single(b *testing.B) {
 		builder.SetDialect(supportDialect)
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
-				Field(
+				Fields(
 					Test.Column.ID.Expr(),
 				).
 				Where(
@@ -119,12 +119,12 @@ func Benchmark_Immutable_Single(b *testing.B) {
 		})
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
-				Field(
+				Fields(
 					Data.Column.ID.Expr().As("test_id"),
 					Data.Column.String.Expr().As("test_string"),
 					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
-						Field(
+						Fields(
 							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
@@ -141,7 +141,7 @@ func Benchmark_Immutable_Single(b *testing.B) {
 						Equal(Data.Column.String.Expr(), Value("active")),
 						Greater(Data.Column.Number.Expr(), Value(2)),
 						In(Data.Column.ID.Expr(), Subquery[int64](NewSelect(Test.Table).
-							Field(
+							Fields(
 								Test.Column.ID.Expr().As("uid"),
 							).
 							Where(
@@ -149,7 +149,7 @@ func Benchmark_Immutable_Single(b *testing.B) {
 							),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
-							Field(
+							Fields(
 								Test.Column.ID.Expr(),
 							).
 							Where(
@@ -189,7 +189,7 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
-				Field(
+				Fields(
 					Test.Column.ID.Expr(),
 				).
 				Where(
@@ -207,12 +207,12 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 		})
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
-				Field(
+				Fields(
 					Data.Column.ID.Expr().As("test_id"),
 					Data.Column.String.Expr().As("test_string"),
 					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
-						Field(
+						Fields(
 							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
@@ -230,7 +230,7 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 						Greater(Test.Column.Number.Expr(), Value(2)),
 						In(Test.Column.ID.Expr(), Subquery[int64](
 							NewSelect(Test.Table).
-								Field(
+								Fields(
 									Test.Column.ID.Expr().As("uid"),
 								).
 								Where(
@@ -238,7 +238,7 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 								),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
-							Field(
+							Fields(
 								Test.Column.ID.Expr(),
 							).
 							Where(
@@ -286,7 +286,7 @@ func Benchmark_Mutable_Single(b *testing.B) {
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
 			stmt := NewSelect(Test.Table).
-				Field(
+				Fields(
 					Test.Column.ID.Expr(),
 				).
 				Where(
@@ -298,12 +298,12 @@ func Benchmark_Mutable_Single(b *testing.B) {
 		})
 		b.Run("Complex", func(b *testing.B) {
 			stmt := NewSelect(Data.Table).
-				Field(
+				Fields(
 					Data.Column.ID.Expr().As("test_id"),
 					Data.Column.String.Expr().As("test_string"),
 					Data.Column.Number.Expr().As("test_number"),
 					Subquery[int](NewSelect(Test.Table).
-						Field(
+						Fields(
 							Count(Test.Column.ID.Expr(), false),
 						).
 						Where(
@@ -320,7 +320,7 @@ func Benchmark_Mutable_Single(b *testing.B) {
 						Equal(Data.Column.String.Expr(), Value("active")),
 						Greater(Data.Column.Number.Expr(), Value(2)),
 						In(Data.Column.ID.Expr(), Subquery[int64](NewSelect(Test.Table).
-							Field(
+							Fields(
 								Test.Column.ID.Expr().As("uid"),
 							).
 							Where(
@@ -328,7 +328,7 @@ func Benchmark_Mutable_Single(b *testing.B) {
 							),
 						)),
 						Exists(Subquery[int](NewSelect(Test.Table).
-							Field(
+							Fields(
 								Test.Column.ID.Expr(),
 							).
 							Where(

@@ -276,54 +276,17 @@ func (renderer *baseRenderer) renderColumns(columns []markSourceable) error {
 	return nil
 }
 func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool, ifNotExists bool) error {
-	switch e := entity.(type) {
-	case *sourceIndex:
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierIndex)
-		if renderer.config.supportIfExists["INDEX"] {
-			renderer.renderIfExists(ifExists)
-		}
-		if renderer.config.supportIfNotExists["INDEX"] {
-			renderer.renderIfNotExists(ifNotExists)
-		}
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.name())
-	case *sourceSchema:
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierSchema)
-		if renderer.config.supportIfExists["SCHEMA"] {
-			renderer.renderIfExists(ifExists)
-		}
-		if renderer.config.supportIfNotExists["SCHEMA"] {
-			renderer.renderIfNotExists(ifNotExists)
-		}
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.name())
-	case *sourceTable:
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierTable)
-		if renderer.config.supportIfExists["TABLE"] {
-			renderer.renderIfExists(ifExists)
-		}
-		if renderer.config.supportIfNotExists["TABLE"] {
-			renderer.renderIfNotExists(ifNotExists)
-		}
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.name())
-	case *sourceView:
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierView)
-		if renderer.config.supportIfExists["VIEW"] {
-			renderer.renderIfExists(ifExists)
-		}
-		if renderer.config.supportIfNotExists["VIEW"] {
-			renderer.renderIfNotExists(ifNotExists)
-		}
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(e.name())
-	default:
-		return ErrInvalidStatement
+	format := entity.format()
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(format)
+	if renderer.config.supportIfExists[format] {
+		renderer.renderIfExists(ifExists)
 	}
+	if renderer.config.supportIfNotExists[format] {
+		renderer.renderIfNotExists(ifNotExists)
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(entity.name())
 	return nil
 }
 func (renderer *baseRenderer) renderFields(fields []markExpressable, isParen bool) error {

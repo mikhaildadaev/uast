@@ -14,8 +14,13 @@ type SourceBase interface {
 	render(baseRenderer *baseRenderer) error
 	validate(baseValidator *baseValidator) error
 }
+type SourceSafe[T typeScalar] interface {
+	SourceBase
+	isSourceSafe(T)
+}
 
 // Публичные структуры
+type ColumnSource[T typeScalar] = sourceColumn[T]
 type CteSource = sourceCte
 type IndexSource = sourceIndex
 type QuerySource = sourceQuery
@@ -24,6 +29,13 @@ type TableSource = sourceTable
 type ViewSource = sourceView
 
 // Публичные конструкторы
+func NewColumn[T typeScalar](columnName string, table *TableSource, valueType ValueType) *sourceColumn[T] {
+	return &sourceColumn[T]{
+		expression: Column[T](table.aliasName, columnName),
+		table:      table,
+		valueType:  valueType,
+	}
+}
 func NewCTE(name string, alias string) *CteSource {
 	if alias == "" {
 		alias = name
@@ -34,9 +46,10 @@ func NewCTE(name string, alias string) *CteSource {
 		withAlias: true,
 	}
 }
-func NewIndex(name string) *IndexSource {
+func NewIndex(name string, table *TableSource) *IndexSource {
 	return &IndexSource{
 		indexName: name,
+		table:     table,
 	}
 }
 func NewQuery(statement statement, alias string) *QuerySource {
@@ -64,21 +77,47 @@ func NewTable(name, alias string) *TableSource {
 		withAlias: true,
 	}
 }
-func NewView(name, alias string) *sourceView {
+func NewView(name, alias string, table *TableSource) *sourceView {
 	if alias == "" {
 		alias = name
 	}
 	return &sourceView{
 		aliasName: alias,
+		table:     table,
 		viewName:  name,
 		withAlias: true,
 	}
+}
+
+// Публичные методы
+func (source *sourceColumn[T]) AutoIncrement() *sourceColumn[T] {
+	source.isAutoIncrement = true
+	return source
+}
+func (source *sourceColumn[T]) Default(value ExpressionBase) *sourceColumn[T] {
+	source.defaultValue = value
+	return source
+}
+func (source *sourceColumn[T]) Expr() *exprColumn[T] {
+	return source.expression
+}
+func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
+	source.isNotNull = true
+	return source
 }
 
 // Приватные переменные
 var queryCounter atomic.Int64
 
 // Приватные структуры
+type sourceColumn[T typeScalar] struct {
+	defaultValue    ExpressionBase
+	expression      *exprColumn[T]
+	isAutoIncrement bool
+	isNotNull       bool
+	table           *sourceTable
+	valueType       ValueType
+}
 type sourceCte struct {
 	aliasName string
 	cteName   string
@@ -86,6 +125,7 @@ type sourceCte struct {
 }
 type sourceIndex struct {
 	indexName string
+	table     *sourceTable
 }
 type sourceQuery struct {
 	aliasName string
@@ -102,11 +142,35 @@ type sourceTable struct {
 }
 type sourceView struct {
 	aliasName string
+	table     *sourceTable
 	viewName  string
 	withAlias bool
 }
 
 // Приватные методы
+func (source *sourceColumn[T]) alias() string {
+	return source.table.alias()
+}
+func (source *sourceColumn[T]) clone() SourceBase {
+	copy := *source
+	return &copy
+}
+func (source *sourceColumn[T]) name() string {
+	return source.expression.transformGetName()
+}
+func (source *sourceColumn[T]) isSourceBase() {}
+func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
+	baseRenderer.renderName(source.table.tableName)
+	baseRenderer.renderOperator(uastCompositeSinglePoint)
+	baseRenderer.renderName(source.name())
+	return nil
+}
+func (col *sourceColumn[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(col.table.tableName); err != nil {
+		return err
+	}
+	return nil
+}
 func (source *sourceCte) alias() string {
 	if source == nil {
 		return ""

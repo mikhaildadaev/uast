@@ -302,7 +302,7 @@ func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool, ifN
 			renderer.renderIfExists(ifExists)
 		}
 		if renderer.config.supportIfNotExists["SCHEMA"] {
-			renderer.renderIfExists(ifNotExists)
+			renderer.renderIfNotExists(ifNotExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderName(e.name())
@@ -313,7 +313,7 @@ func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool, ifN
 			renderer.renderIfExists(ifExists)
 		}
 		if renderer.config.supportIfNotExists["TABLE"] {
-			renderer.renderIfExists(ifNotExists)
+			renderer.renderIfNotExists(ifNotExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderName(e.name())
@@ -324,7 +324,7 @@ func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool, ifN
 			renderer.renderIfExists(ifExists)
 		}
 		if renderer.config.supportIfNotExists["VIEW"] {
-			renderer.renderIfExists(ifNotExists)
+			renderer.renderIfNotExists(ifNotExists)
 		}
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderName(e.name())

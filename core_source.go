@@ -31,9 +31,9 @@ type ViewSource = sourceView
 // Публичные конструкторы
 func NewColumn[T typeScalar](columnName string, table *TableSource, valueType ValueType) *sourceColumn[T] {
 	return &sourceColumn[T]{
-		expression: Column[T](table.aliasName, columnName),
-		table:      table,
-		valueType:  valueType,
+		column:    Column[T](table.aliasName, columnName),
+		table:     table,
+		valueType: valueType,
 	}
 }
 func NewCTE(name string, alias string) *CteSource {
@@ -99,11 +99,17 @@ func (source *sourceColumn[T]) Default(value ExpressionBase) *sourceColumn[T] {
 	return source
 }
 func (source *sourceColumn[T]) Expr() *exprColumn[T] {
-	return source.expression
+	return source.column
 }
 func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
 	source.isNotNull = true
 	return source
+}
+
+// Приватные интерфейсы
+type markSourceable interface {
+	SourceBase
+	isColumnable()
 }
 
 // Приватные переменные
@@ -112,7 +118,7 @@ var queryCounter atomic.Int64
 // Приватные структуры
 type sourceColumn[T typeScalar] struct {
 	defaultValue    ExpressionBase
-	expression      *exprColumn[T]
+	column          *exprColumn[T]
 	isAutoIncrement bool
 	isNotNull       bool
 	table           *sourceTable
@@ -156,9 +162,10 @@ func (source *sourceColumn[T]) clone() SourceBase {
 	return &copy
 }
 func (source *sourceColumn[T]) name() string {
-	return source.expression.transformGetName()
+	return source.column.transformGetName()
 }
 func (source *sourceColumn[T]) isSourceBase() {}
+func (source *sourceColumn[T]) isColumnable() {}
 func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.table.tableName)
 	baseRenderer.renderOperator(uastCompositeSinglePoint)

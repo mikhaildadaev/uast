@@ -20,7 +20,6 @@ type ColumnExpr[T typeScalar] = exprColumn[T]
 // Приватные интерфейсы
 type markExpressable interface {
 	ExpressionBase
-	isColumnable()
 	isFieldable()
 }
 type markPredicable interface {
@@ -173,7 +172,6 @@ func (expr *exprAlias[T]) clone() ExpressionBase {
 }
 func (expr *exprAlias[T]) isExpressionBase()  {}
 func (expr *exprAlias[T]) isExpressionSafe(T) {}
-func (expr *exprAlias[T]) isColumnable()      {}
 func (expr *exprAlias[T]) isFieldable()       {}
 func (expr *exprAlias[T]) isPredicable()      {}
 func (expr *exprAlias[T]) isReturnable()      {}
@@ -205,7 +203,6 @@ func (expr *exprArray[T]) clone() ExpressionBase {
 }
 func (expr *exprArray[T]) isExpressionBase()  {}
 func (expr *exprArray[T]) isExpressionSafe(T) {}
-func (expr *exprArray[T]) isColumnable()      {}
 func (expr *exprArray[T]) isFieldable()       {}
 func (expr *exprArray[T]) isGroupable()       {}
 func (expr *exprArray[T]) isOrderable()       {}
@@ -250,7 +247,6 @@ func (expr *exprBinary[T]) clone() ExpressionBase {
 }
 func (expr *exprBinary[T]) isExpressionBase()  {}
 func (expr *exprBinary[T]) isExpressionSafe(T) {}
-func (expr *exprBinary[T]) isColumnable()      {}
 func (expr *exprBinary[T]) isFieldable()       {}
 func (expr *exprBinary[T]) isPredicable()      {}
 func (expr *exprBinary[T]) isReturnable()      {}
@@ -278,7 +274,6 @@ func (expr *exprColumn[T]) clone() ExpressionBase {
 }
 func (expr *exprColumn[T]) isExpressionBase()  {}
 func (expr *exprColumn[T]) isExpressionSafe(T) {}
-func (expr *exprColumn[T]) isColumnable()      {}
 func (expr *exprColumn[T]) isFieldable()       {}
 func (expr *exprColumn[T]) isGroupable()       {}
 func (expr *exprColumn[T]) isOrderable()       {}
@@ -452,7 +447,6 @@ func (expr *exprConstant[T]) clone() ExpressionBase {
 }
 func (expr *exprConstant[T]) isExpressionBase()  {}
 func (expr *exprConstant[T]) isExpressionSafe(T) {}
-func (expr *exprConstant[T]) isColumnable()      {}
 func (expr *exprConstant[T]) isFieldable()       {}
 func (expr *exprConstant[T]) isGroupable()       {}
 func (expr *exprConstant[T]) isOrderable()       {}
@@ -482,7 +476,6 @@ func (expr *exprFunction[InLT, InRT, T]) clone() ExpressionBase {
 }
 func (expr *exprFunction[InLT, InRT, T]) isExpressionBase()  {}
 func (expr *exprFunction[InLT, InRT, T]) isExpressionSafe(T) {}
-func (expr *exprFunction[InLT, InRT, T]) isColumnable()      {}
 func (expr *exprFunction[InLT, InRT, T]) isFieldable()       {}
 func (expr *exprFunction[InLT, InRT, T]) isGroupable()       {}
 func (expr *exprFunction[InLT, InRT, T]) isOrderable()       {}
@@ -803,7 +796,6 @@ func (expr *exprLiteral[T]) clone() ExpressionBase {
 }
 func (expr *exprLiteral[T]) isExpressionBase()  {}
 func (expr *exprLiteral[T]) isExpressionSafe(T) {}
-func (expr *exprLiteral[T]) isColumnable()      {}
 func (expr *exprLiteral[T]) isFieldable()       {}
 func (expr *exprLiteral[T]) isGroupable()       {}
 func (expr *exprLiteral[T]) isOrderable()       {}
@@ -894,7 +886,6 @@ func (expr *exprPair[T]) clone() ExpressionBase {
 }
 func (expr *exprPair[T]) isExpressionBase()  {}
 func (expr *exprPair[T]) isExpressionSafe(T) {}
-func (expr *exprPair[T]) isColumnable()      {}
 func (expr *exprPair[T]) isFieldable()       {}
 func (expr *exprPair[T]) isGroupable()       {}
 func (expr *exprPair[T]) isOrderable()       {}
@@ -933,7 +924,6 @@ func (expr *exprSubquery[T]) clone() ExpressionBase {
 }
 func (expr *exprSubquery[T]) isExpressionBase()  {}
 func (expr *exprSubquery[T]) isExpressionSafe(T) {}
-func (expr *exprSubquery[T]) isColumnable()      {}
 func (expr *exprSubquery[T]) isFieldable()       {}
 func (expr *exprSubquery[T]) isGroupable()       {}
 func (expr *exprSubquery[T]) isOrderable()       {}
@@ -962,7 +952,6 @@ func (expr *exprValue[T]) clone() ExpressionBase {
 }
 func (expr *exprValue[T]) isExpressionBase()  {}
 func (expr *exprValue[T]) isExpressionSafe(T) {}
-func (expr *exprValue[T]) isColumnable()      {}
 func (expr *exprValue[T]) isFieldable()       {}
 func (expr *exprValue[T]) isGroupable()       {}
 func (expr *exprValue[T]) isOrderable()       {}

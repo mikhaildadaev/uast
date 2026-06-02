@@ -38,7 +38,7 @@ var DialectMsSQL = &SupportDialect{
 		supportIfNotExists: map[string]bool{
 			"INDEX":  false,
 			"SCHEMA": true,
-			"TABLE":  true,
+			"TABLE":  false,
 			"VIEW":   true,
 		},
 		supportRestartIdentity: false,

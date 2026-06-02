@@ -234,6 +234,18 @@ func (renderer *baseRenderer) renderValue(value any) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderAsSource(source statement) error {
+	if source == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierAs)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := source.render(renderer); err != nil {
+		return err
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderCascade(cascade bool) error {
 	if cascade && renderer.config.supportCascade {
 		renderer.renderOperator(uastCompositeSingleSpace)

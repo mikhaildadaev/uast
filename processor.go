@@ -17,6 +17,7 @@ type elementRenderer interface {
 	renderValue(value any) error
 }
 type componentRenderer interface {
+	renderAsSource(source statement) error
 	renderCascade(cascade bool) error
 	renderCommand(command managementService) error
 	renderColumns(columns []markExpressable) error

@@ -665,9 +665,12 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderOn(stmtCreate.table); err != nil {
+		if err := baseRenderer.renderOn(stmtCreate.on); err != nil {
 			return err
 		}
+		//if err := baseRenderer.renderTargetName(stmtCreate.columns); err != nil {
+		//	return err
+		//}
 	case *sourceSchema:
 	case *sourceTable:
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
@@ -699,7 +702,7 @@ func (strateger *mssqlStrateger) renderDelete(baseRenderer *baseRenderer, stmtDe
 	if err := baseRenderer.renderCommand(stmtDelete.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderTarget(stmtDelete.from); err != nil {
+	if err := baseRenderer.renderTargetAlias(stmtDelete.from); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {

@@ -711,7 +711,7 @@ func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, 
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnTable(stmtComment.table); err != nil {
+	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderIsComment(stmtComment.comment); err != nil {
@@ -732,9 +732,12 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderOn(stmtCreate.table); err != nil {
+		if err := baseRenderer.renderOn(stmtCreate.on); err != nil {
 			return err
 		}
+		//if err := baseRenderer.renderTargetName(stmtCreate.columns); err != nil {
+		//	return err
+		//}
 	case *sourceSchema:
 	case *sourceTable:
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
@@ -959,13 +962,7 @@ func (strateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTrans
 	return nil
 }
 func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	if stmtComment.column == nil && stmtComment.table == nil {
-		return ErrInvalidStatement
-	}
-	if err := baseValidator.validateOnColumn(stmtComment.column); err != nil {
-		return err
-	}
-	if err := baseValidator.validateOnTable(stmtComment.table); err != nil {
+	if err := baseValidator.validateOn(stmtComment.on); err != nil {
 		return err
 	}
 	if err := baseValidator.validateIsComment(stmtComment.comment); err != nil {

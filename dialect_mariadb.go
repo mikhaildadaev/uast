@@ -443,7 +443,7 @@ func (strateger *mariadbStrateger) renderComment(baseRenderer *baseRenderer, stm
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnTable(stmtComment.table); err != nil {
+	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderIsComment(stmtComment.comment); err != nil {
@@ -464,9 +464,12 @@ func (strateger *mariadbStrateger) renderCreate(baseRenderer *baseRenderer, stmt
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderOn(stmtCreate.table); err != nil {
+		if err := baseRenderer.renderOn(stmtCreate.on); err != nil {
 			return err
 		}
+		//if err := baseRenderer.renderTargetName(stmtCreate.columns); err != nil {
+		//	return err
+		//}
 	case *sourceSchema:
 	case *sourceTable:
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
@@ -498,7 +501,7 @@ func (strateger *mariadbStrateger) renderDelete(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderCommand(stmtDelete.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderTarget(stmtDelete.from); err != nil {
+	if err := baseRenderer.renderTargetAlias(stmtDelete.from); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {
@@ -682,13 +685,7 @@ func (strateger *mariadbStrateger) transformUpdate(baseTransformer *baseTransfor
 	return nil
 }
 func (strateger *mariadbStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	if stmtComment.column == nil && stmtComment.table == nil {
-		return ErrInvalidStatement
-	}
-	if err := baseValidator.validateOnColumn(stmtComment.column); err != nil {
-		return err
-	}
-	if err := baseValidator.validateOnTable(stmtComment.table); err != nil {
+	if err := baseValidator.validateOn(stmtComment.on); err != nil {
 		return err
 	}
 	if err := baseValidator.validateIsComment(stmtComment.comment); err != nil {

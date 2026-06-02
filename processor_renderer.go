@@ -234,16 +234,9 @@ func (renderer *baseRenderer) renderValue(value any) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderAsSource(source statement) error {
-	if source == nil {
-		return nil
-	}
+func (renderer *baseRenderer) renderAs() error {
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierAs)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := source.render(renderer); err != nil {
-		return err
-	}
 	return nil
 }
 func (renderer *baseRenderer) renderCascade(cascade bool) error {
@@ -264,7 +257,7 @@ func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderColumns(columns []markExpressable) error {
+func (renderer *baseRenderer) renderColumns(columns []markSourceable) error {
 	if len(columns) == 0 {
 		return nil
 	}
@@ -333,12 +326,15 @@ func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool, ifN
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderFields(fields []markExpressable) error {
+func (renderer *baseRenderer) renderFields(fields []markExpressable, isParen bool) error {
 	if len(fields) == 0 {
 		return nil
 	}
 	fieldsCount := len(fields) - 1
 	renderer.renderOperator(uastCompositeSingleSpace)
+	if isParen {
+		renderer.renderOperator(uastCompositeParenLeft)
+	}
 	for i, field := range fields {
 		if err := field.render(renderer); err != nil {
 			return err
@@ -346,6 +342,9 @@ func (renderer *baseRenderer) renderFields(fields []markExpressable) error {
 		if i < fieldsCount {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
+	}
+	if isParen {
+		renderer.renderOperator(uastCompositeParenRight)
 	}
 	return nil
 }
@@ -443,38 +442,23 @@ func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderOnColumn(column markExpressable) error {
-	if column == nil {
+func (renderer *baseRenderer) renderOn(entity SourceBase) error {
+	if entity == nil {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierOn)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierColumn)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := column.render(renderer); err != nil {
-		return err
+	switch e := entity.(type) {
+	case *sourceIndex:
+		renderer.renderName(e.name())
+	case *sourceTable:
+		renderer.renderName(e.name())
+	case *sourceSchema:
+		renderer.renderName(e.name())
+	case *sourceView:
+		renderer.renderName(e.name())
 	}
-	return nil
-}
-func (renderer *baseRenderer) renderOnColumns(table *TableSource, columns []string) error {
-	if table == nil || len(columns) == 0 {
-		return nil
-	}
-	columnsCount := len(columns) - 1
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierOn)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(table.name())
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderOperator(uastCompositeParenLeft)
-	for i, column := range columns {
-		renderer.renderName(column)
-		if i < columnsCount {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-	}
-	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
 func (renderer *baseRenderer) renderOnTable(table *TableSource) error {

@@ -17,13 +17,13 @@ type elementRenderer interface {
 	renderValue(value any) error
 }
 type componentRenderer interface {
-	renderAsSource(source statement) error
+	renderAs() error
 	renderCascade(cascade bool) error
 	renderCommand(command managementService) error
-	renderColumns(columns []markExpressable) error
+	renderColumns(columns []markSourceable) error
 	renderDistinct(distinct bool) error
 	renderEntity(entity SourceBase, ifExists bool, ifNotExists bool) error
-	renderFields(fields []markExpressable) error
+	renderFields(fields []markExpressable, isParen bool) error
 	renderFrom(from SourceBase) error
 	renderGroupBy(groups []markGroupable) error
 	renderHaving(having ExpressionBase) error
@@ -32,9 +32,7 @@ type componentRenderer interface {
 	renderInto(into SourceBase) error
 	renderIsComment(comment string) error
 	renderJoin(joins []*clauseJoin) error
-	renderOnColumn(column markExpressable) error
-	renderOnFields(table *TableSource, fields []markExpressable) error
-	renderOnTable(table *TableSource) error
+	renderOn(table *TableSource) error
 	renderOnto(onto SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
@@ -106,7 +104,7 @@ type elementValidator interface {
 	validateValue(value any) error
 }
 type componentValidator interface {
-	validateColumns(columns []markExpressable) error
+	validateColumns(columns []markSourceable) error
 	validateCommand(command managementService) error
 	validateEntity(entity SourceBase) error
 	validateFields(fields []markExpressable) error

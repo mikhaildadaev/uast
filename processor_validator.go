@@ -328,7 +328,7 @@ func (validator *baseValidator) validateValue(value any) error {
 	}
 	return ErrUnsupportValue
 }
-func (validator *baseValidator) validateColumns(columns []markExpressable) error {
+func (validator *baseValidator) validateColumns(columns []markSourceable) error {
 	if len(columns) == 0 {
 		return nil
 	}

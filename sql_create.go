@@ -27,8 +27,8 @@ func (stmt *stmtCreate) Source(source statement) *stmtCreate {
 	stmt.source = source
 	return stmt
 }
-func (stmt *stmtCreate) On(table *TableSource) *stmtCreate {
-	stmt.table = table
+func (stmt *stmtCreate) On(on SourceBase) *stmtCreate {
+	stmt.on = on
 	return stmt
 }
 func (stmt *stmtCreate) Unique() *stmtCreate {
@@ -43,8 +43,8 @@ type stmtCreate struct {
 	entity      SourceBase
 	ifNotExists bool
 	replace     bool
+	on          SourceBase
 	source      statement
-	table       *TableSource
 	unique      bool
 }
 

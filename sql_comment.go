@@ -1,20 +1,16 @@
 package uast
 
 // Публичные конструкторы
-func NewComment(comment string) *stmtComment {
+func NewComment(on SourceBase) *stmtComment {
 	return &stmtComment{
 		command: uastManagementComment,
-		comment: comment,
+		on:      on,
 	}
 }
 
 // Публичные методы
-func (stmt *stmtComment) OnColumn(column markExpressable) *stmtComment {
-	stmt.column = column
-	return stmt
-}
-func (stmt *stmtComment) OnTable(table *TableSource) *stmtComment {
-	stmt.table = table
+func (stmt *stmtComment) Is(comment string) *stmtComment {
+	stmt.comment = comment
 	return stmt
 }
 
@@ -23,19 +19,12 @@ type stmtComment struct {
 	command managementService
 	comment string
 	column  markExpressable
-	table   *TableSource
+	on      SourceBase
 }
 
 // Приватные методы
 func (stmt *stmtComment) clone() statement {
 	copy := *stmt
-	if stmt.column != nil {
-		copy.column = stmt.column.clone().(markExpressable)
-	}
-	if stmt.table != nil {
-		t := *stmt.table
-		copy.table = &t
-	}
 	return &copy
 }
 func (stmt *stmtComment) render(baseRenderer *baseRenderer) error {

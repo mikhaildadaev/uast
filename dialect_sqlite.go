@@ -501,7 +501,7 @@ func (strateger *sqliteStrateger) renderComment(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderIsComment(stmtComment.comment); err != nil {
+	if err := baseRenderer.renderIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil
@@ -749,7 +749,7 @@ func (strateger *sqliteStrateger) validateComment(baseValidator *baseValidator, 
 	if err := baseValidator.validateOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseValidator.validateIsComment(stmtComment.comment); err != nil {
+	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil

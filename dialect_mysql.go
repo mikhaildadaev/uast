@@ -446,7 +446,7 @@ func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtC
 	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderIsComment(stmtComment.comment); err != nil {
+	if err := baseRenderer.renderIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil
@@ -688,7 +688,7 @@ func (strateger *mysqlStrateger) validateComment(baseValidator *baseValidator, s
 	if err := baseValidator.validateOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseValidator.validateIsComment(stmtComment.comment); err != nil {
+	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil

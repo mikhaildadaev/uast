@@ -714,7 +714,7 @@ func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, 
 	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderIsComment(stmtComment.comment); err != nil {
+	if err := baseRenderer.renderIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil
@@ -965,7 +965,7 @@ func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidat
 	if err := baseValidator.validateOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseValidator.validateIsComment(stmtComment.comment); err != nil {
+	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil

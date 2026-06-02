@@ -446,7 +446,7 @@ func (strateger *mariadbStrateger) renderComment(baseRenderer *baseRenderer, stm
 	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderIsComment(stmtComment.comment); err != nil {
+	if err := baseRenderer.renderIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil
@@ -688,7 +688,7 @@ func (strateger *mariadbStrateger) validateComment(baseValidator *baseValidator,
 	if err := baseValidator.validateOn(stmtComment.on); err != nil {
 		return err
 	}
-	if err := baseValidator.validateIsComment(stmtComment.comment); err != nil {
+	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {
 		return err
 	}
 	return nil

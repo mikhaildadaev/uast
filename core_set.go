@@ -1,17 +1,17 @@
 package uast
 
 // Публичные функции
-func Assign[T typeScalar](column *exprColumn[T], value ExpressionSafe[T]) *clauseSet {
+func Assign[T typeScalar](field *exprField[T], value ExpressionSafe[T]) *clauseSet {
 	return &clauseSet{
-		column: column,
-		value:  value,
+		field: field,
+		value: value,
 	}
 }
 
 // Приватные структуры
 type clauseSet struct {
-	column markExpressable
-	value  ExpressionBase
+	field markExpressable
+	value ExpressionBase
 }
 
 // Приватные методы
@@ -20,7 +20,7 @@ func (clause *clauseSet) clone() *clauseSet {
 	return &copy
 }
 func (clause *clauseSet) render(baseRenderer *baseRenderer) error {
-	if err := clause.column.render(baseRenderer); err != nil {
+	if err := clause.field.render(baseRenderer); err != nil {
 		return err
 	}
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
@@ -32,10 +32,10 @@ func (clause *clauseSet) render(baseRenderer *baseRenderer) error {
 	return nil
 }
 func (clause *clauseSet) validate(baseValidator *baseValidator) error {
-	if clause.column == nil || clause.value == nil {
+	if clause.field == nil || clause.value == nil {
 		return ErrInvalidStatementSet
 	}
-	if err := clause.column.validate(baseValidator); err != nil {
+	if err := clause.field.validate(baseValidator); err != nil {
 		return err
 	}
 	if err := clause.value.validate(baseValidator); err != nil {

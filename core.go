@@ -259,14 +259,6 @@ func ShiftRight[T typeScalar](left, right ExpressionSafe[T]) ExpressionSafe[T] {
 	}
 }
 
-// -- Column -- //
-func Column[T typeScalar](tableAlias, name string) *exprColumn[T] {
-	return &exprColumn[T]{
-		name:       name,
-		tableAlias: tableAlias,
-	}
-}
-
 // -- Comparison -- //
 func Between[T typeScalar](left, valueEnd, valueStart ExpressionSafe[T]) ExpressionSafe[T] {
 	return &exprComparison[T]{
@@ -474,6 +466,14 @@ func ConstUint32One() *exprConstant[uint32] {
 func ConstUint64One() *exprConstant[uint64] {
 	return &exprConstant[uint64]{
 		value: 1,
+	}
+}
+
+// -- Field -- //
+func Field[T typeScalar](tableAlias, name string) *exprField[T] {
+	return &exprField[T]{
+		name:       name,
+		tableAlias: tableAlias,
 	}
 }
 
@@ -1391,10 +1391,10 @@ func Value[T typeScalar](value T) *exprValue[T] {
 }
 
 // Публичные методы
-func (exprColumn *exprColumn[T]) As(aliasName string) *exprAlias[T] {
+func (exprField *exprField[T]) As(aliasName string) *exprAlias[T] {
 	return &exprAlias[T]{
 		aliasName:  aliasName,
-		expression: exprColumn,
+		expression: exprField,
 	}
 }
 func (exprFunction *exprFunction[InLT, InRT, T]) As(aliasName string) *exprAlias[T] {

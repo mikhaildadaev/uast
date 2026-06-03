@@ -26,35 +26,35 @@ func (stmt *stmtInsert) Source(source *stmtSelect) *stmtInsert {
 	fields := make([]markExpressable, len(source.fields))
 	for i, field := range source.fields {
 		switch column := field.(type) {
-		case *ColumnExpr[string]:
+		case *FieldExpr[string]:
 			fields[i] = &exprPair[string]{name: column.name}
-		case *ColumnExpr[int]:
+		case *FieldExpr[int]:
 			fields[i] = &exprPair[int]{name: column.name}
-		case *ColumnExpr[int8]:
+		case *FieldExpr[int8]:
 			fields[i] = &exprPair[int8]{name: column.name}
-		case *ColumnExpr[int16]:
+		case *FieldExpr[int16]:
 			fields[i] = &exprPair[int16]{name: column.name}
-		case *ColumnExpr[int32]:
+		case *FieldExpr[int32]:
 			fields[i] = &exprPair[int32]{name: column.name}
-		case *ColumnExpr[int64]:
+		case *FieldExpr[int64]:
 			fields[i] = &exprPair[int64]{name: column.name}
-		case *ColumnExpr[float32]:
+		case *FieldExpr[float32]:
 			fields[i] = &exprPair[float32]{name: column.name}
-		case *ColumnExpr[float64]:
+		case *FieldExpr[float64]:
 			fields[i] = &exprPair[float64]{name: column.name}
-		case *ColumnExpr[bool]:
+		case *FieldExpr[bool]:
 			fields[i] = &exprPair[bool]{name: column.name}
-		case *ColumnExpr[time.Time]:
+		case *FieldExpr[time.Time]:
 			fields[i] = &exprPair[time.Time]{name: column.name}
-		case *ColumnExpr[uint]:
+		case *FieldExpr[uint]:
 			fields[i] = &exprPair[uint]{name: column.name}
-		case *ColumnExpr[uint8]:
+		case *FieldExpr[uint8]:
 			fields[i] = &exprPair[uint8]{name: column.name}
-		case *ColumnExpr[uint16]:
+		case *FieldExpr[uint16]:
 			fields[i] = &exprPair[uint16]{name: column.name}
-		case *ColumnExpr[uint32]:
+		case *FieldExpr[uint32]:
 			fields[i] = &exprPair[uint32]{name: column.name}
-		case *ColumnExpr[uint64]:
+		case *FieldExpr[uint64]:
 			fields[i] = &exprPair[uint64]{name: column.name}
 		}
 	}
@@ -71,7 +71,7 @@ func (stmt *stmtInsert) Upsert(pairs ...*clausePair) *stmtInsert {
 func (stmt *stmtInsert) Values(pairs ...*clausePair) *stmtInsert {
 	fields := make([]markExpressable, len(pairs))
 	for i, pair := range pairs {
-		fields[i] = pair.column
+		fields[i] = pair.field
 	}
 	stmt.fields = fields
 	stmt.values = &clauseValues{pairs: pairs}

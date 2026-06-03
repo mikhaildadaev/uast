@@ -446,7 +446,7 @@ func Test_Core_clauseWith(t *testing.T) {
 						Test.Column.String.Expr(),
 					).
 					Join(
-						Inner(NewCTE("cte_recursive", "rec"), Equal(Test.Column.ID.Expr(), Column[int64]("rec", "id"))),
+						Inner(NewCTE("cte_recursive", "rec"), Equal(Test.Column.ID.Expr(), Field[int64]("rec", "id"))),
 					),
 				),
 			),
@@ -458,7 +458,7 @@ func Test_Core_clauseWith(t *testing.T) {
 				Test.Column.Number.Expr(),
 			).
 			Join(
-				Inner(NewCTE("cte_norecursive", "cnr"), Equal(Test.Column.ID.Expr(), Column[int64]("cnr", "id"))),
+				Inner(NewCTE("cte_norecursive", "cnr"), Equal(Test.Column.ID.Expr(), Field[int64]("cnr", "id"))),
 			).
 			With(
 				stmtWithR,
@@ -2625,7 +2625,7 @@ func Test_SQL_Select(t *testing.T) {
 			defer sql.Close()
 			stmtSelect := NewSelect(NewCTE("cte_test", "ct")).
 				Fields(
-					Column[int64]("ct", "id"),
+					Field[int64]("ct", "id"),
 				).
 				With(
 					WithN("cte_test", NewSelect(Test.Table).

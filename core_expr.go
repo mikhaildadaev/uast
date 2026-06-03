@@ -15,7 +15,7 @@ type ExpressionSafe[T typeScalar] interface {
 
 // Публичные структуры
 type AliasExpr[T typeScalar] = exprAlias[T]
-type ColumnExpr[T typeScalar] = exprColumn[T]
+type FieldExpr[T typeScalar] = exprField[T]
 
 // Приватные интерфейсы
 type markExpressable interface {
@@ -67,10 +67,6 @@ type exprBinary[T typeScalar] struct {
 	operator binaryOperator
 	right    ExpressionSafe[T]
 }
-type exprColumn[T typeScalar] struct {
-	name       string
-	tableAlias string
-}
 type exprComparison[T typeScalar] struct {
 	left       ExpressionSafe[T]
 	operator   comparisonOperator
@@ -85,6 +81,10 @@ type exprComposite[T typeScalar] struct {
 }
 type exprConstant[T typeScalar] struct {
 	value T
+}
+type exprField[T typeScalar] struct {
+	name       string
+	tableAlias string
 }
 type exprFunction[InLT, InRT, T typeScalar] struct {
 	distinct   bool
@@ -264,37 +264,6 @@ func (expr *exprBinary[T]) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (expr *exprColumn[T]) clone() ExpressionBase {
-	copy := *expr
-	return &copy
-}
-func (expr *exprColumn[T]) isExpressionBase()  {}
-func (expr *exprColumn[T]) isExpressionSafe(T) {}
-func (expr *exprColumn[T]) isFieldable()       {}
-func (expr *exprColumn[T]) isGroupable()       {}
-func (expr *exprColumn[T]) isOrderable()       {}
-func (expr *exprColumn[T]) isPredicable()      {}
-func (expr *exprColumn[T]) isReturnable()      {}
-func (expr *exprColumn[T]) render(baseRenderer *baseRenderer) error {
-	if expr.tableAlias != "" {
-		baseRenderer.renderAlias(expr.tableAlias)
-		baseRenderer.renderOperator(uastCompositeSinglePoint)
-	}
-	baseRenderer.renderName(expr.name)
-	return nil
-}
-func (expr *exprColumn[T]) transformGetName() string {
-	return expr.name
-}
-func (expr *exprColumn[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(expr.name); err != nil {
-		return err
-	}
-	if err := baseValidator.validateAlias(expr.tableAlias); err != nil {
-		return err
-	}
-	return nil
-}
 func (expr *exprComparison[T]) clone() ExpressionBase {
 	copy := *expr
 	if expr.left != nil {
@@ -454,6 +423,37 @@ func (expr *exprConstant[T]) render(baseRenderer *baseRenderer) error {
 }
 func (expr *exprConstant[T]) validate(baseValidator *baseValidator) error {
 	if err := baseValidator.validateConstant(expr.value); err != nil {
+		return err
+	}
+	return nil
+}
+func (expr *exprField[T]) clone() ExpressionBase {
+	copy := *expr
+	return &copy
+}
+func (expr *exprField[T]) isExpressionBase()  {}
+func (expr *exprField[T]) isExpressionSafe(T) {}
+func (expr *exprField[T]) isFieldable()       {}
+func (expr *exprField[T]) isGroupable()       {}
+func (expr *exprField[T]) isOrderable()       {}
+func (expr *exprField[T]) isPredicable()      {}
+func (expr *exprField[T]) isReturnable()      {}
+func (expr *exprField[T]) render(baseRenderer *baseRenderer) error {
+	if expr.tableAlias != "" {
+		baseRenderer.renderAlias(expr.tableAlias)
+		baseRenderer.renderOperator(uastCompositeSinglePoint)
+	}
+	baseRenderer.renderName(expr.name)
+	return nil
+}
+func (expr *exprField[T]) transformGetName() string {
+	return expr.name
+}
+func (expr *exprField[T]) validate(baseValidator *baseValidator) error {
+	if err := baseValidator.validateName(expr.name); err != nil {
+		return err
+	}
+	if err := baseValidator.validateAlias(expr.tableAlias); err != nil {
 		return err
 	}
 	return nil

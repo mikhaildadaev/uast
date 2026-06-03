@@ -32,7 +32,7 @@ type ViewSource = sourceView
 // Публичные конструкторы
 func NewColumn[T typeScalar](columnName string, table *TableSource, valueType ValueType) *sourceColumn[T] {
 	return &sourceColumn[T]{
-		field:     Column[T](table.aliasName, columnName),
+		field:     Field[T](table.aliasName, columnName),
 		table:     table,
 		valueType: valueType,
 	}
@@ -99,7 +99,7 @@ func (source *sourceColumn[T]) DefaultValue(value ExpressionBase) *sourceColumn[
 	source.defaultValue = value
 	return source
 }
-func (source *sourceColumn[T]) Expr() *exprColumn[T] {
+func (source *sourceColumn[T]) Expr() *exprField[T] {
 	return source.field
 }
 func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
@@ -130,7 +130,7 @@ var queryCounter atomic.Int64
 // Приватные структуры
 type sourceColumn[T typeScalar] struct {
 	defaultValue    ExpressionBase
-	field           *exprColumn[T]
+	field           *exprField[T]
 	isAutoIncrement bool
 	isNotNull       bool
 	isPrimaryKey    bool

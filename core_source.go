@@ -122,12 +122,6 @@ type markSourceable interface {
 }
 type transformColumn interface {
 	SourceBase
-	transformGetAutoIncrement() bool
-	transformGetDefaultValue() ExpressionBase
-	transformGetNotNull() bool
-	transformGetPrimaryKey() bool
-	transformGetUnique() bool
-	transformGetValueType() ValueType
 }
 
 // Приватные переменные
@@ -183,24 +177,6 @@ func (source *sourceColumn[T]) clone() SourceBase {
 }
 func (source *sourceColumn[T]) format() modifierService {
 	return uastModifierColumn
-}
-func (source *sourceColumn[T]) transformGetDefaultValue() ExpressionBase {
-	return source.defaultValue
-}
-func (source *sourceColumn[T]) transformGetAutoIncrement() bool {
-	return source.isAutoIncrement
-}
-func (source *sourceColumn[T]) transformGetNotNull() bool {
-	return source.isNotNull
-}
-func (source *sourceColumn[T]) transformGetPrimaryKey() bool {
-	return source.isPrimaryKey
-}
-func (source *sourceColumn[T]) transformGetUnique() bool {
-	return source.isUnique
-}
-func (source *sourceColumn[T]) transformGetValueType() ValueType {
-	return source.valueType
 }
 func (source *sourceColumn[T]) isSourceBase() {}
 func (source *sourceColumn[T]) isColumnable() {}

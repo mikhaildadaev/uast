@@ -504,9 +504,6 @@ func (strateger *sqliteStrateger) renderCreate(baseRenderer *baseRenderer, stmtC
 	}
 	switch stmtCreate.entity.(type) {
 	case *sourceIndex:
-		if err := baseRenderer.renderUnique(stmtCreate.unique); err != nil {
-			return err
-		}
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}

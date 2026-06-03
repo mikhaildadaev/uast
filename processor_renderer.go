@@ -260,7 +260,7 @@ func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderColumns(columns []markSourceable) error {
+func (renderer *baseRenderer) renderColumns(columns, primaryKeys, uniques []markSourceable) error {
 	if len(columns) == 0 {
 		return nil
 	}
@@ -268,10 +268,38 @@ func (renderer *baseRenderer) renderColumns(columns []markSourceable) error {
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, column := range columns {
-		column.render(renderer)
+		if err := column.render(renderer); err != nil {
+			return err
+		}
 		if i < columnsCount {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
+	}
+	if len(primaryKeys) > 0 {
+		renderer.renderOperator(uastCompositeCommaSpace)
+		renderer.renderService(uastModifierPrimaryKey)
+		renderer.renderOperator(uastCompositeParenLeft)
+		primaryKeysCount := len(primaryKeys) - 1
+		for i, primaryKey := range primaryKeys {
+			renderer.renderName(primaryKey.name())
+			if i < primaryKeysCount {
+				renderer.renderOperator(uastCompositeCommaSpace)
+			}
+		}
+		renderer.renderOperator(uastCompositeParenRight)
+	}
+	if len(uniques) > 0 {
+		renderer.renderOperator(uastCompositeCommaSpace)
+		renderer.renderService(uastModifierUnique)
+		renderer.renderOperator(uastCompositeParenLeft)
+		uniquesCount := len(uniques) - 1
+		for i, unique := range uniques {
+			renderer.renderName(unique.name())
+			if i < uniquesCount {
+				renderer.renderOperator(uastCompositeCommaSpace)
+			}
+		}
+		renderer.renderOperator(uastCompositeParenRight)
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil

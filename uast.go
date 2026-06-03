@@ -299,6 +299,7 @@ const (
 	uastManagementOutput      managementService = "OUTPUT"
 	uastManagementPartitionBy managementService = "PARTITION BY"
 	uastManagementReturning   managementService = "RETURNING"
+	uastManagementUpsert      managementService = "UPSERT"
 	uastManagementUsing       managementService = "USING"
 	uastManagementValues      managementService = "VALUES"
 	uastManagementWhere       managementService = "WHERE"
@@ -403,7 +404,7 @@ var listFunctionServices = []functionService{
 	// Функции ранжирующие
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
 }
-var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFetchNext, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementPartitionBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
+var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFetchNext, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementPartitionBy, uastManagementReturning, uastManagementUpsert, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
 var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierCascade, uastModifierColumn, uastModifierCTE, uastModifierBetween, uastModifierDefault, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierIfExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOrReplace, uastModifierOver, uastModifierPrimaryKey, uastModifierQuery, uastModifierRestartIdentity, uastModifierRecursive, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierUnique, uastModifierView, uastModifierWeekday, uastModifierWhen}
 var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMsSQL, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
@@ -454,6 +455,7 @@ type config struct {
 	lengthMaxValueString   int
 	listComparisons        map[comparisonOperator]comparisonTransform
 	listFunctions          map[functionService]functionTransform
+	listManagement         map[managementService]managementService
 	listModifiers          map[modifierService]modifierService
 	listTypes              map[ValueType]typeService
 	parensFunction         bool

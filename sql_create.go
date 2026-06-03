@@ -11,6 +11,11 @@ func NewCreate(entity SourceBase) *stmtCreate {
 // Публичные методы
 func (stmt *stmtCreate) Columns(columns ...markSourceable) *stmtCreate {
 	stmt.columns = columns
+	for _, column := range columns {
+		if col, ok := column.(registerStatement); ok {
+			col.register(stmt)
+		}
+	}
 	return stmt
 }
 func (stmt *stmtCreate) IfNotExists() *stmtCreate {
@@ -43,6 +48,8 @@ type stmtCreate struct {
 	replace     bool
 	on          SourceBase
 	source      statement
+	primaryKeys []markSourceable
+	uniques     []markSourceable
 	unique      bool
 }
 

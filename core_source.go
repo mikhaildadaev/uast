@@ -120,6 +120,10 @@ func (source *sourceColumn[T]) Unique() *sourceColumn[T] {
 	}
 	return source
 }
+func (source *sourceIndex) Unique() *sourceIndex {
+	source.isUnique = true
+	return source
+}
 
 // Приватные интерфейсы
 type markSourceable interface {
@@ -155,6 +159,7 @@ type sourceCte struct {
 }
 type sourceIndex struct {
 	indexName string
+	isUnique  bool
 	table     *sourceTable
 }
 type sourceQuery struct {

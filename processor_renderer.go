@@ -306,6 +306,10 @@ func (renderer *baseRenderer) renderColumns(columns, primaryKeys, uniques []mark
 }
 func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool, ifNotExists bool) error {
 	format := entity.format()
+	//if entity.isUnique {
+	//	renderer.renderOperator(uastCompositeSingleSpace)
+	//	renderer.renderService(uastModifierUnique)
+	//}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(format)
 	if renderer.config.supportIfExists[format] {

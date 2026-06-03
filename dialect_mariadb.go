@@ -19,6 +19,7 @@ var DialectMariaDB = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMariadb,
 		listFunctions:        listFunctionsMariadb,
+		listManagement:       listManagementMariadb,
 		listModifiers:        listModifiersMariadb,
 		listTypes:            listTypesMariadb,
 		parensFunction:       true,
@@ -89,9 +90,6 @@ const (
 	uastMariadbFunctionTrunc functionService = "TRUNCATE"
 	// Функции строковые
 )
-const (
-	uastMariadbManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
-)
 
 // Приватные переменные
 var listComparisonsMariadb = map[comparisonOperator]comparisonTransform{
@@ -118,6 +116,9 @@ var listFunctionsMariadb = map[functionService]functionTransform{
 	uastFunctionCeil:  mariadbFunctionCeil,
 	uastFunctionTrunc: mariadbFunctionTrunc,
 	// Функции строковые
+}
+var listManagementMariadb = map[managementService]managementService{
+	uastManagementUpsert: "ON DUPLICATE KEY UPDATE",
 }
 var listModifiersMariadb = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
@@ -652,7 +653,9 @@ func (strateger *mariadbStrateger) transformInsert(baseTransformer *baseTransfor
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		stmtInsert.values.upsert.service = uastMariadbManagementUpsert
+		if service, exists := listManagementMariadb[uastManagementUpsert]; exists {
+			stmtInsert.values.upsert.service = service
+		}
 	}
 	return nil
 }

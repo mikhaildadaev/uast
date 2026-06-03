@@ -18,6 +18,7 @@ var DialectMySQL = &SupportDialect{
 		lengthMaxValueByte:   1024,
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMysql,
+		listManagement:       listManagementMysql,
 		listFunctions:        listFunctionsMysql,
 		listModifiers:        listModifiersMysql,
 		listTypes:            listTypesMysql,
@@ -89,9 +90,6 @@ const (
 	uastMysqlFunctionTrunc functionService = "TRUNCATE"
 	// Функции строковые
 )
-const (
-	uastMySQLManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
-)
 
 // Приватные переменные
 var listComparisonsMysql = map[comparisonOperator]comparisonTransform{
@@ -118,6 +116,9 @@ var listFunctionsMysql = map[functionService]functionTransform{
 	uastFunctionCeil:  mysqlFunctionCeil,
 	uastFunctionTrunc: mysqlFunctionTrunc,
 	// Функции строковые
+}
+var listManagementMysql = map[managementService]managementService{
+	uastManagementUpsert: "ON DUPLICATE KEY UPDATE",
 }
 var listModifiersMysql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
@@ -652,7 +653,9 @@ func (strateger *mysqlStrateger) transformInsert(baseTransformer *baseTransforme
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		stmtInsert.values.upsert.service = uastMySQLManagementUpsert
+		if service, exists := listManagementMysql[uastManagementUpsert]; exists {
+			stmtInsert.values.upsert.service = service
+		}
 	}
 	return nil
 }

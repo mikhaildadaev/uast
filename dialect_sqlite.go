@@ -19,6 +19,7 @@ var DialectSQLite = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsSQLite,
 		listFunctions:        listFunctionsSQLite,
+		listManagement:       listManagementSQLite,
 		listModifiers:        listModifiersSQLite,
 		listTypes:            listTypesSQLite,
 		parensFunction:       false,
@@ -97,9 +98,6 @@ const (
 	uastSQLiteFunctionRand functionService = "RANDOM"
 	// Функции строковые
 )
-const (
-	uastSQLiteManagementUpsert managementService = "ON CONFLICT DO UPDATE SET"
-)
 
 // Приватные переменные
 var listComparisonsSQLite = map[comparisonOperator]comparisonTransform{
@@ -134,6 +132,9 @@ var listFunctionsSQLite = map[functionService]functionTransform{
 	// Функции математические
 	uastFunctionRand: sqliteFunctionRand,
 	// Функции строковые
+}
+var listManagementSQLite = map[managementService]managementService{
+	uastManagementUpsert: "ON CONFLICT DO UPDATE SET",
 }
 var listModifiersSQLite = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTOINCREMENT",
@@ -704,7 +705,9 @@ func (strateger *sqliteStrateger) transformInsert(baseTransformer *baseTransform
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		stmtInsert.values.upsert.service = uastSQLiteManagementUpsert
+		if service, exists := listManagementSQLite[uastManagementUpsert]; exists {
+			stmtInsert.values.upsert.service = service
+		}
 	}
 	return nil
 }

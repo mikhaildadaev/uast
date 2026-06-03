@@ -20,6 +20,7 @@ var DialectMsSQL = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMssql,
 		listFunctions:        listFunctionsMssql,
+		listManagement:       listManagementMssql,
 		listModifiers:        listModifiersMssql,
 		listTypes:            listTypesMssql,
 		parensFunction:       true,
@@ -108,9 +109,6 @@ const (
 	uastMssqlFunctionLength   functionService = "LEN"
 	uastMssqlFunctionPosition functionService = "CHARINDEX"
 )
-const (
-	uastMssqlManagementUpsert managementService = ""
-)
 
 // Приватные переменные
 var listComparisonsMssql = map[comparisonOperator]comparisonTransform{
@@ -152,6 +150,9 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	// Функции строковые
 	uastFunctionLength:   mssqlFunctionLength,
 	uastFunctionPosition: mssqlFunctionPosition,
+}
+var listManagementMssql = map[managementService]managementService{
+	uastManagementUpsert: "",
 }
 var listModifiersMssql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "IDENTITY(1,1)",
@@ -856,7 +857,9 @@ func (strateger *mssqlStrateger) transformInsert(baseTransformer *baseTransforme
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		stmtInsert.values.upsert.service = uastMssqlManagementUpsert
+		if service, exists := listManagementMssql[uastManagementUpsert]; exists {
+			stmtInsert.values.upsert.service = service
+		}
 	}
 	if stmtInsert.returning != nil {
 		stmtInsert.returning.serviceReturning = uastManagementOutput

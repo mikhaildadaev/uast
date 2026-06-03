@@ -10,35 +10,35 @@ I recommend that you test `uast` alongside other libraries and choose the tool t
 :::
 
 ## Core Performance
-These benchmarks measure the cost of building SQL queries. Simple queries select one column with a WHERE clause. Complex queries include JOINs, subqueries, GROUP BY, HAVING, ORDER BY, and LIMIT.
+These benchmarks measure the cost of building SQL queries with an immutable AST, which guarantees zero mutations and allows safe reuse across multiple dialects. 
 
-### MultiThread
+#### MultiThread
 | Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
 |---------|------------|------------|--------------|---------------|--------|
-| Complex | MariaDB    |       383K |        2,965 |         4,971 |     54 |
-| Complex | MsSQL      |       371K |        3,136 |         4,972 |     54 |
-| Complex | MySQL      |       371K |        3,136 |         4,972 |     54 |
-| Complex | PostgreSQL |       380K |        3,299 |         4,970 |     54 |
-| Complex | SQLite     |       376K |        3,399 |         4,972 |     54 |
-| Simple  | MariaDB    |       3.7M |        335.5 |           720 |      8 |
-| Simple  | MsSQL      |       3.5M |        349.0 |           720 |      8 |
-| Simple  | MySQL      |       3.5M |        349.0 |           720 |      8 |
-| Simple  | PostgreSQL |       3.3M |        398.4 |           720 |      8 |
-| Simple  | SQLite     |       3.3M |        358.3 |           720 |      8 |
+| Complex | MariaDB    |       383K |        2,965 |         4,502 |     66 |
+| Complex | MsSQL      |       371K |        3,136 |         4,502 |     66 |
+| Complex | MySQL      |       371K |        3,136 |         4,502 |     66 |
+| Complex | PostgreSQL |       380K |        3,299 |         4,502 |     66 |
+| Complex | SQLite     |       376K |        3,399 |         4,518 |     67 |
+| Simple  | MariaDB    |       3.2M |        431.9 |           824 |     12 |
+| Simple  | MsSQL      |       3.0M |        416.9 |           824 |     12 |
+| Simple  | MySQL      |       2.8M |        427.1 |           825 |     12 |
+| Simple  | PostgreSQL |       2.8M |        434.0 |           825 |     12 |
+| Simple  | SQLite     |       2.6M |        433.2 |           824 |     12 |
 
-### SingleThread
+#### SingleThread
 | Query   | Dialect    | Operations | Time (ns/op) | Memory (B/op) | Allocs |
 |---------|------------|------------|--------------|---------------|--------|
-| Complex | MariaDB    |       197K |        5,852 |         4,948 |     54 |
-| Complex | MsSQL      |       204K |        6,279 |         4,948 |     54 |
-| Complex | MySQL      |       204K |        6,279 |         4,948 |     54 |
-| Complex | PostgreSQL |       196K |        5,874 |         4,948 |     54 |
-| Complex | SQLite     |       196K |        5,845 |         4,948 |     54 |
-| Simple  | MariaDB    |       1.5M |        789.8 |           718 |      8 |
-| Simple  | MsSQL      |       1.5M |        778.6 |           718 |      8 |
-| Simple  | MySQL      |       1.5M |        778.6 |           718 |      8 |
-| Simple  | PostgreSQL |       1.4M |        795.1 |           718 |      8 |
-| Simple  | SQLite     |       1.4M |        787.9 |           718 |      8 |
+| Complex | MariaDB    |       169K |        6,722 |         4,499 |     66 |
+| Complex | MsSQL      |       171K |        6,819 |         4,499 |     66 |
+| Complex | MySQL      |       175K |        6,707 |         4,499 |     66 |
+| Complex | PostgreSQL |       177K |        6,680 |         4,499 |     66 |
+| Complex | SQLite     |       168K |        6,727 |         4,499 |     67 |
+| Simple  | MariaDB    |       1.3M |        944.3 |           824 |     12 |
+| Simple  | MsSQL      |       1.3M |        941.9 |           824 |     12 |
+| Simple  | MySQL      |       1.3M |        936.4 |           824 |     12 |
+| Simple  | PostgreSQL |       1.3M |        931.3 |           824 |     12 |
+| Simple  | SQLite     |       1.3M |        937.2 |           824 |     12 |
 
 ::: tip **Note** 
 In Multi mode `sync.Pool` reuses `contexter` buffers, reducing allocations and GC pressure.

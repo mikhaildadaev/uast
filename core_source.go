@@ -216,7 +216,7 @@ func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
 		case uastModifierAutoIncrement:
 			if source.isAutoIncrement {
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				baseRenderer.renderService(uastModifierAutoIncrement)
+				baseRenderer.renderService(baseRenderer.config.listModifiers[uastModifierAutoIncrement])
 			}
 		case uastModifierNotNull:
 			if source.isNotNull {

@@ -454,6 +454,8 @@ type config struct {
 	lengthMaxValueString   int
 	listComparisons        map[comparisonOperator]comparisonTransform
 	listFunctions          map[functionService]functionTransform
+	listModifiers          map[modifierService]modifierService
+	listTypes              map[ValueType]typeService
 	parensFunction         bool
 	placeholderNumber      int
 	placeholderStyle       string

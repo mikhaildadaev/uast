@@ -210,7 +210,7 @@ func (source *sourceColumn[T]) name() string {
 func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.name())
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
-	baseRenderer.renderService(source.valueType)
+	baseRenderer.renderService(baseRenderer.config.listTypes[source.valueType])
 	for _, attr := range baseRenderer.config.supportAttrCreateOrder {
 		switch attr {
 		case uastModifierAutoIncrement:

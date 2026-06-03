@@ -108,10 +108,16 @@ func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
 }
 func (source *sourceColumn[T]) PrimaryKey() *sourceColumn[T] {
 	source.isPrimaryKey = true
+	if source.stmt != nil {
+		source.stmt.primaryKeys = append(source.stmt.primaryKeys, source)
+	}
 	return source
 }
 func (source *sourceColumn[T]) Unique() *sourceColumn[T] {
 	source.isUnique = true
+	if source.stmt != nil {
+		source.stmt.uniques = append(source.stmt.uniques, source)
+	}
 	return source
 }
 
@@ -119,6 +125,9 @@ func (source *sourceColumn[T]) Unique() *sourceColumn[T] {
 type markSourceable interface {
 	SourceBase
 	isColumnable()
+}
+type registerStatement interface {
+	register(*stmtCreate)
 }
 type transformColumn interface {
 	SourceBase
@@ -135,6 +144,7 @@ type sourceColumn[T typeScalar] struct {
 	isNotNull       bool
 	isPrimaryKey    bool
 	isUnique        bool
+	stmt            *stmtCreate
 	table           *sourceTable
 	valueType       ValueType
 }
@@ -198,16 +208,6 @@ func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
 			if source.isNotNull {
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
 				baseRenderer.renderService(uastModifierNotNull)
-			}
-		case uastModifierPrimaryKey:
-			if source.isPrimaryKey {
-				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				baseRenderer.renderService(uastModifierPrimaryKey)
-			}
-		case uastModifierUnique:
-			if source.isUnique {
-				baseRenderer.renderOperator(uastCompositeSingleSpace)
-				baseRenderer.renderService(uastModifierUnique)
 			}
 		case uastModifierDefault:
 			if source.defaultValue != nil {
@@ -303,6 +303,15 @@ func (source *sourceQuery) format() modifierService {
 func (source *sourceQuery) isSourceBase() {}
 func (source *sourceQuery) name() string {
 	return ""
+}
+func (source *sourceColumn[T]) register(stmt *stmtCreate) {
+	source.stmt = stmt
+	if source.isPrimaryKey {
+		stmt.primaryKeys = append(stmt.primaryKeys, source)
+	}
+	if source.isUnique {
+		stmt.uniques = append(stmt.uniques, source)
+	}
 }
 func (source *sourceQuery) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeParenLeft)

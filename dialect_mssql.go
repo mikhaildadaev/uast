@@ -34,8 +34,6 @@ var DialectMsSQL = &SupportDialect{
 		supportAttrCreateOrder: []modifierService{
 			uastModifierAutoIncrement,
 			uastModifierNotNull,
-			uastModifierPrimaryKey,
-			uastModifierUnique,
 			uastModifierDefault,
 		},
 		supportCascade: false,
@@ -672,7 +670,7 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderColumns(stmtCreate.columns); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.primaryKeys, stmtCreate.uniques); err != nil {
 			return err
 		}
 	case *sourceView:

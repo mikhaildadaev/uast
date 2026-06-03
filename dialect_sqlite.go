@@ -32,9 +32,7 @@ var DialectSQLite = &SupportDialect{
 		symbolQuoteRight:     "\"",
 		supportAttrCreateOrder: []modifierService{
 			uastModifierNotNull,
-			uastModifierPrimaryKey,
 			uastModifierAutoIncrement,
-			uastModifierUnique,
 			uastModifierDefault,
 		},
 		supportCascade: false,
@@ -524,7 +522,7 @@ func (strateger *sqliteStrateger) renderCreate(baseRenderer *baseRenderer, stmtC
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderColumns(stmtCreate.columns); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.primaryKeys, stmtCreate.uniques); err != nil {
 			return err
 		}
 	case *sourceView:

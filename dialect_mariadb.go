@@ -33,8 +33,6 @@ var DialectMariaDB = &SupportDialect{
 		supportAttrCreateOrder: []modifierService{
 			uastModifierNotNull,
 			uastModifierAutoIncrement,
-			uastModifierPrimaryKey,
-			uastModifierUnique,
 			uastModifierDefault,
 		},
 		supportCascade: true,
@@ -471,7 +469,7 @@ func (strateger *mariadbStrateger) renderCreate(baseRenderer *baseRenderer, stmt
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderColumns(stmtCreate.columns); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.primaryKeys, stmtCreate.uniques); err != nil {
 			return err
 		}
 	case *sourceView:

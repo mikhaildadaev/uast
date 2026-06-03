@@ -20,6 +20,8 @@ var DialectMsSQL = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMssql,
 		listFunctions:        listFunctionsMssql,
+		listModifiers:        listModifiersMssql,
+		listTypes:            listTypesMssql,
 		parensFunction:       true,
 		placeholderNumber:    0,
 		placeholderStyle:     "@p",
@@ -109,34 +111,6 @@ const (
 const (
 	uastMssqlManagementUpsert managementService = ""
 )
-const (
-	// Типы бинарные
-	uastMssqlTypeBinary    typeService = "BINARY"
-	uastMssqlTypeVarBinary typeService = "VARBINARY"
-	// Типы даты и времени
-	uastMssqlTypeDate      typeService = "DATE"
-	uastMssqlTypeDateTime  typeService = "DATETIME2"
-	uastMssqlTypeTime      typeService = "TIME"
-	uastMssqlTypeTimestamp typeService = "DATETIME2"
-	// Типы числовые
-	uastMssqlTypeBigInt   typeService = "BIGINT"
-	uastMssqlTypeDecimal  typeService = "DECIMAL"
-	uastMssqlTypeDouble   typeService = "FLOAT"
-	uastMssqlTypeFloat    typeService = "REAL"
-	uastMssqlTypeInt      typeService = "INT"
-	uastMssqlTypeSmallInt typeService = "SMALLINT"
-	// Типы строковые
-	uastMssqlTypeChar    typeService = "CHAR"
-	uastMssqlTypeString  typeService = "NVARCHAR"
-	uastMssqlTypeText    typeService = "NVARCHAR(MAX)"
-	uastMssqlTypeVarChar typeService = "NVARCHAR"
-	// Типы специальные
-	uastMssqlTypeArray   typeService = "NVARCHAR(MAX)"
-	uastMssqlTypeBoolean typeService = "BIT"
-	uastMssqlTypeJson    typeService = "NVARCHAR(MAX)"
-	uastMssqlTypeUUID    typeService = "UNIQUEIDENTIFIER"
-	uastMssqlTypeXML     typeService = "XML"
-)
 
 // Приватные переменные
 var listComparisonsMssql = map[comparisonOperator]comparisonTransform{
@@ -179,33 +153,36 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionLength:   mssqlFunctionLength,
 	uastFunctionPosition: mssqlFunctionPosition,
 }
-var listTypeMssql = map[ValueType]typeService{
+var listModifiersMssql = map[modifierService]modifierService{
+	uastModifierAutoIncrement: "IDENTITY(1,1)",
+}
+var listTypesMssql = map[ValueType]typeService{
 	// Типы бинарные
-	TypeBinary:    uastMssqlTypeBinary,
-	TypeVarBinary: uastMssqlTypeVarBinary,
+	TypeBinary:    "BINARY",
+	TypeVarBinary: "VARBINARY",
 	// Типы даты и времени
-	TypeDate:      uastMssqlTypeDate,
-	TypeDateTime:  uastMssqlTypeDateTime,
-	TypeTime:      uastMssqlTypeTime,
-	TypeTimestamp: uastMssqlTypeTimestamp,
+	TypeDate:      "DATE",
+	TypeDateTime:  "DATETIME2",
+	TypeTime:      "TIME",
+	TypeTimestamp: "DATETIME2",
 	// Типы числовые
-	TypeBigInt:   uastMssqlTypeBigInt,
-	TypeDecimal:  uastMssqlTypeDecimal,
-	TypeDouble:   uastMssqlTypeDouble,
-	TypeFloat:    uastMssqlTypeFloat,
-	TypeInt:      uastMssqlTypeInt,
-	TypeSmallInt: uastMssqlTypeSmallInt,
+	TypeBigInt:   "BIGINT",
+	TypeDecimal:  "DECIMAL",
+	TypeDouble:   "FLOAT",
+	TypeFloat:    "REAL",
+	TypeInt:      "INT",
+	TypeSmallInt: "SMALLINT",
 	// Типы строковые
-	TypeChar:    uastMssqlTypeChar,
-	TypeString:  uastMssqlTypeString,
-	TypeText:    uastMssqlTypeText,
-	TypeVarChar: uastMssqlTypeVarChar,
+	TypeChar:    "CHAR",
+	TypeString:  "NVARCHAR",
+	TypeText:    "NVARCHAR(MAX)",
+	TypeVarChar: "NVARCHAR",
 	// Типы специальные
-	TypeArray:   uastMssqlTypeArray,
-	TypeBoolean: uastMssqlTypeBoolean,
-	TypeJSON:    uastMssqlTypeJson,
-	TypeUUID:    uastMssqlTypeUUID,
-	TypeXML:     uastMssqlTypeXML,
+	TypeArray:   "NVARCHAR(MAX)",
+	TypeBoolean: "BIT",
+	TypeJSON:    "NVARCHAR(MAX)",
+	TypeUUID:    "UNIQUEIDENTIFIER",
+	TypeXML:     "XML",
 }
 
 // Приватные структуры
@@ -273,7 +250,7 @@ func mssqlFunctionCase(baseTransformer *baseTransformer, expr transformFunction)
 }
 func mssqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeMssql[valueType]
+	typeService, exists := listTypesMssql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -296,7 +273,7 @@ func mssqlFunctionCurDate(baseTransformer *baseTransformer, expr transformFuncti
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastMssqlFunctionCurDate),
 			serviceString(uastModifierAs),
-			serviceString(uastMssqlTypeDate),
+			serviceString(listTypesMysql[TypeDate]),
 		},
 		operator: uastCompositeSingleSpace,
 	})
@@ -309,7 +286,7 @@ func mssqlFunctionCurTime(baseTransformer *baseTransformer, expr transformFuncti
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastMssqlFunctionCurTime),
 			serviceString(uastModifierAs),
-			serviceString(uastMssqlTypeTime),
+			serviceString(listTypesMysql[TypeTime]),
 		},
 		operator: uastCompositeSingleSpace,
 	})
@@ -495,7 +472,7 @@ func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 		}
 	}
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeMysql[valueType]
+	typeService, exists := listTypesMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}

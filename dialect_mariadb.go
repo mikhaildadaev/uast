@@ -19,6 +19,8 @@ var DialectMariaDB = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMariadb,
 		listFunctions:        listFunctionsMariadb,
+		listModifiers:        listModifiersMariadb,
+		listTypes:            listTypesMariadb,
 		parensFunction:       true,
 		placeholderNumber:    -1,
 		placeholderStyle:     "?",
@@ -90,34 +92,6 @@ const (
 const (
 	uastMariadbManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
 )
-const (
-	// Типы бинарные
-	uastMariadbTypeBinary    typeService = "BINARY"
-	uastMariadbTypeVarBinary typeService = "VARBINARY"
-	// Типы даты и времени
-	uastMariadbTypeDate      typeService = "DATE"
-	uastMariadbTypeDateTime  typeService = "DATETIME"
-	uastMariadbTypeTime      typeService = "TIME"
-	uastMariadbTypeTimestamp typeService = "DATETIME"
-	// Типы числовые
-	uastMariadbTypeBigInt   typeService = "SIGNED"
-	uastMariadbTypeDecimal  typeService = "DECIMAL"
-	uastMariadbTypeDouble   typeService = "DECIMAL"
-	uastMariadbTypeFloat    typeService = "DECIMAL"
-	uastMariadbTypeInt      typeService = "SIGNED"
-	uastMariadbTypeSmallInt typeService = "SIGNED"
-	// Типы строковые
-	uastMariadbTypeChar    typeService = "CHAR"
-	uastMariadbTypeString  typeService = "VARCHAR"
-	uastMariadbTypeText    typeService = "TEXT"
-	uastMariadbTypeVarChar typeService = "VARCHAR"
-	// Типы специальные
-	uastMariadbTypeArray   typeService = "JSON"
-	uastMariadbTypeBoolean typeService = "TINYINT(1)"
-	uastMariadbTypeJson    typeService = "JSON"
-	uastMariadbTypeUUID    typeService = "UUID"
-	uastMariadbTypeXML     typeService = "TEXT"
-)
 
 // Приватные переменные
 var listComparisonsMariadb = map[comparisonOperator]comparisonTransform{
@@ -145,33 +119,36 @@ var listFunctionsMariadb = map[functionService]functionTransform{
 	uastFunctionTrunc: mariadbFunctionTrunc,
 	// Функции строковые
 }
-var listTypeMariadb = map[ValueType]typeService{
+var listModifiersMariadb = map[modifierService]modifierService{
+	uastModifierAutoIncrement: "AUTO_INCREMENT",
+}
+var listTypesMariadb = map[ValueType]typeService{
 	// Типы бинарные
-	TypeBinary:    uastMariadbTypeBinary,
-	TypeVarBinary: uastMariadbTypeVarBinary,
+	TypeBinary:    "BINARY",
+	TypeVarBinary: "VARBINARY",
 	// Типы даты и времени
-	TypeDate:      uastMariadbTypeDate,
-	TypeDateTime:  uastMariadbTypeDateTime,
-	TypeTime:      uastMariadbTypeTime,
-	TypeTimestamp: uastMariadbTypeTimestamp,
+	TypeDate:      "DATE",
+	TypeDateTime:  "DATETIME",
+	TypeTime:      "TIME",
+	TypeTimestamp: "DATETIME",
 	// Типы числовые
-	TypeBigInt:   uastMariadbTypeBigInt,
-	TypeDecimal:  uastMariadbTypeDecimal,
-	TypeDouble:   uastMariadbTypeDouble,
-	TypeFloat:    uastMariadbTypeFloat,
-	TypeInt:      uastMariadbTypeInt,
-	TypeSmallInt: uastMariadbTypeSmallInt,
+	TypeBigInt:   "SIGNED",
+	TypeDecimal:  "DECIMAL",
+	TypeDouble:   "DECIMAL",
+	TypeFloat:    "DECIMAL",
+	TypeInt:      "SIGNED",
+	TypeSmallInt: "SIGNED",
 	// Типы строковые
-	TypeChar:    uastMariadbTypeChar,
-	TypeString:  uastMariadbTypeString,
-	TypeText:    uastMariadbTypeText,
-	TypeVarChar: uastMariadbTypeVarChar,
+	TypeChar:    "CHAR",
+	TypeString:  "VARCHAR",
+	TypeText:    "TEXT",
+	TypeVarChar: "VARCHAR",
 	// Типы специальные
-	TypeArray:   uastMariadbTypeArray,
-	TypeBoolean: uastMariadbTypeBoolean,
-	TypeJSON:    uastMariadbTypeJson,
-	TypeUUID:    uastMariadbTypeUUID,
-	TypeXML:     uastMariadbTypeXML,
+	TypeArray:   "JSON",
+	TypeBoolean: "TINYINT(1)",
+	TypeJSON:    "JSON",
+	TypeUUID:    "UUID",
+	TypeXML:     "TEXT",
 }
 
 // Приватные структуры
@@ -236,7 +213,7 @@ func mariadbFunctionCase(baseTransformer *baseTransformer, expr transformFunctio
 }
 func mariadbFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeMariadb[valueType]
+	typeService, exists := listTypesMariadb[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -331,7 +308,7 @@ func mariadbFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 		}
 	}
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeMariadb[valueType]
+	typeService, exists := listTypesMariadb[valueType]
 	if !exists {
 		return ErrUntransformType
 	}

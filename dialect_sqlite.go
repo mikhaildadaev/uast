@@ -19,6 +19,8 @@ var DialectSQLite = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsSQLite,
 		listFunctions:        listFunctionsSQLite,
+		listModifiers:        listModifiersSQLite,
+		listTypes:            listTypesSQLite,
 		parensFunction:       false,
 		placeholderNumber:    0,
 		placeholderStyle:     "?",
@@ -98,34 +100,6 @@ const (
 const (
 	uastSQLiteManagementUpsert managementService = "ON CONFLICT DO UPDATE SET"
 )
-const (
-	// Типы бинарные
-	uastSQLiteTypeBinary    typeService = "BLOB"
-	uastSQLiteTypeVarBinary typeService = "BLOB"
-	// Типы даты и времени
-	uastSQLiteTypeDate      typeService = "TEXT"
-	uastSQLiteTypeDateTime  typeService = "TEXT"
-	uastSQLiteTypeTime      typeService = "TEXT"
-	uastSQLiteTypeTimestamp typeService = "TEXT"
-	// Типы числовые
-	uastSQLiteTypeBigInt   typeService = "INTEGER"
-	uastSQLiteTypeDecimal  typeService = "REAL"
-	uastSQLiteTypeDouble   typeService = "REAL"
-	uastSQLiteTypeFloat    typeService = "REAL"
-	uastSQLiteTypeInt      typeService = "INTEGER"
-	uastSQLiteTypeSmallInt typeService = "INTEGER"
-	// Типы строковые
-	uastSQLiteTypeChar    typeService = "TEXT"
-	uastSQLiteTypeString  typeService = "TEXT"
-	uastSQLiteTypeText    typeService = "TEXT"
-	uastSQLiteTypeVarChar typeService = "TEXT"
-	// Типы специальные
-	uastSQLiteTypeArray   typeService = "TEXT"
-	uastSQLiteTypeBoolean typeService = "INTEGER"
-	uastSQLiteTypeJson    typeService = "TEXT"
-	uastSQLiteTypeUUID    typeService = "TEXT"
-	uastSQLiteTypeXML     typeService = "TEXT"
-)
 
 // Приватные переменные
 var listComparisonsSQLite = map[comparisonOperator]comparisonTransform{
@@ -161,33 +135,36 @@ var listFunctionsSQLite = map[functionService]functionTransform{
 	uastFunctionRand: sqliteFunctionRand,
 	// Функции строковые
 }
-var listTypeSQLite = map[ValueType]typeService{
+var listModifiersSQLite = map[modifierService]modifierService{
+	uastModifierAutoIncrement: "AUTOINCREMENT",
+}
+var listTypesSQLite = map[ValueType]typeService{
 	// Типы бинарные
-	TypeBinary:    uastSQLiteTypeBinary,
-	TypeVarBinary: uastSQLiteTypeVarBinary,
+	TypeBinary:    "BLOB",
+	TypeVarBinary: "BLOB",
 	// Типы даты и времени
-	TypeDate:      uastSQLiteTypeDate,
-	TypeDateTime:  uastSQLiteTypeDateTime,
-	TypeTime:      uastSQLiteTypeTime,
-	TypeTimestamp: uastSQLiteTypeTimestamp,
+	TypeDate:      "TEXT",
+	TypeDateTime:  "TEXT",
+	TypeTime:      "TEXT",
+	TypeTimestamp: "TEXT",
 	// Типы числовые
-	TypeBigInt:   uastSQLiteTypeBigInt,
-	TypeDecimal:  uastSQLiteTypeDecimal,
-	TypeDouble:   uastSQLiteTypeDouble,
-	TypeFloat:    uastSQLiteTypeFloat,
-	TypeInt:      uastSQLiteTypeInt,
-	TypeSmallInt: uastSQLiteTypeSmallInt,
+	TypeBigInt:   "INTEGER",
+	TypeDecimal:  "REAL",
+	TypeDouble:   "REAL",
+	TypeFloat:    "REAL",
+	TypeInt:      "INTEGER",
+	TypeSmallInt: "INTEGER",
 	// Типы строковые
-	TypeChar:    uastSQLiteTypeChar,
-	TypeString:  uastSQLiteTypeString,
-	TypeText:    uastSQLiteTypeText,
-	TypeVarChar: uastSQLiteTypeVarChar,
+	TypeChar:    "TEXT",
+	TypeString:  "TEXT",
+	TypeText:    "TEXT",
+	TypeVarChar: "TEXT",
 	// Типы специальные
-	TypeArray:   uastSQLiteTypeArray,
-	TypeBoolean: uastSQLiteTypeBoolean,
-	TypeJSON:    uastSQLiteTypeJson,
-	TypeUUID:    uastSQLiteTypeUUID,
-	TypeXML:     uastSQLiteTypeXML,
+	TypeArray:   "TEXT",
+	TypeBoolean: "INTEGER",
+	TypeJSON:    "TEXT",
+	TypeUUID:    "TEXT",
+	TypeXML:     "TEXT",
 }
 
 // Приватные структуры
@@ -252,7 +229,7 @@ func sqliteFunctionStdDev(baseTransformer *baseTransformer, expr transformFuncti
 }
 func sqliteFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeSQLite[valueType]
+	typeService, exists := listTypesSQLite[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -381,7 +358,7 @@ func sqliteFunctionJsonExtract(baseTransformer *baseTransformer, expr transformF
 		}
 	}
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeSQLite[valueType]
+	typeService, exists := listTypesSQLite[valueType]
 	if !exists {
 		return ErrUntransformType
 	}

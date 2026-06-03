@@ -19,6 +19,8 @@ var DialectMySQL = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMysql,
 		listFunctions:        listFunctionsMysql,
+		listModifiers:        listModifiersMysql,
+		listTypes:            listTypesMysql,
 		parensFunction:       true,
 		placeholderNumber:    -1,
 		placeholderStyle:     "?",
@@ -90,34 +92,6 @@ const (
 const (
 	uastMySQLManagementUpsert managementService = "ON DUPLICATE KEY UPDATE"
 )
-const (
-	// Типы бинарные
-	uastMysqlTypeBinary    typeService = "BINARY"
-	uastMysqlTypeVarBinary typeService = "VARBINARY"
-	// Типы даты и времени
-	uastMysqlTypeDate      typeService = "DATE"
-	uastMysqlTypeDateTime  typeService = "DATETIME"
-	uastMysqlTypeTime      typeService = "TIME"
-	uastMysqlTypeTimestamp typeService = "DATETIME"
-	// Типы числовые
-	uastMysqlTypeBigInt   typeService = "SIGNED"
-	uastMysqlTypeDecimal  typeService = "DECIMAL"
-	uastMysqlTypeDouble   typeService = "DECIMAL"
-	uastMysqlTypeFloat    typeService = "DECIMAL"
-	uastMysqlTypeInt      typeService = "SIGNED"
-	uastMysqlTypeSmallInt typeService = "SIGNED"
-	// Типы строковые
-	uastMysqlTypeChar    typeService = "CHAR"
-	uastMysqlTypeString  typeService = "VARCHAR"
-	uastMysqlTypeText    typeService = "TEXT"
-	uastMysqlTypeVarChar typeService = "VARCHAR"
-	// Типы специальные
-	uastMysqlTypeArray   typeService = "JSON"
-	uastMysqlTypeBoolean typeService = "TINYINT(1)"
-	uastMysqlTypeJson    typeService = "JSON"
-	uastMysqlTypeUUID    typeService = "CHAR(36)"
-	uastMysqlTypeXML     typeService = "TEXT"
-)
 
 // Приватные переменные
 var listComparisonsMysql = map[comparisonOperator]comparisonTransform{
@@ -145,33 +119,36 @@ var listFunctionsMysql = map[functionService]functionTransform{
 	uastFunctionTrunc: mysqlFunctionTrunc,
 	// Функции строковые
 }
-var listTypeMysql = map[ValueType]typeService{
+var listModifiersMysql = map[modifierService]modifierService{
+	uastModifierAutoIncrement: "AUTO_INCREMENT",
+}
+var listTypesMysql = map[ValueType]typeService{
 	// Типы бинарные
-	TypeBinary:    uastMysqlTypeBinary,
-	TypeVarBinary: uastMysqlTypeVarBinary,
+	TypeBinary:    "BINARY",
+	TypeVarBinary: "VARBINARY",
 	// Типы даты и времени
-	TypeDate:      uastMysqlTypeDate,
-	TypeDateTime:  uastMysqlTypeDateTime,
-	TypeTime:      uastMysqlTypeTime,
-	TypeTimestamp: uastMysqlTypeTimestamp,
+	TypeDate:      "DATE",
+	TypeDateTime:  "DATETIME",
+	TypeTime:      "TIME",
+	TypeTimestamp: "DATETIME",
 	// Типы числовые
-	TypeBigInt:   uastMysqlTypeBigInt,
-	TypeDecimal:  uastMysqlTypeDecimal,
-	TypeDouble:   uastMysqlTypeDouble,
-	TypeFloat:    uastMysqlTypeFloat,
-	TypeInt:      uastMysqlTypeInt,
-	TypeSmallInt: uastMysqlTypeSmallInt,
+	TypeBigInt:   "SIGNED",
+	TypeDecimal:  "DECIMAL",
+	TypeDouble:   "DECIMAL",
+	TypeFloat:    "DECIMAL",
+	TypeInt:      "SIGNED",
+	TypeSmallInt: "SIGNED",
 	// Типы строковые
-	TypeChar:    uastMysqlTypeChar,
-	TypeString:  uastMysqlTypeString,
-	TypeText:    uastMysqlTypeText,
-	TypeVarChar: uastMysqlTypeVarChar,
+	TypeChar:    "CHAR",
+	TypeString:  "VARCHAR",
+	TypeText:    "TEXT",
+	TypeVarChar: "VARCHAR",
 	// Типы специальные
-	TypeArray:   uastMysqlTypeArray,
-	TypeBoolean: uastMysqlTypeBoolean,
-	TypeJSON:    uastMysqlTypeJson,
-	TypeUUID:    uastMysqlTypeUUID,
-	TypeXML:     uastMysqlTypeXML,
+	TypeArray:   "JSON",
+	TypeBoolean: "TINYINT(1)",
+	TypeJSON:    "JSON",
+	TypeUUID:    "CHAR(36)",
+	TypeXML:     "TEXT",
 }
 
 // Приватные структуры
@@ -236,7 +213,7 @@ func mysqlFunctionCase(baseTransformer *baseTransformer, expr transformFunction)
 }
 func mysqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeMysql[valueType]
+	typeService, exists := listTypesMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
@@ -331,7 +308,7 @@ func mysqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 		}
 	}
 	valueType := expr.transformGetValueType()
-	typeService, exists := listTypeMysql[valueType]
+	typeService, exists := listTypesMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}

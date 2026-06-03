@@ -29,6 +29,7 @@ type componentRenderer interface {
 	renderHaving(having ExpressionBase) error
 	renderIfExists(ifExists bool) error
 	renderIfNotExists(ifNotExists bool) error
+	renderIndex(columns []markSourceable) error
 	renderInto(into SourceBase) error
 	renderIsData(data string) error
 	renderJoin(joins []*clauseJoin) error

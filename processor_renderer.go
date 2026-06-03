@@ -223,6 +223,9 @@ func (renderer *baseRenderer) renderService(value any) error {
 	case typeService:
 		renderer.contexter.bufferQuery.WriteString(string(v))
 		return nil
+	case ValueType:
+		renderer.contexter.bufferQuery.WriteString(string(v))
+		return nil
 	}
 	return ErrUnsupportService
 }
@@ -265,9 +268,7 @@ func (renderer *baseRenderer) renderColumns(columns []markSourceable) error {
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, column := range columns {
-		if err := column.render(renderer); err != nil {
-			return err
-		}
+		column.render(renderer)
 		if i < columnsCount {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
@@ -367,6 +368,22 @@ func (renderer *baseRenderer) renderIfNotExists(ifNotExists bool) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderIndex(columns []markSourceable) error {
+	if len(columns) == 0 {
+		return nil
+	}
+	columnsCount := len(columns) - 1
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderOperator(uastCompositeParenLeft)
+	for i, column := range columns {
+		renderer.renderName(column.name())
+		if i < columnsCount {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
 func (renderer *baseRenderer) renderInto(into SourceBase) error {
 	if into == nil {
 		return nil
@@ -411,8 +428,6 @@ func (renderer *baseRenderer) renderOn(on SourceBase) error {
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierOn)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(on.format())
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderName(on.name())
 	return nil

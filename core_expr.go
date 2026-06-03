@@ -26,10 +26,6 @@ type markPredicable interface {
 	ExpressionBase
 	isPredicable()
 }
-type transformColumn interface {
-	ExpressionBase
-	transformGetName() string
-}
 type transformComparison interface {
 	ExpressionBase
 	transformGetLeft() ExpressionBase

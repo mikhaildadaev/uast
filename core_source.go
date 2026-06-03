@@ -32,7 +32,7 @@ type ViewSource = sourceView
 // Публичные конструкторы
 func NewColumn[T typeScalar](columnName string, table *TableSource, valueType ValueType) *sourceColumn[T] {
 	return &sourceColumn[T]{
-		column:    Column[T](table.aliasName, columnName),
+		field:     Column[T](table.aliasName, columnName),
 		table:     table,
 		valueType: valueType,
 	}
@@ -95,15 +95,23 @@ func (source *sourceColumn[T]) AutoIncrement() *sourceColumn[T] {
 	source.isAutoIncrement = true
 	return source
 }
-func (source *sourceColumn[T]) Default(value ExpressionBase) *sourceColumn[T] {
+func (source *sourceColumn[T]) DefaultValue(value ExpressionBase) *sourceColumn[T] {
 	source.defaultValue = value
 	return source
 }
 func (source *sourceColumn[T]) Expr() *exprColumn[T] {
-	return source.column
+	return source.field
 }
 func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
 	source.isNotNull = true
+	return source
+}
+func (source *sourceColumn[T]) PrimaryKey() *sourceColumn[T] {
+	source.isPrimaryKey = true
+	return source
+}
+func (source *sourceColumn[T]) Unique() *sourceColumn[T] {
+	source.isUnique = true
 	return source
 }
 
@@ -112,6 +120,15 @@ type markSourceable interface {
 	SourceBase
 	isColumnable()
 }
+type transformColumn interface {
+	SourceBase
+	transformGetAutoIncrement() bool
+	transformGetDefaultValue() ExpressionBase
+	transformGetNotNull() bool
+	transformGetPrimaryKey() bool
+	transformGetUnique() bool
+	transformGetValueType() ValueType
+}
 
 // Приватные переменные
 var queryCounter atomic.Int64
@@ -119,9 +136,11 @@ var queryCounter atomic.Int64
 // Приватные структуры
 type sourceColumn[T typeScalar] struct {
 	defaultValue    ExpressionBase
-	column          *exprColumn[T]
+	field           *exprColumn[T]
 	isAutoIncrement bool
 	isNotNull       bool
+	isPrimaryKey    bool
+	isUnique        bool
 	table           *sourceTable
 	valueType       ValueType
 }
@@ -165,15 +184,64 @@ func (source *sourceColumn[T]) clone() SourceBase {
 func (source *sourceColumn[T]) format() modifierService {
 	return uastModifierColumn
 }
+func (source *sourceColumn[T]) transformGetDefaultValue() ExpressionBase {
+	return source.defaultValue
+}
+func (source *sourceColumn[T]) transformGetAutoIncrement() bool {
+	return source.isAutoIncrement
+}
+func (source *sourceColumn[T]) transformGetNotNull() bool {
+	return source.isNotNull
+}
+func (source *sourceColumn[T]) transformGetPrimaryKey() bool {
+	return source.isPrimaryKey
+}
+func (source *sourceColumn[T]) transformGetUnique() bool {
+	return source.isUnique
+}
+func (source *sourceColumn[T]) transformGetValueType() ValueType {
+	return source.valueType
+}
 func (source *sourceColumn[T]) isSourceBase() {}
 func (source *sourceColumn[T]) isColumnable() {}
 func (source *sourceColumn[T]) name() string {
-	return source.column.transformGetName()
+	return source.field.transformGetName()
 }
 func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderName(source.table.tableName)
-	baseRenderer.renderOperator(uastCompositeSinglePoint)
 	baseRenderer.renderName(source.name())
+	baseRenderer.renderOperator(uastCompositeSingleSpace)
+	baseRenderer.renderService(source.valueType)
+	for _, attr := range baseRenderer.config.supportAttrCreateOrder {
+		switch attr {
+		case uastModifierAutoIncrement:
+			if source.isAutoIncrement {
+				baseRenderer.renderOperator(uastCompositeSingleSpace)
+				baseRenderer.renderService(uastModifierAutoIncrement)
+			}
+		case uastModifierNotNull:
+			if source.isNotNull {
+				baseRenderer.renderOperator(uastCompositeSingleSpace)
+				baseRenderer.renderService(uastModifierNotNull)
+			}
+		case uastModifierPrimaryKey:
+			if source.isPrimaryKey {
+				baseRenderer.renderOperator(uastCompositeSingleSpace)
+				baseRenderer.renderService(uastModifierPrimaryKey)
+			}
+		case uastModifierUnique:
+			if source.isUnique {
+				baseRenderer.renderOperator(uastCompositeSingleSpace)
+				baseRenderer.renderService(uastModifierUnique)
+			}
+		case uastModifierDefault:
+			if source.defaultValue != nil {
+				baseRenderer.renderOperator(uastCompositeSingleSpace)
+				baseRenderer.renderService(uastModifierDefault)
+				baseRenderer.renderOperator(uastCompositeSingleSpace)
+				source.defaultValue.render(baseRenderer)
+			}
+		}
+	}
 	return nil
 }
 func (col *sourceColumn[T]) validate(baseValidator *baseValidator) error {

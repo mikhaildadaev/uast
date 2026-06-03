@@ -54,6 +54,7 @@ const (
 )
 const (
 	uastCountMaxDepth      = 16
+	uastCountMaxColumn     = 64
 	uastCountMaxComparison = 48
 	uastCountMaxFunction   = 128
 	uastCountMaxLimit      = 64
@@ -61,6 +62,7 @@ const (
 	uastCountMaxUnions     = 16
 	uastCountMaxWith       = 8
 	uastSizeInitByte       = 128
+	uastSizeInitColumn     = 32
 	uastSizeInitComparison = 8
 	uastSizeInitExpr       = 8
 	uastSizeInitFunction   = 8
@@ -460,6 +462,7 @@ type config struct {
 	symbolMarkRight        string
 	symbolQuoteLeft        string
 	symbolQuoteRight       string
+	supportAttrCreateOrder []modifierService
 	supportCascade         bool
 	supportComment         map[modifierService]bool
 	supportIfExists        map[modifierService]bool

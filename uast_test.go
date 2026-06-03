@@ -1928,6 +1928,28 @@ func Test_SQL_Create(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})
 	})
+	t.Run("Schema", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtCreate := NewCreate(NewSchema("public")).
+				IfNotExists()
+			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS `public`", "CREATE SCHEMA")
+			case DialectMsSQL:
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS [public]", "CREATE SCHEMA")
+			case DialectMySQL:
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA `public`", "CREATE SCHEMA")
+			case DialectPostgreSQL:
+				assertContains(t, sqlCreateQuery, `CREATE SCHEMA IF NOT EXISTS "public"`, "CREATE SCHEMA")
+			case DialectSQLite:
+				// Not supported
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
+		})
+	})
 	t.Run("Table", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))

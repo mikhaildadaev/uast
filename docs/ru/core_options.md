@@ -5,14 +5,14 @@ outline: deep
 # API / Ядро / Опции
 
 ::: info **Информация**
-Эта страница охватывает все параметры конфигурации: `clauseGroupBy`, `clauseHaving`, `clauseJoin`, `clauseOrderBy`, `clausePagination`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprColumn`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Каждый параметр показан с рабочим примером кода и ожидаемым выводом.
+Эта страница охватывает все параметры конфигурации: `clauseGroupBy`, `clauseHaving`, `clauseJoin`, `clauseOrderBy`, `clausePagination`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprField`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Каждый параметр показан с рабочим примером кода и ожидаемым выводом.
 :::
 
 ## clauseGroupBy
 Добавляет оператор GROUP BY для группировки строк по указанным колонкам или выражениям.
 ```go
 groupBy := GroupBy(
-	uast.Column[string]("t", "string"),
+	uast.Field[string]("t", "string"),
 )
 ```
 Output MariaDB:
@@ -40,7 +40,7 @@ GROUP BY "t"."string"
 Добавляет оператор HAVING для фильтрации групп. Используется с GROUP BY для фильтрации агрегированных результатов.
 ```go
 having := Having(
-	uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
+	uast.Greater(uast.Count(uast.Field[int64]("t", "id"), false), uast.Value[int64](2)),
 )
 ```
 Output MariaDB:
@@ -94,7 +94,7 @@ CROSS JOIN "test" AS "t"
 ### Full
 Добавляет FULL JOIN к запросу. Возвращает все строки из обеих таблиц, с NULL там, где нет совпадений.
 ```go
-join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -120,7 +120,7 @@ FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### FullOuter
 Добавляет FULL OUTER JOIN к запросу. Возвращает все строки из обеих таблиц, с NULL там, где нет совпадений.
 ```go
-join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -146,7 +146,7 @@ FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Inner
 Добавляет INNER JOIN к запросу. Возвращает строки, имеющие совпадающие значения в обеих таблицах.
 ```go
-join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -172,7 +172,7 @@ INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Left
 Добавляет LEFT JOIN к запросу. Возвращает все строки из левой таблицы и совпадающие строки из правой таблицы.
 ```go
-join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -198,7 +198,7 @@ LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### LeftOuter
 Добавляет LEFT OUTER JOIN к запросу. Возвращает все строки из левой таблицы и совпадающие строки из правой таблицы.
 ```go
-join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -224,7 +224,7 @@ LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Right
 Добавляет RIGHT JOIN к запросу. Возвращает все строки из правой таблицы и совпадающие строки из левой таблицы. Не поддерживается SQLite.
 ```go
-join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -250,7 +250,7 @@ Output SQLite:
 ### RightOuter
 Добавляет RIGHT OUTER JOIN к запросу. Возвращает все строки из правой таблицы и совпадающие строки из левой таблицы. Не поддерживается SQLite.
 ```go
-join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -277,7 +277,7 @@ Output SQLite:
 ### Asc
 Указывает порядок сортировки по возрастанию (сначала наименьшие, от А до Я). Используется для сортировки строк в запросе или в рамках оконной функции.
 ```go
-orderBy := uast.Asc(uast.Column[string]("t", "string"))
+orderBy := uast.Asc(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -303,7 +303,7 @@ Output SQLite:
 ### Desc
 Указывает порядок сортировки по убыванию (сначала наибольшие, от Я до А). Используется для сортировки строк в запросе или в рамках оконной функции.
 ```go
-orderBy := uast.Desc(uast.Column[string]("t", "string"))
+orderBy := uast.Desc(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -356,8 +356,8 @@ LIMIT ? OFFSET ?
 Добавляет оператор RETURNING для возврата изменённых строк. Поддерживается MariaDB, PostgreSQL и SQLite. MySQL не поддерживает этот оператор.
 ```go
 returning = Returning(
-	uast.Column[int64]("t", "id")
-    uast.Column[string]("t", "string")
+	uast.Field[int64]("t", "id")
+    uast.Field[string]("t", "string")
 )
 ```
 Output MariaDB:
@@ -386,7 +386,7 @@ RETURNING "t"."id", "t"."string"
 Указывает колонки и их новые значения с помощью `Assign` для связывания колонок со значениями. Поддерживает несколько пар для обновления нескольких колонок.
 ```go
 set := Set(
-	uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+	uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
@@ -416,7 +416,7 @@ UPDATE "test" AS "t" SET "t"."string" = ?
 ```go
 unions := uast.Union(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -446,7 +446,7 @@ UNION SELECT "t"."string" FROM "test" AS "t"
 ```go
 unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -476,7 +476,7 @@ UNION ALL SELECT "t"."string" FROM "test" AS "t"
 ```go
 unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -506,7 +506,7 @@ EXCEPT SELECT "t"."string" FROM "test" AS "t"
 ```go
 unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("test").As("t")).
 	Field(
-		uast.Column[string]("t", "string"),
+		uast.Field[string]("t", "string"),
 	),
 )
 ```
@@ -536,8 +536,8 @@ INTERSECT SELECT "t"."string" FROM "test" AS "t"
 Указывает значения для вставки с помощью `Pair` для связывания колонок со значениями. Колонки автоматически определяются из пар.
 ```go
 values := Values(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -565,11 +565,11 @@ VALUES (?, ?)
 Добавляет оператор upsert к INSERT ... VALUES с помощью `Upsert`. Связывает колонки со значениями.
 ```go
 values := Values(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 ).
 Upsert(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("updated")),
 )
 ```
 Output MariaDB:
@@ -597,7 +597,7 @@ VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
 Добавляет оператор WHERE для фильтрации строк перед группировкой или агрегацией. Принимает выражения сравнения, логические операторы и подзапросы.
 ```go
 where = Where(
-	uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+	uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
@@ -627,11 +627,11 @@ WHERE "t"."string" = ?
 ```go
 with := WithN("cte_norecursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     ),
     "id", "string",
 )
@@ -662,20 +662,20 @@ WITH "cte_norecursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "
 ```go
 with := WithR("cte_recursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Unions(
         uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
             Field(
-                uast.Column[int64]("t", "id"),
-                uast.Column[string]("t", "string"),
+                uast.Field[int64]("t", "id"),
+                uast.Field[string]("t", "string"),
             ).
             Join(
-                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("rec", "id"))),
+                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("rec", "id"))),
             ),
         ),
     ),
@@ -733,7 +733,7 @@ ARRAY[?, ?, ?]
 ### BitwiseAnd
 Выполняет побитовую операцию И между двумя выражениями.
 ```go
-binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseAnd(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MsSQL:
 ```text
@@ -751,7 +751,7 @@ Output PostgreSQL:
 ### BitwiseOr
 Выполняет побитовую операцию ИЛИ между двумя выражениями.
 ```go
-binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseOr(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -777,7 +777,7 @@ Output SQLite:
 ### BitwiseXor
 Выполняет побитовую операцию исключающего ИЛИ между двумя выражениями.
 ```go
-binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseXor(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -803,7 +803,7 @@ Output SQLite:
 ### Divide
 Делит левое выражение на правое.
 ```go
-binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Divide(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -829,7 +829,7 @@ Output SQLite:
 ### Minus
 Вычитает правое выражение из левого.
 ```go
-binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Minus(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -855,7 +855,7 @@ Output SQLite:
 ### Modulo
 Возвращает остаток от деления левого выражения на правое.
 ```go
-binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Modulo(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -881,7 +881,7 @@ Output SQLite:
 ### Multiply
 Умножает левое выражение на правое.
 ```go
-binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Multiply(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -907,7 +907,7 @@ Output SQLite:
 ### Plus
 Складывает левое выражение с правым.
 ```go
-binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Plus(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -933,7 +933,7 @@ Output SQLite:
 ### ShiftLeft
 Выполняет побитовый сдвиг влево левого выражения на количество бит, указанное в правом выражении.
 ```go
-binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftLeft(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -959,7 +959,7 @@ Output SQLite:
 ### ShiftRight
 Выполняет побитовый сдвиг вправо левого выражения на количество бит, указанное в правом выражении.
 ```go
-binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftRight(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -982,38 +982,11 @@ Output SQLite:
 "t"."number" >> ?
 ```
 
-## exprColumn
-### Column
-Создаёт ссылку на колонку таблицы, опционально квалифицированную псевдонимом таблицы. Это основной способ ссылаться на колонки базы данных в выражениях.
-```go
-column := uast.Column[string]("t", "string")
-```
-Output MariaDB:
-```text
-`t`.`string`
-```
-Output MsSQL:
-```text
-[t].[string]
-```
-Output MySQL:
-```text
-`t`.`string`
-```
-Output PostgreSQL:
-```text
-"t"."string"
-```
-Output SQLite:
-```text
-"t"."string"
-```
-
 ## exprComparison
 ### Between
 Проверяет, попадает ли левое выражение в диапазон, заданный valueStart и valueEnd (включительно).
 ```go
-comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.Between(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1039,7 +1012,7 @@ Output SQLite:
 ### Equal
 Сравнивает два выражения на равенство (`=`).
 ```go
-comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Equal(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1091,7 +1064,7 @@ EXISTS (SELECT 1 FROM "test" AS "t")
 ### Greater
 Сравнивает, больше ли левое выражение правого (`>`).
 ```go
-comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Greater(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1117,7 +1090,7 @@ Output SQLite:
 ### GreaterEqual
 Сравнивает, больше или равно ли левое выражение правому (`>=`).
 ```go
-comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.GreaterEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1143,7 +1116,7 @@ Output SQLite:
 ### ILike
 Выполняет регистронезависимое сравнение с шаблоном. Правое выражение должно содержать шаблон с `%` (любая последовательность) и `_` (один символ).
 ```go
-comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.ILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1169,7 +1142,7 @@ LOWER("t"."string") LIKE LOWER(?)
 ### In
 Проверяет, соответствует ли левое выражение любому значению, содержащемуся в правом выражении (обычно подзапрос или массив).
 ```go
-comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.In(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
@@ -1195,7 +1168,7 @@ Output SQLite:
 ### IsNotNull
 Проверяет, что выражение не `NULL`.
 ```go
-comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
+comparison := uast.IsNotNull(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -1221,7 +1194,7 @@ Output SQLite:
 ### IsNull
 Проверяет, что выражение является `NULL`.
 ```go
-comparison := uast.IsNull(uast.Column[string]("t", "string"))
+comparison := uast.IsNull(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -1247,7 +1220,7 @@ Output SQLite:
 ### Less
 Сравнивает, меньше ли левое выражение правого (`<`).
 ```go
-comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Less(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1273,7 +1246,7 @@ Output SQLite:
 ### LessEqual
 Сравнивает, меньше или равно ли левое выражение правому (`<=`).
 ```go
-comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.LessEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1299,7 +1272,7 @@ Output SQLite:
 ### Like
 Выполняет регистрозависимое сравнение с шаблоном. Правое выражение должно содержать шаблон с `%` и `_`.
 ```go
-comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.Like(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1325,7 +1298,7 @@ Output SQLite:
 ### NotBetween
 Проверяет, находится ли левое выражение вне диапазона, заданного `valueStart` и `valueEnd`.
 ```go
-comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.NotBetween(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1351,7 +1324,7 @@ Output SQLite:
 ### NotEqual
 Сравнивает два выражения на неравенство (`!=` or `<>`).
 ```go
-comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.NotEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1403,7 +1376,7 @@ NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ### NotILike
 Выполняет отрицательное регистронезависимое сравнение с шаблоном.
 ```go
-comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1429,7 +1402,7 @@ LOWER("t"."string") NOT LIKE LOWER(?)
 ### NotIn
 Проверяет, что левое выражение не соответствует ни одному значению, содержащемуся в правом выражении.
 ```go
-comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.NotIn(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
@@ -1455,7 +1428,7 @@ Output SQLite:
 ### NotLike
 Выполняет отрицательное регистрозависимое сравнение с шаблоном.
 ```go
-comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotLike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1639,13 +1612,40 @@ Output:
 1
 ```
 
+## exprField
+### Field
+Создаёт ссылку на колонку таблицы, опционально квалифицированную псевдонимом таблицы. Это основной способ ссылаться на колонки базы данных в выражениях.
+```go
+field := uast.Field[string]("t", "string")
+```
+Output MariaDB:
+```text
+`t`.`string`
+```
+Output MsSQL:
+```text
+[t].[string]
+```
+Output MySQL:
+```text
+`t`.`string`
+```
+Output PostgreSQL:
+```text
+"t"."string"
+```
+Output SQLite:
+```text
+"t"."string"
+```
+
 ## exprFunction
 ### Aggregate
 #### Avg
 Возвращает среднее арифметическое всех не-NULL значений в выражении. Если `distinct` равен `true`, среднее вычисляется только по уникальным значениям.
 ```go
-function := uast.Avg(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
+function := uast.Avg(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Avg(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1676,8 +1676,8 @@ AVG(DISTINCT "t"."number")
 #### BitAnd
 Возвращает побитовое И всех битов в выражении. Имеет смысл только для целочисленных типов.
 ```go
-function := uast.BitAnd(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
+function := uast.BitAnd(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitAnd(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1708,8 +1708,8 @@ BIT_AND(DISTINCT "t"."number")
 #### BitOr
 Возвращает побитовое ИЛИ всех битов в выражении.
 ```go
-function := uast.BitOr(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
+function := uast.BitOr(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitOr(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1740,8 +1740,8 @@ BIT_OR(DISTINCT "t"."number")
 #### BitXor
 Возвращает побитовое исключающее ИЛИ всех битов в выражении.
 ```go
-function := uast.BitXor(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
+function := uast.BitXor(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitXor(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1772,8 +1772,8 @@ BIT_XOR(DISTINCT "t"."number")
 #### Count
 Возвращает количество строк, соответствующих запросу, или количество не-NULL значений, если указано выражение. Когда `distinct` равен `true`, подсчитываются только уникальные значения.
 ```go
-function := uast.Count(uast.Column[string]("t", "string"), false)
-functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
+function := uast.Count(uast.Field[string]("t", "string"), false)
+functionWithDistinct := uast.Count(uast.Field[string]("t", "string"), true)
 ```
 Output MariaDB:
 ```text
@@ -1804,8 +1804,8 @@ COUNT(DISTINCT "t"."string")
 #### GroupConcat
 Объединяет значения из группы в одну строку, разделённую стандартным разделителем (обычно запятая). Флаг `distinct` удаляет дубликаты перед объединением.
 ```go
-function := uast.GroupConcat(uast.Column[string]("t", "string"), false)
-functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), true)
+function := uast.GroupConcat(uast.Field[string]("t", "string"), false)
+functionWithDistinct := uast.GroupConcat(uast.Field[string]("t", "string"), true)
 ```
 Output MariaDB:
 ```text
@@ -1836,8 +1836,8 @@ GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ',')
 #### Max
 Возвращает максимальное значение выражения по всем строкам в группе.
 ```go
-function := uast.Max(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
+function := uast.Max(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Max(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1868,8 +1868,8 @@ MAX(DISTINCT "t"."number")
 #### Min
 Возвращает минимальное значение выражения по всем строкам в группе.
 ```go
-function := uast.Min(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
+function := uast.Min(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Min(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1900,8 +1900,8 @@ MIN(DISTINCT "t"."number")
 #### StdDev
 Возвращает популяционное стандартное отклонение выражения.
 ```go
-function := uast.StdDev(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
+function := uast.StdDev(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.StdDev(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1932,8 +1932,8 @@ STDEV(DISTINCT "t"."number")
 #### Sum
 Возвращает сумму всех значений в выражении. Если `distinct` равен `true`, суммируются только уникальные значения.
 ```go
-function := uast.Sum(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
+function := uast.Sum(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Sum(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1964,8 +1964,8 @@ SUM(DISTINCT "t"."number")
 #### Variance
 Возвращает популяционную дисперсию выражения.
 ```go
-function := uast.Variance(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
+function := uast.Variance(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Variance(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1997,9 +1997,9 @@ VARIANCE(DISTINCT "t"."number")
 #### FirstValue
 Возвращает значение выражения из первой строки оконного фрейма. Требует оператор `OVER` с оконной спецификацией.
 ```go
-function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+function := uast.FirstValue(uast.Field[string]("t", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -2026,9 +2026,9 @@ FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC
 #### Lag
 Возвращает значение выражения из строки, смещённой на `offset` строк назад от текущей строки в рамках раздела.
 ```go
-function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
+function := uast.Lag(uast.Field[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
 )
 ```
 Output MariaDB:
@@ -2055,9 +2055,9 @@ LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### LastValue
 Возвращает значение выражения из последней строки оконного фрейма.
 ```go
-function := uast.LastValue(uast.Column[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[int]("t", "number"))),
+function := uast.LastValue(uast.Field[string]("t", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[int]("t", "number"))),
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
@@ -2085,9 +2085,9 @@ LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC R
 #### Lead
 Возвращает значение выражения из строки, смещённой на `offset` строк вперёд от текущей строки в рамках раздела.
 ```go
-function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
+function := uast.Lead(uast.Field[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
 )
 ```
 Output MariaDB:
@@ -2114,9 +2114,9 @@ LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### NthValue
 Возвращает значение выражения из `n-й` строки оконного фрейма.
 ```go
-function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+function := uast.NthValue(uast.Field[string]("t", "string"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
 ```
@@ -2147,7 +2147,7 @@ NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DES
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
-        uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
         uast.Value("old"),
     ),
 )
@@ -2178,7 +2178,7 @@ CASE WHEN "t"."number" < ? THEN ? ELSE ? END
 #### Coalesce
 Возвращает первое не-NULL выражение из предоставленного списка. Полезно для указания запасных значений.
 ```go
-function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Coalesce(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2204,7 +2204,7 @@ COALESCE("t"."createat", "t"."updateat")
 #### Greatest
 Возвращает наибольшее значение из предоставленного списка выражений.
 ```go
-function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Greatest(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2230,7 +2230,7 @@ GREATEST("t"."createat", "t"."updateat")
 #### Least
 Возвращает наименьшее значение из предоставленного списка выражений.
 ```go
-function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Least(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2256,7 +2256,7 @@ LEAST("t"."createat", "t"."updateat")
 #### NullIf
 Возвращает `NULL` если два выражения равны; иначе возвращает первое выражение.
 ```go
-function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.NullIf(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2283,7 +2283,7 @@ NULLIF("t"."createat", "t"."updateat")
 #### Cast
 Преобразует выражение к указанному типу данных.
 ```go
-function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
+function := uast.Cast(uast.Field[int]("t", "number"), uast.TypeString)
 ```
 Output MariaDB:
 ```text
@@ -2309,7 +2309,7 @@ CAST("t"."number" AS TEXT)
 #### CharLength
 Возвращает количество символов в строковом выражении.
 ```go
-function := uast.CharLength(uast.Column[string]("t", "string"))
+function := uast.CharLength(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -2335,7 +2335,7 @@ CHAR_LENGTH("t"."string")
 #### DateFormat
 Форматирует выражение даты/времени в соответствии с указанной маской формата.
 ```go
-function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
+function := uast.DateFormat(uast.Field[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
 ```
 Output MariaDB:
 ```text
@@ -2361,7 +2361,7 @@ STRFTIME("t"."createat", '%Y-%m-%d')
 #### Degrees
 Преобразует угол из радиан в градусы.
 ```go
-function := uast.Degrees(uast.Column[int]("t", "number"))
+function := uast.Degrees(uast.Field[int]("t", "number"))
 ```
 Output MariaDB:
 ```text
@@ -2387,7 +2387,7 @@ DEGREES("t"."number")
 #### Length
 Возвращает длину строкового выражения в байтах.
 ```go
-function := uast.Length(uast.Column[string]("t", "string"))
+function := uast.Length(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -2413,7 +2413,7 @@ LENGTH("t"."string")
 #### Position
 Возвращает начальную позицию первого вхождения подстроки в строку.
 ```go
-function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
+function := uast.Position(uast.Field[string]("t", "string"), uast.Value("old"))
 ```
 Output MariaDB:
 ```text
@@ -2439,7 +2439,7 @@ POSITION(? IN "t"."string")
 #### Radians
 Преобразует угол из градусов в радианы.
 ```go
-function := uast.Radians(uast.Column[int]("t", "number"))
+function := uast.Radians(uast.Field[int]("t", "number"))
 ```
 Output MariaDB:
 ```text
@@ -2518,7 +2518,7 @@ TIME('now')
 #### DateAdd
 Добавляет интервал даты/времени к выражению даты/времени и возвращает результирующую дату/время.
 ```go
-function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
@@ -2544,7 +2544,7 @@ DATETIME("t"."createat", '+2 DAY')
 #### DateDiff
 Возвращает разницу в днях между двумя выражениями даты/времени (`datetimeEnd` - `datetimeStart`).
 ```go
-function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+function := uast.DateDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2570,7 +2570,7 @@ DATEDIFF("t"."updateat", "t"."createat")
 #### DateSub
 Вычитает интервал даты/времени из выражения даты/времени и возвращает результирующую дату/время.
 ```go
-function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
@@ -2596,7 +2596,7 @@ DATETIME("t"."createat", '-2 DAY')
 #### Day
 Извлекает день месяца (1–31) из выражения даты/времени.
 ```go
-function := uast.Day(uast.Column[time.Time]("t", "createat"))
+function := uast.Day(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2622,7 +2622,7 @@ DAY("t"."createat")
 #### DayName
 Возвращает название дня недели (например, 'Понедельник', 'Вторник') для заданного выражения даты/времени.
 ```go
-function := uast.DayName(uast.Column[time.Time]("t", "createat"))
+function := uast.DayName(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2648,7 +2648,7 @@ STRFTIME('%w', "t"."createat")
 #### Hour
 Извлекает час (0–23) из выражения даты/времени.
 ```go
-function := uast.Hour(uast.Column[time.Time]("t", "createat"))
+function := uast.Hour(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2674,7 +2674,7 @@ HOUR("t"."createat")
 #### Minute
 Извлекает минуту (0–59) из выражения даты/времени.
 ```go
-function := uast.Minute(uast.Column[time.Time]("t", "createat"))
+function := uast.Minute(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2700,7 +2700,7 @@ MINUTE("t"."createat")
 #### Month
 Извлекает месяц (1–12) из выражения даты/времени.
 ```go
-function := uast.Month(uast.Column[time.Time]("t", "createat"))
+function := uast.Month(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2726,7 +2726,7 @@ MONTH("t"."createat")
 #### MonthName
 Возвращает название месяца (например, 'Январь', 'Февраль') для заданного выражения даты/времени.
 ```go
-function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
+function := uast.MonthName(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2778,7 +2778,7 @@ DATETIME('now')
 #### Quarter
 Извлекает квартал (1–4) из выражения даты/времени.
 ```go
-function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
+function := uast.Quarter(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2804,7 +2804,7 @@ QUARTER("t"."createat")
 #### Second
 Извлекает секунду (0–59) из выражения даты/времени.
 ```go
-function := uast.Second(uast.Column[time.Time]("t", "createat"))
+function := uast.Second(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2830,7 +2830,7 @@ SECOND("t"."createat")
 #### TimeAdd
 Добавляет интервал времени к выражению времени/даты/времени и возвращает результирующее время.
 ```go
-function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
@@ -2856,7 +2856,7 @@ TIME("t"."createat", '+2 HOUR')
 #### TimeDiff
 Возвращает разницу между двумя выражениями времени/даты/времени (`timeEnd` - `timeStart`).
 ```go
-function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+function := uast.TimeDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2882,7 +2882,7 @@ TIMEDIFF("t"."updateat", "t"."createat")
 #### TimeSub
 Вычитает интервал времени из выражения времени/даты/времени и возвращает результирующее время.
 ```go
-function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
@@ -2908,7 +2908,7 @@ TIME("t"."createat", '-2 HOUR')
 #### Week
 Извлекает номер недели (1–53) из выражения даты/времени.
 ```go
-function := uast.Week(uast.Column[time.Time]("t", "createat"))
+function := uast.Week(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2934,7 +2934,7 @@ WEEK("t"."createat")
 #### Year
 Извлекает год из выражения даты/времени.
 ```go
-function := uast.Year(uast.Column[time.Time]("t", "createat"))
+function := uast.Year(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2962,7 +2962,7 @@ YEAR("t"."createat")
 Создаёт JSON-массив из заданного выражения и опциональных дополнительных значений.
 ```go
 function := uast.JsonArray(
-    uast.Column[string]("t", "json"), 
+    uast.Field[string]("t", "json"), 
     uast.Value("val1"), 
     uast.Value("val2"),
 )
@@ -2992,7 +2992,7 @@ JSON_ARRAY("t"."json", ?, ?)
 Агрегирует значения из группы в JSON-массив.
 ```go
 function := uast.JsonArrayAgg(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
 )
 ```
 Output MariaDB:
@@ -3020,7 +3020,7 @@ JSON_GROUP_ARRAY("t"."json")
 Проверяет, содержит ли JSON-документ указанное значение.
 ```go
 function := uast.JsonContains(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.Value(`{"key":"val"}`),
 )
 ```
@@ -3049,7 +3049,7 @@ JSON_CONTAINS("t"."json", '{"key":"val"}')
 Извлекает значение из JSON-документа по указанному пути. Параметр `json` строится с помощью `JsonPath` и опциональных `JsonKey`/`JsonIndex`.
 ```go
 function := JsonExtract(
-    uast.Column[string]("t", "json"), 
+    uast.Field[string]("t", "json"), 
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("parent"), 
@@ -3087,7 +3087,7 @@ Output SQLite:
 function := uast.JsonObject(
     uast.JsonPair(
         uast.JsonKey("key"), 
-        uast.Count(uast.Column[string]("t", "json"), false),
+        uast.Count(uast.Field[string]("t", "json"), false),
     ),
 )
 ```
@@ -3116,8 +3116,8 @@ JSON_OBJECT('key', COUNT("t"."json"))
 Агрегирует пары ключ-значение из группы в один JSON-объект.
 ```go
 function := uast.JsonObjectAgg(
-    uast.Column[string]("t", "json"),
-    uast.Column[int]("t", "number"),
+    uast.Field[string]("t", "json"),
+    uast.Field[int]("t", "number"),
 )
 ```
 Output MariaDB:
@@ -3145,7 +3145,7 @@ JSON_GROUP_OBJECT("t"."json", "t"."number")
 Удаляет значение из JSON-документа по указанному пути(ям).
 ```go
 function := uast.JsonRemove(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3183,7 +3183,7 @@ JSON_REMOVE("t"."json", '$.key1', '$.key2')
 Устанавливает значение в JSON-документе по указанному пути(ям). Создаёт путь, если он не существует.
 ```go
 function := uast.JsonSet(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3222,7 +3222,7 @@ JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)
 #### JsonType
 Возвращает тип JSON-значения (например, 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
 ```go
-function := uast.JsonType(uast.Column[string]("t", "json"))
+function := uast.JsonType(uast.Field[string]("t", "json"))
 ```
 Output MariaDB:
 ```text
@@ -3249,7 +3249,7 @@ JSON_TYPE("t"."json")
 #### Abs
 Возвращает абсолютное (неотрицательное) значение числового выражения.
 ```go
-function := uast.Abs(uast.Column[int]("t", "x"))
+function := uast.Abs(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3275,7 +3275,7 @@ ABS("t"."x")
 #### ACos
 Возвращает арккосинус (обратный косинус) выражения в радианах.
 ```go
-function := uast.ACos(uast.Column[int]("t", "x"))
+function := uast.ACos(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3301,7 +3301,7 @@ ACOS("t"."x")
 #### ASin
 Возвращает арксинус (обратный синус) выражения в радианах.
 ```go
-function := uast.ASin(uast.Column[int]("t", "x"))
+function := uast.ASin(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3327,7 +3327,7 @@ ASIN("t"."x")
 #### ATan
 Возвращает арктангенс (обратный тангенс) выражения в радианах.
 ```go
-function := uast.ATan(uast.Column[int]("t", "x"))
+function := uast.ATan(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3353,7 +3353,7 @@ ATAN("t"."x")
 #### ATan2
 Возвращает арктангенс частного двух аргументов (`y`/`x`), используя их знаки для определения квадранта.
 ```go
-function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
+function := uast.ATan2(uast.Field[int]("t", "y"), uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3379,7 +3379,7 @@ ATAN2("t"."y", "t"."x")
 #### Cbrt
 Возвращает кубический корень числового выражения.
 ```go
-function := uast.Cbrt(uast.Column[int]("t", "x"))
+function := uast.Cbrt(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3405,7 +3405,7 @@ CBRT("t"."x")
 #### Ceil
 Возвращает наименьшее целое значение, не меньшее аргумента (округление вверх).
 ```go
-function := uast.Ceil(uast.Column[int]("t", "x"))
+function := uast.Ceil(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3431,7 +3431,7 @@ CEIL("t"."x")
 #### Cos
 Возвращает косинус выражения в радианах.
 ```go
-function := uast.Cos(uast.Column[int]("t", "x"))
+function := uast.Cos(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3457,7 +3457,7 @@ COS("t"."x")
 #### Exp
 Возвращает число Эйлера `e` (~2.71828) возведённое в степень выражения.
 ```go
-function := uast.Exp(uast.Column[int]("t", "x"))
+function := uast.Exp(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3483,7 +3483,7 @@ EXP("t"."x")
 #### Floor
 Возвращает наибольшее целое значение, не большее аргумента (округление вниз).
 ```go
-function := uast.Floor(uast.Column[int]("t", "x"))
+function := uast.Floor(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3509,7 +3509,7 @@ FLOOR("t"."x")
 #### Ln
 Возвращает натуральный логарифм (по основанию `e`) выражения.
 ```go
-function := uast.Ln(uast.Column[int]("t", "x"))
+function := uast.Ln(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3535,7 +3535,7 @@ LN("t"."x")
 #### Log
 Возвращает логарифм выражения по указанному основанию.
 ```go
-function := uast.Log(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Log(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3561,7 +3561,7 @@ LOG("t"."x", ?)
 #### Mod
 Возвращает остаток (модуль) от деления первого выражения на второе.
 ```go
-function := uast.Mod(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Mod(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3613,7 +3613,7 @@ PI()
 #### Power
 Возвращает выражение, возведённое в степень экспоненты.
 ```go
-function := uast.Power(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Power(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3665,7 +3665,7 @@ RANDOM()
 #### Round
 Округляет выражение до указанного количества знаков после запятой.
 ```go
-function := uast.Round(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Round(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3691,7 +3691,7 @@ ROUND("t"."x", ?)
 #### Sin
 Возвращает синус выражения в радианах.
 ```go
-function := uast.Sin(uast.Column[int]("t", "x"))
+function := uast.Sin(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3717,7 +3717,7 @@ SIN("t"."x")
 #### Sqrt
 Возвращает квадратный корень выражения.
 ```go
-function := uast.Sqrt(uast.Column[int]("t", "x"))
+function := uast.Sqrt(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3743,7 +3743,7 @@ SQRT("t"."x")
 #### Tan
 Возвращает тангенс выражения в радианах.
 ```go
-function := uast.Tan(uast.Column[int]("t", "x"))
+function := uast.Tan(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3769,7 +3769,7 @@ TAN("t"."x")
 #### Trunc
 Усекает числовое выражение до указанного количества знаков после запятой (без округления).
 ```go
-function := uast.Trunc(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Trunc(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3797,8 +3797,8 @@ TRUNC("t"."x", ?)
 Возвращает кумулятивное распределение значения в рамках раздела (отношение строк, которые идут до или равны текущей строке). Должна использоваться с оператором `OVER`.
 ```go
 function := uast.CumeDist().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3826,8 +3826,8 @@ CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Возвращает ранг строки без пропусков. Строки с равными значениями получают одинаковый ранг, а следующий ранг является непосредственно следующим целым числом. Требует `OVER`.
 ```go
 function := uast.DenseRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3855,8 +3855,8 @@ DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Делит строки в рамках раздела на `n` приблизительно равных групп и возвращает номер группы (от 1 до `n`) для каждой строки.
 ```go
 function := uast.NTile(2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3884,8 +3884,8 @@ NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Возвращает процентильный ранг строки в рамках раздела (диапазон от 0 до 1). Ранг первой строки всегда равен 0. Требует `OVER`.
 ```go
 function := uast.PercentRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3913,8 +3913,8 @@ PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Возвращает ранг строки с пропусками. Равные значения получают одинаковый ранг, а следующее отличное значение пропускает ранги. Требует `OVER`.
 ```go
 function := uast.Rank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3942,8 +3942,8 @@ RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Присваивает уникальный последовательный номер каждой строке в рамках раздела, начиная с 1. Порядок определяет последовательность нумерации.
 ```go
 function := uast.RowNumber().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3971,7 +3971,7 @@ ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 #### Concat
 Объединяет два или более строковых выражения в одну строку. Аргументы `NULL` рассматриваются как пустые строки в большинстве диалектов.
 ```go
-function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Concat(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -3997,7 +3997,7 @@ CONCAT("t"."string", ?, ?)
 #### ConcatWs
 Объединяет два или более строковых выражения с указанным разделителем между ними. Пропускает аргументы `NULL`.
 ```go
-function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
+function := uast.ConcatWs(uast.Value("_"), uast.Field[string]("t", "string"), uast.Value("old"),uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4023,7 +4023,7 @@ CONCAT_WS(?, "t"."string", ?, ?)
 #### LeftString
 Возвращает крайние слева `count` символов из строкового выражения.
 ```go
-function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.LeftString(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4049,7 +4049,7 @@ LEFT("t"."string", ?)
 #### Lower
 Преобразует строковое выражение в нижний регистр.
 ```go
-function := uast.Lower(uast.Column[string]("t", "string"))
+function := uast.Lower(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4075,7 +4075,7 @@ LOWER("t"."string")
 #### LPad
 Дополняет строковое выражение слева указанным разделителем до общей длины `count` символов.
 ```go
-function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.LPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
@@ -4101,7 +4101,7 @@ LPAD("t"."string", ?, ?)
 #### LTrim
 Удаляет начальные пробелы из строкового выражения.
 ```go
-function := uast.LTrim(uast.Column[string]("t", "string"))
+function := uast.LTrim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4127,7 +4127,7 @@ LTRIM("t"."string")
 #### Repeat
 Повторяет строковое выражение `count` раз.
 ```go
-function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.Repeat(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4153,7 +4153,7 @@ REPEAT("t"."string", ?)
 #### Replace
 Заменяет все вхождения подстроки в строке на новую подстроку.
 ```go
-function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Replace(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4179,7 +4179,7 @@ REPLACE("t"."string", ?, ?)
 #### Reverse
 Переворачивает символы в строковом выражении.
 ```go
-function := uast.Reverse(uast.Column[string]("t", "string"))
+function := uast.Reverse(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4205,7 +4205,7 @@ REVERSE("t"."string")
 #### RightString
 Возвращает крайние справа `count` символов из строкового выражения.
 ```go
-function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.RightString(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4231,7 +4231,7 @@ RIGHT("t"."string", ?)
 #### RPad
 Дополняет строковое выражение справа указанным разделителем до общей длины `count` символов.
 ```go
-function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.RPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
@@ -4257,7 +4257,7 @@ RPAD("t"."string", ?, ?)
 #### RTrim
 Удаляет конечные пробелы из строкового выражения.
 ```go
-function := uast.RTrim(uast.Column[string]("t", "string"))
+function := uast.RTrim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4283,7 +4283,7 @@ RTRIM("t"."string")
 #### SubString
 Извлекает подстроку из строкового выражения, начиная с `startPos` (начиная с 1) длиной `lengthStr` символов.
 ```go
-function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
+function := uast.SubString(uast.Field[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4309,7 +4309,7 @@ SUBSTRING("t"."string", ?, ?)
 #### Trim
 Удаляет как начальные, так и конечные пробелы из строкового выражения.
 ```go
-function := uast.Trim(uast.Column[string]("t", "string"))
+function := uast.Trim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4335,7 +4335,7 @@ TRIM("t"."string")
 #### Upper
 Преобразует строковое выражение в верхний регистр.
 ```go
-function := uast.Upper(uast.Column[string]("t", "string"))
+function := uast.Upper(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4374,8 +4374,8 @@ Output:
 Комбинирует несколько условий логическим `AND`. Все условия должны быть истинными для истинности комбинированного выражения.
 ```go
 logical := uast.And(
-    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -4403,8 +4403,8 @@ Output SQLite:
 Комбинирует несколько условий логическим `OR`. Хотя бы одно условие должно быть истинным для истинности комбинированного выражения.
 ```go
 logical := uast.Or(
-    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -4432,7 +4432,7 @@ Output SQLite:
 ### Subquery
 Оборачивает оператор `SELECT` как типизированное выражение, которое может использоваться в сравнениях (`In`, `Exists`, `Equal` и т.д.) или как колонка в операторе `SELECT`. Обобщённый параметр `T` указывает скалярный тип единственной колонки, возвращаемой подзапросом.
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test").As("t")))
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("t", "id")).From(uast.NewTable("test").As("t")))
 ```
 Output MariaDB:
 ```text

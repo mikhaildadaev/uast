@@ -12,7 +12,7 @@ This page covers all 21 data types in `Binary`, `Datetime`, `Numeric`, `String`,
 ### TypeBinary
 Fixed-length binary string.
 ```go
-binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBinary)
+binary := uast.Cast(uast.Field[int]("t", "number"), uast.TypeBinary)
 ```
 Output MariaDB:
 ```text
@@ -38,7 +38,7 @@ CAST("t"."number" AS BLOB)
 ### TypeVarBinary
 Variable-length binary string.
 ```go
-binary := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarBinary)
+binary := uast.Cast(uast.Field[int]("t", "number"), uast.TypeVarBinary)
 ```
 Output MariaDB:
 ```text
@@ -65,7 +65,7 @@ CAST("t"."number" AS BLOB)
 ### TypeDate
 Represents a date value (year, month, day).
 ```go
-datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDate)
+datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDate)
 ```
 Output MariaDB:
 ```text
@@ -91,7 +91,7 @@ CAST("t"."number" AS TEXT)
 ### TypeDateTime
 Represents a combined date and time value.
 ```go
-datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDateTime)
+datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDateTime)
 ```
 Output MariaDB:
 ```text
@@ -117,7 +117,7 @@ CAST("t"."number" AS TEXT)
 ### TypeTime
 Represents a time value (hour, minute, second).
 ```go
-datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTime)
+datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeTime)
 ```
 Output MariaDB:
 ```text
@@ -143,7 +143,7 @@ CAST("t"."number" AS TEXT)
 ### TypeTimestamp
 Represents a timestamp value.
 ```go
-datetime := uast.Cast(uast.Column[int]("t", "number"), uast.TypeTimestamp)
+datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeTimestamp)
 ```
 Output MariaDB:
 ```text
@@ -170,7 +170,7 @@ CAST("t"."number" AS TEXT)
 ### TypeBigInt
 Large integer type.
 ```go
-math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBigInt)
+math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeBigInt)
 ```
 Output MariaDB:
 ```text
@@ -196,7 +196,7 @@ CAST("t"."number" AS INTEGER)
 ### TypeDecimal
 Fixed-point decimal number.
 ```go
-math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDecimal)
+math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDecimal)
 ```
 Output MariaDB:
 ```text
@@ -222,7 +222,7 @@ CAST("t"."number" AS REAL)
 ### TypeDouble
 Double-precision floating-point number.
 ```go
-math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeDouble)
+math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDouble)
 ```
 Output MariaDB:
 ```text
@@ -248,7 +248,7 @@ CAST("t"."number" AS REAL)
 ### TypeFloat
 Single-precision floating-point number.
 ```go
-math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeFloat)
+math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeFloat)
 ```
 Output MariaDB:
 ```text
@@ -274,7 +274,7 @@ CAST("t"."number" AS REAL)
 ### TypeInt
 Integer type.
 ```go
-math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeInt)
+math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeInt)
 ```
 Output MariaDB:
 ```text
@@ -300,7 +300,7 @@ CAST("t"."number" AS INTEGER)
 ### TypeSmallInt
 Small integer type.
 ```go
-math := uast.Cast(uast.Column[int]("t", "number"), uast.TypeSmallInt)
+math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeSmallInt)
 ```
 Output MariaDB:
 ```text
@@ -327,7 +327,7 @@ CAST("t"."number" AS INTEGER)
 ### TypeChar 
 Fixed-length character string.
 ```go
-str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeChar)
+str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeChar)
 ```
 Output MariaDB:
 ```text
@@ -353,7 +353,7 @@ CAST("t"."number" AS TEXT)
 ### TypeString
 Variable-length character string.
 ```go
-str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
+str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeString)
 ```
 Output MariaDB:
 ```text
@@ -379,7 +379,7 @@ CAST("t"."number" AS TEXT)
 ### TypeText
 Variable-length text string.
 ```go
-str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeText)
+str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeText)
 ```
 Output MariaDB:
 ```text
@@ -405,7 +405,7 @@ CAST("t"."number" AS TEXT)
 ### TypeVarChar
 Variable-length character string with specified maximum.
 ```go
-str := uast.Cast(uast.Column[int]("t", "number"), uast.TypeVarChar)
+str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeVarChar)
 ```
 Output MariaDB:
 ```text
@@ -432,7 +432,7 @@ CAST("t"."number" AS TEXT)
 ### TypeArray
 Represents an array type.
 ```go
-special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeArray)
+special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeArray)
 ```
 Output MariaDB:
 ```text
@@ -458,7 +458,7 @@ CAST("t"."number" AS TEXT)
 ### TypeBoolean
 Represents a boolean (true/false) type.
 ```go
-special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeBoolean)
+special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeBoolean)
 ```
 Output MariaDB:
 ```text
@@ -484,7 +484,7 @@ CAST("t"."number" AS INTEGER)
 ### TypeJSON
 Represents a JSON data type.
 ```go
-special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeJSON)
+special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeJSON)
 ```
 Output MariaDB:
 ```text
@@ -510,7 +510,7 @@ CAST("t"."number" AS TEXT)
 ### TypeUUID
 Represents a universally unique identifier (UUID).
 ```go
-special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeUUID)
+special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeUUID)
 ```
 Output MariaDB:
 ```text
@@ -536,7 +536,7 @@ CAST("t"."number" AS TEXT)
 ### TypeXML
 Represents an XML data type.
 ```go
-special := uast.Cast(uast.Column[int]("t", "number"), uast.TypeXML)
+special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeXML)
 ```
 Output MariaDB:
 ```text

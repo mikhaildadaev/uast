@@ -5,14 +5,14 @@ outline: deep
 # API / Core / Options
 
 ::: info **Info**
-This page covers all configuration options: `clauseGroupBy`, `clauseHaving`, `clauseJoin`, `clauseOrderBy`, `clausePagination`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprColumn`, `exprComparison`, `exprConstant`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
+This page covers all configuration options: `clauseGroupBy`, `clauseHaving`, `clauseJoin`, `clauseOrderBy`, `clausePagination`, `clauseReturning`, `clauseSet`, `clauseUnions`, `clauseValues`, `clauseWhere`, `clauseWith`, `exprArray`, `exprBinary`, `exprComparison`, `exprConstant`, `exprField`, `exprFunction`, `exprLiteral`, `exprLogical`, `exprSubquery`, `exprValue`. Each option is shown with a working code example and expected output.
 :::
 
 ## clauseGroupBy
 Adds a GROUP BY clause to group rows by specified columns or expressions.
 ```go
 groupBy := GroupBy(
-	uast.Column[string]("t", "string"),
+	uast.Field[string]("t", "string"),
 )
 ```
 Output MariaDB:
@@ -40,7 +40,7 @@ GROUP BY "t"."string"
 Adds a HAVING clause to filter groups. Used with GROUP BY to filter aggregated results.
 ```go
 having := Having(
-	uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
+	uast.Greater(uast.Count(uast.Field[int64]("t", "id"), false), uast.Value[int64](2)),
 )
 ```
 Output MariaDB:
@@ -94,7 +94,7 @@ CROSS JOIN "test" AS "t"
 ### Full
 Adds a FULL JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -120,7 +120,7 @@ FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### FullOuter
 Adds a FULL OUTER JOIN to the statement. Returns all rows from both tables, with NULLs where there is no match.
 ```go
-join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -146,7 +146,7 @@ FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Inner
 Adds an INNER JOIN to the statement. Returns rows that have matching values in both tables.
 ```go
-join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -172,7 +172,7 @@ INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Left
 Adds a LEFT JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -198,7 +198,7 @@ LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### LeftOuter
 Adds a LEFT OUTER JOIN to the statement. Returns all rows from the left table, and matching rows from the right table.
 ```go
-join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -224,7 +224,7 @@ LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Right
 Adds a RIGHT JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -250,7 +250,7 @@ Output SQLite:
 ### RightOuter
 Adds a RIGHT OUTER JOIN to the statement. Returns all rows from the right table, and matching rows from the left table. Not supported by SQLite.
 ```go
-join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -277,7 +277,7 @@ Output SQLite:
 ### Asc
 Specifies ascending sort order (smallest first, A-to-Z). Used for sorting rows in a query or within a window function.
 ```go
-orderBy := uast.Asc(uast.Column[string]("t", "string"))
+orderBy := uast.Asc(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -303,7 +303,7 @@ Output SQLite:
 ### Desc
 Specifies descending sort order (largest first, Z-to-A). Used for sorting rows in a query or within a window function.
 ```go
-orderBy := uast.Desc(uast.Column[string]("t", "string"))
+orderBy := uast.Desc(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -356,8 +356,8 @@ LIMIT ? OFFSET ?
 Adds a RETURNING clause to return modified rows. Supported by MariaDB, PostgreSQL, and SQLite. MySQL does not support this clause natively.
 ```go
 returning = Returning(
-	uast.Column[int64]("t", "id")
-    uast.Column[string]("t", "string")
+	uast.Field[int64]("t", "id")
+    uast.Field[string]("t", "string")
 )
 ```
 Output MariaDB:
@@ -386,7 +386,7 @@ RETURNING "t"."id", "t"."string"
 Specifies columns and their new values using `Assign` to associate columns with values. Supports multiple pairs for updating multiple columns.
 ```go
 set := Set(
-	uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+	uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
@@ -416,7 +416,7 @@ Combines results from multiple SELECT statements. UNION returns distinct rows.
 ```go
 unions := uast.Union(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -446,7 +446,7 @@ Combines results from multiple SELECT statements. UNION ALL returns all rows, in
 ```go
 unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -476,7 +476,7 @@ Combines results from multiple SELECT statements. EXCEPT returns distinct rows f
 ```go
 unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -506,7 +506,7 @@ Combines results from multiple SELECT statements. INTERSECT returns distinct row
 ```go
 unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("test").As("t")).
 	Field(
-		uast.Column[string]("t", "string"),
+		uast.Field[string]("t", "string"),
 	),
 )
 ```
@@ -536,8 +536,8 @@ INTERSECT SELECT "t"."string" FROM "test" AS "t"
 Specifies values for insertion using `Pair` to associate columns with values. Columns are automatically inferred from the pairs.
 ```go
 values := Values(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -565,11 +565,11 @@ VALUES (?, ?)
 Adds an upsert clause to INSERT ... VALUES using `Upsert`. Associates columns with values.
 ```go
 values := Values(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 ).
 Upsert(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("updated")),
 )
 ```
 Output MariaDB:
@@ -597,7 +597,7 @@ VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
 Adds a WHERE clause to filter rows before grouping or aggregation. Accepts comparison expressions, logical operators, and subqueries.
 ```go
 where = Where(
-	uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+	uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
@@ -627,11 +627,11 @@ Adds a norecursive Common Table Expression (CTE) to the statement using `WithN`.
 ```go
 with := WithN("cte_norecursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     ),
     "id", "string",
 )
@@ -662,20 +662,20 @@ Adds a recursive Common Table Expression (CTE) to the statement using `WithR`. R
 ```go
 with := WithR("cte_recursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Unions(
         uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
             Field(
-                uast.Column[int64]("t", "id"),
-                uast.Column[string]("t", "string"),
+                uast.Field[int64]("t", "id"),
+                uast.Field[string]("t", "string"),
             ).
             Join(
-                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("rec", "id"))),
+                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("rec", "id"))),
             ),
         ),
     ),
@@ -734,7 +734,7 @@ ARRAY[?, ?, ?]
 ### BitwiseAnd
 Performs a bitwise AND operation between two expressions.
 ```go
-binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseAnd(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -760,7 +760,7 @@ Output SQLite:
 ### BitwiseOr
 Performs a bitwise OR operation between two expressions.
 ```go
-binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseOr(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -786,7 +786,7 @@ Output SQLite:
 ### BitwiseXor
 Performs a bitwise XOR operation between two expressions.
 ```go
-binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseXor(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -812,7 +812,7 @@ Output SQLite:
 ### Divide
 Divides the left expression by the right expression.
 ```go
-binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Divide(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -838,7 +838,7 @@ Output SQLite:
 ### Minus
 Subtracts the right expression from the left expression.
 ```go
-binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Minus(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -864,7 +864,7 @@ Output SQLite:
 ### Modulo
 Returns the remainder of dividing the left expression by the right expression.
 ```go
-binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Modulo(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -890,7 +890,7 @@ Output SQLite:
 ### Multiply
 Multiplies the left expression by the right expression.
 ```go
-binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Multiply(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -916,7 +916,7 @@ Output SQLite:
 ### Plus
 Adds the left expression to the right expression.
 ```go
-binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Plus(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -942,7 +942,7 @@ Output SQLite:
 ### ShiftLeft
 Performs a bitwise left shift on the left expression by the number of bits specified in the right expression.
 ```go
-binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftLeft(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -968,7 +968,7 @@ Output SQLite:
 ### ShiftRight
 Performs a bitwise right shift on the left expression by the number of bits specified in the right expression.
 ```go
-binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftRight(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -991,38 +991,11 @@ Output SQLite:
 "t"."number" >> ?
 ```
 
-## exprColumn
-### Column
-Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
-```go
-column := uast.Column[string]("t", "string")
-```
-Output MariaDB:
-```text
-`t`.`string`
-```
-Output MsSQL:
-```text
-[t].[string]
-```
-Output MySQL:
-```text
-`t`.`string`
-```
-Output PostgreSQL:
-```text
-"t"."string"
-```
-Output SQLite:
-```text
-"t"."string"
-```
-
 ## exprComparison
 ### Between
 Checks if the left expression falls within the range defined by `valueStart` and `valueEnd` (inclusive).
 ```go
-comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.Between(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1048,7 +1021,7 @@ Output SQLite:
 ### Equal
 Compares two expressions for equality (`=`).
 ```go
-comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Equal(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1100,7 +1073,7 @@ EXISTS (SELECT 1 FROM "test" AS "t")
 ### Greater
 Compares if the left expression is greater than the right expression (`>`).
 ```go
-comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Greater(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1126,7 +1099,7 @@ Output SQLite:
 ### GreaterEqual
 Compares if the left expression is greater than or equal to the right expression (`>=`).
 ```go
-comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.GreaterEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1152,7 +1125,7 @@ Output SQLite:
 ### ILike
 Performs a case-insensitive pattern matching comparison. The right expression should contain a pattern with `%` (any sequence) and `_` (single character) wildcards.
 ```go
-comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.ILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1178,7 +1151,7 @@ LOWER("t"."string") LIKE LOWER(?)
 ### In
 Checks if the left expression matches any value contained within the right expression (typically a subquery or array).
 ```go
-comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.In(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
@@ -1204,7 +1177,7 @@ Output SQLite:
 ### IsNotNull
 Checks if the expression is not `NULL`.
 ```go
-comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
+comparison := uast.IsNotNull(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -1230,7 +1203,7 @@ Output SQLite:
 ### IsNull
 Checks if the expression is `NULL`.
 ```go
-comparison := uast.IsNull(uast.Column[string]("t", "string"))
+comparison := uast.IsNull(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -1256,7 +1229,7 @@ Output SQLite:
 ### Less
 Compares if the left expression is less than the right expression (`<`).
 ```go
-comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Less(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1282,7 +1255,7 @@ Output SQLite:
 ### LessEqual
 Compares if the left expression is less than or equal to the right expression (`<=`).
 ```go
-comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.LessEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1308,7 +1281,7 @@ Output SQLite:
 ### Like
 Performs a case-sensitive pattern matching comparison. The right expression should contain a pattern with `%` and `_` wildcards.
 ```go
-comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.Like(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1334,7 +1307,7 @@ Output SQLite:
 ### NotBetween
 Checks if the left expression falls outside the range defined by `valueStart` and `valueEnd`.
 ```go
-comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.NotBetween(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1360,7 +1333,7 @@ Output SQLite:
 ### NotEqual
 Compares two expressions for inequality (`!=` or `<>`).
 ```go
-comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.NotEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1412,7 +1385,7 @@ NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ### NotILike
 Performs a negated case-insensitive pattern matching comparison.
 ```go
-comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1438,7 +1411,7 @@ LOWER("t"."string") NOT LIKE LOWER(?)
 ### NotIn
 Checks if the left expression does not match any value contained within the right expression.
 ```go
-comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.NotIn(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
@@ -1464,7 +1437,7 @@ Output SQLite:
 ### NotLike
 Performs a negated case-sensitive pattern matching comparison.
 ```go
-comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotLike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1648,13 +1621,40 @@ Output:
 1
 ```
 
+## exprField
+### Field
+Creates a reference to a table column, optionally qualified with a table alias. This is the primary way to reference database columns in expressions.
+```go
+field := uast.Field[string]("t", "string")
+```
+Output MariaDB:
+```text
+`t`.`string`
+```
+Output MsSQL:
+```text
+[t].[string]
+```
+Output MySQL:
+```text
+`t`.`string`
+```
+Output PostgreSQL:
+```text
+"t"."string"
+```
+Output SQLite:
+```text
+"t"."string"
+```
+
 ## exprFunction
 ### Aggregate
 #### Avg
 Returns the average (arithmetic mean) of all non-NULL values in the expression. If `distinct` is `true`, the average is calculated over distinct values only.
 ```go
-function := uast.Avg(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
+function := uast.Avg(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Avg(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1685,8 +1685,8 @@ AVG(DISTINCT "t"."number")
 #### BitAnd
 Returns the bitwise AND of all bits in the expression. Only meaningful for integer types.
 ```go
-function := uast.BitAnd(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
+function := uast.BitAnd(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitAnd(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1717,8 +1717,8 @@ BIT_AND(DISTINCT "t"."number")
 #### BitOr
 Returns the bitwise OR of all bits in the expression. Only meaningful for integer types.
 ```go
-function := uast.BitOr(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
+function := uast.BitOr(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitOr(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1749,8 +1749,8 @@ BIT_OR(DISTINCT "t"."number")
 #### BitXor
 Returns the bitwise XOR of all bits in the expression. Only meaningful for integer types.
 ```go
-function := uast.BitXor(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
+function := uast.BitXor(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitXor(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1781,8 +1781,8 @@ BIT_XOR(DISTINCT "t"."number")
 #### Count
 Returns the number of rows matching the query, or the number of non-NULL values if an expression is provided. When `distinct` is `true`, counts only distinct values.
 ```go
-function := uast.Count(uast.Column[string]("t", "string"), false)
-functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
+function := uast.Count(uast.Field[string]("t", "string"), false)
+functionWithDistinct := uast.Count(uast.Field[string]("t", "string"), true)
 ```
 Output MariaDB:
 ```text
@@ -1813,8 +1813,8 @@ COUNT(DISTINCT "t"."string")
 #### GroupConcat
 Concatenates values from a group into a single string, separated by a default delimiter (typically a comma). The `distinct` flag removes duplicates before concatenation.
 ```go
-function := uast.GroupConcat(uast.Column[string]("t", "string"), false)
-functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), true)
+function := uast.GroupConcat(uast.Field[string]("t", "string"), false)
+functionWithDistinct := uast.GroupConcat(uast.Field[string]("t", "string"), true)
 ```
 Output MariaDB:
 ```text
@@ -1845,8 +1845,8 @@ GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ',')
 #### Max
 Returns the maximum value of the expression across all rows in the group.
 ```go
-function := uast.Max(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
+function := uast.Max(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Max(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1877,8 +1877,8 @@ MAX(DISTINCT "t"."number")
 #### Min
 Returns the minimum value of the expression across all rows in the group.
 ```go
-function := uast.Min(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
+function := uast.Min(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Min(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1909,8 +1909,8 @@ MIN(DISTINCT "t"."number")
 #### StdDev
 Returns the population standard deviation of the expression.
 ```go
-function := uast.StdDev(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
+function := uast.StdDev(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.StdDev(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1941,8 +1941,8 @@ STDEV(DISTINCT "t"."number")
 #### Sum
 Returns the sum of all values in the expression. If `distinct` is `true`, sums only distinct values.
 ```go
-function := uast.Sum(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
+function := uast.Sum(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Sum(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1973,8 +1973,8 @@ SUM(DISTINCT "t"."number")
 #### Variance
 Returns the population variance of the expression.
 ```go
-function := uast.Variance(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
+function := uast.Variance(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Variance(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -2006,9 +2006,9 @@ VARIANCE(DISTINCT "t"."number")
 #### FirstValue
 Returns the value of the expression from the first row of the window frame. Requires an `OVER` clause with window specification.
 ```go
-function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+function := uast.FirstValue(uast.Field[string]("t", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -2035,9 +2035,9 @@ FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC
 #### Lag
 Returns the value of the expression from a row that is `offset` rows before the current row within the partition.
 ```go
-function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
+function := uast.Lag(uast.Field[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
 )
 ```
 Output MariaDB:
@@ -2064,9 +2064,9 @@ LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### LastValue
 Returns the value of the expression from the last row of the window frame.
 ```go
-function := uast.LastValue(uast.Column[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[int]("t", "number"))),
+function := uast.LastValue(uast.Field[string]("t", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[int]("t", "number"))),
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
@@ -2094,9 +2094,9 @@ LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC R
 #### Lead
 Returns the value of the expression from a row that is `offset` rows after the current row within the partition.
 ```go
-function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
+function := uast.Lead(uast.Field[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
 )
 ```
 Output MariaDB:
@@ -2123,9 +2123,9 @@ LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### NthValue
 Returns the value of the expression from the `n-th` row of the window frame.
 ```go
-function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+function := uast.NthValue(uast.Field[string]("t", "string"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
 ```
@@ -2156,7 +2156,7 @@ Evaluates a list of `WHEN`-`THEN` pairs and returns the `THEN` expression for th
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
-        uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
         uast.Value("old"),
     ),
 )
@@ -2187,7 +2187,7 @@ CASE WHEN "t"."number" < ? THEN ? ELSE ? END
 #### Coalesce
 Returns the first non-NULL expression from the provided list. Useful for providing fallback values.
 ```go
-function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Coalesce(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2213,7 +2213,7 @@ COALESCE("t"."createat", "t"."updateat")
 #### Greatest
 Returns the largest value from the provided list of expressions.
 ```go
-function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Greatest(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2239,7 +2239,7 @@ GREATEST("t"."createat", "t"."updateat")
 #### Least
 Returns the smallest value from the provided list of expressions.
 ```go
-function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Least(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2265,7 +2265,7 @@ LEAST("t"."createat", "t"."updateat")
 #### NullIf
 Returns `NULL` if the two expressions are equal; otherwise returns the first expression.
 ```go
-function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.NullIf(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2292,7 +2292,7 @@ NULLIF("t"."createat", "t"."updateat")
 #### Cast
 Converts an expression to a specified data type.
 ```go
-function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
+function := uast.Cast(uast.Field[int]("t", "number"), uast.TypeString)
 ```
 Output MariaDB:
 ```text
@@ -2318,7 +2318,7 @@ CAST("t"."number" AS TEXT)
 #### CharLength
 Returns the number of characters in a string expression.
 ```go
-function := uast.CharLength(uast.Column[string]("t", "string"))
+function := uast.CharLength(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -2344,7 +2344,7 @@ CHAR_LENGTH("t"."string")
 #### DateFormat
 Formats a datetime expression according to a specified format mask.
 ```go
-function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
+function := uast.DateFormat(uast.Field[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
 ```
 Output MariaDB:
 ```text
@@ -2370,7 +2370,7 @@ STRFTIME("t"."createat", '%Y-%m-%d')
 #### Degrees
 Converts an angle from radians to degrees.
 ```go
-function := uast.Degrees(uast.Column[int]("t", "number"))
+function := uast.Degrees(uast.Field[int]("t", "number"))
 ```
 Output MariaDB:
 ```text
@@ -2396,7 +2396,7 @@ DEGREES("t"."number")
 #### Length
 Returns the byte length of a string expression.
 ```go
-function := uast.Length(uast.Column[string]("t", "string"))
+function := uast.Length(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -2422,7 +2422,7 @@ LENGTH("t"."string")
 #### Position
 Returns the starting position of the first occurrence of a substring within a string.
 ```go
-function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
+function := uast.Position(uast.Field[string]("t", "string"), uast.Value("old"))
 ```
 Output MariaDB:
 ```text
@@ -2448,7 +2448,7 @@ POSITION(? IN "t"."string")
 #### Radians
 Converts an angle from degrees to radians.
 ```go
-function := uast.Radians(uast.Column[int]("t", "number"))
+function := uast.Radians(uast.Field[int]("t", "number"))
 ```
 Output MariaDB:
 ```text
@@ -2527,7 +2527,7 @@ TIME('now')
 #### DateAdd
 Adds a time/date interval to a datetime expression and returns the resulting datetime.
 ```go
-function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
@@ -2553,7 +2553,7 @@ DATETIME("t"."createat", '+2 DAY')
 #### DateDiff
 Returns the difference in days between two datetime expressions (`datetimeEnd` - `datetimeStart`).
 ```go
-function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+function := uast.DateDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2579,7 +2579,7 @@ DATEDIFF("t"."updateat", "t"."createat")
 #### DateSub
 Subtracts a time/date interval from a datetime expression and returns the resulting datetime.
 ```go
-function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
@@ -2605,7 +2605,7 @@ DATETIME("t"."createat", '-2 DAY')
 #### Day
 Extracts the day of the month (1–31) from a datetime expression.
 ```go
-function := uast.Day(uast.Column[time.Time]("t", "createat"))
+function := uast.Day(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2631,7 +2631,7 @@ DAY("t"."createat")
 #### DayName
 Returns the name of the weekday (e.g., 'Monday', 'Tuesday') for a given datetime expression.
 ```go
-function := uast.DayName(uast.Column[time.Time]("t", "createat"))
+function := uast.DayName(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2657,7 +2657,7 @@ STRFTIME('%w', "t"."createat")
 #### Hour
 Extracts the hour (0–23) from a datetime expression.
 ```go
-function := uast.Hour(uast.Column[time.Time]("t", "createat"))
+function := uast.Hour(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2683,7 +2683,7 @@ HOUR("t"."createat")
 #### Minute
 Extracts the minute (0–59) from a datetime expression.
 ```go
-function := uast.Minute(uast.Column[time.Time]("t", "createat"))
+function := uast.Minute(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2709,7 +2709,7 @@ MINUTE("t"."createat")
 #### Month
 Extracts the month (1–12) from a datetime expression.
 ```go
-function := uast.Month(uast.Column[time.Time]("t", "createat"))
+function := uast.Month(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2735,7 +2735,7 @@ MONTH("t"."createat")
 #### MonthName
 Returns the name of the month (e.g., 'January', 'February') for a given datetime expression.
 ```go
-function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
+function := uast.MonthName(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2787,7 +2787,7 @@ DATETIME('now')
 #### Quarter
 Extracts the quarter (1–4) from a datetime expression.
 ```go
-function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
+function := uast.Quarter(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2813,7 +2813,7 @@ QUARTER("t"."createat")
 #### Second
 Extracts the second (0–59) from a datetime expression.
 ```go
-function := uast.Second(uast.Column[time.Time]("t", "createat"))
+function := uast.Second(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2839,7 +2839,7 @@ SECOND("t"."createat")
 #### TimeAdd
 Adds a time interval to a time/datetime expression and returns the resulting time.
 ```go
-function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
@@ -2865,7 +2865,7 @@ TIME("t"."createat", '+2 HOUR')
 #### TimeDiff
 Returns the difference between two time/datetime expressions (`timeEnd` - `timeStart`).
 ```go
-function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+function := uast.TimeDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2891,7 +2891,7 @@ TIMEDIFF("t"."updateat", "t"."createat")
 #### TimeSub
 Subtracts a time interval from a time/datetime expression and returns the resulting time.
 ```go
-function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
@@ -2917,7 +2917,7 @@ TIME("t"."createat", '-2 HOUR')
 #### Week
 Extracts the week number (1–53) from a datetime expression.
 ```go
-function := uast.Week(uast.Column[time.Time]("t", "createat"))
+function := uast.Week(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2943,7 +2943,7 @@ WEEK("t"."createat")
 #### Year
 Extracts the year from a datetime expression.
 ```go
-function := uast.Year(uast.Column[time.Time]("t", "createat"))
+function := uast.Year(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2971,7 +2971,7 @@ YEAR("t"."createat")
 Creates a JSON array from the given expression and optional additional values.
 ```go
 function := uast.JsonArray(
-    uast.Column[string]("t", "json"), 
+    uast.Field[string]("t", "json"), 
     uast.Value("val1"), 
     uast.Value("val2"),
 )
@@ -3001,7 +3001,7 @@ JSON_ARRAY("t"."json", ?, ?)
 Aggregates values from a group into a JSON array.
 ```go
 function := uast.JsonArrayAgg(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
 )
 ```
 Output MariaDB:
@@ -3029,7 +3029,7 @@ JSON_GROUP_ARRAY("t"."json")
 Checks whether a JSON document contains a specified value.
 ```go
 function := uast.JsonContains(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.Value(`{"key":"val"}`),
 )
 ```
@@ -3058,7 +3058,7 @@ JSON_CONTAINS("t"."json", '{"key":"val"}')
 Extracts a value from a JSON document at the specified path. The `json` parameter is built with `JsonPath` and optional `JsonKey`/`JsonIndex`.
 ```go
 function := JsonExtract(
-    uast.Column[string]("t", "json"), 
+    uast.Field[string]("t", "json"), 
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("parent"), 
@@ -3096,7 +3096,7 @@ Builds a JSON object from key-value pairs.
 function := uast.JsonObject(
     uast.JsonPair(
         uast.JsonKey("key"), 
-        uast.Count(uast.Column[string]("t", "json"), false),
+        uast.Count(uast.Field[string]("t", "json"), false),
     ),
 )
 ```
@@ -3125,8 +3125,8 @@ JSON_OBJECT('key', COUNT("t"."json"))
 Aggregates key-value pairs from a group into a single JSON object.
 ```go
 function := uast.JsonObjectAgg(
-    uast.Column[string]("t", "json"),
-    uast.Column[int]("t", "number"),
+    uast.Field[string]("t", "json"),
+    uast.Field[int]("t", "number"),
 )
 ```
 Output MariaDB:
@@ -3154,7 +3154,7 @@ JSON_GROUP_OBJECT("t"."json", "t"."number")
 Removes a value from a JSON document at the specified path(s).
 ```go
 function := uast.JsonRemove(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3192,7 +3192,7 @@ JSON_REMOVE("t"."json", '$.key1', '$.key2')
 Sets a value in a JSON document at the specified path(s). Creates the path if it does not exist.
 ```go
 function := uast.JsonSet(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3231,7 +3231,7 @@ JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)
 #### JsonType
 Returns the JSON type of a JSON value (e.g., 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
 ```go
-function := uast.JsonType(uast.Column[string]("t", "json"))
+function := uast.JsonType(uast.Field[string]("t", "json"))
 ```
 Output MariaDB:
 ```text
@@ -3258,7 +3258,7 @@ JSON_TYPE("t"."json")
 #### Abs
 Returns the absolute (non-negative) value of a numeric expression.
 ```go
-function := uast.Abs(uast.Column[int]("t", "x"))
+function := uast.Abs(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3284,7 +3284,7 @@ ABS("t"."x")
 #### ACos
 Returns the arc cosine (inverse cosine) of the expression, in radians.
 ```go
-function := uast.ACos(uast.Column[int]("t", "x"))
+function := uast.ACos(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3310,7 +3310,7 @@ ACOS("t"."x")
 #### ASin
 Returns the arc sine (inverse sine) of the expression, in radians.
 ```go
-function := uast.ASin(uast.Column[int]("t", "x"))
+function := uast.ASin(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3336,7 +3336,7 @@ ASIN("t"."x")
 #### ATan
 Returns the arc tangent (inverse tangent) of the expression, in radians.
 ```go
-function := uast.ATan(uast.Column[int]("t", "x"))
+function := uast.ATan(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3362,7 +3362,7 @@ ATAN("t"."x")
 #### ATan2
 Returns the arc tangent of the quotient of its two arguments (`y`/`x`), using their signs to determine the quadrant.
 ```go
-function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
+function := uast.ATan2(uast.Field[int]("t", "y"), uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3388,7 +3388,7 @@ ATAN2("t"."y", "t"."x")
 #### Cbrt
 Returns the cube root of a numeric expression.
 ```go
-function := uast.Cbrt(uast.Column[int]("t", "x"))
+function := uast.Cbrt(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3414,7 +3414,7 @@ CBRT("t"."x")
 #### Ceil
 Returns the smallest integer value not less than the argument (rounds up).
 ```go
-function := uast.Ceil(uast.Column[int]("t", "x"))
+function := uast.Ceil(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3440,7 +3440,7 @@ CEIL("t"."x")
 #### Cos
 Returns the cosine of the expression, where the expression is in radians.
 ```go
-function := uast.Cos(uast.Column[int]("t", "x"))
+function := uast.Cos(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3466,7 +3466,7 @@ COS("t"."x")
 #### Exp
 Returns `e` (Euler's number, ~2.71828) raised to the power of the expression.
 ```go
-function := uast.Exp(uast.Column[int]("t", "x"))
+function := uast.Exp(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3492,7 +3492,7 @@ EXP("t"."x")
 #### Floor
 Returns the largest integer value not greater than the argument (rounds down).
 ```go
-function := uast.Floor(uast.Column[int]("t", "x"))
+function := uast.Floor(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3518,7 +3518,7 @@ FLOOR("t"."x")
 #### Ln
 Returns the natural logarithm (base `e`) of the expression.
 ```go
-function := uast.Ln(uast.Column[int]("t", "x"))
+function := uast.Ln(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3544,7 +3544,7 @@ LN("t"."x")
 #### Log
 Returns the logarithm of the expression to the specified base.
 ```go
-function := uast.Log(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Log(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3570,7 +3570,7 @@ LOG("t"."x", ?)
 #### Mod
 Returns the remainder (modulo) of the division of the first expression by the second.
 ```go
-function := uast.Mod(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Mod(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3622,7 +3622,7 @@ PI()
 #### Power
 Returns the expression raised to the power of the exponent.
 ```go
-function := uast.Power(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Power(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3674,7 +3674,7 @@ RANDOM()
 #### Round
 Rounds the expression to the specified number of decimal places.
 ```go
-function := uast.Round(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Round(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3700,7 +3700,7 @@ ROUND("t"."x", ?)
 #### Sin
 Returns the sine of the expression, where the expression is in radians.
 ```go
-function := uast.Sin(uast.Column[int]("t", "x"))
+function := uast.Sin(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3726,7 +3726,7 @@ SIN("t"."x")
 #### Sqrt
 Returns the square root of the expression.
 ```go
-function := uast.Sqrt(uast.Column[int]("t", "x"))
+function := uast.Sqrt(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3752,7 +3752,7 @@ SQRT("t"."x")
 #### Tan
 Returns the tangent of the expression, where the expression is in radians.
 ```go
-function := uast.Tan(uast.Column[int]("t", "x"))
+function := uast.Tan(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3778,7 +3778,7 @@ TAN("t"."x")
 #### Trunc
 Truncates the numeric expression to the specified number of decimal places (without rounding).
 ```go
-function := uast.Trunc(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Trunc(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3806,8 +3806,8 @@ TRUNC("t"."x", ?)
 Returns the cumulative distribution of a value within a partition (the ratio of rows that come before or are peers with the current row). Must be used with an `OVER` clause.
 ```go
 function := uast.CumeDist().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3835,8 +3835,8 @@ CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Returns the rank of a row without gaps. Rows with equal values receive the same rank, and the next rank is the immediate next integer. Requires `OVER`.
 ```go
 function := uast.DenseRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3864,8 +3864,8 @@ DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Divides the rows within a partition into `n` approximately equal groups and returns the group number (1 through `n`) for each row.
 ```go
 function := uast.NTile(2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3893,8 +3893,8 @@ NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Returns the percentile rank of a row within a partition (range 0 to 1). Rank of first row is always 0. Requires `OVER`.
 ```go
 function := uast.PercentRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3922,8 +3922,8 @@ PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Returns the rank of a row with gaps. Equal values receive the same rank, and the next distinct value skips ahead. Requires `OVER`.
 ```go
 function := uast.Rank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3951,8 +3951,8 @@ RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 Assigns a unique sequential integer to each row within the partition, starting from 1. Order determines the numbering sequence.
 ```go
 function := uast.RowNumber().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3980,7 +3980,7 @@ ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 #### Concat
 Concatenates two or more string expressions into a single string. `NULL` arguments are treated as empty strings in most dialects.
 ```go
-function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Concat(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4006,7 +4006,7 @@ CONCAT("t"."string", ?, ?)
 #### ConcatWs
 Concatenates two or more string expressions with a specified separator between them. Skips `NULL` arguments.
 ```go
-function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
+function := uast.ConcatWs(uast.Value("_"), uast.Field[string]("t", "string"), uast.Value("old"),uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4032,7 +4032,7 @@ CONCAT_WS(?, "t"."string", ?, ?)
 #### LeftString
 Returns the leftmost `count` characters from a string expression.
 ```go
-function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.LeftString(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4058,7 +4058,7 @@ LEFT("t"."string", ?)
 #### Lower
 Converts a string expression to lowercase.
 ```go
-function := uast.Lower(uast.Column[string]("t", "string"))
+function := uast.Lower(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4084,7 +4084,7 @@ LOWER("t"."string")
 #### LPad
 Left-pads a string expression with the specified separator to a total length of `count` characters.
 ```go
-function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.LPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
@@ -4110,7 +4110,7 @@ LPAD("t"."string", ?, ?)
 #### LTrim
 Removes leading spaces from a string expression.
 ```go
-function := uast.LTrim(uast.Column[string]("t", "string"))
+function := uast.LTrim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4136,7 +4136,7 @@ LTRIM("t"."string")
 #### Repeat
 Repeats a string expression `count` times.
 ```go
-function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.Repeat(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4162,7 +4162,7 @@ REPEAT("t"."string", ?)
 #### Replace
 Replaces all occurrences of a substring in a string with a new substring.
 ```go
-function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Replace(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4188,7 +4188,7 @@ REPLACE("t"."string", ?, ?)
 #### Reverse
 Reverses the characters in a string expression.
 ```go
-function := uast.Reverse(uast.Column[string]("t", "string"))
+function := uast.Reverse(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4214,7 +4214,7 @@ REVERSE("t"."string")
 #### RightString
 Returns the rightmost `count` characters from a string expression.
 ```go
-function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.RightString(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4240,7 +4240,7 @@ RIGHT("t"."string", ?)
 #### RPad
 Right-pads a string expression with the specified separator to a total length of `count` characters.
 ```go
-function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.RPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
@@ -4266,7 +4266,7 @@ RPAD("t"."string", ?, ?)
 #### RTrim
 Removes trailing spaces from a string expression.
 ```go
-function := uast.RTrim(uast.Column[string]("t", "string"))
+function := uast.RTrim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4292,7 +4292,7 @@ RTRIM("t"."string")
 #### SubString
 Extracts a substring from a string expression starting at `startPos` (1-based) for `lengthStr` characters.
 ```go
-function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
+function := uast.SubString(uast.Field[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4318,7 +4318,7 @@ SUBSTRING("t"."string", ?, ?)
 #### Trim
 Removes both leading and trailing spaces from a string expression.
 ```go
-function := uast.Trim(uast.Column[string]("t", "string"))
+function := uast.Trim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4344,7 +4344,7 @@ TRIM("t"."string")
 #### Upper
 Converts a string expression to uppercase.
 ```go
-function := uast.Upper(uast.Column[string]("t", "string"))
+function := uast.Upper(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4383,8 +4383,8 @@ Output:
 Combines multiple conditions with a logical `AND`. All conditions must be true for the combined expression to be true.
 ```go
 logical := uast.And(
-    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -4412,8 +4412,8 @@ Output SQLite:
 Combines multiple conditions with a logical `OR`. At least one condition must be true for the combined expression to be true.
 ```go
 logical := uast.Or(
-    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -4441,7 +4441,7 @@ Output SQLite:
 ### Subquery
 Wraps a `SELECT` statement as a typed expression that can be used in comparisons (`In`, `Exists`, `Equal`, etc.) or as a column in a `SELECT` clause. The generic parameter `T` specifies the scalar type of the single column returned by the subquery.
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test").As("t")))
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("t", "id")).From(uast.NewTable("test").As("t")))
 ```
 Output MariaDB:
 ```text

@@ -5,14 +5,14 @@ outline: deep
 # API / 核心 / 选项
 
 ::: info **关于**
-本页面涵盖了所有配置选项：`clauseGroupBy`、`clauseHaving`、`clauseJoin`、`clauseOrderBy`、`clausePagination`、`clauseReturning`、`clauseSet`、`clauseUnions`、`clauseValues`、`clauseWhere`、`clauseWith`、`exprArray`、`exprBinary`、`exprColumn`、`exprComparison`、`exprConstant`、`exprFunction`、`exprLiteral`、`exprLogical`、`exprSubquery`、`exprValue`。每个选项都配有可运行的代码示例和预期输出。
+本页面涵盖了所有配置选项：`clauseGroupBy`、`clauseHaving`、`clauseJoin`、`clauseOrderBy`、`clausePagination`、`clauseReturning`、`clauseSet`、`clauseUnions`、`clauseValues`、`clauseWhere`、`clauseWith`、`exprArray`、`exprBinary`、`exprComparison`、`exprConstant`、`exprField`、`exprFunction`、`exprLiteral`、`exprLogical`、`exprSubquery`、`exprValue`。每个选项都配有可运行的代码示例和预期输出。
 :::
 
 ## clauseGroupBy
 添加 GROUP BY 子句，按指定列或表达式对行进行分组。
 ```go
 groupBy := GroupBy(
-	uast.Column[string]("t", "string"),
+	uast.Field[string]("t", "string"),
 )
 ```
 Output MariaDB:
@@ -40,7 +40,7 @@ GROUP BY "t"."string"
 添加 HAVING 子句以过滤分组。与 GROUP BY 一起使用以过滤聚合结果。
 ```go
 having := Having(
-	uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
+	uast.Greater(uast.Count(uast.Field[int64]("t", "id"), false), uast.Value[int64](2)),
 )
 ```
 Output MariaDB:
@@ -94,7 +94,7 @@ CROSS JOIN "test" AS "t"
 ### Full
 向语句添加 FULL JOIN。返回两个表中的所有行，不匹配处为 NULL。
 ```go
-join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -120,7 +120,7 @@ FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### FullOuter
 向语句添加 FULL OUTER JOIN。返回两个表中的所有行，不匹配处为 NULL。
 ```go
-join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -146,7 +146,7 @@ FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Inner
 向语句添加 INNER JOIN。返回两个表中具有匹配值的行。
 ```go
-join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -172,7 +172,7 @@ INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Left
 向语句添加 LEFT JOIN。返回左表中的所有行以及右表中的匹配行。
 ```go
-join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -198,7 +198,7 @@ LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### LeftOuter
 向语句添加 LEFT OUTER JOIN。返回左表中的所有行以及右表中的匹配行。
 ```go
-join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -224,7 +224,7 @@ LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
 ### Right
 向语句添加 RIGHT JOIN。返回右表中的所有行以及左表中的匹配行。SQLite 不支持。
 ```go
-join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -250,7 +250,7 @@ Output SQLite:
 ### RightOuter
 向语句添加 RIGHT OUTER JOIN。返回右表中的所有行以及左表中的匹配行。SQLite 不支持。
 ```go
-join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("t1", "id")))
+join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
@@ -277,7 +277,7 @@ Output SQLite:
 ### Asc
 指定升序排序（最小的在前，A 到 Z）。用于对查询中的行或窗口函数内的行进行排序。
 ```go
-orderBy := uast.Asc(uast.Column[string]("t", "string"))
+orderBy := uast.Asc(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -303,7 +303,7 @@ Output SQLite:
 ### Desc
 指定降序排序（最大的在前，Z 到 A）。用于对查询中的行或窗口函数内的行进行排序。
 ```go
-orderBy := uast.Desc(uast.Column[string]("t", "string"))
+orderBy := uast.Desc(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -356,8 +356,8 @@ LIMIT ? OFFSET ?
 添加 RETURNING 子句以返回修改后的行。MariaDB、PostgreSQL 和 SQLite 支持。MySQL 原生不支持此子句。
 ```go
 returning = Returning(
-	uast.Column[int64]("t", "id")
-    uast.Column[string]("t", "string")
+	uast.Field[int64]("t", "id")
+    uast.Field[string]("t", "string")
 )
 ```
 Output MariaDB:
@@ -386,7 +386,7 @@ RETURNING "t"."id", "t"."string"
 使用 `Assign` 指定列及其新值，将列与值关联。支持多个对以更新多个列。
 ```go
 set := Set(
-	uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+	uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
@@ -416,7 +416,7 @@ UPDATE "test" AS "t" SET "t"."string" = ?
 ```go
 unions := uast.Union(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -446,7 +446,7 @@ UNION SELECT "t"."string" FROM "test" AS "t"
 ```go
 unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -476,7 +476,7 @@ UNION ALL SELECT "t"."string" FROM "test" AS "t"
 ```go
 unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ),
 )
 ```
@@ -506,7 +506,7 @@ EXCEPT SELECT "t"."string" FROM "test" AS "t"
 ```go
 unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("test").As("t")).
 	Field(
-		uast.Column[string]("t", "string"),
+		uast.Field[string]("t", "string"),
 	),
 )
 ```
@@ -536,8 +536,8 @@ INTERSECT SELECT "t"."string" FROM "test" AS "t"
 使用 `Pair` 指定插入的值，将列与值关联。列会自动从对中推断。
 ```go
 values := Values(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -565,11 +565,11 @@ VALUES (?, ?)
 使用 `Upsert` 向 INSERT ... VALUES 添加 upsert 子句。将列与值关联。
 ```go
 values := Values(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 ).
 Upsert(
-    uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
+    uast.Pair(uast.Field[string]("t", "string"), uast.Value("updated")),
 )
 ```
 Output MariaDB:
@@ -597,7 +597,7 @@ VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
 添加 WHERE 子句以在分组或聚合之前过滤行。接受比较表达式、逻辑运算符和子查询。
 ```go
 where = Where(
-	uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+	uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
@@ -627,11 +627,11 @@ WHERE "t"."string" = ?
 ```go
 with := WithN("cte_norecursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     ),
     "id", "string",
 )
@@ -662,20 +662,20 @@ WITH "cte_norecursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "
 ```go
 with := WithR("cte_recursive", NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Unions(
         uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
             Field(
-                uast.Column[int64]("t", "id"),
-                uast.Column[string]("t", "string"),
+                uast.Field[int64]("t", "id"),
+                uast.Field[string]("t", "string"),
             ).
             Join(
-                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("rec", "id"))),
+                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("rec", "id"))),
             ),
         ),
     ),
@@ -734,7 +734,7 @@ ARRAY[?, ?, ?]
 ### BitwiseAnd
 对两个表达式执行按位与运算。
 ```go
-binary := uast.BitwiseAnd(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseAnd(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -760,7 +760,7 @@ Output SQLite:
 ### BitwiseOr
 对两个表达式执行按位或运算。
 ```go
-binary := uast.BitwiseOr(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseOr(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -786,7 +786,7 @@ Output SQLite:
 ### BitwiseXor
 对两个表达式执行按位异或运算。
 ```go
-binary := uast.BitwiseXor(uast.Column[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseXor(uast.Field[int]("t", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
@@ -812,7 +812,7 @@ Output SQLite:
 ### Divide
 左表达式除以右表达式。
 ```go
-binary := uast.Divide(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Divide(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -838,7 +838,7 @@ Output SQLite:
 ### Minus
 左表达式减去右表达式。
 ```go
-binary := uast.Minus(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Minus(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -864,7 +864,7 @@ Output SQLite:
 ### Modulo
 返回左表达式除以右表达式的余数。
 ```go
-binary := uast.Modulo(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Modulo(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -890,7 +890,7 @@ Output SQLite:
 ### Multiply
 左表达式乘以右表达式。
 ```go
-binary := uast.Multiply(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Multiply(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -916,7 +916,7 @@ Output SQLite:
 ### Plus
 左表达式加上右表达式。
 ```go
-binary := uast.Plus(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.Plus(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -942,7 +942,7 @@ Output SQLite:
 ### ShiftLeft
 对左表达式执行按位左移，移动位数由右表达式指定。
 ```go
-binary := uast.ShiftLeft(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftLeft(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -968,7 +968,7 @@ Output SQLite:
 ### ShiftRight
 对左表达式执行按位右移，移动位数由右表达式指定。
 ```go
-binary := uast.ShiftRight(uast.Column[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftRight(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -991,38 +991,11 @@ Output SQLite:
 "t"."number" >> ?
 ```
 
-## exprColumn
-### Column
-创建对表列的引用，可选择用表别名限定。这是在表达式中引用数据库列的主要方式。
-```go
-column := uast.Column[string]("t", "string")
-```
-Output MariaDB:
-```text
-`t`.`string`
-```
-Output MsSQL:
-```text
-[t].[string]
-```
-Output MySQL:
-```text
-`t`.`string`
-```
-Output PostgreSQL:
-```text
-"t"."string"
-```
-Output SQLite:
-```text
-"t"."string"
-```
-
 ## exprComparison
 ### Between
 检查左表达式是否落在 `valueStart` 和 `valueEnd` 定义的范围内（含）。
 ```go
-comparison := uast.Between(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.Between(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1048,7 +1021,7 @@ Output SQLite:
 ### Equal
 比较两个表达式是否相等（`=`）。
 ```go
-comparison := uast.Equal(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Equal(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1100,7 +1073,7 @@ EXISTS (SELECT 1 FROM "test" AS "t")
 ### Greater
 比较左表达式是否大于右表达式（`>`）。
 ```go
-comparison := uast.Greater(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Greater(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1126,7 +1099,7 @@ Output SQLite:
 ### GreaterEqual
 比较左表达式是否大于或等于右表达式（`>=`）。
 ```go
-comparison := uast.GreaterEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.GreaterEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1152,7 +1125,7 @@ Output SQLite:
 ### ILike
 执行不区分大小写的模式匹配比较。右表达式应包含带有 `%`（任意序列）和 `_`（单个字符）通配符的模式。
 ```go
-comparison := uast.ILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.ILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1178,7 +1151,7 @@ LOWER("t"."string") LIKE LOWER(?)
 ### In
 检查左表达式是否匹配右表达式中包含的任何值（通常是子查询或数组）。
 ```go
-comparison := uast.In(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.In(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
@@ -1204,7 +1177,7 @@ Output SQLite:
 ### IsNotNull
 检查表达式是否不为 `NULL`。
 ```go
-comparison := uast.IsNotNull(uast.Column[string]("t", "string"))
+comparison := uast.IsNotNull(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -1230,7 +1203,7 @@ Output SQLite:
 ### IsNull
 检查表达式是否为 `NULL`。
 ```go
-comparison := uast.IsNull(uast.Column[string]("t", "string"))
+comparison := uast.IsNull(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -1256,7 +1229,7 @@ Output SQLite:
 ### Less
 比较左表达式是否小于右表达式（`<`）。
 ```go
-comparison := uast.Less(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.Less(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1282,7 +1255,7 @@ Output SQLite:
 ### LessEqual
 比较左表达式是否小于或等于右表达式（`<=`）。
 ```go
-comparison := uast.LessEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.LessEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1308,7 +1281,7 @@ Output SQLite:
 ### Like
 执行区分大小写的模式匹配比较。右表达式应包含带有 `%` 和 `_` 通配符的模式。
 ```go
-comparison := uast.Like(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.Like(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1334,7 +1307,7 @@ Output SQLite:
 ### NotBetween
 检查左表达式是否落在 `valueStart` 和 `valueEnd` 定义的范围之外。
 ```go
-comparison := uast.NotBetween(uast.Column[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.NotBetween(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1360,7 +1333,7 @@ Output SQLite:
 ### NotEqual
 比较两个表达式是否不相等（`!=` 或 `<>`）。
 ```go
-comparison := uast.NotEqual(uast.Column[int]("t", "number"), uast.Value(2))
+comparison := uast.NotEqual(uast.Field[int]("t", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -1412,7 +1385,7 @@ NOT EXISTS (SELECT 1 FROM "test" AS "t")
 ### NotILike
 执行否定的不区分大小写的模式匹配比较。
 ```go
-comparison := uast.NotILike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1438,7 +1411,7 @@ LOWER("t"."string") NOT LIKE LOWER(?)
 ### NotIn
 检查左表达式是否不匹配右表达式中包含的任何值。
 ```go
-comparison := uast.NotIn(uast.Column[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.NotIn(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
@@ -1464,7 +1437,7 @@ Output SQLite:
 ### NotLike
 执行否定的区分大小写的模式匹配比较。
 ```go
-comparison := uast.NotLike(uast.Column[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotLike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
@@ -1648,13 +1621,40 @@ Output:
 1
 ```
 
+## exprField
+### Field
+创建对表列的引用，可选择用表别名限定。这是在表达式中引用数据库列的主要方式。
+```go
+field := uast.Field[string]("t", "string")
+```
+Output MariaDB:
+```text
+`t`.`string`
+```
+Output MsSQL:
+```text
+[t].[string]
+```
+Output MySQL:
+```text
+`t`.`string`
+```
+Output PostgreSQL:
+```text
+"t"."string"
+```
+Output SQLite:
+```text
+"t"."string"
+```
+
 ## exprFunction
 ### Aggregate
 #### Avg
 返回表达式中所有非 NULL 值的平均值（算术平均）。如果 `distinct` 为 `true`，则仅对不重复的值计算平均值。
 ```go
-function := uast.Avg(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Avg(uast.Column[int]("t", "number"), true)
+function := uast.Avg(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Avg(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1685,8 +1685,8 @@ AVG(DISTINCT "t"."number")
 #### BitAnd
 返回表达式中所有位的按位与。仅对整数类型有意义。
 ```go
-function := uast.BitAnd(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitAnd(uast.Column[int]("t", "number"), true)
+function := uast.BitAnd(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitAnd(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1717,8 +1717,8 @@ BIT_AND(DISTINCT "t"."number")
 #### BitOr
 返回表达式中所有位的按位或。仅对整数类型有意义。
 ```go
-function := uast.BitOr(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitOr(uast.Column[int]("t", "number"), true)
+function := uast.BitOr(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitOr(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1749,8 +1749,8 @@ BIT_OR(DISTINCT "t"."number")
 #### BitXor
 返回表达式中所有位的按位异或。仅对整数类型有意义。
 ```go
-function := uast.BitXor(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.BitXor(uast.Column[int]("t", "number"), true)
+function := uast.BitXor(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.BitXor(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1781,8 +1781,8 @@ BIT_XOR(DISTINCT "t"."number")
 #### Count
 返回匹配查询的行数，如果提供了表达式，则返回非 NULL 值的数量。当 `distinct` 为 `true` 时，仅计数不重复的值。
 ```go
-function := uast.Count(uast.Column[string]("t", "string"), false)
-functionWithDistinct := uast.Count(uast.Column[string]("t", "string"), true)
+function := uast.Count(uast.Field[string]("t", "string"), false)
+functionWithDistinct := uast.Count(uast.Field[string]("t", "string"), true)
 ```
 Output MariaDB:
 ```text
@@ -1813,8 +1813,8 @@ COUNT(DISTINCT "t"."string")
 #### GroupConcat
 将组中的值连接成一个字符串，用默认分隔符（通常是逗号）分隔。`distinct` 标志在连接前删除重复项。
 ```go
-function := uast.GroupConcat(uast.Column[string]("t", "string"), false)
-functionWithDistinct := uast.GroupConcat(uast.Column[string]("t", "string"), true)
+function := uast.GroupConcat(uast.Field[string]("t", "string"), false)
+functionWithDistinct := uast.GroupConcat(uast.Field[string]("t", "string"), true)
 ```
 Output MariaDB:
 ```text
@@ -1845,8 +1845,8 @@ GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ',')
 #### Max
 返回组中所有行的表达式的最大值。
 ```go
-function := uast.Max(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Max(uast.Column[int]("t", "number"), true)
+function := uast.Max(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Max(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1877,8 +1877,8 @@ MAX(DISTINCT "t"."number")
 #### Min
 返回组中所有行的表达式的最小值。
 ```go
-function := uast.Min(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Min(uast.Column[int]("t", "number"), true)
+function := uast.Min(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Min(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1909,8 +1909,8 @@ MIN(DISTINCT "t"."number")
 #### StdDev
 返回表达式的总体标准差。
 ```go
-function := uast.StdDev(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.StdDev(uast.Column[int]("t", "number"), true)
+function := uast.StdDev(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.StdDev(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1941,8 +1941,8 @@ STDEV(DISTINCT "t"."number")
 #### Sum
 返回表达式中所有值的总和。如果 `distinct` 为 `true`，则仅对不重复的值求和。
 ```go
-function := uast.Sum(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Sum(uast.Column[int]("t", "number"), true)
+function := uast.Sum(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Sum(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -1973,8 +1973,8 @@ SUM(DISTINCT "t"."number")
 #### Variance
 返回表达式的总体方差。
 ```go
-function := uast.Variance(uast.Column[int]("t", "number"), false)
-functionWithDistinct := uast.Variance(uast.Column[int]("t", "number"), true)
+function := uast.Variance(uast.Field[int]("t", "number"), false)
+functionWithDistinct := uast.Variance(uast.Field[int]("t", "number"), true)
 ```
 Output MariaDB:
 ```text
@@ -2006,9 +2006,9 @@ VARIANCE(DISTINCT "t"."number")
 #### FirstValue
 返回窗口框架第一行的表达式值。需要带有窗口规范的 `OVER` 子句。
 ```go
-function := uast.FirstValue(uast.Column[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+function := uast.FirstValue(uast.Field[string]("t", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -2035,9 +2035,9 @@ FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC
 #### Lag
 返回分区内当前行之前偏移 `offset` 行的表达式值。
 ```go
-function := uast.Lag(uast.Column[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
+function := uast.Lag(uast.Field[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
 )
 ```
 Output MariaDB:
@@ -2064,9 +2064,9 @@ LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### LastValue
 返回窗口框架最后一行的表达式值。
 ```go
-function := uast.LastValue(uast.Column[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[int]("t", "number"))),
+function := uast.LastValue(uast.Field[string]("t", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[int]("t", "number"))),
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
@@ -2094,9 +2094,9 @@ LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC R
 #### Lead
 返回分区内当前行之后偏移 `offset` 行的表达式值。
 ```go
-function := uast.Lead(uast.Column[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Column[time.Time]("t", "date"))),
+function := uast.Lead(uast.Field[int]("t", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
 )
 ```
 Output MariaDB:
@@ -2123,9 +2123,9 @@ LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
 #### NthValue
 返回窗口框架第 `n` 行的表达式值。
 ```go
-function := uast.NthValue(uast.Column[string]("t", "string"), 2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+function := uast.NthValue(uast.Field[string]("t", "string"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
 ```
@@ -2156,7 +2156,7 @@ NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DES
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
-        uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
         uast.Value("old"),
     ),
 )
@@ -2187,7 +2187,7 @@ CASE WHEN "t"."number" < ? THEN ? ELSE ? END
 #### Coalesce
 返回提供列表中的第一个非 NULL 表达式。用于提供回退值。
 ```go
-function := uast.Coalesce(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Coalesce(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2213,7 +2213,7 @@ COALESCE("t"."createat", "t"."updateat")
 #### Greatest
 返回提供表达式列表中的最大值。
 ```go
-function := uast.Greatest(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Greatest(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2239,7 +2239,7 @@ GREATEST("t"."createat", "t"."updateat")
 #### Least
 返回提供表达式列表中的最小值。
 ```go
-function := uast.Least(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.Least(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2265,7 +2265,7 @@ LEAST("t"."createat", "t"."updateat")
 #### NullIf
 如果两个表达式相等，则返回 `NULL`；否则返回第一个表达式。
 ```go
-function := uast.NullIf(uast.Column[time.Time]("t", "createat"), uast.Column[time.Time]("t", "updateat"))
+function := uast.NullIf(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
 ```
 Output MariaDB:
 ```text
@@ -2292,7 +2292,7 @@ NULLIF("t"."createat", "t"."updateat")
 #### Cast
 将表达式转换为指定的数据类型。
 ```go
-function := uast.Cast(uast.Column[int]("t", "number"), uast.TypeString)
+function := uast.Cast(uast.Field[int]("t", "number"), uast.TypeString)
 ```
 Output MariaDB:
 ```text
@@ -2318,7 +2318,7 @@ CAST("t"."number" AS TEXT)
 #### CharLength
 返回字符串表达式中的字符数。
 ```go
-function := uast.CharLength(uast.Column[string]("t", "string"))
+function := uast.CharLength(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -2344,7 +2344,7 @@ CHAR_LENGTH("t"."string")
 #### DateFormat
 根据指定的格式掩码格式化日期时间表达式。
 ```go
-function := uast.DateFormat(uast.Column[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
+function := uast.DateFormat(uast.Field[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
 ```
 Output MariaDB:
 ```text
@@ -2370,7 +2370,7 @@ STRFTIME("t"."createat", '%Y-%m-%d')
 #### Degrees
 将角度从弧度转换为度数。
 ```go
-function := uast.Degrees(uast.Column[int]("t", "number"))
+function := uast.Degrees(uast.Field[int]("t", "number"))
 ```
 Output MariaDB:
 ```text
@@ -2396,7 +2396,7 @@ DEGREES("t"."number")
 #### Length
 返回字符串表达式的字节长度。
 ```go
-function := uast.Length(uast.Column[string]("t", "string"))
+function := uast.Length(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -2422,7 +2422,7 @@ LENGTH("t"."string")
 #### Position
 返回子字符串在字符串中首次出现的起始位置。
 ```go
-function := uast.Position(uast.Column[string]("t", "string"), uast.Value("old"))
+function := uast.Position(uast.Field[string]("t", "string"), uast.Value("old"))
 ```
 Output MariaDB:
 ```text
@@ -2448,7 +2448,7 @@ POSITION(? IN "t"."string")
 #### Radians
 将角度从度数转换为弧度。
 ```go
-function := uast.Radians(uast.Column[int]("t", "number"))
+function := uast.Radians(uast.Field[int]("t", "number"))
 ```
 Output MariaDB:
 ```text
@@ -2527,7 +2527,7 @@ TIME('now')
 #### DateAdd
 将时间/日期间隔添加到日期时间表达式，并返回结果日期时间。
 ```go
-function := uast.DateAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
@@ -2553,7 +2553,7 @@ DATETIME("t"."createat", '+2 DAY')
 #### DateDiff
 返回两个日期时间表达式之间的天数差（`datetimeEnd` - `datetimeStart`）。
 ```go
-function := uast.DateDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+function := uast.DateDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2579,7 +2579,7 @@ DATEDIFF("t"."updateat", "t"."createat")
 #### DateSub
 从日期时间表达式中减去时间/日期间隔，并返回结果日期时间。
 ```go
-function := uast.DateSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
@@ -2605,7 +2605,7 @@ DATETIME("t"."createat", '-2 DAY')
 #### Day
 从日期时间表达式中提取月份中的日期（1–31）。
 ```go
-function := uast.Day(uast.Column[time.Time]("t", "createat"))
+function := uast.Day(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2631,7 +2631,7 @@ DAY("t"."createat")
 #### DayName
 返回给定日期时间表达式的星期名称（例如 'Monday', 'Tuesday'）。
 ```go
-function := uast.DayName(uast.Column[time.Time]("t", "createat"))
+function := uast.DayName(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2657,7 +2657,7 @@ STRFTIME('%w', "t"."createat")
 #### Hour
 从日期时间表达式中提取小时（0–23）。
 ```go
-function := uast.Hour(uast.Column[time.Time]("t", "createat"))
+function := uast.Hour(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2683,7 +2683,7 @@ HOUR("t"."createat")
 #### Minute
 从日期时间表达式中提取分钟（0–59）。
 ```go
-function := uast.Minute(uast.Column[time.Time]("t", "createat"))
+function := uast.Minute(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2709,7 +2709,7 @@ MINUTE("t"."createat")
 #### Month
 从日期时间表达式中提取月份（1–12）。
 ```go
-function := uast.Month(uast.Column[time.Time]("t", "createat"))
+function := uast.Month(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2735,7 +2735,7 @@ MONTH("t"."createat")
 #### MonthName
 返回给定日期时间表达式的月份名称（例如 'January', 'February'）。
 ```go
-function := uast.MonthName(uast.Column[time.Time]("t", "createat"))
+function := uast.MonthName(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2787,7 +2787,7 @@ DATETIME('now')
 #### Quarter
 从日期时间表达式中提取季度（1–4）。
 ```go
-function := uast.Quarter(uast.Column[time.Time]("t", "createat"))
+function := uast.Quarter(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2813,7 +2813,7 @@ QUARTER("t"."createat")
 #### Second
 从日期时间表达式中提取秒数（0–59）。
 ```go
-function := uast.Second(uast.Column[time.Time]("t", "createat"))
+function := uast.Second(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2839,7 +2839,7 @@ SECOND("t"."createat")
 #### TimeAdd
 将时间间隔添加到时间/日期时间表达式，并返回结果时间。
 ```go
-function := uast.TimeAdd(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
@@ -2865,7 +2865,7 @@ TIME("t"."createat", '+2 HOUR')
 #### TimeDiff
 返回两个时间/日期时间表达式之间的差值（`timeEnd` - `timeStart`）。
 ```go
-function := uast.TimeDiff(uast.Column[time.Time]("t", "updateat"), uast.Column[time.Time]("t", "createat"))
+function := uast.TimeDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2891,7 +2891,7 @@ TIMEDIFF("t"."updateat", "t"."createat")
 #### TimeSub
 从时间/日期时间表达式中减去时间间隔，并返回结果时间。
 ```go
-function := uast.TimeSub(uast.Column[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
@@ -2917,7 +2917,7 @@ TIME("t"."createat", '-2 HOUR')
 #### Week
 从日期时间表达式中提取周数（1–53）。
 ```go
-function := uast.Week(uast.Column[time.Time]("t", "createat"))
+function := uast.Week(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2943,7 +2943,7 @@ WEEK("t"."createat")
 #### Year
 从日期时间表达式中提取年份。
 ```go
-function := uast.Year(uast.Column[time.Time]("t", "createat"))
+function := uast.Year(uast.Field[time.Time]("t", "createat"))
 ```
 Output MariaDB:
 ```text
@@ -2971,7 +2971,7 @@ YEAR("t"."createat")
 从给定表达式和可选附加值创建 JSON 数组。
 ```go
 function := uast.JsonArray(
-    uast.Column[string]("t", "json"), 
+    uast.Field[string]("t", "json"), 
     uast.Value("val1"), 
     uast.Value("val2"),
 )
@@ -3001,7 +3001,7 @@ JSON_ARRAY("t"."json", ?, ?)
 将组中的值聚合到 JSON 数组中。
 ```go
 function := uast.JsonArrayAgg(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
 )
 ```
 Output MariaDB:
@@ -3029,7 +3029,7 @@ JSON_GROUP_ARRAY("t"."json")
 检查 JSON 文档是否包含指定值。
 ```go
 function := uast.JsonContains(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.Value(`{"key":"val"}`),
 )
 ```
@@ -3058,7 +3058,7 @@ JSON_CONTAINS("t"."json", '{"key":"val"}')
 在指定路径从 JSON 文档中提取值。`json` 参数使用 `JsonPath` 和可选的 `JsonKey`/`JsonIndex` 构建。
 ```go
 function := JsonExtract(
-    uast.Column[string]("t", "json"), 
+    uast.Field[string]("t", "json"), 
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("parent"), 
@@ -3096,7 +3096,7 @@ Output SQLite:
 function := uast.JsonObject(
     uast.JsonPair(
         uast.JsonKey("key"), 
-        uast.Count(uast.Column[string]("t", "json"), false),
+        uast.Count(uast.Field[string]("t", "json"), false),
     ),
 )
 ```
@@ -3125,8 +3125,8 @@ JSON_OBJECT('key', COUNT("t"."json"))
 将组中的键值对聚合到单个 JSON 对象中。
 ```go
 function := uast.JsonObjectAgg(
-    uast.Column[string]("t", "json"),
-    uast.Column[int]("t", "number"),
+    uast.Field[string]("t", "json"),
+    uast.Field[int]("t", "number"),
 )
 ```
 Output MariaDB:
@@ -3154,7 +3154,7 @@ JSON_GROUP_OBJECT("t"."json", "t"."number")
 在指定路径从 JSON 文档中删除值。
 ```go
 function := uast.JsonRemove(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3192,7 +3192,7 @@ JSON_REMOVE("t"."json", '$.key1', '$.key2')
 在指定路径设置 JSON 文档中的值。如果路径不存在则创建。
 ```go
 function := uast.JsonSet(
-    uast.Column[string]("t", "json"),
+    uast.Field[string]("t", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3231,7 +3231,7 @@ JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)
 #### JsonType
 返回 JSON 值的类型（例如 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL'）。
 ```go
-function := uast.JsonType(uast.Column[string]("t", "json"))
+function := uast.JsonType(uast.Field[string]("t", "json"))
 ```
 Output MariaDB:
 ```text
@@ -3258,7 +3258,7 @@ JSON_TYPE("t"."json")
 #### Abs
 返回数值表达式的绝对值（非负值）。
 ```go
-function := uast.Abs(uast.Column[int]("t", "x"))
+function := uast.Abs(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3284,7 +3284,7 @@ ABS("t"."x")
 #### ACos
 返回表达式的反余弦（逆余弦），以弧度为单位。
 ```go
-function := uast.ACos(uast.Column[int]("t", "x"))
+function := uast.ACos(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3310,7 +3310,7 @@ ACOS("t"."x")
 #### ASin
 返回表达式的反正弦（逆正弦），以弧度为单位。
 ```go
-function := uast.ASin(uast.Column[int]("t", "x"))
+function := uast.ASin(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3336,7 +3336,7 @@ ASIN("t"."x")
 #### ATan
 返回表达式的反正切（逆正切），以弧度为单位。
 ```go
-function := uast.ATan(uast.Column[int]("t", "x"))
+function := uast.ATan(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3362,7 +3362,7 @@ ATAN("t"."x")
 #### ATan2
 返回两个参数（`y`/`x`）商的反正切，使用它们的符号确定象限。
 ```go
-function := uast.ATan2(uast.Column[int]("t", "y"), uast.Column[int]("t", "x"))
+function := uast.ATan2(uast.Field[int]("t", "y"), uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3388,7 +3388,7 @@ ATAN2("t"."y", "t"."x")
 #### Cbrt
 返回数值表达式的立方根。
 ```go
-function := uast.Cbrt(uast.Column[int]("t", "x"))
+function := uast.Cbrt(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3414,7 +3414,7 @@ CBRT("t"."x")
 #### Ceil
 返回不小于参数的最小整数值（向上取整）。
 ```go
-function := uast.Ceil(uast.Column[int]("t", "x"))
+function := uast.Ceil(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3440,7 +3440,7 @@ CEIL("t"."x")
 #### Cos
 返回表达式的余弦，以弧度为单位。
 ```go
-function := uast.Cos(uast.Column[int]("t", "x"))
+function := uast.Cos(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3466,7 +3466,7 @@ COS("t"."x")
 #### Exp
 返回 `e`（欧拉数，~2.71828）的表达式次幂。
 ```go
-function := uast.Exp(uast.Column[int]("t", "x"))
+function := uast.Exp(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3492,7 +3492,7 @@ EXP("t"."x")
 #### Floor
 返回不大于参数的最大整数值（向下取整）。
 ```go
-function := uast.Floor(uast.Column[int]("t", "x"))
+function := uast.Floor(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3518,7 +3518,7 @@ FLOOR("t"."x")
 #### Ln
 返回表达式的自然对数（以 `e` 为底）。
 ```go
-function := uast.Ln(uast.Column[int]("t", "x"))
+function := uast.Ln(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3544,7 +3544,7 @@ LN("t"."x")
 #### Log
 返回表达式对指定底数的对数。
 ```go
-function := uast.Log(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Log(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3570,7 +3570,7 @@ LOG("t"."x", ?)
 #### Mod
 返回第一个表达式除以第二个表达式的余数（模）。
 ```go
-function := uast.Mod(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Mod(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3622,7 +3622,7 @@ PI()
 #### Power
 返回表达式对 exponent 次幂的值。
 ```go
-function := uast.Power(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Power(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3674,7 +3674,7 @@ RANDOM()
 #### Round
 将表达式四舍五入到指定的小数位数。
 ```go
-function := uast.Round(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Round(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3700,7 +3700,7 @@ ROUND("t"."x", ?)
 #### Sin
 返回表达式的正弦，以弧度为单位。
 ```go
-function := uast.Sin(uast.Column[int]("t", "x"))
+function := uast.Sin(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3726,7 +3726,7 @@ SIN("t"."x")
 #### Sqrt
 返回表达式的平方根。
 ```go
-function := uast.Sqrt(uast.Column[int]("t", "x"))
+function := uast.Sqrt(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3752,7 +3752,7 @@ SQRT("t"."x")
 #### Tan
 返回表达式的正切，以弧度为单位。
 ```go
-function := uast.Tan(uast.Column[int]("t", "x"))
+function := uast.Tan(uast.Field[int]("t", "x"))
 ```
 Output MariaDB:
 ```text
@@ -3778,7 +3778,7 @@ TAN("t"."x")
 #### Trunc
 将数值表达式截断到指定的小数位数（不进行四舍五入）。
 ```go
-function := uast.Trunc(uast.Column[int]("t", "x"), uast.Value(2))
+function := uast.Trunc(uast.Field[int]("t", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -3806,8 +3806,8 @@ TRUNC("t"."x", ?)
 返回分区内值的累积分布（在当前行之前或与当前行相等的行数比率）。必须与 `OVER` 子句一起使用。
 ```go
 function := uast.CumeDist().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3835,8 +3835,8 @@ CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 返回无间隙的行排名。相等值的行获得相同的排名，下一个排名是紧接着的下一个整数。需要 `OVER`。
 ```go
 function := uast.DenseRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3864,8 +3864,8 @@ DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 将分区内的行划分为 `n` 个近似相等的组，并返回每行的组号（1 到 `n`）。
 ```go
 function := uast.NTile(2).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3893,8 +3893,8 @@ NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 返回分区内行的百分位排名（范围 0 到 1）。第一行的排名始终为 0。需要 `OVER`。
 ```go
 function := uast.PercentRank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3922,8 +3922,8 @@ PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 返回有间隙的行排名。相等值获得相同排名，下一个不同值跳过排名。需要 `OVER`。
 ```go
 function := uast.Rank().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3951,8 +3951,8 @@ RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 为分区内的每一行分配一个唯一的序号，从 1 开始。顺序决定编号序列。
 ```go
 function := uast.RowNumber().Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -3980,7 +3980,7 @@ ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 #### Concat
 将两个或多个字符串表达式连接成一个字符串。`NULL` 参数在大多数方言中被视为空字符串。
 ```go
-function := uast.Concat(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Concat(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4006,7 +4006,7 @@ CONCAT("t"."string", ?, ?)
 #### ConcatWs
 用指定的分隔符连接两个或多个字符串表达式。跳过 `NULL` 参数。
 ```go
-function := uast.ConcatWs(uast.Value("_"), uast.Column[string]("t", "string"), uast.Value("old"),uast.Value("new"))
+function := uast.ConcatWs(uast.Value("_"), uast.Field[string]("t", "string"), uast.Value("old"),uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4032,7 +4032,7 @@ CONCAT_WS(?, "t"."string", ?, ?)
 #### LeftString
 返回字符串表达式最左边的 `count` 个字符。
 ```go
-function := uast.LeftString(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.LeftString(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4058,7 +4058,7 @@ LEFT("t"."string", ?)
 #### Lower
 将字符串表达式转换为小写。
 ```go
-function := uast.Lower(uast.Column[string]("t", "string"))
+function := uast.Lower(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4084,7 +4084,7 @@ LOWER("t"."string")
 #### LPad
 用指定的分隔符在左侧填充字符串表达式，使其总长度达到 `count` 个字符。
 ```go
-function := uast.LPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.LPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
@@ -4110,7 +4110,7 @@ LPAD("t"."string", ?, ?)
 #### LTrim
 删除字符串表达式的前导空格。
 ```go
-function := uast.LTrim(uast.Column[string]("t", "string"))
+function := uast.LTrim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4136,7 +4136,7 @@ LTRIM("t"."string")
 #### Repeat
 将字符串表达式重复 `count` 次。
 ```go
-function := uast.Repeat(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.Repeat(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4162,7 +4162,7 @@ REPEAT("t"."string", ?)
 #### Replace
 将字符串中所有出现的子字符串替换为新的子字符串。
 ```go
-function := uast.Replace(uast.Column[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Replace(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
@@ -4188,7 +4188,7 @@ REPLACE("t"."string", ?, ?)
 #### Reverse
 反转字符串表达式中的字符。
 ```go
-function := uast.Reverse(uast.Column[string]("t", "string"))
+function := uast.Reverse(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4214,7 +4214,7 @@ REVERSE("t"."string")
 #### RightString
 返回字符串表达式最右边的 `count` 个字符。
 ```go
-function := uast.RightString(uast.Column[string]("t", "string"), uast.Value(2))
+function := uast.RightString(uast.Field[string]("t", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4240,7 +4240,7 @@ RIGHT("t"."string", ?)
 #### RPad
 用指定的分隔符在右侧填充字符串表达式，使其总长度达到 `count` 个字符。
 ```go
-function := uast.RPad(uast.Column[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.RPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
@@ -4266,7 +4266,7 @@ RPAD("t"."string", ?, ?)
 #### RTrim
 删除字符串表达式的尾部空格。
 ```go
-function := uast.RTrim(uast.Column[string]("t", "string"))
+function := uast.RTrim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4292,7 +4292,7 @@ RTRIM("t"."string")
 #### SubString
 从字符串表达式中提取子字符串，从 `startPos`（基于 1）开始，长度为 `lengthStr` 个字符。
 ```go
-function := uast.SubString(uast.Column[string]("t", "string"), uast.Value(0), uast.Value(2))
+function := uast.SubString(uast.Field[string]("t", "string"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
@@ -4318,7 +4318,7 @@ SUBSTRING("t"."string", ?, ?)
 #### Trim
 删除字符串表达式的前导和尾部空格。
 ```go
-function := uast.Trim(uast.Column[string]("t", "string"))
+function := uast.Trim(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4344,7 +4344,7 @@ TRIM("t"."string")
 #### Upper
 将字符串表达式转换为大写。
 ```go
-function := uast.Upper(uast.Column[string]("t", "string"))
+function := uast.Upper(uast.Field[string]("t", "string"))
 ```
 Output MariaDB:
 ```text
@@ -4383,8 +4383,8 @@ Output:
 通过逻辑 `AND` 组合多个条件。要使组合表达式为真，所有条件都必须为真。
 ```go
 logical := uast.And(
-    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -4412,8 +4412,8 @@ Output SQLite:
 通过逻辑 `OR` 组合多个条件。要使组合表达式为真，至少有一个条件为真。
 ```go
 logical := uast.Or(
-    uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -4441,7 +4441,7 @@ Output SQLite:
 ### Subquery
 将 `SELECT` 语句包装为类型化表达式，可用于比较（`In`、`Exists`、`Equal` 等）或作为 `SELECT` 子句中的列。泛型参数 `T` 指定子查询返回的单个列的标量类型。
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test").As("t")))
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("t", "id")).From(uast.NewTable("test").As("t")))
 ```
 Output MariaDB:
 ```text

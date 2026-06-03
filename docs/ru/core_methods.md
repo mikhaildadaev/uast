@@ -12,7 +12,7 @@ outline: deep
 ### As
 Назначает псевдоним выражению-колонке.
 ```go
-column := uast.Column[string]("t", "string").As("alias")
+column := uast.Field[string]("t", "string").As("alias")
 ```
 Output MariaDB:
 ```text
@@ -39,7 +39,7 @@ Output SQLite:
 ### As
 Назначает псевдоним выражению-функции.
 ```go
-function := uast.Avg(uast.Column[int]("t", "number"), false).As("alias")
+function := uast.Avg(uast.Field[int]("t", "number"), false).As("alias")
 ```
 Output MariaDB:
 ```text
@@ -65,9 +65,9 @@ AVG("t"."number") AS "alias"
 ### Over
 Добавляет оконную спецификацию к функции, превращая её в оконную функцию.
 ```go
-function := uast.Avg(uast.Column[int]("t", "number"), false).Over(
-    uast.PartitionBy(uast.Column[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Column[int]("t", "number"))),
+function := uast.Avg(uast.Field[int]("t", "number"), false).Over(
+    uast.PartitionBy(uast.Field[int64]("t", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
 )
 ```
 Output MariaDB:
@@ -95,7 +95,7 @@ AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
 ### As
 Назначает псевдоним выражению-подзапросу.
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Column[int64]("t", "id")).From(uast.NewTable("test", "t"))).As("alias")
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("t", "id")).From(uast.NewTable("test", "t"))).As("alias")
 ```
 Output MariaDB:
 ```text

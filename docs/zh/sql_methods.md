@@ -14,7 +14,7 @@ outline: deep
 ```go
 stmt := uast.NewInsert(uast.NewTable("test").As("t")).
     Values(
-        uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
+        uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer builder.Close()
@@ -37,11 +37,11 @@ Output:
 ```go
 stmt := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer sbuilderql.Close()
@@ -70,11 +70,11 @@ Output:
 ```go
 stmt := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string"),
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[int64]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int64]("t", "id"), uast.Value(1)),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer builder.Close()

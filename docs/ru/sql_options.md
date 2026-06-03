@@ -11,12 +11,12 @@ outline: deep
 ## WithDialect/SetDialect
 `WithDialect` устанавливает диалект при создании экземпляра. `SetDialect` переключает диалект существующего экземпляра во время выполнения без пересоздания пула соединений.
 ```go
-stmt := uast.NewSelect(uast.Column[string]("t", "string")).
+stmt := uast.NewSelect(uast.Field[string]("t", "string")).
     From(
         uast.NewTable("test").As("t"),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
     )
 builder := uast.NewSQL(
     uast.WithDialect(uast.DialectMariaDB)
@@ -58,10 +58,10 @@ SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
 ```go
 stmt1 := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
     )
 immutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
@@ -74,17 +74,17 @@ query3, _, _ := immutableBuilder.Build(stmt1)
 query4, _, _ := immutableBuilder.Build(stmt1)
 stmt2 := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
     )
 stmt3 := uast.NewSelect(uast.NewTable("test").As("t")).
     Field(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
     )
 mutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),

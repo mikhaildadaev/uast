@@ -12,7 +12,7 @@ outline: deep
 创建一个新的 COMMENT 语句实例。接受注释文本，并返回一个可以使用 `OnColumn` 或 `OnTable` 进行配置的语句。
 ```go
 stmtCommentColumn := uast.NewComment("Test comment").
-    OnColumn(uast.Column[int64]("t", "id"))
+    OnColumn(uast.Field[int64]("t", "id"))
 stmtCommentTable := uast.NewComment("Test comment").
     OnTable(uast.NewTable("test", "t"))
 ```
@@ -47,31 +47,31 @@ COMMENT ON TABLE "test" AS "t" IS 'Test comment'
 ```go
 stmtDeleteJoin := uast.NewDelete(uast.NewTable("test", "t")).
     Join(
-		Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
+		Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("d", "id"))),
     ).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     )
 stmtDeleteReturning := uast.NewDelete(uast.NewTable("test", "t")).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Returning(
-		uast.Column[int64]("t", "id"),
-		uast.Column[string]("t", "string"),
+		uast.Field[int64]("t", "id"),
+		uast.Field[string]("t", "string"),
 	)
 stmtDeleteWhere := uast.NewDelete(uast.NewTable("test", "t")).
     Where(
-        uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
     )
 stmtDeleteWith := NewDelete(uast.NewTable("test", "t")).
 	With(
 		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
 			Field(
-                uast.Column[int64]("t", "id"),
+                uast.Field[int64]("t", "id"),
             ).
 			Where(
-                Less(uast.Column[int]("t", "number"), Value(2)),
+                Less(uast.Field[int]("t", "number"), Value(2)),
             ),
 		),
 	)
@@ -172,43 +172,43 @@ DROP VIEW IF EXISTS "test"
 ```go
 stmtInsertReturning := uast.NewInsert(uast.NewTable("test", "t")).
     Values(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+		uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 	).
 	Returning(
-		uast.Column[int64]("t", "id"),
-		uast.Column[string]("t", "string"),
+		uast.Field[int64]("t", "id"),
+		uast.Field[string]("t", "string"),
 	)
 stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
 	Source(NewSelect(uast.NewTable("test", "t")).
 		Field(
-			uast.Column[string]("t", "string"),
-			uast.Column[int]("t", "number"),
+			uast.Field[string]("t", "string"),
+			uast.Field[int]("t", "number"),
 		).
 		Where(
-			uast.Equal(uast.Column[string]("t", "string"), uast.Value("active")),
+			uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
 		),
 	)
 stmtInsertValues := uast.NewInsert(uast.NewTable("test", "t")).
     Values(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+		uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 	).
     Upsert(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("updated")),
+		uast.Pair(uast.Field[string]("t", "string"), uast.Value("updated")),
 	)
 stmtInsertWith := NewInsert(uast.NewTable("test", "t")).
 	Values(
-		uast.Pair(uast.Column[string]("t", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Column[int]("t", "number"), uast.Value(2)),
+		uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
 	).
 	With(
 		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
 			Field(
-                uast.Column[int64]("t", "id"),
+                uast.Field[int64]("t", "id"),
 		    ).
 			Where(
-				uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+				uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
 			),
 		),
 	)
@@ -255,87 +255,87 @@ WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) 
 stmtSelectDistinct := uast.NewSelect(uast.NewTable("test", "t")).
     Distinct().
     Field(
-        uast.Column[int64]("t", "id"),
+        uast.Field[int64]("t", "id"),
     ).
     Where(
-		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+		uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
 	)
 stmtSelectField := uast.NewSelect(uast.NewTable("test", "t")).
     Field(
-        uast.Column[int64]("t", "id"),
+        uast.Field[int64]("t", "id"),
     ).
     Where(
-		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+		uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
 	)
 stmtSelectGroupBy := uast.NewSelect(uast.NewTable("test", "t")).
 	Field(
-		uast.Column[string]("t", "string"),
-		uast.Count(uast.Column[int64]("t", "id"), false).As("cnt"),
+		uast.Field[string]("t", "string"),
+		uast.Count(uast.Field[int64]("t", "id"), false).As("cnt"),
 	).
 	GroupBy(
-		uast.Column[string]("t", "string"),
+		uast.Field[string]("t", "string"),
 	)
 stmtSelectHaving := uast.NewSelect(uast.NewTable("test", "t")).
 	Field(
-		uast.Column[string]("t", "string"),
-		uast.Count(uast.Column[int64]("t", "id"), false).As("cnt"),
+		uast.Field[string]("t", "string"),
+		uast.Count(uast.Field[int64]("t", "id"), false).As("cnt"),
 	).
 	GroupBy(
-        uast.Column[string]("t", "string"),
+        uast.Field[string]("t", "string"),
     ).
 	Having(
-		uast.Greater(uast.Count(uast.Column[int64]("t", "id"), false), uast.Value[int64](2)),
+		uast.Greater(uast.Count(uast.Field[int64]("t", "id"), false), uast.Value[int64](2)),
 	)
 stmtSelectJoin := uast.NewSelect(uast.NewTable("test", "t")).
 	Field(
-		uast.Column[int64]("t", "id"),
-		uast.Column[string]("d", "string"),
+		uast.Field[int64]("t", "id"),
+		uast.Field[string]("d", "string"),
 	).
 	Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("d", "id"))),
 	)
 stmtSelectOrderBy := uast.NewSelect(uast.NewTable("test", "t")).
 	Field(
-		uast.Column[int64]("t", "id"),
+		uast.Field[int64]("t", "id"),
 	).
 	OrderBy(
-		uast.Desc(uast.Column[int]("t", "number")),
-		uast.Asc(uast.Column[string]("t", "string")),
+		uast.Desc(uast.Field[int]("t", "number")),
+		uast.Asc(uast.Field[string]("t", "string")),
 	)
 stmtSelectPagination := uast.NewSelect(uast.NewTable("test", "t")).
 	Field(
-		uast.Column[int64]("t", "id"),
+		uast.Field[int64]("t", "id"),
 	).
 	Pagination(10, 20)
 stmtSelectUnions := uast.NewSelect(uast.NewTable("test", "t")).
 	Field(
-		uast.Column[string]("t", "string"),
+		uast.Field[string]("t", "string"),
 	).
 	Unions(
 		uast.UnionAll(uast.NewSelect(uast.NewTable("data", "d")).
 			Field(
-				uast.Column[string]("d", "string"),
+				uast.Field[string]("d", "string"),
 			),
 		),
 	)
 stmtSelectWhere := uast.NewSelect(uast.NewTable("test", "t")).
 	Field(
-		uast.Column[int64]("t", "id"),
+		uast.Field[int64]("t", "id"),
 	).
 	Where(
-		uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+		uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
 	)
 stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_test", "ct")).
 	Field(
-		uast.Column[int64]("ct", "id"),
+		uast.Field[int64]("ct", "id"),
 	).
 	With(
 		uast.WithN("cte_test", uast.NewSelect(uast.NewTable("test", "t")).
 			Field(
-                uast.Column[int64]("t", "id"),
+                uast.Field[int64]("t", "id"),
             ).
 			Where(
-                uast.Greater(uast.Column[int]("t", "number"), uast.Value(2)),
+                uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
             ),
 		),
 	)
@@ -451,50 +451,50 @@ TRUNCATE TABLE "test"
 ```go
 stmtUpdateJoin := uast.NewUpdate(uast.NewTable("test", "t")).
     Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Column[int64]("t", "id"), uast.Column[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("d", "id"))),
     ).
     Set(
-        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
     ).
 stmtUpdateReturning := uast.NewUpdate(uast.NewTable("test", "t")).
     Set(
-        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
     ).
     Returning(
-        uast.Column[int64]("t", "id"),
-        uast.Column[string]("t", "string")
+        uast.Field[int64]("t", "id"),
+        uast.Field[string]("t", "string")
     )
 stmtUpdateSet := uast.NewUpdate(uast.NewTable("test", "t")).
     Set(
-        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
     )
 stmtUpdateWhere := uast.NewUpdate(uast.NewTable("test", "t")).
     Set(
-        uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Column[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
     )
 stmtUpdateWith := NewUpdate(uast.NewTable("test", "t")).
 	Set(
-		uast.Assign(uast.Column[string]("t", "string"), uast.Value("active")),
+		uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
 	).
 	With(
 		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
 			Field(
-                uast.Column[int64]("t", "id"),
+                uast.Field[int64]("t", "id"),
             ).
 			Where(
-                uast.Less(uast.Column[int]("t", "number"), uast.Value(2)),
+                uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
             ),
 		),
 	)

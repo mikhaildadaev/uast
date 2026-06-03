@@ -27,7 +27,14 @@ var DialectPostgreSQL = &SupportDialect{
 		symbolMarkRight:      "'",
 		symbolQuoteLeft:      `"`,
 		symbolQuoteRight:     `"`,
-		supportCascade:       true,
+		supportAttrCreateOrder: []modifierService{
+			uastModifierPrimaryKey,
+			uastModifierAutoIncrement,
+			uastModifierNotNull,
+			uastModifierUnique,
+			uastModifierDefault,
+		},
+		supportCascade: true,
 		supportComment: map[modifierService]bool{
 			uastModifierColumn: true,
 			uastModifierIndex:  true,
@@ -744,9 +751,9 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 		if err := baseRenderer.renderOn(stmtCreate.on); err != nil {
 			return err
 		}
-		//if err := baseRenderer.renderTargetName(stmtCreate.columns); err != nil {
-		//	return err
-		//}
+		if err := baseRenderer.renderIndex(stmtCreate.columns); err != nil {
+			return err
+		}
 	case *sourceSchema:
 	case *sourceTable:
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {

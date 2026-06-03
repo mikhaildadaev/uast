@@ -27,7 +27,14 @@ var DialectSQLite = &SupportDialect{
 		symbolMarkRight:      "'",
 		symbolQuoteLeft:      "\"",
 		symbolQuoteRight:     "\"",
-		supportCascade:       false,
+		supportAttrCreateOrder: []modifierService{
+			uastModifierNotNull,
+			uastModifierPrimaryKey,
+			uastModifierAutoIncrement,
+			uastModifierUnique,
+			uastModifierDefault,
+		},
+		supportCascade: false,
 		supportComment: map[modifierService]bool{
 			uastModifierColumn: true,
 			uastModifierIndex:  false,
@@ -531,9 +538,9 @@ func (strateger *sqliteStrateger) renderCreate(baseRenderer *baseRenderer, stmtC
 		if err := baseRenderer.renderOn(stmtCreate.on); err != nil {
 			return err
 		}
-		//if err := baseRenderer.renderTargetName(stmtCreate.columns); err != nil {
-		//	return err
-		//}
+		if err := baseRenderer.renderIndex(stmtCreate.columns); err != nil {
+			return err
+		}
 	case *sourceSchema:
 	case *sourceTable:
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
@@ -765,26 +772,20 @@ func (strateger *sqliteStrateger) validateComment(baseValidator *baseValidator, 
 }
 func (strateger *sqliteStrateger) validateCreate(baseValidator *baseValidator, stmtCreate *stmtCreate) error {
 	// !!! Внимание, находится в стадии разработки
+	if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
+		return err
+	}
 	switch stmtCreate.entity.(type) {
 	case *sourceIndex:
-		if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
-			return err
-		}
 		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
-			return err
-		}
 		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceView:
-		if err := baseValidator.validateEntity(stmtCreate.entity); err != nil {
-			return err
-		}
 		if err := baseValidator.validateSource(stmtCreate.source); err != nil {
 			return err
 		}

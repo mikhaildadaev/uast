@@ -55,9 +55,9 @@ var DialectMsSQL = &SupportDialect{
 		},
 		supportIfNotExists: map[modifierService]bool{
 			uastModifierColumn: false,
-			uastModifierIndex:  false,
+			uastModifierIndex:  true,
 			uastModifierSchema: true,
-			uastModifierTable:  true,
+			uastModifierTable:  false,
 			uastModifierView:   true,
 		},
 		supportRestartIdentity: false,

@@ -31,8 +31,8 @@ var DialectPostgreSQL = &SupportDialect{
 		symbolQuoteLeft:      `"`,
 		symbolQuoteRight:     `"`,
 		supportAttrCreateOrder: []modifierService{
-			uastModifierPrimaryKey,
 			uastModifierAutoIncrement,
+			uastModifierPrimaryKey,
 			uastModifierNotNull,
 			uastModifierUnique,
 			uastModifierDefault,

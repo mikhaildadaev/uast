@@ -34,10 +34,6 @@ func (stmt *stmtCreate) On(on SourceBase) *stmtCreate {
 	stmt.on = on
 	return stmt
 }
-func (stmt *stmtCreate) Unique() *stmtCreate {
-	stmt.unique = true
-	return stmt
-}
 
 // Приватные структуры
 type stmtCreate struct {
@@ -50,7 +46,6 @@ type stmtCreate struct {
 	source      statement
 	primaryKeys []markSourceable
 	uniques     []markSourceable
-	unique      bool
 }
 
 // Приватные методы

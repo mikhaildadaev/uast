@@ -7,13 +7,22 @@ import (
 
 // Публичные типы
 type (
-	ValueType string
+	ReferenceAction string
+	ValueType       string
 )
 
 // Публичные константы
 const (
 	Author  = "Mikhail Dadaev"
 	Version = "1.26.11"
+)
+
+const (
+	ActionCascade    ReferenceAction = "CASCADE"
+	ActionNoAction   ReferenceAction = "NO ACTION"
+	ActionRestrict   ReferenceAction = "RESTRICT"
+	ActionSetDefault ReferenceAction = "SET DEFAULT"
+	ActionSetNull    ReferenceAction = "SET NULL"
 )
 const (
 	// Типы бинарные

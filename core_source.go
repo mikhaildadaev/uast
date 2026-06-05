@@ -90,7 +90,32 @@ func NewView(name, alias string, table *TableSource) *sourceView {
 	}
 }
 
+// Публичные функции
+func Cascade() ReferenceAction {
+	return ActionCascade
+}
+func NoAction() ReferenceAction {
+	return ActionNoAction
+}
+func Restrict() ReferenceAction {
+	return ActionRestrict
+}
+func SetDefault() ReferenceAction {
+	return ActionSetDefault
+}
+func SetNull() ReferenceAction {
+	return ActionSetNull
+}
+
 // Публичные методы
+func (constraint *constraintData) OnDelete(action ReferenceAction) *constraintData {
+	constraint.onDelete = action
+	return constraint
+}
+func (constraint *constraintData) OnUpdate(action ReferenceAction) *constraintData {
+	constraint.onUpdate = action
+	return constraint
+}
 func (source *sourceColumn[T]) AutoIncrement() *sourceColumn[T] {
 	source.isAutoIncrement = true
 	return source
@@ -104,6 +129,14 @@ func (source *sourceColumn[T]) Expr() *exprField[T] {
 }
 func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
 	source.isNotNull = true
+	return source
+}
+func (source *sourceColumn[T]) References(constraintName string) *sourceColumn[T] {
+	constraint, exists := source.stmt.constraints[constraintName]
+	if !exists {
+		return source
+	}
+	constraint.references = append(constraint.references, source)
 	return source
 }
 func (source *sourceColumn[T]) PrimaryKey() *sourceColumn[T] {
@@ -141,6 +174,13 @@ type transformColumn interface {
 var queryCounter atomic.Int64
 
 // Приватные структуры
+type constraintData struct {
+	foreignKey string
+	onDelete   ReferenceAction
+	onUpdate   ReferenceAction
+	references []SourceBase
+	table      *sourceTable
+}
 type sourceColumn[T typeScalar] struct {
 	defaultValue    ExpressionBase
 	field           *exprField[T]

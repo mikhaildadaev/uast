@@ -1980,7 +1980,7 @@ func Test_SQL_Create(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtCreate := NewCreate(NewView("test_view", "tv", Test.Table)).
-				Replace().
+				IsReplace().
 				Source(NewSelect(NewTable("test", "t")).
 					Fields(Test.Column.ID.Expr(), Test.Column.String.Expr()),
 				)
@@ -2122,7 +2122,7 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(Test.Table).Cascade()
+			stmtDrop := NewDrop(Test.Table).IsCascade()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2684,7 +2684,7 @@ func Test_SQL_Truncate(t *testing.T) {
 			)
 			defer sql.Close()
 			stmtTruncate := NewTruncate(Test.Table).
-				Cascade()
+				IsCascade()
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2708,7 +2708,7 @@ func Test_SQL_Truncate(t *testing.T) {
 			)
 			defer sql.Close()
 			stmtTruncate := NewTruncate(Test.Table).
-				RestartIdentity()
+				IsRestartIdentity()
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:

@@ -301,7 +301,7 @@ func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderColumns(columns, primaryKeys, uniques []markSourceable) error {
+func (renderer *baseRenderer) renderColumns(columns, primaryKeys, uniques []markSourceable, constraints map[string]*constraintData) error {
 	if len(columns) == 0 {
 		return nil
 	}
@@ -341,6 +341,11 @@ func (renderer *baseRenderer) renderColumns(columns, primaryKeys, uniques []mark
 			}
 		}
 		renderer.renderOperator(uastCompositeParenRight)
+	}
+	for _, constraint := range constraints {
+		if err := renderer.renderConstraint(constraint); err != nil {
+			return err
+		}
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil

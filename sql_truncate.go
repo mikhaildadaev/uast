@@ -11,21 +11,21 @@ func NewTruncate(table *TableSource) *stmtTruncate {
 }
 
 // Публичные методы
-func (stmt *stmtTruncate) Cascade() *stmtTruncate {
-	stmt.cascade = true
+func (stmt *stmtTruncate) IsCascade() *stmtTruncate {
+	stmt.isCascade = true
 	return stmt
 }
-func (stmt *stmtTruncate) RestartIdentity() *stmtTruncate {
-	stmt.restartIdentity = true
+func (stmt *stmtTruncate) IsRestartIdentity() *stmtTruncate {
+	stmt.isRestartIdentity = true
 	return stmt
 }
 
 // Приватные структуры
 type stmtTruncate struct {
-	command         managementService
-	table           *TableSource
-	cascade         bool
-	restartIdentity bool
+	command           managementService
+	table             *TableSource
+	isCascade         bool
+	isRestartIdentity bool
 }
 
 // Приватные методы

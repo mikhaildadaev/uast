@@ -9,21 +9,21 @@ func NewDrop(entity SourceBase) *stmtDrop {
 }
 
 // Публичные методы
-func (stmt *stmtDrop) Cascade() *stmtDrop {
-	stmt.cascade = true
-	return stmt
-}
 func (stmt *stmtDrop) IfExists() *stmtDrop {
 	stmt.ifExists = true
+	return stmt
+}
+func (stmt *stmtDrop) IsCascade() *stmtDrop {
+	stmt.isCascade = true
 	return stmt
 }
 
 // Приватные структуры
 type stmtDrop struct {
-	command  managementService
-	cascade  bool
-	entity   SourceBase
-	ifExists bool
+	command   managementService
+	entity    SourceBase
+	ifExists  bool
+	isCascade bool
 }
 
 // Приватные методы

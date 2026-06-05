@@ -18,12 +18,23 @@ func (stmt *stmtCreate) Columns(columns ...markSourceable) *stmtCreate {
 	}
 	return stmt
 }
+func (stmt *stmtCreate) Constraint(foreignKey string, table *sourceTable) *constraintData {
+	if stmt.constraints == nil {
+		stmt.constraints = make(map[string]*constraintData)
+	}
+	constraint := &constraintData{
+		foreignKey: foreignKey,
+		table:      table,
+	}
+	stmt.constraints[foreignKey] = constraint
+	return constraint
+}
 func (stmt *stmtCreate) IfNotExists() *stmtCreate {
 	stmt.ifNotExists = true
 	return stmt
 }
-func (stmt *stmtCreate) Replace() *stmtCreate {
-	stmt.replace = true
+func (stmt *stmtCreate) IsReplace() *stmtCreate {
+	stmt.isReplace = true
 	return stmt
 }
 func (stmt *stmtCreate) Source(source statement) *stmtCreate {
@@ -39,9 +50,10 @@ func (stmt *stmtCreate) On(on SourceBase) *stmtCreate {
 type stmtCreate struct {
 	command     managementService
 	columns     []markSourceable
+	constraints map[string]*constraintData
 	entity      SourceBase
 	ifNotExists bool
-	replace     bool
+	isReplace   bool
 	on          SourceBase
 	source      statement
 	primaryKeys []markSourceable

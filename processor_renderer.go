@@ -254,10 +254,8 @@ func (renderer *baseRenderer) renderCommand(command managementService) error {
 	return nil
 }
 func (renderer *baseRenderer) renderConstraint(constraint *constraintData) error {
-	// CONSTRAINT name
 	renderer.renderService(uastModifierConstraint)
 	renderer.renderName(constraint.foreignKey)
-	// FOREIGN KEY (col1, col2)
 	renderer.renderService(uastModifierForeignKey)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, col := range constraint.references {
@@ -267,7 +265,6 @@ func (renderer *baseRenderer) renderConstraint(constraint *constraintData) error
 		renderer.renderName(col.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
-	// REFERENCES table(col1, col2)
 	renderer.renderService(uastModifierReferences)
 	renderer.renderName(constraint.table.tableName)
 	renderer.renderOperator(uastCompositeParenLeft)
@@ -278,26 +275,17 @@ func (renderer *baseRenderer) renderConstraint(constraint *constraintData) error
 		renderer.renderName(col.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
-	// ON DELETE
 	if constraint.onDelete != "" {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierOnDelete)
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(modifierService(constraint.onDelete))
 	}
-	// ON UPDATE
 	if constraint.onUpdate != "" {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierOnUpdate)
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(modifierService(constraint.onUpdate))
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderDistinct(distinct bool) error {
-	if distinct {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierDistinct)
 	}
 	return nil
 }
@@ -348,6 +336,13 @@ func (renderer *baseRenderer) renderColumns(columns, primaryKeys, uniques []mark
 		}
 	}
 	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
+func (renderer *baseRenderer) renderDistinct(distinct bool) error {
+	if distinct {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierDistinct)
+	}
 	return nil
 }
 func (renderer *baseRenderer) renderEntity(entity SourceBase, ifExists bool, ifNotExists bool) error {

@@ -253,6 +253,47 @@ func (renderer *baseRenderer) renderCommand(command managementService) error {
 	renderer.renderService(command)
 	return nil
 }
+func (renderer *baseRenderer) renderConstraint(constraint *constraintData) error {
+	// CONSTRAINT name
+	renderer.renderService(uastModifierConstraint)
+	renderer.renderName(constraint.foreignKey)
+	// FOREIGN KEY (col1, col2)
+	renderer.renderService(uastModifierForeignKey)
+	renderer.renderOperator(uastCompositeParenLeft)
+	for i, col := range constraint.references {
+		if i > 0 {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		renderer.renderName(col.name())
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	// REFERENCES table(col1, col2)
+	renderer.renderService(uastModifierReferences)
+	renderer.renderName(constraint.table.tableName)
+	renderer.renderOperator(uastCompositeParenLeft)
+	for i, col := range constraint.references {
+		if i > 0 {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		renderer.renderName(col.name())
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	// ON DELETE
+	if constraint.onDelete != "" {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierOnDelete)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(modifierService(constraint.onDelete))
+	}
+	// ON UPDATE
+	if constraint.onUpdate != "" {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierOnUpdate)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(modifierService(constraint.onUpdate))
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	if distinct {
 		renderer.renderOperator(uastCompositeSingleSpace)

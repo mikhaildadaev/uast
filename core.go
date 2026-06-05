@@ -16,7 +16,6 @@ const (
 	Author  = "Mikhail Dadaev"
 	Version = "1.26.11"
 )
-
 const (
 	ActionCascade    ReferenceAction = "CASCADE"
 	ActionNoAction   ReferenceAction = "NO ACTION"

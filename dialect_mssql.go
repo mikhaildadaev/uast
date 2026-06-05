@@ -671,7 +671,7 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 			return err
 		}
 	case *sourceView:
-		if err := baseRenderer.renderReplace(stmtCreate.replace); err != nil {
+		if err := baseRenderer.renderReplace(stmtCreate.isReplace); err != nil {
 			return err
 		}
 		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
@@ -717,7 +717,7 @@ func (strateger *mssqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop
 	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderCascade(stmtDrop.cascade); err != nil {
+	if err := baseRenderer.renderCascade(stmtDrop.isCascade); err != nil {
 		return err
 	}
 	return nil
@@ -792,10 +792,10 @@ func (strateger *mssqlStrateger) renderTruncate(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderCascade(stmtTruncate.cascade); err != nil {
+	if err := baseRenderer.renderCascade(stmtTruncate.isCascade); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderRestartIdentity(stmtTruncate.restartIdentity); err != nil {
+	if err := baseRenderer.renderRestartIdentity(stmtTruncate.isRestartIdentity); err != nil {
 		return err
 	}
 	return nil

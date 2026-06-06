@@ -253,87 +253,126 @@ func (renderer *baseRenderer) renderCommand(command managementService) error {
 	renderer.renderService(command)
 	return nil
 }
-func (renderer *baseRenderer) renderConstraint(constraint *constraintData) error {
-	renderer.renderService(uastModifierConstraint)
-	renderer.renderName(constraint.foreignKey)
-	renderer.renderService(uastModifierForeignKey)
-	renderer.renderOperator(uastCompositeParenLeft)
-	for i, col := range constraint.references {
-		if i > 0 {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-		renderer.renderName(col.name())
-	}
-	renderer.renderOperator(uastCompositeParenRight)
-	renderer.renderService(uastModifierReferences)
-	renderer.renderName(constraint.table.tableName)
-	renderer.renderOperator(uastCompositeParenLeft)
-	for i, col := range constraint.references {
-		if i > 0 {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-		renderer.renderName(col.name())
-	}
-	renderer.renderOperator(uastCompositeParenRight)
-	if constraint.onDelete != "" {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierOnDelete)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(modifierService(constraint.onDelete))
-	}
-	if constraint.onUpdate != "" {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierOnUpdate)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(modifierService(constraint.onUpdate))
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderColumns(columns, primaryKeys, uniques []markSourceable, constraints map[string]*constraintData) error {
+func (renderer *baseRenderer) renderColumns(columns []markSourceable, constraintChecks []*ConstraintCheck, constraintForeigns []*ConstraintForeign, constraintPrimarys []*ConstraintPrimary, constraintUniques []*ConstraintUnique) error {
 	if len(columns) == 0 {
 		return nil
 	}
-	columnsCount := len(columns) - 1
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, column := range columns {
+		if i > 0 {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
 		if err := column.render(renderer); err != nil {
 			return err
 		}
-		if i < columnsCount {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
 	}
-	if len(primaryKeys) > 0 {
-		renderer.renderOperator(uastCompositeCommaSpace)
-		renderer.renderService(uastModifierPrimaryKey)
-		renderer.renderOperator(uastCompositeParenLeft)
-		primaryKeysCount := len(primaryKeys) - 1
-		for i, primaryKey := range primaryKeys {
-			renderer.renderName(primaryKey.name())
-			if i < primaryKeysCount {
-				renderer.renderOperator(uastCompositeCommaSpace)
-			}
-		}
-		renderer.renderOperator(uastCompositeParenRight)
-	}
-	if len(uniques) > 0 {
-		renderer.renderOperator(uastCompositeCommaSpace)
-		renderer.renderService(uastModifierUnique)
-		renderer.renderOperator(uastCompositeParenLeft)
-		uniquesCount := len(uniques) - 1
-		for i, unique := range uniques {
-			renderer.renderName(unique.name())
-			if i < uniquesCount {
-				renderer.renderOperator(uastCompositeCommaSpace)
-			}
-		}
-		renderer.renderOperator(uastCompositeParenRight)
-	}
-	for _, constraint := range constraints {
-		if err := renderer.renderConstraint(constraint); err != nil {
+	for _, constraintPrimary := range constraintPrimarys {
+		if err := renderer.renderConstraintPrimary(constraintPrimary); err != nil {
 			return err
 		}
+	}
+	for _, constraintUnique := range constraintUniques {
+		if err := renderer.renderConstraintUnique(constraintUnique); err != nil {
+			return err
+		}
+	}
+	for _, constraintForeign := range constraintForeigns {
+		if err := renderer.renderConstraintForeign(constraintForeign); err != nil {
+			return err
+		}
+	}
+	for _, constraintCheck := range constraintChecks {
+		if err := renderer.renderConstraintCheck(constraintCheck); err != nil {
+			return err
+		}
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
+func (renderer *baseRenderer) renderConstraintCheck(constraintCheck *ConstraintCheck) error {
+	renderer.renderOperator(uastCompositeCommaSpace)
+	renderer.renderService(uastModifierConstraint)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(constraintCheck.Name)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierCheck)
+	renderer.renderOperator(uastCompositeParenLeft)
+	if err := constraintCheck.Expression.render(renderer); err != nil {
+		return err
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
+func (renderer *baseRenderer) renderConstraintForeign(constraintForeign *ConstraintForeign) error {
+	renderer.renderOperator(uastCompositeCommaSpace)
+	renderer.renderService(uastModifierConstraint)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(constraintForeign.Name)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierForeignKey)
+	renderer.renderOperator(uastCompositeParenLeft)
+	for i, col := range constraintForeign.Columns {
+		if i > 0 {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		renderer.renderName(col)
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	renderer.renderService(uastModifierReferences)
+	renderer.renderName(constraintForeign.Table.name())
+	renderer.renderOperator(uastCompositeParenLeft)
+	for i, col := range constraintForeign.RefColumns {
+		if i > 0 {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		renderer.renderName(col)
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	if constraintForeign.OnDelete != "" {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierOnDelete)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(modifierService(constraintForeign.OnDelete))
+	}
+	if constraintForeign.OnUpdate != "" {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierOnUpdate)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(modifierService(constraintForeign.OnUpdate))
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderConstraintPrimary(constraintPrimary *ConstraintPrimary) error {
+	renderer.renderOperator(uastCompositeCommaSpace)
+	renderer.renderService(uastModifierConstraint)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(constraintPrimary.Name)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierPrimaryKey)
+	renderer.renderOperator(uastCompositeParenLeft)
+	for i, col := range constraintPrimary.Columns {
+		if i > 0 {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		renderer.renderName(col)
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
+func (renderer *baseRenderer) renderConstraintUnique(constraintUnique *ConstraintUnique) error {
+	renderer.renderOperator(uastCompositeCommaSpace)
+	renderer.renderService(uastModifierConstraint)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(constraintUnique.Name)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierUnique)
+	renderer.renderOperator(uastCompositeParenLeft)
+	for i, col := range constraintUnique.Columns {
+		if i > 0 {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		renderer.renderName(col)
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil

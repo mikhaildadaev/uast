@@ -8,19 +8,19 @@ type ConstraintCheck struct {
 type ConstraintForeign struct {
 	Name       string
 	Table      *sourceTable
-	Columns    []string
-	RefColumns []string
+	Columns    []SourceBase
+	References []SourceBase
 	OnDelete   ReferenceAction
 	OnUpdate   ReferenceAction
 }
 type ConstraintForeignOption func(*ConstraintForeign)
 type ConstraintPrimary struct {
 	Name    string
-	Columns []string
+	Columns []SourceBase
 }
 type ConstraintUnique struct {
 	Name    string
-	Columns []string
+	Columns []SourceBase
 }
 
 // Публичные конструкторы
@@ -30,11 +30,11 @@ func NewCheck(name string, expression ExpressionBase) *ConstraintCheck {
 		Name:       name,
 	}
 }
-func NewForeignKey(name string, table *sourceTable, columns, refColumns []string, options ...ConstraintForeignOption) *ConstraintForeign {
+func NewForeignKey(name string, table *sourceTable, columns, references []SourceBase, options ...ConstraintForeignOption) *ConstraintForeign {
 	foreignKey := &ConstraintForeign{
 		Columns:    columns,
 		Name:       name,
-		RefColumns: refColumns,
+		References: references,
 		Table:      table,
 	}
 	for _, option := range options {
@@ -42,14 +42,14 @@ func NewForeignKey(name string, table *sourceTable, columns, refColumns []string
 	}
 	return foreignKey
 }
-func NewPrimaryKey(name string, columns ...string) *ConstraintPrimary {
+func NewPrimaryKey(name string, columns ...SourceBase) *ConstraintPrimary {
 	return &ConstraintPrimary{
 		Columns: columns,
 		Name:    name,
 	}
 }
 
-func NewUnique(name string, columns ...string) *ConstraintUnique {
+func NewUnique(name string, columns ...SourceBase) *ConstraintUnique {
 	return &ConstraintUnique{
 		Columns: columns,
 		Name:    name,

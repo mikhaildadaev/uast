@@ -312,21 +312,21 @@ func (renderer *baseRenderer) renderConstraintForeign(constraintForeign *Constra
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierForeignKey)
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, col := range constraintForeign.Columns {
+	for i, column := range constraintForeign.Columns {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(col)
+		renderer.renderName(column.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	renderer.renderService(uastModifierReferences)
 	renderer.renderName(constraintForeign.Table.name())
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, col := range constraintForeign.RefColumns {
+	for i, reference := range constraintForeign.References {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(col)
+		renderer.renderName(reference.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	if constraintForeign.OnDelete != "" {
@@ -351,11 +351,11 @@ func (renderer *baseRenderer) renderConstraintPrimary(constraintPrimary *Constra
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierPrimaryKey)
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, col := range constraintPrimary.Columns {
+	for i, column := range constraintPrimary.Columns {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(col)
+		renderer.renderName(column.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
@@ -368,11 +368,11 @@ func (renderer *baseRenderer) renderConstraintUnique(constraintUnique *Constrain
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierUnique)
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, col := range constraintUnique.Columns {
+	for i, column := range constraintUnique.Columns {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(col)
+		renderer.renderName(column.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil

@@ -90,32 +90,7 @@ func NewView(name, alias string, table *TableSource) *sourceView {
 	}
 }
 
-// Публичные функции
-func Cascade() ReferenceAction {
-	return ActionCascade
-}
-func NoAction() ReferenceAction {
-	return ActionNoAction
-}
-func Restrict() ReferenceAction {
-	return ActionRestrict
-}
-func SetDefault() ReferenceAction {
-	return ActionSetDefault
-}
-func SetNull() ReferenceAction {
-	return ActionSetNull
-}
-
 // Публичные методы
-func (constraint *constraintData) OnDelete(action ReferenceAction) *constraintData {
-	constraint.onDelete = action
-	return constraint
-}
-func (constraint *constraintData) OnUpdate(action ReferenceAction) *constraintData {
-	constraint.onUpdate = action
-	return constraint
-}
 func (source *sourceColumn[T]) AutoIncrement() *sourceColumn[T] {
 	source.isAutoIncrement = true
 	return source
@@ -129,28 +104,6 @@ func (source *sourceColumn[T]) Expr() *exprField[T] {
 }
 func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
 	source.isNotNull = true
-	return source
-}
-func (source *sourceColumn[T]) References(constraintName string) *sourceColumn[T] {
-	constraint, exists := source.stmt.constraints[constraintName]
-	if !exists {
-		return source
-	}
-	constraint.references = append(constraint.references, source)
-	return source
-}
-func (source *sourceColumn[T]) PrimaryKey() *sourceColumn[T] {
-	source.isPrimaryKey = true
-	if source.stmt != nil {
-		source.stmt.primaryKeys = append(source.stmt.primaryKeys, source)
-	}
-	return source
-}
-func (source *sourceColumn[T]) Unique() *sourceColumn[T] {
-	source.isUnique = true
-	if source.stmt != nil {
-		source.stmt.uniques = append(source.stmt.uniques, source)
-	}
 	return source
 }
 func (source *sourceIndex) Unique() *sourceIndex {
@@ -174,20 +127,11 @@ type transformColumn interface {
 var queryCounter atomic.Int64
 
 // Приватные структуры
-type constraintData struct {
-	foreignKey string
-	onDelete   ReferenceAction
-	onUpdate   ReferenceAction
-	references []SourceBase
-	table      *sourceTable
-}
 type sourceColumn[T typeScalar] struct {
 	defaultValue    ExpressionBase
 	field           *exprField[T]
 	isAutoIncrement bool
 	isNotNull       bool
-	isPrimaryKey    bool
-	isUnique        bool
 	stmt            *stmtCreate
 	table           *sourceTable
 	valueType       ValueType
@@ -351,12 +295,6 @@ func (source *sourceQuery) name() string {
 }
 func (source *sourceColumn[T]) register(stmt *stmtCreate) {
 	source.stmt = stmt
-	if source.isPrimaryKey {
-		stmt.primaryKeys = append(stmt.primaryKeys, source)
-	}
-	if source.isUnique {
-		stmt.uniques = append(stmt.uniques, source)
-	}
 }
 func (source *sourceQuery) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderOperator(uastCompositeParenLeft)

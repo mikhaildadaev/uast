@@ -13,7 +13,6 @@ type ConstraintForeign struct {
 	OnDelete   ReferenceAction
 	OnUpdate   ReferenceAction
 }
-type ConstraintForeignOption func(*ConstraintForeign)
 type ConstraintPrimary struct {
 	Name    string
 	Columns []SourceBase
@@ -21,6 +20,10 @@ type ConstraintPrimary struct {
 type ConstraintUnique struct {
 	Name    string
 	Columns []SourceBase
+}
+type ForeignRelation struct {
+	Column    SourceBase
+	Reference SourceBase
 }
 
 // Публичные конструкторы
@@ -30,17 +33,21 @@ func NewCheck(name string, expression ExpressionBase) *ConstraintCheck {
 		Name:       name,
 	}
 }
-func NewForeignKey(name string, table *sourceTable, columns, references []SourceBase, options ...ConstraintForeignOption) *ConstraintForeign {
-	foreignKey := &ConstraintForeign{
-		Columns:    columns,
+func NewForeignKey(name string, table *sourceTable, onDelete, onUpdate ReferenceAction, relations ...ForeignRelation) *ConstraintForeign {
+	columns := make([]SourceBase, len(relations))
+	references := make([]SourceBase, len(relations))
+	for i, relation := range relations {
+		columns[i] = relation.Column
+		references[i] = relation.Reference
+	}
+	return &ConstraintForeign{
 		Name:       name,
-		References: references,
 		Table:      table,
+		Columns:    columns,
+		References: references,
+		OnDelete:   onDelete,
+		OnUpdate:   onUpdate,
 	}
-	for _, option := range options {
-		option(foreignKey)
-	}
-	return foreignKey
 }
 func NewPrimaryKey(name string, columns ...SourceBase) *ConstraintPrimary {
 	return &ConstraintPrimary{
@@ -63,14 +70,10 @@ func Cascade() ReferenceAction {
 func NoAction() ReferenceAction {
 	return ActionNoAction
 }
-func OnDelete(action ReferenceAction) ConstraintForeignOption {
-	return func(foreignKey *ConstraintForeign) {
-		foreignKey.OnDelete = action
-	}
-}
-func OnUpdate(action ReferenceAction) ConstraintForeignOption {
-	return func(foreignKey *ConstraintForeign) {
-		foreignKey.OnUpdate = action
+func Relation(column, reference SourceBase) ForeignRelation {
+	return ForeignRelation{
+		Column:    column,
+		Reference: reference,
 	}
 }
 func Restrict() ReferenceAction {

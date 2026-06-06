@@ -18,16 +18,20 @@ func (stmt *stmtCreate) Columns(columns ...markSourceable) *stmtCreate {
 	}
 	return stmt
 }
-func (stmt *stmtCreate) Constraint(foreignKey string, table *sourceTable) *constraintData {
-	if stmt.constraints == nil {
-		stmt.constraints = make(map[string]*constraintData)
+func (stmt *stmtCreate) Constraints(constraints ...any) *stmtCreate {
+	for _, constraint := range constraints {
+		switch data := constraint.(type) {
+		case *ConstraintCheck:
+			stmt.constraintChecks = append(stmt.constraintChecks, data)
+		case *ConstraintForeign:
+			stmt.constraintForeigns = append(stmt.constraintForeigns, data)
+		case *ConstraintPrimary:
+			stmt.constraintPrimarys = append(stmt.constraintPrimarys, data)
+		case *ConstraintUnique:
+			stmt.constraintUniques = append(stmt.constraintUniques, data)
+		}
 	}
-	constraint := &constraintData{
-		foreignKey: foreignKey,
-		table:      table,
-	}
-	stmt.constraints[foreignKey] = constraint
-	return constraint
+	return stmt
 }
 func (stmt *stmtCreate) IfNotExists() *stmtCreate {
 	stmt.ifNotExists = true
@@ -48,16 +52,17 @@ func (stmt *stmtCreate) On(on SourceBase) *stmtCreate {
 
 // Приватные структуры
 type stmtCreate struct {
-	command     managementService
-	columns     []markSourceable
-	constraints map[string]*constraintData
-	entity      SourceBase
-	ifNotExists bool
-	isReplace   bool
-	on          SourceBase
-	source      statement
-	primaryKeys []markSourceable
-	uniques     []markSourceable
+	command            managementService
+	columns            []markSourceable
+	constraintChecks   []*ConstraintCheck
+	constraintForeigns []*ConstraintForeign
+	constraintPrimarys []*ConstraintPrimary
+	constraintUniques  []*ConstraintUnique
+	entity             SourceBase
+	ifNotExists        bool
+	isReplace          bool
+	on                 SourceBase
+	source             statement
 }
 
 // Приватные методы

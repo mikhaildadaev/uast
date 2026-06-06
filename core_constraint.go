@@ -2,24 +2,24 @@ package uast
 
 // Публичные структуры
 type ConstraintCheck struct {
-	Name       string
 	Expression ExpressionBase
+	Name       string
 }
 type ConstraintForeign struct {
-	Name       string
-	Table      *sourceTable
 	Columns    []SourceBase
-	References []SourceBase
+	Name       string
 	OnDelete   ReferenceAction
 	OnUpdate   ReferenceAction
+	References []SourceBase
+	Table      *sourceTable
 }
 type ConstraintPrimary struct {
-	Name    string
 	Columns []SourceBase
+	Name    string
 }
 type ConstraintUnique struct {
-	Name    string
 	Columns []SourceBase
+	Name    string
 }
 type ForeignRelation struct {
 	Column    SourceBase

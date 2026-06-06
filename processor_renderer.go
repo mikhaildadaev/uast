@@ -297,6 +297,7 @@ func (renderer *baseRenderer) renderConstraintCheck(constraintCheck *ConstraintC
 	renderer.renderName(constraintCheck.Name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierCheck)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	if err := constraintCheck.Expression.render(renderer); err != nil {
 		return err
@@ -311,6 +312,7 @@ func (renderer *baseRenderer) renderConstraintForeign(constraintForeign *Constra
 	renderer.renderName(constraintForeign.Name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierForeignKey)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, column := range constraintForeign.Columns {
 		if i > 0 {
@@ -319,8 +321,11 @@ func (renderer *baseRenderer) renderConstraintForeign(constraintForeign *Constra
 		renderer.renderName(column.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierReferences)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderName(constraintForeign.Table.name())
+	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, reference := range constraintForeign.References {
 		if i > 0 {
@@ -350,6 +355,7 @@ func (renderer *baseRenderer) renderConstraintPrimary(constraintPrimary *Constra
 	renderer.renderName(constraintPrimary.Name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierPrimaryKey)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, column := range constraintPrimary.Columns {
 		if i > 0 {
@@ -367,6 +373,7 @@ func (renderer *baseRenderer) renderConstraintUnique(constraintUnique *Constrain
 	renderer.renderName(constraintUnique.Name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierUnique)
+	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, column := range constraintUnique.Columns {
 		if i > 0 {

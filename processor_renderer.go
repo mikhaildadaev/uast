@@ -402,7 +402,6 @@ func (renderer *baseRenderer) renderEntity(entity SourceBase, isReplace, isUniqu
 		if err := renderer.renderReplace(isReplace); err != nil {
 			return err
 		}
-
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(format)

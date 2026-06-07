@@ -447,7 +447,7 @@ func (strateger *mariadbStrateger) renderCreate(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtCreate.entity, stmtCreate.isReplace, false, stmtCreate.ifNotExists); err != nil {
+	if err := baseRenderer.renderEntity(stmtCreate.entity, stmtCreate.isReplace, stmtCreate.isUnique, false, stmtCreate.ifNotExists); err != nil {
 		return err
 	}
 	switch stmtCreate.entity.(type) {
@@ -501,7 +501,7 @@ func (strateger *mariadbStrateger) renderDrop(baseRenderer *baseRenderer, stmtDr
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtDrop.entity, false, stmtDrop.ifExists, false); err != nil {
+	if err := baseRenderer.renderEntity(stmtDrop.entity, false, false, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderCascade(stmtDrop.isCascade); err != nil {

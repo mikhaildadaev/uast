@@ -53,7 +53,7 @@ var DialectMsSQL = &SupportDialect{
 		},
 		supportIfNotExists: map[modifierService]bool{
 			uastModifierColumn: false,
-			uastModifierIndex:  true,
+			uastModifierIndex:  false,
 			uastModifierSchema: true,
 			uastModifierTable:  false,
 			uastModifierView:   true,
@@ -648,7 +648,7 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtCreate.entity, stmtCreate.isReplace, false, stmtCreate.ifNotExists); err != nil {
+	if err := baseRenderer.renderEntity(stmtCreate.entity, stmtCreate.isReplace, stmtCreate.isUnique, false, stmtCreate.ifNotExists); err != nil {
 		return err
 	}
 	switch stmtCreate.entity.(type) {
@@ -702,7 +702,7 @@ func (strateger *mssqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtDrop.entity, false, stmtDrop.ifExists, false); err != nil {
+	if err := baseRenderer.renderEntity(stmtDrop.entity, false, false, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderCascade(stmtDrop.isCascade); err != nil {

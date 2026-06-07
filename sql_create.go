@@ -41,6 +41,10 @@ func (stmt *stmtCreate) IsReplace() *stmtCreate {
 	stmt.isReplace = true
 	return stmt
 }
+func (stmt *stmtCreate) IsUnique() *stmtCreate {
+	stmt.isUnique = true
+	return stmt
+}
 func (stmt *stmtCreate) Source(source statement) *stmtCreate {
 	stmt.source = source
 	return stmt
@@ -61,6 +65,7 @@ type stmtCreate struct {
 	entity             SourceBase
 	ifNotExists        bool
 	isReplace          bool
+	isUnique           bool
 	on                 SourceBase
 	source             statement
 }

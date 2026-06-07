@@ -715,11 +715,11 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 	if err := baseRenderer.renderCommand(stmtCreate.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderEntity(stmtCreate.entity, stmtCreate.isReplace, false, stmtCreate.ifNotExists); err != nil {
+		return err
+	}
 	switch stmtCreate.entity.(type) {
 	case *sourceIndex:
-		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
-			return err
-		}
 		if err := baseRenderer.renderOn(stmtCreate.on); err != nil {
 			return err
 		}
@@ -727,23 +727,11 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 			return err
 		}
 	case *sourceSchema:
-		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
-			return err
-		}
 	case *sourceTable:
-		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
-			return err
-		}
 		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.constraintChecks, stmtCreate.constraintForeigns, stmtCreate.constraintPrimarys, stmtCreate.constraintUniques); err != nil {
 			return err
 		}
 	case *sourceView:
-		if err := baseRenderer.renderReplace(stmtCreate.isReplace); err != nil {
-			return err
-		}
-		if err := baseRenderer.renderEntity(stmtCreate.entity, false, stmtCreate.ifNotExists); err != nil {
-			return err
-		}
 		if err := baseRenderer.renderAs(); err != nil {
 			return err
 		}
@@ -778,7 +766,7 @@ func (strateger *postgresqlStrateger) renderDrop(baseRenderer *baseRenderer, stm
 	if err := baseRenderer.renderCommand(stmtDrop.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderEntity(stmtDrop.entity, stmtDrop.ifExists, false); err != nil {
+	if err := baseRenderer.renderEntity(stmtDrop.entity, false, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderCascade(stmtDrop.isCascade); err != nil {

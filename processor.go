@@ -26,7 +26,7 @@ type componentRenderer interface {
 	renderConstraintPrimary(constraintPrimary *ConstraintPrimary) error
 	renderConstraintUnique(constraintUnique *ConstraintUnique) error
 	renderDistinct(distinct bool) error
-	renderEntity(entity SourceBase, ifExists bool, ifNotExists bool) error
+	renderEntity(entity SourceBase, isReplace bool, ifExists bool, ifNotExists bool) error
 	renderFields(fields []markExpressable, isParen bool) error
 	renderFrom(from SourceBase) error
 	renderGroupBy(groups []markGroupable) error

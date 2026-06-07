@@ -391,14 +391,18 @@ func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderEntity(entity SourceBase, isReplace bool, ifExists bool, ifNotExists bool) error {
+func (renderer *baseRenderer) renderEntity(entity SourceBase, isReplace, isUnique bool, ifExists, ifNotExists bool) error {
 	format := entity.format()
-	//if entity.isUnique {
-	//	renderer.renderOperator(uastCompositeSingleSpace)
-	//	renderer.renderService(uastModifierUnique)
-	//}
-	if err := renderer.renderReplace(isReplace); err != nil {
-		return err
+	switch format {
+	case uastModifierIndex:
+		if err := renderer.renderUnique(isUnique); err != nil {
+			return err
+		}
+	case uastModifierView:
+		if err := renderer.renderReplace(isReplace); err != nil {
+			return err
+		}
+
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(format)

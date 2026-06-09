@@ -58,6 +58,7 @@ type componentRenderer interface {
 }
 type statementRenderer interface {
 	// DDL
+	renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error
 	renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error
 	renderCreate(baseRenderer *baseRenderer, stmtCreate *stmtCreate) error
 	renderDrop(baseRenderer *baseRenderer, stmtDrop *stmtDrop) error
@@ -82,6 +83,7 @@ type componentTransformer interface {
 }
 type statementTransformer interface {
 	// DDL
+	transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error
 	transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error
 	transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error
 	transformDrop(baseTransformer *baseTransformer, stmtDrop *stmtDrop) error
@@ -135,6 +137,7 @@ type componentValidator interface {
 }
 type statementValidator interface {
 	// DDL
+	validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error
 	validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error
 	validateCreate(baseValidator *baseValidator, stmtCreate *stmtCreate) error
 	validateDrop(baseValidator *baseValidator, stmtDrop *stmtDrop) error

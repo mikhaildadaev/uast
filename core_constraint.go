@@ -1,5 +1,10 @@
 package uast
 
+// Публичные интерфейсы
+type Constraint interface {
+	isConstraint()
+}
+
 // Публичные структуры
 type ConstraintCheck struct {
 	Expression ExpressionBase
@@ -85,3 +90,9 @@ func SetDefault() ReferenceAction {
 func SetNull() ReferenceAction {
 	return ActionSetNull
 }
+
+// Приватные методы
+func (*ConstraintCheck) isConstraint()   {}
+func (*ConstraintForeign) isConstraint() {}
+func (*ConstraintPrimary) isConstraint() {}
+func (*ConstraintUnique) isConstraint()  {}

@@ -117,7 +117,7 @@ type markSourceable interface {
 	isColumnable()
 }
 type registerStatement interface {
-	register(*stmtCreate)
+	register(statement)
 }
 type transformColumn interface {
 	SourceBase

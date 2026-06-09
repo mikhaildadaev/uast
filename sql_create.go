@@ -18,7 +18,7 @@ func (stmt *stmtCreate) Columns(columns ...markSourceable) *stmtCreate {
 	}
 	return stmt
 }
-func (stmt *stmtCreate) Constraints(constraints ...any) *stmtCreate {
+func (stmt *stmtCreate) Constraints(constraints ...Constraint) *stmtCreate {
 	for _, constraint := range constraints {
 		switch data := constraint.(type) {
 		case *ConstraintCheck:

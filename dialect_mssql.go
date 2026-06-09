@@ -641,6 +641,13 @@ func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunct
 }
 
 // Приватные методы
+func (strateger *mssqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *mssqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
 	return nil
 }
@@ -812,6 +819,10 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	}
 	return nil
 }
+func (strateger *mssqlStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mssqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
@@ -887,6 +898,10 @@ func (strateger *mssqlStrateger) transformUpdate(baseTransformer *baseTransforme
 	if stmtUpdate.returning != nil {
 		stmtUpdate.returning.serviceReturning = uastManagementOutput
 	}
+	return nil
+}
+func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mssqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {

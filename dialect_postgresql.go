@@ -699,6 +699,13 @@ func postgresqlFunctionATan2(baseTransformer *baseTransformer, expr transformFun
 }
 
 // Приватные методы
+func (strateger *postgresqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
@@ -876,6 +883,10 @@ func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, s
 	}
 	return nil
 }
+func (strateger *postgresqlStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *postgresqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
@@ -939,6 +950,10 @@ func (strateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTrans
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *postgresqlStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {

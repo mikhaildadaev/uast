@@ -431,6 +431,13 @@ func mysqlFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction
 }
 
 // Приватные методы
+func (strateger *mysqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
@@ -611,6 +618,10 @@ func (strateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	}
 	return nil
 }
+func (strateger *mysqlStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mysqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
@@ -662,6 +673,10 @@ func (strateger *mysqlStrateger) transformUpdate(baseTransformer *baseTransforme
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mysqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {

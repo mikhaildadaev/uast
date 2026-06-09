@@ -431,6 +431,13 @@ func mariadbFunctionTrunc(baseTransformer *baseTransformer, expr transformFuncti
 }
 
 // Приватные методы
+func (strateger *mariadbStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
+		return err
+	}
+	return nil
+}
 func (strateger *mariadbStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
@@ -611,6 +618,10 @@ func (strateger *mariadbStrateger) renderUpdate(baseRenderer *baseRenderer, stmt
 	}
 	return nil
 }
+func (strateger *mariadbStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
+	return nil
+}
 func (strateger *mariadbStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
 	return nil
 }
@@ -662,6 +673,10 @@ func (strateger *mariadbStrateger) transformUpdate(baseTransformer *baseTransfor
 	if err := baseTransformer.transformFunction(); err != nil {
 		return err
 	}
+	return nil
+}
+func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
+	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariadbStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {

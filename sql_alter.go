@@ -11,118 +11,53 @@ func NewAlter(entity SourceBase) *stmtAlter {
 }
 
 // Публичные методы
-//
-//	func (stmt *stmtAlter) AddColumn(column *sourceColumn) *stmtAlter {
-//		stmt.action = uastManagementAdd
-//		stmt.column = column
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) AddConstraintCheck(expr ExpressionBase) *stmtAlter {
-//		stmt.action = uastManagementAdd
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierCheck,
-//			check:          expr,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) AddConstraintForeignKey(columns ...markSourceable) *stmtAlter {
-//		stmt.action = uastManagementAdd
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierForeignKey,
-//			columns:        columns,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) AddConstraintPrimaryKey(columns ...markSourceable) *stmtAlter {
-//		stmt.action = uastManagementAdd
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierPrimaryKey,
-//			columns:        columns,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) AddConstraintUnique(columns ...markSourceable) *stmtAlter {
-//		stmt.action = uastManagementAdd
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierUnique,
-//			columns:        columns,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) DropColumn(name string) *stmtAlter {
-//		stmt.action = uastManagementDrop
-//		stmt.oldName = name
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) DropConstraintCheck(name string) *stmtAlter {
-//		stmt.action = uastManagementDrop
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierCheck,
-//			name:           name,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) DropConstraintForeignKey(name string) *stmtAlter {
-//		stmt.action = uastManagementDrop
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierForeignKey,
-//			name:           name,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) DropConstraintPrimaryKey() *stmtAlter {
-//		stmt.action = uastManagementDrop
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierPrimaryKey,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) DropConstraintUnique(name string) *stmtAlter {
-//		stmt.action = uastManagementDrop
-//		stmt.constraint = &constraintData{
-//			constraintType: uastModifierUnique,
-//			name:           name,
-//		}
-//		return stmt
-//	}
-//
-//	func (stmt *stmtAlter) ModifyColumn(column *sourceColumn) *stmtAlter {
-//		stmt.action = uastManagementAlter
-//		stmt.column = column
-//		return stmt
-//	}
-func (stmt *stmtAlter) RenameColumn(oldName, newName string) *stmtAlter {
-	stmt.action = uastManagementRename
-	stmt.oldName = oldName
-	stmt.newName = newName
+func (stmt *stmtAlter) AddConstraints(constraints ...Constraint) *stmtAlter {
+	for _, constraint := range constraints {
+		switch data := constraint.(type) {
+		case *ConstraintCheck:
+			stmt.constraintChecksAdd = append(stmt.constraintChecksAdd, data)
+		case *ConstraintForeign:
+			stmt.constraintForeignsAdd = append(stmt.constraintForeignsAdd, data)
+		case *ConstraintPrimary:
+			stmt.constraintPrimarysAdd = append(stmt.constraintPrimarysAdd, data)
+		case *ConstraintUnique:
+			stmt.constraintUniquesAdd = append(stmt.constraintUniquesAdd, data)
+		}
+	}
+	return stmt
+}
+func (stmt *stmtAlter) DropConstraints(constraints ...Constraint) *stmtAlter {
+	for _, constraint := range constraints {
+		switch data := constraint.(type) {
+		case *ConstraintCheck:
+			stmt.constraintChecksDrop = append(stmt.constraintChecksDrop, data)
+		case *ConstraintForeign:
+			stmt.constraintForeignsDrop = append(stmt.constraintForeignsDrop, data)
+		case *ConstraintPrimary:
+			stmt.constraintPrimarysDrop = append(stmt.constraintPrimarysDrop, data)
+		case *ConstraintUnique:
+			stmt.constraintUniquesDrop = append(stmt.constraintUniquesDrop, data)
+		}
+	}
 	return stmt
 }
 
 // Приватные структуры
 type stmtAlter struct {
-	action  managementService
-	command managementService
-	entity  SourceBase
-	//column      *sourceColumn
-	ifExists    bool
-	ifNotExists bool
-	oldName     string
-	newName     string
-	//constraint  *constraintData
-	on         SourceBase
-	references *sourceTable
-	refColumns []string
-	onDelete   modifierService
-	onUpdate   modifierService
+	command                managementService
+	columns                []markSourceable
+	constraintChecksAdd    []*ConstraintCheck
+	constraintChecksDrop   []*ConstraintCheck
+	constraintForeignsAdd  []*ConstraintForeign
+	constraintForeignsDrop []*ConstraintForeign
+	constraintPrimarysAdd  []*ConstraintPrimary
+	constraintPrimarysDrop []*ConstraintPrimary
+	constraintUniquesAdd   []*ConstraintUnique
+	constraintUniquesDrop  []*ConstraintUnique
+	entity                 SourceBase
+	ifExists               bool
+	ifNotExists            bool
+	on                     SourceBase
 }
 
 // Приватные методы

@@ -19,18 +19,7 @@ func (stmt *stmtCreate) Columns(columns ...markSourceable) *stmtCreate {
 	return stmt
 }
 func (stmt *stmtCreate) Constraints(constraints ...Constraint) *stmtCreate {
-	for _, constraint := range constraints {
-		switch data := constraint.(type) {
-		case *ConstraintCheck:
-			stmt.constraintChecks = append(stmt.constraintChecks, data)
-		case *ConstraintForeign:
-			stmt.constraintForeigns = append(stmt.constraintForeigns, data)
-		case *ConstraintPrimary:
-			stmt.constraintPrimarys = append(stmt.constraintPrimarys, data)
-		case *ConstraintUnique:
-			stmt.constraintUniques = append(stmt.constraintUniques, data)
-		}
-	}
+	stmt.constraints = append(stmt.constraints, constraints...)
 	return stmt
 }
 func (stmt *stmtCreate) IfNotExists() *stmtCreate {
@@ -56,18 +45,15 @@ func (stmt *stmtCreate) On(on SourceBase) *stmtCreate {
 
 // Приватные структуры
 type stmtCreate struct {
-	command            managementService
-	columns            []markSourceable
-	constraintChecks   []*ConstraintCheck
-	constraintForeigns []*ConstraintForeign
-	constraintPrimarys []*ConstraintPrimary
-	constraintUniques  []*ConstraintUnique
-	entity             SourceBase
-	ifNotExists        bool
-	isReplace          bool
-	isUnique           bool
-	on                 SourceBase
-	source             statement
+	command     managementService
+	columns     []markSourceable
+	constraints []Constraint
+	entity      SourceBase
+	ifNotExists bool
+	isReplace   bool
+	isUnique    bool
+	on          SourceBase
+	source      statement
 }
 
 // Приватные методы

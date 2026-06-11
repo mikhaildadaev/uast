@@ -11,53 +11,39 @@ func NewAlter(entity SourceBase) *stmtAlter {
 }
 
 // Публичные методы
-func (stmt *stmtAlter) AddConstraints(constraints ...Constraint) *stmtAlter {
-	for _, constraint := range constraints {
-		switch data := constraint.(type) {
-		case *ConstraintCheck:
-			stmt.constraintChecksAdd = append(stmt.constraintChecksAdd, data)
-		case *ConstraintForeign:
-			stmt.constraintForeignsAdd = append(stmt.constraintForeignsAdd, data)
-		case *ConstraintPrimary:
-			stmt.constraintPrimarysAdd = append(stmt.constraintPrimarysAdd, data)
-		case *ConstraintUnique:
-			stmt.constraintUniquesAdd = append(stmt.constraintUniquesAdd, data)
+func (stmt *stmtAlter) AddColumns(columns ...markSourceable) *stmtAlter {
+	stmt.addColumns = columns
+	for _, column := range columns {
+		if col, ok := column.(registerStatement); ok {
+			col.register(stmt)
 		}
 	}
 	return stmt
 }
-func (stmt *stmtAlter) DropConstraints(constraints ...Constraint) *stmtAlter {
-	for _, constraint := range constraints {
-		switch data := constraint.(type) {
-		case *ConstraintCheck:
-			stmt.constraintChecksDrop = append(stmt.constraintChecksDrop, data)
-		case *ConstraintForeign:
-			stmt.constraintForeignsDrop = append(stmt.constraintForeignsDrop, data)
-		case *ConstraintPrimary:
-			stmt.constraintPrimarysDrop = append(stmt.constraintPrimarysDrop, data)
-		case *ConstraintUnique:
-			stmt.constraintUniquesDrop = append(stmt.constraintUniquesDrop, data)
-		}
-	}
+func (stmt *stmtAlter) AddConstraints(constraints ...Constraint) *stmtAlter {
+	stmt.addConstraints = append(stmt.addConstraints, constraints...)
+	return stmt
+}
+func (stmt *stmtAlter) DropColumns(columns ...string) *stmtAlter {
+	stmt.dropColumns = columns
+	return stmt
+}
+func (stmt *stmtAlter) DropConstraints(names ...string) *stmtAlter {
+	stmt.dropConstraints = append(stmt.dropConstraints, names...)
 	return stmt
 }
 
 // Приватные структуры
 type stmtAlter struct {
-	command                managementService
-	columns                []markSourceable
-	constraintChecksAdd    []*ConstraintCheck
-	constraintChecksDrop   []*ConstraintCheck
-	constraintForeignsAdd  []*ConstraintForeign
-	constraintForeignsDrop []*ConstraintForeign
-	constraintPrimarysAdd  []*ConstraintPrimary
-	constraintPrimarysDrop []*ConstraintPrimary
-	constraintUniquesAdd   []*ConstraintUnique
-	constraintUniquesDrop  []*ConstraintUnique
-	entity                 SourceBase
-	ifExists               bool
-	ifNotExists            bool
-	on                     SourceBase
+	command         managementService
+	addColumns      []markSourceable
+	addConstraints  []Constraint
+	dropConstraints []string
+	dropColumns     []string
+	entity          SourceBase
+	ifExists        bool
+	ifNotExists     bool
+	on              SourceBase
 }
 
 // Приватные методы

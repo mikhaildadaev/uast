@@ -735,7 +735,7 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.constraintChecks, stmtCreate.constraintForeigns, stmtCreate.constraintPrimarys, stmtCreate.constraintUniques); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:

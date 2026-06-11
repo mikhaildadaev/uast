@@ -158,14 +158,13 @@ func (constraintForeign *ConstraintForeign) render(renderer *baseRenderer) error
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderName(constraintForeign.Table.name())
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, ref := range constraintForeign.References {
+	for i, reference := range constraintForeign.References {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(ref.name())
+		renderer.renderName(reference.name())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
-
 	if constraintForeign.OnDelete != "" {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierOnDelete)

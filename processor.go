@@ -21,10 +21,6 @@ type componentRenderer interface {
 	renderCascade(cascade bool) error
 	renderCommand(command managementService) error
 	renderColumns(columns []markSourceable, constraints []Constraint) error
-	renderConstraintCheck(constraintCheck *ConstraintCheck) error
-	renderConstraintForeign(constraintForeign *ConstraintForeign) error
-	renderConstraintPrimary(constraintPrimary *ConstraintPrimary) error
-	renderConstraintUnique(constraintUnique *ConstraintUnique) error
 	renderDistinct(distinct bool) error
 	renderEntity(entity SourceBase, isReplace bool, ifExists bool, ifNotExists bool) error
 	renderFields(fields []markExpressable, isParen bool) error

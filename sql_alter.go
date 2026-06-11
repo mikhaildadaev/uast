@@ -28,8 +28,8 @@ func (stmt *stmtAlter) DropColumns(columns ...string) *stmtAlter {
 	stmt.dropColumns = columns
 	return stmt
 }
-func (stmt *stmtAlter) DropConstraints(names ...string) *stmtAlter {
-	stmt.dropConstraints = append(stmt.dropConstraints, names...)
+func (stmt *stmtAlter) DropConstraints(constraints ...string) *stmtAlter {
+	stmt.dropConstraints = append(stmt.dropConstraints, constraints...)
 	return stmt
 }
 

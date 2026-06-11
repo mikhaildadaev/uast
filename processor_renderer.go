@@ -253,7 +253,7 @@ func (renderer *baseRenderer) renderCommand(command managementService) error {
 	renderer.renderService(command)
 	return nil
 }
-func (renderer *baseRenderer) renderColumns(columns []markSourceable, constraintChecks []*ConstraintCheck, constraintForeigns []*ConstraintForeign, constraintPrimarys []*ConstraintPrimary, constraintUniques []*ConstraintUnique) error {
+func (renderer *baseRenderer) renderColumns(columns []markSourceable, constraints []Constraint) error {
 	if len(columns) == 0 {
 		return nil
 	}
@@ -267,25 +267,15 @@ func (renderer *baseRenderer) renderColumns(columns []markSourceable, constraint
 			return err
 		}
 	}
-	for _, constraintPrimary := range constraintPrimarys {
-		if err := renderer.renderConstraintPrimary(constraintPrimary); err != nil {
+	needComma := len(columns) > 0
+	for _, constraint := range constraints {
+		if needComma {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		if err := constraint.render(renderer); err != nil {
 			return err
 		}
-	}
-	for _, constraintUnique := range constraintUniques {
-		if err := renderer.renderConstraintUnique(constraintUnique); err != nil {
-			return err
-		}
-	}
-	for _, constraintForeign := range constraintForeigns {
-		if err := renderer.renderConstraintForeign(constraintForeign); err != nil {
-			return err
-		}
-	}
-	for _, constraintCheck := range constraintChecks {
-		if err := renderer.renderConstraintCheck(constraintCheck); err != nil {
-			return err
-		}
+		needComma = true
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil

@@ -20,7 +20,7 @@ type componentRenderer interface {
 	renderAs() error
 	renderCascade(cascade bool) error
 	renderCommand(command managementService) error
-	renderColumns(columns []markSourceable, constraintChecks []*ConstraintCheck, constraintForeigns []*ConstraintForeign, constraintPrimarys []*ConstraintPrimary, constraintUniques []*ConstraintUnique) error
+	renderColumns(columns []markSourceable, constraints []Constraint) error
 	renderConstraintCheck(constraintCheck *ConstraintCheck) error
 	renderConstraintForeign(constraintForeign *ConstraintForeign) error
 	renderConstraintPrimary(constraintPrimary *ConstraintPrimary) error

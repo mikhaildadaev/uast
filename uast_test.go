@@ -1851,6 +1851,102 @@ func Test_SQL(t *testing.T) {
 		})
 	})
 }
+func Test_SQL_Alter(t *testing.T) {
+	t.Run("Index", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			// ALTER INDEX ... RENAME TO ...
+			switch supportDialect {
+			case DialectMariaDB:
+				// Not supported - RENAME
+			case DialectMsSQL:
+				// Not supported - RENAME
+			case DialectMySQL:
+				// Not supported - RENAME
+			case DialectPostgreSQL:
+				//assertContains(t, sqlCommentQuery, `RENAME`, "RENAME")
+			case DialectSQLite:
+				// Not supported - RENAME
+			}
+			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+		})
+	})
+	t.Run("Schema", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			// ALTER SCHEMA ... RENAME TO ...
+			switch supportDialect {
+			case DialectMariaDB:
+				// Not supported - RENAME
+			case DialectMsSQL:
+				//assertContains(t, sqlCommentQuery, "RENAME", "RENAME")
+			case DialectMySQL:
+				// Not supported - RENAME
+			case DialectPostgreSQL:
+				//assertContains(t, sqlCommentQuery, `RENAME`, "RENAME")
+			case DialectSQLite:
+				// Not supported - RENAME
+			}
+			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+		})
+	})
+	t.Run("Table", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			// ADD/DROP COLUMN, ADD/DROP CONSTRAINT, RENAME
+			stmtAlter := NewAlter(Test.Table).
+				AddColumns(Test.Column.String, Test.Column.Date).
+				AddConstraints(
+					NewPrimaryKey("pk_test", Test.Column.ID),
+					NewUnique("uk_test", Test.Column.Name),
+					NewForeignKey("fk_test_users", Data.Table, Cascade(), Restrict(),
+						Relation(Test.Column.DataID, Data.Column.ID),
+					),
+					NewCheck("ck_test", Greater(Test.Column.Number.Expr(), Value(0))),
+				).
+				DropColumns("old_column1", "old_column2")
+				//DropConstraints("old_constraint1", "old_constraint2").
+				//Rename("new_test")
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlAlterQuery, "ALTER TABLE `test`", "ALTER TABLE")
+			case DialectMsSQL:
+				assertContains(t, sqlAlterQuery, "ALTER TABLE [test]", "ALTER TABLE")
+			case DialectMySQL:
+				assertContains(t, sqlAlterQuery, "ALTER TABLE `test`", "ALTER TABLE")
+			case DialectPostgreSQL:
+				assertContains(t, sqlAlterQuery, `ALTER TABLE "test"`, "ALTER TABLE")
+			case DialectSQLite:
+				assertContains(t, sqlAlterQuery, `ALTER TABLE "test"`, "ALTER TABLE")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("View", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			// ALTER VIEW ... RENAME TO ...
+			switch supportDialect {
+			case DialectMariaDB:
+				// Not supported - RENAME
+			case DialectMsSQL:
+				//assertContains(t, sqlCommentQuery, "RENAME", "RENAME")
+			case DialectMySQL:
+				// Not supported - RENAME
+			case DialectPostgreSQL:
+				//assertContains(t, sqlCommentQuery, `RENAME`, "RENAME")
+			case DialectSQLite:
+				// Not supported - RENAME
+			}
+			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+		})
+	})
+}
 func Test_SQL_Comment(t *testing.T) {
 	t.Run("Column", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {

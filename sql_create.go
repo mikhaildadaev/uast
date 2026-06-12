@@ -18,7 +18,7 @@ func (stmt *stmtCreate) Columns(columns ...markSourceable) *stmtCreate {
 	}
 	return stmt
 }
-func (stmt *stmtCreate) Constraints(constraints ...Constraint) *stmtCreate {
+func (stmt *stmtCreate) Constraints(constraints ...ConstraintBase) *stmtCreate {
 	stmt.constraints = append(stmt.constraints, constraints...)
 	return stmt
 }
@@ -47,7 +47,7 @@ func (stmt *stmtCreate) On(on SourceBase) *stmtCreate {
 type stmtCreate struct {
 	command     managementService
 	columns     []markSourceable
-	constraints []Constraint
+	constraints []ConstraintBase
 	entity      SourceBase
 	ifNotExists bool
 	isReplace   bool

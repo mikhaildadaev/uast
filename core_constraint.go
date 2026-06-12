@@ -1,73 +1,57 @@
 package uast
 
 // Публичные интерфейсы
-type Constraint interface {
-	clone() Constraint
+type ConstraintBase interface {
+	clone() ConstraintBase
 	isConstraint()
+	getName() string
 	render(baseRenderer *baseRenderer) error
 	validate(baseValidator *baseValidator) error
 }
 
 // Публичные структуры
-type ConstraintCheck struct {
-	Expression ExpressionBase
-	Name       string
-}
-type ConstraintForeign struct {
-	Columns    []SourceBase
-	Name       string
-	OnDelete   ReferenceAction
-	OnUpdate   ReferenceAction
-	References []SourceBase
-	Table      *sourceTable
-}
-type ConstraintPrimary struct {
-	Columns []SourceBase
-	Name    string
-}
-type ConstraintUnique struct {
-	Columns []SourceBase
-	Name    string
-}
+type CheckConstraint = constraintCheck
+type ForeignConstraint = constraintForeign
 type ForeignRelation struct {
 	Column    SourceBase
 	Reference SourceBase
 }
+type PrimaryConstraint = constraintPrimary
+type UniqueConstraint = constraintUnique
 
 // Публичные конструкторы
-func NewCheck(name string, expression ExpressionBase) *ConstraintCheck {
-	return &ConstraintCheck{
-		Expression: expression,
-		Name:       name,
+func NewCheck(name string, expression ExpressionBase) *CheckConstraint {
+	return &CheckConstraint{
+		expression: expression,
+		name:       name,
 	}
 }
-func NewForeignKey(name string, table *sourceTable, onDelete, onUpdate ReferenceAction, relations ...ForeignRelation) *ConstraintForeign {
+func NewForeignKey(name string, table *sourceTable, onDelete, onUpdate ReferenceAction, relations ...ForeignRelation) *ForeignConstraint {
 	columns := make([]SourceBase, len(relations))
 	references := make([]SourceBase, len(relations))
 	for i, relation := range relations {
 		columns[i] = relation.Column
 		references[i] = relation.Reference
 	}
-	return &ConstraintForeign{
-		Columns:    columns,
-		Name:       name,
-		OnDelete:   onDelete,
-		OnUpdate:   onUpdate,
-		References: references,
-		Table:      table,
+	return &ForeignConstraint{
+		columns:    columns,
+		name:       name,
+		onDelete:   onDelete,
+		onUpdate:   onUpdate,
+		references: references,
+		table:      table,
 	}
 }
-func NewPrimaryKey(name string, columns ...SourceBase) *ConstraintPrimary {
-	return &ConstraintPrimary{
-		Columns: columns,
-		Name:    name,
+func NewPrimaryKey(name string, columns ...SourceBase) *PrimaryConstraint {
+	return &PrimaryConstraint{
+		columns: columns,
+		name:    name,
 	}
 }
-
-func NewUnique(name string, columns ...SourceBase) *ConstraintUnique {
-	return &ConstraintUnique{
-		Columns: columns,
-		Name:    name,
+func NewUnique(name string, columns ...SourceBase) *UniqueConstraint {
+	return &UniqueConstraint{
+		columns: columns,
+		name:    name,
 	}
 }
 
@@ -94,181 +78,215 @@ func SetNull() ReferenceAction {
 	return ActionSetNull
 }
 
+// Приватные структуры
+type constraintCheck struct {
+	expression ExpressionBase
+	name       string
+}
+type constraintForeign struct {
+	columns    []SourceBase
+	name       string
+	onDelete   ReferenceAction
+	onUpdate   ReferenceAction
+	references []SourceBase
+	table      *sourceTable
+}
+type constraintPrimary struct {
+	columns []SourceBase
+	name    string
+}
+type constraintUnique struct {
+	columns []SourceBase
+	name    string
+}
+
 // Приватные методы
-func (сonstraintCheck *ConstraintCheck) clone() Constraint {
-	return &ConstraintCheck{
-		Expression: сonstraintCheck.Expression,
-		Name:       сonstraintCheck.Name,
+func (constraint *constraintCheck) clone() ConstraintBase {
+	return &constraintCheck{
+		expression: constraint.expression,
+		name:       constraint.name,
 	}
 }
-func (сonstraintCheck *ConstraintCheck) isConstraint() {}
-func (сonstraintCheck *ConstraintCheck) render(renderer *baseRenderer) error {
+func (constraint *constraintCheck) getName() string {
+	return constraint.name
+}
+func (constraint *constraintCheck) isConstraint() {}
+func (constraint *constraintCheck) render(renderer *baseRenderer) error {
 	renderer.renderService(uastModifierConstraint)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(сonstraintCheck.Name)
+	renderer.renderName(constraint.name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierCheck)
 	renderer.renderOperator(uastCompositeParenLeft)
-	if err := сonstraintCheck.Expression.render(renderer); err != nil {
+	if err := constraint.expression.render(renderer); err != nil {
 		return err
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (constraintCheck *ConstraintCheck) validate(validator *baseValidator) error {
-	if err := validator.validateName(constraintCheck.Name); err != nil {
+func (constraint *constraintCheck) validate(validator *baseValidator) error {
+	if err := validator.validateName(constraint.name); err != nil {
 		return err
 	}
-	if constraintCheck.Expression == nil {
+	if constraint.expression == nil {
 		return ErrInvalidConstraintCheck
 	}
-	return constraintCheck.Expression.validate(validator)
+	return constraint.expression.validate(validator)
 }
-func (constraintForeign *ConstraintForeign) clone() Constraint {
-	columns := make([]SourceBase, len(constraintForeign.Columns))
-	references := make([]SourceBase, len(constraintForeign.References))
-	copy(columns, constraintForeign.Columns)
-	copy(references, constraintForeign.References)
-	return &ConstraintForeign{
-		Columns:    columns,
-		Name:       constraintForeign.Name,
-		OnDelete:   constraintForeign.OnDelete,
-		OnUpdate:   constraintForeign.OnUpdate,
-		References: references,
-		Table:      constraintForeign.Table,
+func (constraint *constraintForeign) clone() ConstraintBase {
+	columns := make([]SourceBase, len(constraint.columns))
+	references := make([]SourceBase, len(constraint.references))
+	copy(columns, constraint.columns)
+	copy(references, constraint.references)
+	return &constraintForeign{
+		columns:    columns,
+		name:       constraint.name,
+		onDelete:   constraint.onDelete,
+		onUpdate:   constraint.onUpdate,
+		references: references,
+		table:      constraint.table,
 	}
 }
-func (constraintForeign *ConstraintForeign) isConstraint() {}
-func (constraintForeign *ConstraintForeign) render(renderer *baseRenderer) error {
+func (constraint *constraintForeign) getName() string {
+	return constraint.name
+}
+func (constraint *constraintForeign) isConstraint() {}
+func (constraint *constraintForeign) render(renderer *baseRenderer) error {
 	renderer.renderService(uastModifierConstraint)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(constraintForeign.Name)
+	renderer.renderName(constraint.name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierForeignKey)
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, column := range constraintForeign.Columns {
+	for i, column := range constraint.columns {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(column.name())
+		renderer.renderName(column.getName())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierReferences)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(constraintForeign.Table.name())
+	renderer.renderName(constraint.table.getName())
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, reference := range constraintForeign.References {
+	for i, reference := range constraint.references {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(reference.name())
+		renderer.renderName(reference.getName())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
-	if constraintForeign.OnDelete != "" {
+	if constraint.onDelete != "" {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierOnDelete)
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(modifierService(constraintForeign.OnDelete))
+		renderer.renderService(modifierService(constraint.onDelete))
 	}
-	if constraintForeign.OnUpdate != "" {
+	if constraint.onUpdate != "" {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierOnUpdate)
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(modifierService(constraintForeign.OnUpdate))
+		renderer.renderService(modifierService(constraint.onUpdate))
 	}
 	return nil
 }
-func (constraintForeign *ConstraintForeign) validate(validator *baseValidator) error {
-	if err := validator.validateName(constraintForeign.Name); err != nil {
+func (constraint *constraintForeign) validate(validator *baseValidator) error {
+	if err := validator.validateName(constraint.name); err != nil {
 		return err
 	}
-	if constraintForeign.Table == nil || len(constraintForeign.Columns) == 0 || len(constraintForeign.Columns) != len(constraintForeign.References) {
+	if constraint.table == nil || len(constraint.columns) == 0 || len(constraint.columns) != len(constraint.references) {
 		return ErrInvalidConstraintForeignKey
 	}
-	for i, column := range constraintForeign.Columns {
-		if err := validator.validateName(column.name()); err != nil {
+	for i, column := range constraint.columns {
+		if err := validator.validateName(column.getName()); err != nil {
 			return err
 		}
-		if err := validator.validateName(constraintForeign.References[i].name()); err != nil {
+		if err := validator.validateName(constraint.references[i].getName()); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (constraintPrimary *ConstraintPrimary) clone() Constraint {
-	columns := make([]SourceBase, len(constraintPrimary.Columns))
-	copy(columns, constraintPrimary.Columns)
-	return &ConstraintPrimary{
-		Columns: columns,
-		Name:    constraintPrimary.Name,
+func (constraint *constraintPrimary) clone() ConstraintBase {
+	columns := make([]SourceBase, len(constraint.columns))
+	copy(columns, constraint.columns)
+	return &constraintPrimary{
+		columns: columns,
+		name:    constraint.name,
 	}
 }
-func (constraintPrimary *ConstraintPrimary) isConstraint() {}
-func (constraintPrimary *ConstraintPrimary) render(renderer *baseRenderer) error {
+func (constraint *constraintPrimary) getName() string {
+	return constraint.name
+}
+func (constraint *constraintPrimary) isConstraint() {}
+func (constraint *constraintPrimary) render(renderer *baseRenderer) error {
 	renderer.renderService(uastModifierConstraint)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(constraintPrimary.Name)
+	renderer.renderName(constraint.name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierPrimaryKey)
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, column := range constraintPrimary.Columns {
+	for i, column := range constraint.columns {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(column.name())
+		renderer.renderName(column.getName())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (constraintPrimary *ConstraintPrimary) validate(validator *baseValidator) error {
-	if len(constraintPrimary.Columns) == 0 {
+func (constraint *constraintPrimary) validate(validator *baseValidator) error {
+	if len(constraint.columns) == 0 {
 		return ErrInvalidConstraintPrimaryKey
 	}
-	if err := validator.validateName(constraintPrimary.Name); err != nil {
+	if err := validator.validateName(constraint.name); err != nil {
 		return err
 	}
-	for _, column := range constraintPrimary.Columns {
-		if err := validator.validateName(column.name()); err != nil {
+	for _, column := range constraint.columns {
+		if err := validator.validateName(column.getName()); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (constraintUnique *ConstraintUnique) clone() Constraint {
-	columns := make([]SourceBase, len(constraintUnique.Columns))
-	copy(columns, constraintUnique.Columns)
-	return &ConstraintUnique{
-		Columns: columns,
-		Name:    constraintUnique.Name,
+func (constraint *constraintUnique) clone() ConstraintBase {
+	columns := make([]SourceBase, len(constraint.columns))
+	copy(columns, constraint.columns)
+	return &constraintUnique{
+		columns: columns,
+		name:    constraint.name,
 	}
 }
-func (constraintUnique *ConstraintUnique) isConstraint() {}
-func (constraintUnique *ConstraintUnique) render(renderer *baseRenderer) error {
+func (constraint *constraintUnique) getName() string {
+	return constraint.name
+}
+func (constraint *constraintUnique) isConstraint() {}
+func (constraint *constraintUnique) render(renderer *baseRenderer) error {
 	renderer.renderService(uastModifierConstraint)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(constraintUnique.Name)
+	renderer.renderName(constraint.name)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierUnique)
 	renderer.renderOperator(uastCompositeParenLeft)
-	for i, column := range constraintUnique.Columns {
+	for i, column := range constraint.columns {
 		if i > 0 {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
-		renderer.renderName(column.name())
+		renderer.renderName(column.getName())
 	}
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (constraintUnique *ConstraintUnique) validate(validator *baseValidator) error {
-	if len(constraintUnique.Columns) == 0 {
+func (constraint *constraintUnique) validate(validator *baseValidator) error {
+	if len(constraint.columns) == 0 {
 		return ErrInvalidConstraintUnique
 	}
-	if err := validator.validateName(constraintUnique.Name); err != nil {
+	if err := validator.validateName(constraint.name); err != nil {
 		return err
 	}
-	for _, column := range constraintUnique.Columns {
-		if err := validator.validateName(column.name()); err != nil {
+	for _, column := range constraint.columns {
+		if err := validator.validateName(column.getName()); err != nil {
 			return err
 		}
 	}

@@ -7,10 +7,10 @@ import (
 
 // Публичные интерфейсы
 type SourceBase interface {
-	alias() string
 	clone() SourceBase
-	format() modifierService
-	name() string
+	getAlias() string
+	getFormat() modifierService
+	getName() string
 	isSourceBase()
 	render(baseRenderer *baseRenderer) error
 	validate(baseValidator *baseValidator) error
@@ -30,8 +30,8 @@ type TableSource = sourceTable
 type ViewSource = sourceView
 
 // Публичные конструкторы
-func NewColumn[T typeScalar](columnName string, table *TableSource, valueType ValueType) *sourceColumn[T] {
-	return &sourceColumn[T]{
+func NewColumn[T typeScalar](columnName string, table *TableSource, valueType ValueType) *ColumnSource[T] {
+	return &ColumnSource[T]{
 		field:     Field[T](table.aliasName, columnName),
 		table:     table,
 		valueType: valueType,
@@ -78,11 +78,11 @@ func NewTable(name, alias string) *TableSource {
 		withAlias: true,
 	}
 }
-func NewView(name, alias string, table *TableSource) *sourceView {
+func NewView(name, alias string, table *TableSource) *ViewSource {
 	if alias == "" {
 		alias = name
 	}
-	return &sourceView{
+	return &ViewSource{
 		aliasName: alias,
 		table:     table,
 		viewName:  name,
@@ -167,23 +167,23 @@ type sourceView struct {
 }
 
 // Приватные методы
-func (source *sourceColumn[T]) alias() string {
-	return source.table.alias()
-}
 func (source *sourceColumn[T]) clone() SourceBase {
 	copy := *source
 	return &copy
 }
-func (source *sourceColumn[T]) format() modifierService {
+func (source *sourceColumn[T]) getAlias() string {
+	return source.table.getAlias()
+}
+func (source *sourceColumn[T]) getFormat() modifierService {
 	return uastModifierColumn
+}
+func (source *sourceColumn[T]) getName() string {
+	return source.field.transformGetName()
 }
 func (source *sourceColumn[T]) isSourceBase() {}
 func (source *sourceColumn[T]) isColumnable() {}
-func (source *sourceColumn[T]) name() string {
-	return source.field.transformGetName()
-}
 func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
-	baseRenderer.renderName(source.name())
+	baseRenderer.renderName(source.getName())
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(baseRenderer.config.listTypes[source.valueType])
 	for _, attr := range baseRenderer.config.supportAttrCreateOrder {
@@ -215,23 +215,23 @@ func (col *sourceColumn[T]) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (source *sourceCte) alias() string {
+func (source *sourceCte) clone() SourceBase {
+	copy := *source
+	return &copy
+}
+func (source *sourceCte) getAlias() string {
 	if source == nil {
 		return ""
 	}
 	return source.aliasName
 }
-func (source *sourceCte) clone() SourceBase {
-	copy := *source
-	return &copy
-}
-func (source *sourceCte) format() modifierService {
+func (source *sourceCte) getFormat() modifierService {
 	return uastModifierCTE
 }
-func (source *sourceCte) isSourceBase() {}
-func (source *sourceCte) name() string {
+func (source *sourceCte) getName() string {
 	return source.cteName
 }
+func (source *sourceCte) isSourceBase() {}
 func (source *sourceCte) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.cteName)
 	if source.withAlias {
@@ -251,17 +251,17 @@ func (source *sourceCte) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (source *sourceIndex) alias() string {
-	return ""
-}
 func (source *sourceIndex) clone() SourceBase {
 	copy := *source
 	return &copy
 }
-func (source *sourceIndex) format() modifierService {
+func (source *sourceIndex) getAlias() string {
+	return ""
+}
+func (source *sourceIndex) getFormat() modifierService {
 	return uastModifierIndex
 }
-func (source *sourceIndex) name() string {
+func (source *sourceIndex) getName() string {
 	return source.indexName
 }
 func (source *sourceIndex) isSourceBase() {}
@@ -275,24 +275,24 @@ func (source *sourceIndex) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (source *sourceQuery) alias() string {
-	if source == nil {
-		return ""
-	}
-	return source.aliasName
-}
 func (source *sourceQuery) clone() SourceBase {
 	copy := *source
 	copy.statement = source.statement.clone()
 	return &copy
 }
-func (source *sourceQuery) format() modifierService {
+func (source *sourceQuery) getAlias() string {
+	if source == nil {
+		return ""
+	}
+	return source.aliasName
+}
+func (source *sourceQuery) getFormat() modifierService {
 	return uastModifierQuery
 }
-func (source *sourceQuery) isSourceBase() {}
-func (source *sourceQuery) name() string {
+func (source *sourceQuery) getName() string {
 	return ""
 }
+func (source *sourceQuery) isSourceBase() {}
 func (source *sourceColumn[T]) register(stmt *stmtCreate) {
 	source.stmt = stmt
 }
@@ -322,17 +322,17 @@ func (source *sourceQuery) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (source *sourceSchema) alias() string {
-	return ""
-}
 func (source *sourceSchema) clone() SourceBase {
 	copy := *source
 	return &copy
 }
-func (source *sourceSchema) format() modifierService {
+func (source *sourceSchema) getAlias() string {
+	return ""
+}
+func (source *sourceSchema) getFormat() modifierService {
 	return uastModifierSchema
 }
-func (source *sourceSchema) name() string {
+func (source *sourceSchema) getName() string {
 	return source.schemaName
 }
 func (source *sourceSchema) isSourceBase() {}
@@ -346,20 +346,20 @@ func (source *sourceSchema) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (source *sourceTable) alias() string {
+func (source *sourceTable) clone() SourceBase {
+	copy := *source
+	return &copy
+}
+func (source *sourceTable) getAlias() string {
 	if source == nil {
 		return ""
 	}
 	return source.aliasName
 }
-func (source *sourceTable) clone() SourceBase {
-	copy := *source
-	return &copy
-}
-func (source *sourceTable) format() modifierService {
+func (source *sourceTable) getFormat() modifierService {
 	return uastModifierTable
 }
-func (source *sourceTable) name() string {
+func (source *sourceTable) getName() string {
 	return source.tableName
 }
 func (source *sourceTable) isSourceBase() {}
@@ -382,20 +382,20 @@ func (source *sourceTable) validate(baseValidator *baseValidator) error {
 	}
 	return nil
 }
-func (source *sourceView) alias() string {
+func (source *sourceView) clone() SourceBase {
+	copy := *source
+	return &copy
+}
+func (source *sourceView) getAlias() string {
 	if source == nil {
 		return ""
 	}
 	return source.aliasName
 }
-func (source *sourceView) clone() SourceBase {
-	copy := *source
-	return &copy
-}
-func (source *sourceView) format() modifierService {
+func (source *sourceView) getFormat() modifierService {
 	return uastModifierView
 }
-func (source *sourceView) name() string {
+func (source *sourceView) getName() string {
 	return source.viewName
 }
 func (source *sourceView) isSourceBase() {}

@@ -253,7 +253,7 @@ func (renderer *baseRenderer) renderCommand(command managementService) error {
 	renderer.renderService(command)
 	return nil
 }
-func (renderer *baseRenderer) renderColumns(columns []markSourceable, constraints []Constraint) error {
+func (renderer *baseRenderer) renderColumns(columns []markSourceable, constraints []ConstraintBase) error {
 	if len(columns) == 0 {
 		return nil
 	}
@@ -288,7 +288,7 @@ func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	return nil
 }
 func (renderer *baseRenderer) renderEntity(entity SourceBase, isReplace, isUnique bool, ifExists, ifNotExists bool) error {
-	format := entity.format()
+	format := entity.getFormat()
 	switch format {
 	case uastModifierIndex:
 		if err := renderer.renderUnique(isUnique); err != nil {
@@ -308,7 +308,7 @@ func (renderer *baseRenderer) renderEntity(entity SourceBase, isReplace, isUniqu
 		renderer.renderIfNotExists(ifNotExists)
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(entity.name())
+	renderer.renderName(entity.getName())
 	return nil
 }
 func (renderer *baseRenderer) renderFields(fields []markExpressable, isParen bool) error {
@@ -397,7 +397,7 @@ func (renderer *baseRenderer) renderIndex(columns []markSourceable) error {
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, column := range columns {
-		renderer.renderName(column.name())
+		renderer.renderName(column.getName())
 		if i < columnsCount {
 			renderer.renderOperator(uastCompositeCommaSpace)
 		}
@@ -450,7 +450,7 @@ func (renderer *baseRenderer) renderOn(on SourceBase) error {
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierOn)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(on.name())
+	renderer.renderName(on.getName())
 	return nil
 }
 func (renderer *baseRenderer) renderOnto(onto SourceBase) error {

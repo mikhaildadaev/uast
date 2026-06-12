@@ -52,11 +52,11 @@ func (validator *baseValidator) validateComparison(value transformComparison) er
 	if validator.contexter.countMaxComparison > uastCountMaxComparison {
 		return ErrExcessMaxComparison
 	}
-	left := value.transformGetLeft()
-	operator := value.transformGetOperator()
-	right := value.transformGetRight()
-	valueEnd := value.transformGetValueEnd()
-	valueStart := value.transformGetValueStart()
+	left := value.getLeft()
+	operator := value.getOperator()
+	right := value.getRight()
+	valueEnd := value.getValueEnd()
+	valueStart := value.getValueStart()
 	switch operator {
 	case uastComparisonBetween, uastComparisonNotBetween:
 		if left == nil || valueEnd == nil || valueStart == nil {
@@ -152,9 +152,9 @@ func (validator *baseValidator) validateFunction(value transformFunction) error 
 	if validator.contexter.countMaxFunction > uastCountMaxFunction {
 		return ErrExcessMaxFunction
 	}
-	distinct := value.transformGetDistinct()
-	paramCount := value.transformGetParamCount()
-	service := value.transformGetService()
+	distinct := value.getDistinct()
+	paramCount := value.getParamCount()
+	service := value.getService()
 	if i, exists := constFunctionParameters[functionService(service)]; exists {
 		if distinct && !i.distinct {
 			return ErrUnsupportFunctionDistinct

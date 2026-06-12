@@ -178,7 +178,7 @@ func (source *sourceColumn[T]) getFormat() modifierService {
 	return uastModifierColumn
 }
 func (source *sourceColumn[T]) getName() string {
-	return source.field.transformGetName()
+	return source.field.getName()
 }
 func (source *sourceColumn[T]) isSourceBase() {}
 func (source *sourceColumn[T]) isColumnable() {}

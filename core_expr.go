@@ -28,30 +28,30 @@ type markPredicable interface {
 }
 type transformComparison interface {
 	ExpressionBase
-	transformGetLeft() ExpressionBase
-	transformGetOperator() comparisonOperator
-	transformGetRight() ExpressionBase
-	transformGetValueEnd() ExpressionBase
-	transformGetValueStart() ExpressionBase
+	getLeft() ExpressionBase
+	getOperator() comparisonOperator
+	getRight() ExpressionBase
+	getValueEnd() ExpressionBase
+	getValueStart() ExpressionBase
 }
 type transformFunction interface {
 	ExpressionBase
-	transformGetDistinct() bool
-	transformGetJson() []*exprJson
-	transformGetLeft() ExpressionBase
-	transformGetParamCount() int
-	transformGetProcess() processingStage
-	transformGetRight() ExpressionBase
-	transformGetService() functionService
-	transformGetValueArray() []ExpressionBase
-	transformGetValueType() ValueType
-	transformSetJson([]*exprJson)
-	transformSetLeft(left ExpressionBase)
-	transformSetOperator(operator compositeOperator)
-	transformSetProcess(format processingStage)
-	transformSetRight(right ExpressionBase)
-	transformSetService(service functionService)
-	transformSetValueArray(valueArray []ExpressionBase)
+	getDistinct() bool
+	getJson() []*exprJson
+	getLeft() ExpressionBase
+	getParamCount() int
+	getProcess() processingStage
+	getRight() ExpressionBase
+	getService() functionService
+	getValueArray() []ExpressionBase
+	getValueType() ValueType
+	setJson([]*exprJson)
+	setLeft(left ExpressionBase)
+	setOperator(operator compositeOperator)
+	setProcess(format processingStage)
+	setRight(right ExpressionBase)
+	setService(service functionService)
+	setValueArray(valueArray []ExpressionBase)
 }
 
 // Приватные структуры
@@ -356,19 +356,19 @@ func (expr *exprComparison[T]) render(baseRenderer *baseRenderer) error {
 	}
 	return nil
 }
-func (expr *exprComparison[T]) transformGetLeft() ExpressionBase {
+func (expr *exprComparison[T]) getLeft() ExpressionBase {
 	return expr.left
 }
-func (expr *exprComparison[T]) transformGetOperator() comparisonOperator {
+func (expr *exprComparison[T]) getOperator() comparisonOperator {
 	return expr.operator
 }
-func (expr *exprComparison[T]) transformGetRight() ExpressionBase {
+func (expr *exprComparison[T]) getRight() ExpressionBase {
 	return expr.right
 }
-func (expr *exprComparison[T]) transformGetValueEnd() ExpressionBase {
+func (expr *exprComparison[T]) getValueEnd() ExpressionBase {
 	return expr.valueEnd
 }
-func (expr *exprComparison[T]) transformGetValueStart() ExpressionBase {
+func (expr *exprComparison[T]) getValueStart() ExpressionBase {
 	return expr.valueStart
 }
 func (expr *exprComparison[T]) validate(baseValidator *baseValidator) error {
@@ -446,7 +446,7 @@ func (expr *exprField[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(expr.name)
 	return nil
 }
-func (expr *exprField[T]) transformGetName() string {
+func (expr *exprField[T]) getName() string {
 	return expr.name
 }
 func (expr *exprField[T]) validate(baseValidator *baseValidator) error {
@@ -655,16 +655,16 @@ func (expr *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRenderer) erro
 	}
 	return nil
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetDistinct() bool {
+func (expr *exprFunction[InLT, InRT, T]) getDistinct() bool {
 	return expr.distinct
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetJson() []*exprJson {
+func (expr *exprFunction[InLT, InRT, T]) getJson() []*exprJson {
 	return expr.json
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetLeft() ExpressionBase {
+func (expr *exprFunction[InLT, InRT, T]) getLeft() ExpressionBase {
 	return expr.left
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetParamCount() int {
+func (expr *exprFunction[InLT, InRT, T]) getParamCount() int {
 	var countJson int
 	var countLeft int
 	var countRight int
@@ -693,44 +693,44 @@ func (expr *exprFunction[InLT, InRT, T]) transformGetParamCount() int {
 	}
 	return countJson + countLeft + countRight + countValueArray + countValueType
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetProcess() processingStage {
+func (expr *exprFunction[InLT, InRT, T]) getProcess() processingStage {
 	return expr.process
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetRight() ExpressionBase {
+func (expr *exprFunction[InLT, InRT, T]) getRight() ExpressionBase {
 	return expr.right
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetService() functionService {
+func (expr *exprFunction[InLT, InRT, T]) getService() functionService {
 	return expr.service
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetValueArray() []ExpressionBase {
+func (expr *exprFunction[InLT, InRT, T]) getValueArray() []ExpressionBase {
 	return expr.valueArray
 }
-func (expr *exprFunction[InLT, InRT, T]) transformGetValueType() ValueType {
+func (expr *exprFunction[InLT, InRT, T]) getValueType() ValueType {
 	return expr.valueType
 }
-func (expr *exprFunction[InLT, InRT, T]) transformSetJson(json []*exprJson) {
+func (expr *exprFunction[InLT, InRT, T]) setJson(json []*exprJson) {
 	expr.json = json
 }
-func (expr *exprFunction[InLT, InRT, T]) transformSetLeft(left ExpressionBase) {
+func (expr *exprFunction[InLT, InRT, T]) setLeft(left ExpressionBase) {
 	if expression, ok := left.(ExpressionSafe[InLT]); ok {
 		expr.left = expression
 	}
 }
-func (expr *exprFunction[InLT, InRT, T]) transformSetOperator(operator compositeOperator) {
+func (expr *exprFunction[InLT, InRT, T]) setOperator(operator compositeOperator) {
 	expr.operator = operator
 }
-func (expr *exprFunction[InLT, InRT, T]) transformSetProcess(process processingStage) {
+func (expr *exprFunction[InLT, InRT, T]) setProcess(process processingStage) {
 	expr.process = process
 }
-func (expr *exprFunction[InLT, InRT, T]) transformSetRight(right ExpressionBase) {
+func (expr *exprFunction[InLT, InRT, T]) setRight(right ExpressionBase) {
 	if expression, ok := right.(ExpressionSafe[InRT]); ok {
 		expr.right = expression
 	}
 }
-func (expr *exprFunction[InLT, InRT, T]) transformSetService(service functionService) {
+func (expr *exprFunction[InLT, InRT, T]) setService(service functionService) {
 	expr.service = service
 }
-func (expr *exprFunction[InLT, InRT, T]) transformSetValueArray(valueArray []ExpressionBase) {
+func (expr *exprFunction[InLT, InRT, T]) setValueArray(valueArray []ExpressionBase) {
 	expr.valueArray = valueArray
 }
 func (expr *exprFunction[InLT, InRT, T]) validate(baseValidator *baseValidator) error {

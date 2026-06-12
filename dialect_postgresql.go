@@ -211,45 +211,45 @@ func postgresqlFunctionGroupConcat(baseTransformer *baseTransformer, expr transf
 	return nil
 }
 func postgresqlFunctionStdDev(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionStdDev)
+	expr.setService(uastPostgresqlFunctionStdDev)
 	return nil
 }
 func postgresqlFunctionVariance(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionVariance)
+	expr.setService(uastPostgresqlFunctionVariance)
 	return nil
 }
 func postgresqlFunctionCase(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionCase)
+	expr.setService(uastPostgresqlFunctionCase)
 	return nil
 }
 func postgresqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesPostgresql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
-	expr.transformSetRight(&exprComposite[string]{
+	expr.setRight(&exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastModifierAs),
 			serviceString(typeService),
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetService(uastPostgresqlFunctionCast)
+	expr.setService(uastPostgresqlFunctionCast)
 	return nil
 }
 func postgresqlFunctionDateFormat(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionDateFormat)
+	expr.setService(uastPostgresqlFunctionDateFormat)
 	return nil
 }
 func postgresqlFunctionCurDate(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetProcess(uastProcessEmpty)
-	expr.transformSetService(uastPostgresqlFunctionCurDate)
+	expr.setProcess(uastProcessEmpty)
+	expr.setService(uastPostgresqlFunctionCurDate)
 	return nil
 }
 func postgresqlFunctionCurTime(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetProcess(uastProcessEmpty)
-	expr.transformSetService(uastPostgresqlFunctionCurTime)
+	expr.setProcess(uastProcessEmpty)
+	expr.setService(uastPostgresqlFunctionCurTime)
 	return nil
 }
 func postgresqlFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -397,8 +397,8 @@ func postgresqlFunctionMonthName(baseTransformer *baseTransformer, expr transfor
 	return nil
 }
 func postgresqlFunctionNow(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetProcess(uastProcessEmpty)
-	expr.transformSetService(uastPostgresqlFunctionNow)
+	expr.setProcess(uastProcessEmpty)
+	expr.setService(uastPostgresqlFunctionNow)
 	return nil
 }
 func postgresqlFunctionQuarter(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -526,16 +526,16 @@ func postgresqlFunctionYear(baseTransformer *baseTransformer, expr transformFunc
 	return nil
 }
 func postgresqlFunctionJsonArrayAgg(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionJsonArrayAgg)
+	expr.setService(uastPostgresqlFunctionJsonArrayAgg)
 	return nil
 }
 func postgresqlFunctionJsonContains(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetOperator(uastCompositeSpaceAtGreaterSpace)
-	expr.transformSetService(uastPostgresqlFunctionJsonContains)
+	expr.setOperator(uastCompositeSpaceAtGreaterSpace)
+	expr.setService(uastPostgresqlFunctionJsonContains)
 	return nil
 }
 func postgresqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	path := string(uastCompositeBraceLeft)
 	for j, expression := range json[0].expressions {
 		if j > 0 {
@@ -551,14 +551,14 @@ func postgresqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transf
 		}
 	}
 	path += string(uastCompositeBraceRight)
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesPostgresql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
 	switch valueType {
 	case TypeJSON:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -568,10 +568,10 @@ func postgresqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transf
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceSignGreaterSpace)
-		expr.transformSetService(uastPostgresqlFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceSignGreaterSpace)
+		expr.setService(uastPostgresqlFunctionJsonExtract)
 	case TypeString:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -581,10 +581,10 @@ func postgresqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transf
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceSignDoubleGreaterSpace)
-		expr.transformSetService(uastPostgresqlFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceSignDoubleGreaterSpace)
+		expr.setService(uastPostgresqlFunctionJsonExtract)
 	default:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -596,21 +596,21 @@ func postgresqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transf
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceSignDoubleGreaterSpace)
-		expr.transformSetService(uastPostgresqlFunctionJsonExtractCast)
+		expr.setOperator(uastCompositeSpaceSignDoubleGreaterSpace)
+		expr.setService(uastPostgresqlFunctionJsonExtractCast)
 	}
 	return nil
 }
 func postgresqlFunctionJsonObject(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionJsonObject)
+	expr.setService(uastPostgresqlFunctionJsonObject)
 	return nil
 }
 func postgresqlFunctionJsonObjectAgg(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionJsonObjectAgg)
+	expr.setService(uastPostgresqlFunctionJsonObjectAgg)
 	return nil
 }
 func postgresqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeBraceLeft)
@@ -637,13 +637,13 @@ func postgresqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transfo
 			operator: uastCompositeSpaceMinusSpace,
 		}
 	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeSpaceMinusSpace)
-	expr.transformSetService(uastPostgresqlFunctionJsonRemove)
+	expr.setJson(groups)
+	expr.setOperator(uastCompositeSpaceMinusSpace)
+	expr.setService(uastPostgresqlFunctionJsonRemove)
 	return nil
 }
 func postgresqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeBraceLeft)
@@ -674,27 +674,27 @@ func postgresqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformF
 		for i := last - 1; i > 0; i-- {
 			groups[i].children = []*exprJson{groups[i-1]}
 		}
-		expr.transformSetJson([]*exprJson{groups[last-1]})
+		expr.setJson([]*exprJson{groups[last-1]})
 	} else {
-		expr.transformSetJson([]*exprJson{groups[0]})
+		expr.setJson([]*exprJson{groups[0]})
 	}
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetProcess(uastProcessJsonRecurcive)
-	expr.transformSetService(uastPostgresqlFunctionJsonSet)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setProcess(uastProcessJsonRecurcive)
+	expr.setService(uastPostgresqlFunctionJsonSet)
 	return nil
 }
 func postgresqlFunctionJsonType(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastPostgresqlFunctionJsonType)
+	expr.setService(uastPostgresqlFunctionJsonType)
 	return nil
 }
 func postgresqlFunctionRand(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetProcess(uastProcessEmpty)
-	expr.transformSetService(uastPostgresqlFunctionRand)
+	expr.setProcess(uastProcessEmpty)
+	expr.setService(uastPostgresqlFunctionRand)
 	return nil
 }
 func postgresqlFunctionATan2(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetProcess(uastProcessInvert)
-	expr.transformSetService(uastPostgresqlFunctionATan2)
+	expr.setProcess(uastProcessInvert)
+	expr.setService(uastPostgresqlFunctionATan2)
 	return nil
 }
 

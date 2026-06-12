@@ -223,43 +223,43 @@ func sqliteFunctionGroupConcat(baseTransformer *baseTransformer, expr transformF
 	return nil
 }
 func sqliteFunctionStdDev(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionStdDev)
+	expr.setService(uastSQLiteFunctionStdDev)
 	return nil
 }
 func sqliteFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesSQLite[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
-	expr.transformSetRight(&exprComposite[string]{
+	expr.setRight(&exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastModifierAs),
 			serviceString(typeService),
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetService(uastSQLiteFunctionCast)
+	expr.setService(uastSQLiteFunctionCast)
 	return nil
 }
 func sqliteFunctionDateFormat(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionDateFormat)
+	expr.setService(uastSQLiteFunctionDateFormat)
 	return nil
 }
 func sqliteFunctionCurDate(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionCurDate)
-	expr.transformSetLeft(&exprLiteral[string]{
+	expr.setService(uastSQLiteFunctionCurDate)
+	expr.setLeft(&exprLiteral[string]{
 		value: "now",
 	})
-	expr.transformSetProcess(uastProcessDirect)
+	expr.setProcess(uastProcessDirect)
 	return nil
 }
 func sqliteFunctionCurTime(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionCurTime)
-	expr.transformSetLeft(&exprLiteral[string]{
+	expr.setService(uastSQLiteFunctionCurTime)
+	expr.setLeft(&exprLiteral[string]{
 		value: "now",
 	})
-	expr.transformSetProcess(uastProcessDirect)
+	expr.setProcess(uastProcessDirect)
 	return nil
 }
 func sqliteFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -287,29 +287,29 @@ func sqliteFunctionDateSub(baseTransformer *baseTransformer, expr transformFunct
 	return nil
 }
 func sqliteFunctionDayName(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetProcess(uastProcessInvert)
-	expr.transformSetRight(&exprLiteral[string]{
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setProcess(uastProcessInvert)
+	expr.setRight(&exprLiteral[string]{
 		value: "%w",
 	})
-	expr.transformSetService(uastSQLiteFunctionDayName)
+	expr.setService(uastSQLiteFunctionDayName)
 	return nil
 }
 func sqliteFunctionNow(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionNow)
-	expr.transformSetLeft(&exprLiteral[string]{
+	expr.setService(uastSQLiteFunctionNow)
+	expr.setLeft(&exprLiteral[string]{
 		value: "now",
 	})
-	expr.transformSetProcess(uastProcessDirect)
+	expr.setProcess(uastProcessDirect)
 	return nil
 }
 func sqliteFunctionMonthName(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetProcess(uastProcessInvert)
-	expr.transformSetRight(&exprLiteral[string]{
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setProcess(uastProcessInvert)
+	expr.setRight(&exprLiteral[string]{
 		value: "%m",
 	})
-	expr.transformSetService(uastSQLiteFunctionMonthName)
+	expr.setService(uastSQLiteFunctionMonthName)
 	return nil
 }
 func sqliteFunctionTimeAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -337,11 +337,11 @@ func sqliteFunctionTimeSub(baseTransformer *baseTransformer, expr transformFunct
 	return nil
 }
 func sqliteFunctionJsonArrayAgg(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionJsonArrayAgg)
+	expr.setService(uastSQLiteFunctionJsonArrayAgg)
 	return nil
 }
 func sqliteFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	path := string(uastCompositeDollarPoint)
 	for j, expression := range json[0].expressions {
 		switch e := expression.(type) {
@@ -356,14 +356,14 @@ func sqliteFunctionJsonExtract(baseTransformer *baseTransformer, expr transformF
 			return ErrInvalidLiteral
 		}
 	}
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesSQLite[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
 	switch valueType {
 	case TypeJSON:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -373,10 +373,10 @@ func sqliteFunctionJsonExtract(baseTransformer *baseTransformer, expr transformF
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusGreaterSpace)
-		expr.transformSetService(uastSQLiteFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceMinusGreaterSpace)
+		expr.setService(uastSQLiteFunctionJsonExtract)
 	case TypeString:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -386,10 +386,10 @@ func sqliteFunctionJsonExtract(baseTransformer *baseTransformer, expr transformF
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastSQLiteFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
+		expr.setService(uastSQLiteFunctionJsonExtract)
 	default:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -401,21 +401,21 @@ func sqliteFunctionJsonExtract(baseTransformer *baseTransformer, expr transformF
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastSQLiteFunctionJsonExtractCast)
+		expr.setOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
+		expr.setService(uastSQLiteFunctionJsonExtractCast)
 	}
 	return nil
 }
 func sqliteFunctionJsonObject(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionJsonObject)
+	expr.setService(uastSQLiteFunctionJsonObject)
 	return nil
 }
 func sqliteFunctionJsonObjectAgg(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionJsonObjectAgg)
+	expr.setService(uastSQLiteFunctionJsonObjectAgg)
 	return nil
 }
 func sqliteFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeDollarPoint)
@@ -441,13 +441,13 @@ func sqliteFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFu
 			operator: uastCompositeCommaSpace,
 		}
 	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastSQLiteFunctionJsonRemove)
+	expr.setJson(groups)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setService(uastSQLiteFunctionJsonRemove)
 	return nil
 }
 func sqliteFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeDollarPoint)
@@ -474,14 +474,14 @@ func sqliteFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunct
 			values:   group.values,
 		}
 	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastSQLiteFunctionJsonSet)
+	expr.setJson(groups)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setService(uastSQLiteFunctionJsonSet)
 	return nil
 }
 func sqliteFunctionRand(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastSQLiteFunctionRand)
-	expr.transformSetProcess(uastProcessEmpty)
+	expr.setService(uastSQLiteFunctionRand)
+	expr.setProcess(uastProcessEmpty)
 	return nil
 }
 

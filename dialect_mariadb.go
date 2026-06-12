@@ -207,23 +207,23 @@ func mariadbFunctionGroupConcat(baseTransformer *baseTransformer, expr transform
 	return nil
 }
 func mariadbFunctionCase(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMariadbFunctionCase)
+	expr.setService(uastMariadbFunctionCase)
 	return nil
 }
 func mariadbFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesMariadb[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
-	expr.transformSetRight(&exprComposite[string]{
+	expr.setRight(&exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastModifierAs),
 			serviceString(typeService),
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetService(uastMariadbFunctionCast)
+	expr.setService(uastMariadbFunctionCast)
 	return nil
 }
 func mariadbFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -291,7 +291,7 @@ func mariadbFunctionTimeSub(baseTransformer *baseTransformer, expr transformFunc
 	return nil
 }
 func mariadbFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	path := string(uastCompositeDollarPoint)
 	for j, expression := range json[0].expressions {
 		switch e := expression.(type) {
@@ -306,14 +306,14 @@ func mariadbFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 			return ErrInvalidLiteral
 		}
 	}
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesMariadb[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
 	switch valueType {
 	case TypeJSON:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -323,10 +323,10 @@ func mariadbFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusGreaterSpace)
-		expr.transformSetService(uastMariadbFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceMinusGreaterSpace)
+		expr.setService(uastMariadbFunctionJsonExtract)
 	case TypeString:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -336,10 +336,10 @@ func mariadbFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMariadbFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
+		expr.setService(uastMariadbFunctionJsonExtract)
 	default:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -351,13 +351,13 @@ func mariadbFunctionJsonExtract(baseTransformer *baseTransformer, expr transform
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMariadbFunctionJsonExtractCast)
+		expr.setOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
+		expr.setService(uastMariadbFunctionJsonExtractCast)
 	}
 	return nil
 }
 func mariadbFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeDollarPoint)
@@ -383,13 +383,13 @@ func mariadbFunctionJsonRemove(baseTransformer *baseTransformer, expr transformF
 			operator: uastCompositeCommaSpace,
 		}
 	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMariadbFunctionJsonRemove)
+	expr.setJson(groups)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setService(uastMariadbFunctionJsonRemove)
 	return nil
 }
 func mariadbFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeDollarPoint)
@@ -416,17 +416,17 @@ func mariadbFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunc
 			values:   group.values,
 		}
 	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMariadbFunctionJsonSet)
+	expr.setJson(groups)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setService(uastMariadbFunctionJsonSet)
 	return nil
 }
 func mariadbFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMariadbFunctionCeil)
+	expr.setService(uastMariadbFunctionCeil)
 	return nil
 }
 func mariadbFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMariadbFunctionTrunc)
+	expr.setService(uastMariadbFunctionTrunc)
 	return nil
 }
 

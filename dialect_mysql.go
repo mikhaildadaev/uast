@@ -207,23 +207,23 @@ func mysqlFunctionGroupConcat(baseTransformer *baseTransformer, expr transformFu
 	return nil
 }
 func mysqlFunctionCase(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMysqlFunctionCase)
+	expr.setService(uastMysqlFunctionCase)
 	return nil
 }
 func mysqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
-	expr.transformSetRight(&exprComposite[string]{
+	expr.setRight(&exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastModifierAs),
 			serviceString(typeService),
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetService(uastMysqlFunctionCast)
+	expr.setService(uastMysqlFunctionCast)
 	return nil
 }
 func mysqlFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -291,7 +291,7 @@ func mysqlFunctionTimeSub(baseTransformer *baseTransformer, expr transformFuncti
 	return nil
 }
 func mysqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	path := string(uastCompositeDollarPoint)
 	for j, expression := range json[0].expressions {
 		switch e := expression.(type) {
@@ -306,14 +306,14 @@ func mysqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 			return ErrInvalidLiteral
 		}
 	}
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
 	switch valueType {
 	case TypeJSON:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -323,10 +323,10 @@ func mysqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusGreaterSpace)
-		expr.transformSetService(uastMysqlFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceMinusGreaterSpace)
+		expr.setService(uastMysqlFunctionJsonExtract)
 	case TypeString:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -336,10 +336,10 @@ func mysqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMysqlFunctionJsonExtract)
+		expr.setOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
+		expr.setService(uastMysqlFunctionJsonExtract)
 	default:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -351,13 +351,13 @@ func mysqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
-		expr.transformSetService(uastMysqlFunctionJsonExtractCast)
+		expr.setOperator(uastCompositeSpaceMinusDoubleGreaterSpace)
+		expr.setService(uastMysqlFunctionJsonExtractCast)
 	}
 	return nil
 }
 func mysqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeDollarPoint)
@@ -383,13 +383,13 @@ func mysqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFun
 			operator: uastCompositeCommaSpace,
 		}
 	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMysqlFunctionJsonRemove)
+	expr.setJson(groups)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setService(uastMysqlFunctionJsonRemove)
 	return nil
 }
 func mysqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	groups := make([]*exprJson, len(json))
 	for i, group := range json {
 		path := string(uastCompositeDollarPoint)
@@ -416,17 +416,17 @@ func mysqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFuncti
 			values:   group.values,
 		}
 	}
-	expr.transformSetJson(groups)
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetService(uastMysqlFunctionJsonSet)
+	expr.setJson(groups)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setService(uastMysqlFunctionJsonSet)
 	return nil
 }
 func mysqlFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMysqlFunctionCeil)
+	expr.setService(uastMysqlFunctionCeil)
 	return nil
 }
 func mysqlFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMysqlFunctionTrunc)
+	expr.setService(uastMysqlFunctionTrunc)
 	return nil
 }
 

@@ -236,39 +236,39 @@ func mssqlFunctionGroupConcat(baseTransformer *baseTransformer, expr transformFu
 	return nil
 }
 func mssqlFunctionStdDev(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMssqlFunctionStdDev)
+	expr.setService(uastMssqlFunctionStdDev)
 	return nil
 }
 func mssqlFunctionVariance(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMssqlFunctionVariance)
+	expr.setService(uastMssqlFunctionVariance)
 	return nil
 }
 func mssqlFunctionCase(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMssqlFunctionCase)
+	expr.setService(uastMssqlFunctionCase)
 	return nil
 }
 func mssqlFunctionCast(baseTransformer *baseTransformer, expr transformFunction) error {
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesMssql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
-	expr.transformSetRight(&exprComposite[string]{
+	expr.setRight(&exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastModifierAs),
 			serviceString(typeService),
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetService(uastMssqlFunctionCast)
+	expr.setService(uastMssqlFunctionCast)
 	return nil
 }
 func mssqlFunctionDateFormat(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMssqlFunctionDateFormat)
+	expr.setService(uastMssqlFunctionDateFormat)
 	return nil
 }
 func mssqlFunctionCurDate(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetLeft(&exprComposite[string]{
+	expr.setLeft(&exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastMssqlFunctionCurDate),
 			serviceString(uastModifierAs),
@@ -276,12 +276,12 @@ func mssqlFunctionCurDate(baseTransformer *baseTransformer, expr transformFuncti
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetProcess(uastProcessDirect)
-	expr.transformSetService(uastMssqlFunctionCurDateCast)
+	expr.setProcess(uastProcessDirect)
+	expr.setService(uastMssqlFunctionCurDateCast)
 	return nil
 }
 func mssqlFunctionCurTime(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetLeft(&exprComposite[string]{
+	expr.setLeft(&exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastMssqlFunctionCurTime),
 			serviceString(uastModifierAs),
@@ -289,8 +289,8 @@ func mssqlFunctionCurTime(baseTransformer *baseTransformer, expr transformFuncti
 		},
 		operator: uastCompositeSingleSpace,
 	})
-	expr.transformSetProcess(uastProcessDirect)
-	expr.transformSetService(uastMssqlFunctionCurTimeCast)
+	expr.setProcess(uastProcessDirect)
+	expr.setService(uastMssqlFunctionCurTimeCast)
 	return nil
 }
 func mssqlFunctionDateAdd(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -378,7 +378,7 @@ func mssqlFunctionMonthName(baseTransformer *baseTransformer, expr transformFunc
 	return nil
 }
 func mssqlFunctionNow(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMssqlFunctionNow)
+	expr.setService(uastMssqlFunctionNow)
 	return nil
 }
 func mssqlFunctionQuarter(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -455,7 +455,7 @@ func mssqlFunctionWeek(baseTransformer *baseTransformer, expr transformFunction)
 	return nil
 }
 func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	path := string(uastCompositeDollarPoint)
 	for j, expression := range json[0].expressions {
 		switch e := expression.(type) {
@@ -470,14 +470,14 @@ func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 			return ErrInvalidLiteral
 		}
 	}
-	valueType := expr.transformGetValueType()
+	valueType := expr.getValueType()
 	typeService, exists := listTypesMysql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}
 	switch valueType {
 	case TypeJSON:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -487,10 +487,10 @@ func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeCommaSpace)
-		expr.transformSetService(uastMssqlFunctionJsonExtractQuery)
+		expr.setOperator(uastCompositeCommaSpace)
+		expr.setService(uastMssqlFunctionJsonExtractQuery)
 	case TypeString:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -500,10 +500,10 @@ func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeCommaSpace)
-		expr.transformSetService(uastMssqlFunctionJsonExtractValue)
+		expr.setOperator(uastCompositeCommaSpace)
+		expr.setService(uastMssqlFunctionJsonExtractValue)
 	default:
-		expr.transformSetJson([]*exprJson{
+		expr.setJson([]*exprJson{
 			{
 				expressions: []ExpressionBase{
 					&exprLiteral[string]{
@@ -515,13 +515,13 @@ func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 				operator: uastCompositeSingleSpace,
 			},
 		})
-		expr.transformSetOperator(uastCompositeCommaSpace)
-		expr.transformSetService(uastMssqlFunctionJsonExtractValue)
+		expr.setOperator(uastCompositeCommaSpace)
+		expr.setService(uastMssqlFunctionJsonExtractValue)
 	}
 	return nil
 }
 func mssqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	last := len(json)
 	groups := make([]*exprJson, last)
 	for i, group := range json {
@@ -553,17 +553,17 @@ func mssqlFunctionJsonRemove(baseTransformer *baseTransformer, expr transformFun
 		for i := last - 1; i > 0; i-- {
 			groups[i].children = []*exprJson{groups[i-1]}
 		}
-		expr.transformSetJson([]*exprJson{groups[last-1]})
+		expr.setJson([]*exprJson{groups[last-1]})
 	} else {
-		expr.transformSetJson([]*exprJson{groups[0]})
+		expr.setJson([]*exprJson{groups[0]})
 	}
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetProcess(uastProcessJsonRecurcive)
-	expr.transformSetService(uastMssqlFunctionJsonRemove)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setProcess(uastProcessJsonRecurcive)
+	expr.setService(uastMssqlFunctionJsonRemove)
 	return nil
 }
 func mssqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFunction) error {
-	json := expr.transformGetJson()
+	json := expr.getJson()
 	last := len(json)
 	groups := make([]*exprJson, last)
 	for i, group := range json {
@@ -593,17 +593,17 @@ func mssqlFunctionJsonSet(baseTransformer *baseTransformer, expr transformFuncti
 		for i := last - 1; i > 0; i-- {
 			groups[i].children = []*exprJson{groups[i-1]}
 		}
-		expr.transformSetJson([]*exprJson{groups[last-1]})
+		expr.setJson([]*exprJson{groups[last-1]})
 	} else {
-		expr.transformSetJson([]*exprJson{groups[0]})
+		expr.setJson([]*exprJson{groups[0]})
 	}
-	expr.transformSetOperator(uastCompositeCommaSpace)
-	expr.transformSetProcess(uastProcessJsonRecurcive)
-	expr.transformSetService(uastMssqlFunctionJsonSet)
+	expr.setOperator(uastCompositeCommaSpace)
+	expr.setProcess(uastProcessJsonRecurcive)
+	expr.setService(uastMssqlFunctionJsonSet)
 	return nil
 }
 func mssqlFunctionCeil(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMssqlFunctionCeil)
+	expr.setService(uastMssqlFunctionCeil)
 	return nil
 }
 func mssqlFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction) error {
@@ -619,16 +619,16 @@ func mssqlFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction
 		},
 		operator: uastCompositeCommaSpace,
 	}
-	expr.transformSetService(uastMssqlFunctionTrunc)
+	expr.setService(uastMssqlFunctionTrunc)
 	return nil
 }
 func mssqlFunctionLength(baseTransformer *baseTransformer, expr transformFunction) error {
-	expr.transformSetService(uastMssqlFunctionLength)
+	expr.setService(uastMssqlFunctionLength)
 	return nil
 }
 func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunction) error {
-	if composite, ok := expr.transformGetLeft().(*exprComposite[string]); ok {
-		expr.transformSetLeft(&exprComposite[string]{
+	if composite, ok := expr.getLeft().(*exprComposite[string]); ok {
+		expr.setLeft(&exprComposite[string]{
 			expressions: []ExpressionSafe[string]{
 				composite.expressions[0],
 				composite.expressions[2],
@@ -636,7 +636,7 @@ func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunct
 			operator: uastCompositeCommaSpace,
 		})
 	}
-	expr.transformSetService(uastMssqlFunctionPosition)
+	expr.setService(uastMssqlFunctionPosition)
 	return nil
 }
 

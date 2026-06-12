@@ -491,6 +491,9 @@ func (strateger *sqliteStrateger) renderAlter(baseRenderer *baseRenderer, stmtAl
 	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderEntity(stmtAlter.entity, false, false, stmtAlter.ifExists, stmtAlter.ifNotExists); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *sqliteStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
@@ -739,6 +742,9 @@ func (strateger *sqliteStrateger) transformUpdate(baseTransformer *baseTransform
 }
 func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
 	// !!!Внимание, находится в стадии разработки
+	if err := baseValidator.validateEntity(stmtAlter.entity); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *sqliteStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {

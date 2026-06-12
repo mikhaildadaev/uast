@@ -704,6 +704,9 @@ func (strateger *postgresqlStrateger) renderAlter(baseRenderer *baseRenderer, st
 	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderEntity(stmtAlter.entity, false, false, stmtAlter.ifExists, stmtAlter.ifNotExists); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
@@ -954,6 +957,9 @@ func (strateger *postgresqlStrateger) transformUpdate(baseTransformer *baseTrans
 }
 func (strateger *postgresqlStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
 	// !!!Внимание, находится в стадии разработки
+	if err := baseValidator.validateEntity(stmtAlter.entity); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {

@@ -436,6 +436,9 @@ func (strateger *mysqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlt
 	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
 		return err
 	}
+	if err := baseRenderer.renderEntity(stmtAlter.entity, false, false, stmtAlter.ifExists, stmtAlter.ifNotExists); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
@@ -677,6 +680,9 @@ func (strateger *mysqlStrateger) transformUpdate(baseTransformer *baseTransforme
 }
 func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
 	// !!!Внимание, находится в стадии разработки
+	if err := baseValidator.validateEntity(stmtAlter.entity); err != nil {
+		return err
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {

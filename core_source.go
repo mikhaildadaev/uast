@@ -119,9 +119,6 @@ type markSourceable interface {
 type registerStatement interface {
 	register(statement)
 }
-type transformColumn interface {
-	SourceBase
-}
 
 // Приватные переменные
 var queryCounter atomic.Int64

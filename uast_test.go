@@ -17,11 +17,17 @@ var Data = struct {
 		String *ColumnSource[string]
 		Time   *ColumnSource[time.Time]
 	}
+	Index struct {
+		ID *IndexSource
+	}
 	Table *TableSource
 }{
 	Table: NewTable("data", "d"),
 }
 var Test = struct {
+	Check struct {
+		Number *CheckConstraint
+	}
 	Column struct {
 		CreateAt *ColumnSource[time.Time]
 		DataID   *ColumnSource[int64]
@@ -35,7 +41,22 @@ var Test = struct {
 		X        *ColumnSource[int]
 		Y        *ColumnSource[int]
 	}
-	Table *TableSource
+	Foreign struct {
+		Composite *ForeignConstraint
+	}
+	Index struct {
+		ID *IndexSource
+	}
+	Primary struct {
+		ID *PrimaryConstraint
+	}
+	Table  *TableSource
+	Unique struct {
+		Name *UniqueConstraint
+	}
+	View struct {
+		General *ViewSource
+	}
 }{
 	Table: NewTable("test", "t"),
 }
@@ -1900,16 +1921,13 @@ func Test_SQL_Alter(t *testing.T) {
 			stmtAlter := NewAlter(Test.Table).
 				AddColumns(Test.Column.String, Test.Column.Date).
 				AddConstraints(
-					NewPrimaryKey("pk_test", Test.Column.ID),
-					NewUnique("uk_test", Test.Column.Name),
-					NewForeignKey("fk_test_users", Data.Table, Cascade(), Restrict(),
-						Relation(Test.Column.DataID, Data.Column.ID),
-					),
-					NewCheck("ck_test", Greater(Test.Column.Number.Expr(), Value(0))),
+					Test.Check.Number,
+					Test.Foreign.Composite,
+					Test.Primary.ID,
+					Test.Unique.Name,
 				).
 				DropColumns("old_column1", "old_column2")
-				//DropConstraints("old_constraint1", "old_constraint2").
-				//Rename("new_test")
+				//DropConstraints("old_constraint1", "old_constraint2")
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2001,7 +2019,7 @@ func Test_SQL_Create(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtCreate := NewCreate(NewIndex("idx_test", Test.Table)).
+			stmtCreate := NewCreate(Test.Index.ID).
 				IfNotExists().
 				IsUnique().
 				On(Test.Table).
@@ -2012,15 +2030,15 @@ func Test_SQL_Create(t *testing.T) {
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX IF NOT EXISTS `idx_test` ON `test` (`string`, `number`)", "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX IF NOT EXISTS `id` ON `test` (`string`, `number`)", "CREATE INDEX")
 			case DialectMsSQL:
-				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX [idx_test] ON [test] ([string], [number])", "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX [id] ON [test] ([string], [number])", "CREATE INDEX")
 			case DialectMySQL:
-				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX `idx_test` ON `test` (`string`, `number`)", "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, "CREATE UNIQUE INDEX `id` ON `test` (`string`, `number`)", "CREATE INDEX")
 			case DialectPostgreSQL:
-				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ("string", "number")`, "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "id" ON "test" ("string", "number")`, "CREATE INDEX")
 			case DialectSQLite:
-				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "idx_test" ON "test" ("string", "number")`, "CREATE INDEX")
+				assertContains(t, sqlCreateQuery, `CREATE UNIQUE INDEX IF NOT EXISTS "id" ON "test" ("string", "number")`, "CREATE INDEX")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})
@@ -2053,13 +2071,10 @@ func Test_SQL_Create(t *testing.T) {
 			defer sql.Close()
 			stmtCreate := NewCreate(Test.Table).
 				Constraints(
-					NewCheck("ck_id", Greater(Test.Column.ID.Expr(), Value[int64](0))),
-					NewForeignKey("fk_test_data", Data.Table, Cascade(), Restrict(),
-						Relation(Test.Column.DataID, Data.Column.ID),
-						Relation(Test.Column.Name, Data.Column.String),
-					),
-					NewPrimaryKey("pk_orders", Test.Column.ID),
-					NewUnique("uk_orders", Test.Column.Name),
+					Test.Check.Number,
+					Test.Foreign.Composite,
+					Test.Primary.ID,
+					Test.Unique.Name,
 				).
 				IfNotExists().
 				Columns(
@@ -2069,15 +2084,15 @@ func Test_SQL_Create(t *testing.T) {
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlCreateQuery, "CREATE TABLE IF NOT EXISTS `test` (`id` SIGNED AUTO_INCREMENT, `name` VARCHAR NOT NULL, CONSTRAINT `ck_id` CHECK(`t`.`id` > ?), CONSTRAINT `fk_test_data` FOREIGN KEY(`data_id`, `name`) REFERENCES `data`(`id`, `string`) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT `pk_orders` PRIMARY KEY(`id`), CONSTRAINT `uk_orders` UNIQUE(`name`))", "CREATE TABLE")
+				assertContains(t, sqlCreateQuery, "CREATE TABLE IF NOT EXISTS `test` (`id` SIGNED AUTO_INCREMENT, `name` VARCHAR NOT NULL, CONSTRAINT `ck_number` CHECK(`t`.`number` > ?), CONSTRAINT `fk_composite` FOREIGN KEY(`data_id`, `name`) REFERENCES `data`(`id`, `string`) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT `pk_id` PRIMARY KEY(`id`), CONSTRAINT `un_name` UNIQUE(`name`))", "CREATE TABLE")
 			case DialectMsSQL:
-				assertContains(t, sqlCreateQuery, "CREATE TABLE [test] ([id] BIGINT IDENTITY(1,1), [name] NVARCHAR NOT NULL, CONSTRAINT [ck_id] CHECK([t].[id] > @p1), CONSTRAINT [fk_test_data] FOREIGN KEY([data_id], [name]) REFERENCES [data]([id], [string]) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT [pk_orders] PRIMARY KEY([id]), CONSTRAINT [uk_orders] UNIQUE([name]))", "CREATE TABLE")
+				assertContains(t, sqlCreateQuery, "CREATE TABLE [test] ([id] BIGINT IDENTITY(1,1), [name] NVARCHAR NOT NULL, CONSTRAINT [ck_number] CHECK([t].[number] > @p1), CONSTRAINT [fk_composite] FOREIGN KEY([data_id], [name]) REFERENCES [data]([id], [string]) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT [pk_id] PRIMARY KEY([id]), CONSTRAINT [un_name] UNIQUE([name]))", "CREATE TABLE")
 			case DialectMySQL:
-				assertContains(t, sqlCreateQuery, "CREATE TABLE IF NOT EXISTS `test` (`id` SIGNED AUTO_INCREMENT, `name` VARCHAR NOT NULL, CONSTRAINT `ck_id` CHECK(`t`.`id` > ?), CONSTRAINT `fk_test_data` FOREIGN KEY(`data_id`, `name`) REFERENCES `data`(`id`, `string`) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT `pk_orders` PRIMARY KEY(`id`), CONSTRAINT `uk_orders` UNIQUE(`name`))", "CREATE TABLE")
+				assertContains(t, sqlCreateQuery, "CREATE TABLE IF NOT EXISTS `test` (`id` SIGNED AUTO_INCREMENT, `name` VARCHAR NOT NULL, CONSTRAINT `ck_number` CHECK(`t`.`number` > ?), CONSTRAINT `fk_composite` FOREIGN KEY(`data_id`, `name`) REFERENCES `data`(`id`, `string`) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT `pk_id` PRIMARY KEY(`id`), CONSTRAINT `un_name` UNIQUE(`name`))", "CREATE TABLE")
 			case DialectPostgreSQL:
-				assertContains(t, sqlCreateQuery, `CREATE TABLE IF NOT EXISTS "test" ("id" BIGINT GENERATED BY DEFAULT AS IDENTITY, "name" VARCHAR NOT NULL, CONSTRAINT "ck_id" CHECK("t"."id" > $1), CONSTRAINT "fk_test_data" FOREIGN KEY("data_id", "name") REFERENCES "data"("id", "string") ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT "pk_orders" PRIMARY KEY("id"), CONSTRAINT "uk_orders" UNIQUE("name"))`, "CREATE TABLE")
+				assertContains(t, sqlCreateQuery, `CREATE TABLE IF NOT EXISTS "test" ("id" BIGINT GENERATED BY DEFAULT AS IDENTITY, "name" VARCHAR NOT NULL, CONSTRAINT "ck_number" CHECK("t"."number" > $1), CONSTRAINT "fk_composite" FOREIGN KEY("data_id", "name") REFERENCES "data"("id", "string") ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT "pk_id" PRIMARY KEY("id"), CONSTRAINT "un_name" UNIQUE("name"))`, "CREATE TABLE")
 			case DialectSQLite:
-				assertContains(t, sqlCreateQuery, `CREATE TABLE IF NOT EXISTS "test" ("id" INTEGER AUTOINCREMENT, "name" TEXT NOT NULL, CONSTRAINT "ck_id" CHECK("t"."id" > ?), CONSTRAINT "fk_test_data" FOREIGN KEY("data_id", "name") REFERENCES "data"("id", "string") ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT "pk_orders" PRIMARY KEY("id"), CONSTRAINT "uk_orders" UNIQUE("name"))`, "CREATE TABLE")
+				assertContains(t, sqlCreateQuery, `CREATE TABLE IF NOT EXISTS "test" ("id" INTEGER AUTOINCREMENT, "name" TEXT NOT NULL, CONSTRAINT "ck_number" CHECK("t"."number" > ?), CONSTRAINT "fk_composite" FOREIGN KEY("data_id", "name") REFERENCES "data"("id", "string") ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT "pk_id" PRIMARY KEY("id"), CONSTRAINT "un_name" UNIQUE("name"))`, "CREATE TABLE")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})
@@ -2086,7 +2101,7 @@ func Test_SQL_Create(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtCreate := NewCreate(NewView("test_view", "tv", Test.Table)).
+			stmtCreate := NewCreate(Test.View.General).
 				IsReplace().
 				Source(NewSelect(NewTable("test", "t")).
 					Fields(Test.Column.ID.Expr(), Test.Column.String.Expr()),
@@ -2094,15 +2109,15 @@ func Test_SQL_Create(t *testing.T) {
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `general` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
 			case DialectMsSQL:
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW [test_view] AS SELECT [t].[id], [t].[string] FROM [test] AS [t]", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW [general] AS SELECT [t].[id], [t].[string] FROM [test] AS [t]", "CREATE VIEW")
 			case DialectMySQL:
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `test_view` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `general` AS SELECT `t`.`id`, `t`.`string` FROM `test` AS `t`", "CREATE VIEW")
 			case DialectPostgreSQL:
-				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "general" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
 			case DialectSQLite:
-				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "test_view" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "general" AS SELECT "t"."id", "t"."string" FROM "test" AS "t"`, "CREATE VIEW")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})
@@ -3068,14 +3083,13 @@ func getNextDialect(dialect *SupportDialect) *SupportDialect {
 	return DialectPostgreSQL
 }
 func init() {
-	// Data
+	// Column
 	Data.Column.Date = NewColumn[time.Time]("date", Data.Table, TypeDate)
 	Data.Column.ID = NewColumn[int64]("id", Data.Table, TypeBigInt)
 	Data.Column.Json = NewColumn[string]("json", Data.Table, TypeJSON)
 	Data.Column.Number = NewColumn[int]("number", Data.Table, TypeInt)
 	Data.Column.String = NewColumn[string]("string", Data.Table, TypeVarChar)
 	Data.Column.Time = NewColumn[time.Time]("time", Data.Table, TypeTime)
-	// Test
 	Test.Column.CreateAt = NewColumn[time.Time]("createat", Test.Table, TypeTimestamp)
 	Test.Column.DataID = NewColumn[int64]("data_id", Test.Table, TypeBigInt)
 	Test.Column.Date = NewColumn[time.Time]("date", Test.Table, TypeDate)
@@ -3087,7 +3101,18 @@ func init() {
 	Test.Column.UpdateAt = NewColumn[time.Time]("updateat", Test.Table, TypeTimestamp)
 	Test.Column.X = NewColumn[int]("x", Test.Table, TypeInt)
 	Test.Column.Y = NewColumn[int]("y", Test.Table, TypeInt)
+	// Constraint
+	Test.Check.Number = NewCheck("ck_number", Greater(Test.Column.Number.Expr(), Value(0)))
+	Test.Foreign.Composite = NewForeignKey("fk_composite", Data.Table, Cascade(), Restrict(), Relation(Test.Column.DataID, Data.Column.ID), Relation(Test.Column.Name, Data.Column.String))
+	Test.Primary.ID = NewPrimaryKey("pk_id", Test.Column.ID)
+	Test.Unique.Name = NewUnique("un_name", Test.Column.Name)
+	// Index
+	Data.Index.ID = NewIndex("id", Data.Table)
+	Test.Index.ID = NewIndex("id", Test.Table)
+	// View
+	Test.View.General = NewView("general", "tg", Test.Table)
 }
+
 func testAllDialects(t *testing.T, testFunc func(t *testing.T, supportDialect *SupportDialect)) {
 	for _, supportDialect := range listSupportDialects {
 		currentDialect := supportDialect

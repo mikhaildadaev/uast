@@ -20,9 +20,11 @@ var Data = struct {
 	Index struct {
 		ID *IndexSource
 	}
-	Table *TableSource
+	Schema *SchemaSource
+	Table  *TableSource
 }{
-	Table: NewTable("data", "d"),
+	Schema: NewSchema("data"),
+	Table:  NewTable("data", "d"),
 }
 var Test = struct {
 	Check struct {
@@ -50,6 +52,7 @@ var Test = struct {
 	Primary struct {
 		ID *PrimaryConstraint
 	}
+	Schema *SchemaSource
 	Table  *TableSource
 	Unique struct {
 		Name *UniqueConstraint
@@ -58,7 +61,8 @@ var Test = struct {
 		General *ViewSource
 	}
 }{
-	Table: NewTable("test", "t"),
+	Schema: NewSchema("test"),
+	Table:  NewTable("test", "t"),
 }
 
 // Публичные функции
@@ -2047,18 +2051,18 @@ func Test_SQL_Create(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtCreate := NewCreate(NewSchema("public")).
+			stmtCreate := NewCreate(Test.Schema).
 				IfNotExists()
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS `public`", "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS `test`", "CREATE SCHEMA")
 			case DialectMsSQL:
-				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS [public]", "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS [test]", "CREATE SCHEMA")
 			case DialectMySQL:
-				assertContains(t, sqlCreateQuery, "CREATE SCHEMA `public`", "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA `test`", "CREATE SCHEMA")
 			case DialectPostgreSQL:
-				assertContains(t, sqlCreateQuery, `CREATE SCHEMA IF NOT EXISTS "public"`, "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, `CREATE SCHEMA IF NOT EXISTS "test"`, "CREATE SCHEMA")
 			case DialectSQLite:
 				// Not supported
 			}
@@ -2103,7 +2107,7 @@ func Test_SQL_Create(t *testing.T) {
 			defer sql.Close()
 			stmtCreate := NewCreate(Test.View.General).
 				IsReplace().
-				Source(NewSelect(NewTable("test", "t")).
+				Source(NewSelect(Test.Table).
 					Fields(Test.Column.ID.Expr(), Test.Column.String.Expr()),
 				)
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
@@ -2267,19 +2271,19 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(NewIndex("test", Test.Table)).IfExists()
+			stmtDrop := NewDrop(Test.Index.ID).IfExists()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP INDEX IF EXISTS `test`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP INDEX IF EXISTS `id`", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP INDEX [test]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP INDEX [id]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP INDEX `test`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP INDEX `id`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP INDEX IF EXISTS "test"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP INDEX IF EXISTS "id"`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP INDEX IF EXISTS "test"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP INDEX IF EXISTS "id"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
@@ -2290,7 +2294,7 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(NewSchema("test")).IfExists()
+			stmtDrop := NewDrop(Test.Schema).IfExists()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2336,19 +2340,19 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(NewView("test", "t", Test.Table)).IfExists()
+			stmtDrop := NewDrop(Test.View.General).IfExists()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `general`", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS [test]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS [general]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `test`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `general`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "general"`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "test"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "general"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})

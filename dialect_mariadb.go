@@ -496,7 +496,7 @@ func (strateger *mariadbStrateger) renderDelete(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderCommand(stmtDelete.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderTargetAlias(stmtDelete.from); err != nil {
+	if err := baseRenderer.renderTarget(stmtDelete.from); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFrom(stmtDelete.from); err != nil {

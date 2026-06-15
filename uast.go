@@ -475,7 +475,7 @@ type config struct {
 	symbolQuoteLeft        string
 	symbolQuoteRight       string
 	supportAttrCreateOrder []modifierService
-	supportCascade         bool
+	supportCascade         map[modifierService]bool
 	supportComment         map[modifierService]bool
 	supportIfExists        map[modifierService]bool
 	supportIfNotExists     map[modifierService]bool

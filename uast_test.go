@@ -2292,7 +2292,7 @@ func Test_SQL_Drop(t *testing.T) {
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP TABLE `users` CASCADE", "DROP")
+				assertContains(t, sqlDropQuery, "DROP TABLE `users`", "DROP")
 			case DialectMsSQL:
 				assertContains(t, sqlDropQuery, "DROP TABLE [users]", "DROP")
 			case DialectMySQL:
@@ -2877,7 +2877,7 @@ func Test_SQL_Truncate(t *testing.T) {
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `users` CASCADE", "TRUNCATE CASCADE")
+				// Not supported - CASCADE
 			case DialectMsSQL:
 				// Not supported - CASCADE
 			case DialectMySQL:

@@ -242,8 +242,9 @@ func (renderer *baseRenderer) renderAs() error {
 	renderer.renderService(uastModifierAs)
 	return nil
 }
-func (renderer *baseRenderer) renderCascade(cascade bool) error {
-	if cascade && renderer.config.supportCascade {
+func (renderer *baseRenderer) renderCascade(entity SourceBase, cascade bool) error {
+	format := entity.getFormat()
+	if cascade && renderer.config.supportCascade[format] {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierCascade)
 	}

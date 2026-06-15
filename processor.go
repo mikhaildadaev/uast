@@ -18,7 +18,7 @@ type elementRenderer interface {
 }
 type componentRenderer interface {
 	renderAs() error
-	renderCascade(cascade bool) error
+	renderCascade(entity SourceBase, cascade bool) error
 	renderCommand(command managementService) error
 	renderColumns(columns []markSourceable, constraints []ConstraintBase) error
 	renderDistinct(distinct bool) error

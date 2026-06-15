@@ -35,7 +35,13 @@ var DialectMySQL = &SupportDialect{
 			uastModifierAutoIncrement,
 			uastModifierDefault,
 		},
-		supportCascade: false,
+		supportCascade: map[modifierService]bool{
+			uastModifierColumn: false,
+			uastModifierIndex:  false,
+			uastModifierSchema: false,
+			uastModifierTable:  false,
+			uastModifierView:   false,
+		},
 		supportComment: map[modifierService]bool{
 			uastModifierColumn: true,
 			uastModifierIndex:  false,
@@ -514,7 +520,7 @@ func (strateger *mysqlStrateger) renderDrop(baseRenderer *baseRenderer, stmtDrop
 	if err := baseRenderer.renderEntity(stmtDrop.entity, false, false, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderCascade(stmtDrop.isCascade); err != nil {
+	if err := baseRenderer.renderCascade(stmtDrop.entity, stmtDrop.isCascade); err != nil {
 		return err
 	}
 	return nil
@@ -589,7 +595,7 @@ func (strateger *mysqlStrateger) renderTruncate(baseRenderer *baseRenderer, stmt
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderCascade(stmtTruncate.isCascade); err != nil {
+	if err := baseRenderer.renderCascade(stmtTruncate.table, stmtTruncate.isCascade); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderRestartIdentity(stmtTruncate.isRestartIdentity); err != nil {

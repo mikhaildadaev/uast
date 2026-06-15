@@ -35,7 +35,13 @@ var DialectMariaDB = &SupportDialect{
 			uastModifierAutoIncrement,
 			uastModifierDefault,
 		},
-		supportCascade: true,
+		supportCascade: map[modifierService]bool{
+			uastModifierColumn: true,
+			uastModifierIndex:  true,
+			uastModifierSchema: true,
+			uastModifierTable:  false,
+			uastModifierView:   true,
+		},
 		supportComment: map[modifierService]bool{
 			uastModifierColumn: true,
 			uastModifierIndex:  false,
@@ -514,7 +520,7 @@ func (strateger *mariadbStrateger) renderDrop(baseRenderer *baseRenderer, stmtDr
 	if err := baseRenderer.renderEntity(stmtDrop.entity, false, false, stmtDrop.ifExists, false); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderCascade(stmtDrop.isCascade); err != nil {
+	if err := baseRenderer.renderCascade(stmtDrop.entity, stmtDrop.isCascade); err != nil {
 		return err
 	}
 	return nil
@@ -589,7 +595,7 @@ func (strateger *mariadbStrateger) renderTruncate(baseRenderer *baseRenderer, st
 	if err := baseRenderer.renderTable(stmtTruncate.table); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderCascade(stmtTruncate.isCascade); err != nil {
+	if err := baseRenderer.renderCascade(stmtTruncate.table, stmtTruncate.isCascade); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderRestartIdentity(stmtTruncate.isRestartIdentity); err != nil {

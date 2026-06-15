@@ -43,8 +43,7 @@ type componentRenderer interface {
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
 	renderTable(table *TableSource) error
-	renderTargetAlias(source SourceBase) error
-	renderTargetName(source SourceBase) error
+	renderTarget(source SourceBase) error
 	renderUnions(unions []*clauseUnions) error
 	renderUnique(unique bool) error
 	renderUsing(joins []*clauseJoin) error

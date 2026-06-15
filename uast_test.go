@@ -2236,7 +2236,53 @@ func Test_SQL_Delete(t *testing.T) {
 	})
 }
 func Test_SQL_Drop(t *testing.T) {
-	t.Run("Cascade", func(t *testing.T) {
+	t.Run("CascadeIndex", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDrop := NewDrop(Test.Index.UsersID).IsCascade()
+			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDropQuery, "DROP INDEX `users_id` CASCADE", "DROP")
+			case DialectMsSQL:
+				assertContains(t, sqlDropQuery, "DROP INDEX [users_id]", "DROP")
+			case DialectMySQL:
+				assertContains(t, sqlDropQuery, "DROP INDEX `users_id`", "DROP")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDropQuery, `DROP INDEX "users_id" CASCADE`, "DROP")
+			case DialectSQLite:
+				assertContains(t, sqlDropQuery, `DROP INDEX "users_id"`, "DROP")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+		})
+	})
+	t.Run("CascadeSchema", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDrop := NewDrop(Test.Schema).IsCascade()
+			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDropQuery, "DROP SCHEMA `test` CASCADE", "DROP")
+			case DialectMsSQL:
+				assertContains(t, sqlDropQuery, "DROP SCHEMA [test]", "DROP")
+			case DialectMySQL:
+				assertContains(t, sqlDropQuery, "DROP SCHEMA `test`", "DROP")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDropQuery, `DROP SCHEMA "test" CASCADE`, "DROP")
+			case DialectSQLite:
+				assertContains(t, sqlDropQuery, `DROP SCHEMA "test"`, "DROP")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+		})
+	})
+	t.Run("CascadeTable", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
 				WithDialect(supportDialect),
@@ -2255,6 +2301,29 @@ func Test_SQL_Drop(t *testing.T) {
 				assertContains(t, sqlDropQuery, `DROP TABLE "users" CASCADE`, "DROP")
 			case DialectSQLite:
 				assertContains(t, sqlDropQuery, `DROP TABLE "users"`, "DROP")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
+		})
+	})
+	t.Run("CascadeView", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(
+				WithDialect(supportDialect),
+			)
+			defer sql.Close()
+			stmtDrop := NewDrop(Test.View.General).IsCascade()
+			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
+			switch supportDialect {
+			case DialectMariaDB:
+				assertContains(t, sqlDropQuery, "DROP VIEW `general` CASCADE", "DROP")
+			case DialectMsSQL:
+				assertContains(t, sqlDropQuery, "DROP VIEW [general]", "DROP")
+			case DialectMySQL:
+				assertContains(t, sqlDropQuery, "DROP VIEW `general`", "DROP")
+			case DialectPostgreSQL:
+				assertContains(t, sqlDropQuery, `DROP VIEW "general" CASCADE`, "DROP")
+			case DialectSQLite:
+				assertContains(t, sqlDropQuery, `DROP VIEW "general"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})

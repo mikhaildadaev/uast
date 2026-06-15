@@ -56,7 +56,7 @@ var Test = struct {
 		Y        *ColumnSource[int]
 	}
 }{
-	Schema: NewSchema("users"),
+	Schema: NewSchema("test"),
 }
 
 // Публичные функции
@@ -2050,13 +2050,13 @@ func Test_SQL_Create(t *testing.T) {
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS `users`", "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS `test`", "CREATE SCHEMA")
 			case DialectMsSQL:
-				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS [users]", "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA IF NOT EXISTS [test]", "CREATE SCHEMA")
 			case DialectMySQL:
-				assertContains(t, sqlCreateQuery, "CREATE SCHEMA `users`", "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, "CREATE SCHEMA `test`", "CREATE SCHEMA")
 			case DialectPostgreSQL:
-				assertContains(t, sqlCreateQuery, `CREATE SCHEMA IF NOT EXISTS "users"`, "CREATE SCHEMA")
+				assertContains(t, sqlCreateQuery, `CREATE SCHEMA IF NOT EXISTS "test"`, "CREATE SCHEMA")
 			case DialectSQLite:
 				// Not supported
 			}
@@ -2292,15 +2292,15 @@ func Test_SQL_Drop(t *testing.T) {
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP SCHEMA IF EXISTS `users`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP SCHEMA IF EXISTS `test`", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP SCHEMA IF EXISTS [users]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP SCHEMA IF EXISTS [test]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP SCHEMA `users`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP SCHEMA `test`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP SCHEMA IF EXISTS "users"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP SCHEMA IF EXISTS "test"`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP SCHEMA "users"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP SCHEMA "test"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})

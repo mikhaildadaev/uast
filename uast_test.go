@@ -1877,6 +1877,7 @@ func Test_SQL(t *testing.T) {
 	})
 }
 func Test_SQL_Alter(t *testing.T) {
+	// !!!Внимание, находится в стадии разработки
 	t.Run("Index", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
@@ -1980,6 +1981,7 @@ func Test_SQL_Alter(t *testing.T) {
 	})
 }
 func Test_SQL_Comment(t *testing.T) {
+	// !!!Внимание, находится в стадии разработки
 	t.Run("Column", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(

@@ -20,7 +20,7 @@ type componentRenderer interface {
 	renderAs() error
 	renderCascade(entity SourceBase, cascade bool) error
 	renderCommand(command managementService) error
-	renderColumns(columns []markSourceable, constraints []ConstraintBase) error
+	renderColumns(command managementService, addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase) error
 	renderDistinct(distinct bool) error
 	renderEntity(entity SourceBase, isReplace bool, ifExists bool, ifNotExists bool) error
 	renderFields(fields []markExpressable, isParen bool) error

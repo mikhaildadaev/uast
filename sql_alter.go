@@ -24,8 +24,10 @@ func (stmt *stmtAlter) AddConstraints(constraints ...ConstraintBase) *stmtAlter 
 	stmt.addConstraints = append(stmt.addConstraints, constraints...)
 	return stmt
 }
-func (stmt *stmtAlter) DropColumns(columns ...string) *stmtAlter {
-	stmt.dropColumns = columns
+func (stmt *stmtAlter) DropColumns(columns ...markSourceable) *stmtAlter {
+	for _, column := range columns {
+		stmt.dropColumns = append(stmt.dropColumns, column.getName())
+	}
 	return stmt
 }
 func (stmt *stmtAlter) DropConstraints(constraints ...ConstraintBase) *stmtAlter {

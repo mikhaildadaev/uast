@@ -25,15 +25,11 @@ func (stmt *stmtAlter) AddConstraints(constraints ...ConstraintBase) *stmtAlter 
 	return stmt
 }
 func (stmt *stmtAlter) DropColumns(columns ...markSourceable) *stmtAlter {
-	for _, column := range columns {
-		stmt.dropColumns = append(stmt.dropColumns, column.getName())
-	}
+	stmt.dropColumns = append(stmt.dropColumns, columns...)
 	return stmt
 }
 func (stmt *stmtAlter) DropConstraints(constraints ...ConstraintBase) *stmtAlter {
-	for _, constraint := range constraints {
-		stmt.dropConstraints = append(stmt.dropConstraints, constraint.getName())
-	}
+	stmt.dropConstraints = append(stmt.dropConstraints, constraints...)
 	return stmt
 }
 
@@ -42,8 +38,8 @@ type stmtAlter struct {
 	command         managementService
 	addColumns      []markSourceable
 	addConstraints  []ConstraintBase
-	dropColumns     []string
-	dropConstraints []string
+	dropColumns     []markSourceable
+	dropConstraints []ConstraintBase
 	entity          SourceBase
 	ifExists        bool
 	ifNotExists     bool

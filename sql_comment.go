@@ -1,5 +1,7 @@
 package uast
 
+// !!!Внимание, находится в стадии разработки
+
 // Публичные конструкторы
 func NewComment(on SourceBase) *stmtComment {
 	return &stmtComment{

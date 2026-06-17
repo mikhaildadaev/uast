@@ -282,51 +282,59 @@ func (renderer *baseRenderer) renderColumns(command managementService, addColumn
 		}
 		renderer.renderOperator(uastCompositeParenRight)
 	} else {
-		for _, column := range addColumns {
-			if needComma {
-				renderer.renderOperator(uastCompositeCommaSpace)
+		if renderer.config.supportAlterAddColumn {
+			for _, column := range addColumns {
+				if needComma {
+					renderer.renderOperator(uastCompositeCommaSpace)
+				}
+				renderer.renderService(uastManagementAdd)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierColumn)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				if err := column.render(renderer); err != nil {
+					return err
+				}
+				needComma = true
 			}
-			renderer.renderService(uastManagementAdd)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(uastModifierColumn)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			if err := column.render(renderer); err != nil {
-				return err
-			}
-			needComma = true
 		}
-		for _, constraint := range addConstraints {
-			if needComma {
-				renderer.renderOperator(uastCompositeCommaSpace)
+		if renderer.config.supportAlterAddConstraint {
+			for _, constraint := range addConstraints {
+				if needComma {
+					renderer.renderOperator(uastCompositeCommaSpace)
+				}
+				renderer.renderService(uastManagementAdd)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				if err := constraint.render(renderer); err != nil {
+					return err
+				}
+				needComma = true
 			}
-			renderer.renderService(uastManagementAdd)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			if err := constraint.render(renderer); err != nil {
-				return err
-			}
-			needComma = true
 		}
-		for _, column := range dropColumns {
-			if needComma {
-				renderer.renderOperator(uastCompositeCommaSpace)
+		if renderer.config.supportAlterDropColumn {
+			for _, column := range dropColumns {
+				if needComma {
+					renderer.renderOperator(uastCompositeCommaSpace)
+				}
+				renderer.renderService(uastManagementDrop)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierColumn)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderName(column.getName())
+				needComma = true
 			}
-			renderer.renderService(uastManagementDrop)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(uastModifierColumn)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderName(column.getName())
-			needComma = true
 		}
-		for _, constraint := range dropConstraints {
-			if needComma {
-				renderer.renderOperator(uastCompositeCommaSpace)
+		if renderer.config.supportAlterDropConstraint {
+			for _, constraint := range dropConstraints {
+				if needComma {
+					renderer.renderOperator(uastCompositeCommaSpace)
+				}
+				renderer.renderService(uastManagementDrop)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierConstraint)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderName(constraint.getName())
+				needComma = true
 			}
-			renderer.renderService(uastManagementDrop)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(uastModifierConstraint)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderName(constraint.getName())
-			needComma = true
 		}
 	}
 	return nil

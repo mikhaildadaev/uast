@@ -659,9 +659,9 @@ func (strateger *mssqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlt
 	case *sourceIndex:
 	case *sourceSchema:
 	case *sourceTable:
-		//if err := baseRenderer.renderColumns(stmtAlter.columns, stmtAlter.constraints); err != nil {
-		//	return err
-		//}
+		if err := baseRenderer.renderColumns(stmtAlter.command, stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints); err != nil {
+			return err
+		}
 	case *sourceView:
 	}
 	return nil
@@ -687,7 +687,7 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.command, stmtCreate.columns, stmtCreate.constraints, nil, nil); err != nil {
 			return err
 		}
 	case *sourceView:

@@ -717,9 +717,9 @@ func (strateger *postgresqlStrateger) renderAlter(baseRenderer *baseRenderer, st
 	case *sourceIndex:
 	case *sourceSchema:
 	case *sourceTable:
-		//if err := baseRenderer.renderColumns(stmtAlter.columns, stmtAlter.constraints); err != nil {
-		//	return err
-		//}
+		if err := baseRenderer.renderColumns(stmtAlter.command, stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints); err != nil {
+			return err
+		}
 	case *sourceView:
 	}
 	return nil
@@ -754,7 +754,7 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseRenderer.renderColumns(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseRenderer.renderColumns(stmtCreate.command, stmtCreate.columns, stmtCreate.constraints, nil, nil); err != nil {
 			return err
 		}
 	case *sourceView:

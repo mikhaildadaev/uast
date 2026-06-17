@@ -10,9 +10,11 @@ import (
 // Публичные переменные
 var Test = struct {
 	Check struct {
-		UsersNumber *CheckConstraint
+		OrdersNumber *CheckConstraint
+		UsersNumber  *CheckConstraint
 	}
 	Foreign struct {
+		OrdersUsers *ForeignConstraint
 		UsersOrders *ForeignConstraint
 	}
 	Index struct {
@@ -29,18 +31,22 @@ var Test = struct {
 		Users  *TableSource
 	}
 	Unique struct {
-		UsersName *UniqueConstraint
+		OrdersName *UniqueConstraint
+		UsersName  *UniqueConstraint
 	}
 	View struct {
-		General *ViewSource
+		OrdersGeneral *ViewSource
+		UsersGeneral  *ViewSource
 	}
 	Orders struct {
 		Date   *ColumnSource[time.Time]
 		ID     *ColumnSource[int64]
 		Json   *ColumnSource[string]
+		Name   *ColumnSource[string]
 		Number *ColumnSource[int]
 		String *ColumnSource[string]
 		Time   *ColumnSource[time.Time]
+		UserID *ColumnSource[int64]
 	}
 	Users struct {
 		CreateAt *ColumnSource[time.Time]
@@ -1917,15 +1923,25 @@ func Test_SQL_Alter(t *testing.T) {
 			defer sql.Close()
 			// ADD/DROP COLUMN, ADD/DROP CONSTRAINT, RENAME
 			stmtAlter := NewAlter(Test.Tables.Users).
-				AddColumns(Test.Users.String, Test.Users.Date).
+				AddColumns(
+					Test.Users.String,
+					Test.Users.Date,
+				).
 				AddConstraints(
+					Test.Check.OrdersNumber,
+					Test.Primary.OrdersID,
+					Test.Unique.OrdersName,
+				).
+				DropColumns(
+					Test.Users.ID,
+					Test.Users.Name,
+				).
+				DropConstraints(
 					Test.Check.UsersNumber,
 					Test.Foreign.UsersOrders,
 					Test.Primary.UsersID,
 					Test.Unique.UsersName,
-				).
-				DropColumns("old_column1", "old_column2")
-				//DropConstraints("old_constraint1", "old_constraint2")
+				)
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2099,7 +2115,7 @@ func Test_SQL_Create(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtCreate := NewCreate(Test.View.General).
+			stmtCreate := NewCreate(Test.View.UsersGeneral).
 				IsReplace().
 				Source(NewSelect(Test.Tables.Users).
 					Fields(Test.Users.ID.Expr(), Test.Users.String.Expr()),
@@ -2107,15 +2123,15 @@ func Test_SQL_Create(t *testing.T) {
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `general` AS SELECT `u`.`id`, `u`.`string` FROM `users` AS `u`", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `users_general` AS SELECT `u`.`id`, `u`.`string` FROM `users` AS `u`", "CREATE VIEW")
 			case DialectMsSQL:
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW [general] AS SELECT [u].[id], [u].[string] FROM [users] AS [u]", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW [users_general] AS SELECT [u].[id], [u].[string] FROM [users] AS [u]", "CREATE VIEW")
 			case DialectMySQL:
-				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `general` AS SELECT `u`.`id`, `u`.`string` FROM `users` AS `u`", "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, "CREATE OR REPLACE VIEW `users_general` AS SELECT `u`.`id`, `u`.`string` FROM `users` AS `u`", "CREATE VIEW")
 			case DialectPostgreSQL:
-				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "general" AS SELECT "u"."id", "u"."string" FROM "users" AS "u"`, "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "users_general" AS SELECT "u"."id", "u"."string" FROM "users" AS "u"`, "CREATE VIEW")
 			case DialectSQLite:
-				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "general" AS SELECT "u"."id", "u"."string" FROM "users" AS "u"`, "CREATE VIEW")
+				assertContains(t, sqlCreateQuery, `CREATE OR REPLACE VIEW "users_general" AS SELECT "u"."id", "u"."string" FROM "users" AS "u"`, "CREATE VIEW")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})
@@ -2311,19 +2327,19 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(Test.View.General).IsCascade()
+			stmtDrop := NewDrop(Test.View.UsersGeneral).IsCascade()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP VIEW `general` CASCADE", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW `users_general` CASCADE", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW [general]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW [users_general]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW `general`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW `users_general`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP VIEW "general" CASCADE`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW "users_general" CASCADE`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP VIEW "general"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW "users_general"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
@@ -2403,19 +2419,19 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(Test.View.General).IfExists()
+			stmtDrop := NewDrop(Test.View.UsersGeneral).IfExists()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `general`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `users_general`", "DROP")
 			case DialectMsSQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS [general]", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS [users_general]", "DROP")
 			case DialectMySQL:
-				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `general`", "DROP")
+				assertContains(t, sqlDropQuery, "DROP VIEW IF EXISTS `users_general`", "DROP")
 			case DialectPostgreSQL:
-				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "general"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "users_general"`, "DROP")
 			case DialectSQLite:
-				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "general"`, "DROP")
+				assertContains(t, sqlDropQuery, `DROP VIEW IF EXISTS "users_general"`, "DROP")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlDropArguments, supportDialect.name, sqlDropQuery)
 		})
@@ -3157,9 +3173,11 @@ func init() {
 	Test.Orders.Date = NewColumn[time.Time]("date", Test.Tables.Orders, TypeDate)
 	Test.Orders.ID = NewColumn[int64]("id", Test.Tables.Orders, TypeBigInt)
 	Test.Orders.Json = NewColumn[string]("json", Test.Tables.Orders, TypeJSON)
+	Test.Orders.Name = NewColumn[string]("string", Test.Tables.Orders, TypeVarChar)
 	Test.Orders.Number = NewColumn[int]("number", Test.Tables.Orders, TypeInt)
 	Test.Orders.String = NewColumn[string]("string", Test.Tables.Orders, TypeVarChar)
 	Test.Orders.Time = NewColumn[time.Time]("time", Test.Tables.Orders, TypeTime)
+	Test.Orders.UserID = NewColumn[int64]("data_id", Test.Tables.Orders, TypeBigInt)
 	Test.Users.CreateAt = NewColumn[time.Time]("createat", Test.Tables.Users, TypeTimestamp)
 	Test.Users.DataID = NewColumn[int64]("data_id", Test.Tables.Users, TypeBigInt)
 	Test.Users.Date = NewColumn[time.Time]("date", Test.Tables.Users, TypeDate)
@@ -3172,15 +3190,20 @@ func init() {
 	Test.Users.X = NewColumn[int]("x", Test.Tables.Users, TypeInt)
 	Test.Users.Y = NewColumn[int]("y", Test.Tables.Users, TypeInt)
 	// Constraint
+	Test.Check.OrdersNumber = NewCheck("ck_orders_number", Greater(Test.Orders.Number.Expr(), Value(0)))
 	Test.Check.UsersNumber = NewCheck("ck_users_number", Greater(Test.Users.Number.Expr(), Value(0)))
+	Test.Foreign.OrdersUsers = NewForeignKey("fk_orders_users", Test.Tables.Users, Cascade(), Restrict(), Relation(Test.Orders.UserID, Test.Users.ID), Relation(Test.Orders.Name, Test.Users.String))
 	Test.Foreign.UsersOrders = NewForeignKey("fk_users_orders", Test.Tables.Orders, Cascade(), Restrict(), Relation(Test.Users.DataID, Test.Orders.ID), Relation(Test.Users.Name, Test.Orders.String))
+	Test.Primary.OrdersID = NewPrimaryKey("pk_orders_id", Test.Orders.ID)
 	Test.Primary.UsersID = NewPrimaryKey("pk_users_id", Test.Users.ID)
+	Test.Unique.OrdersName = NewUnique("un_orders_name", Test.Orders.Name)
 	Test.Unique.UsersName = NewUnique("un_users_name", Test.Users.Name)
 	// Index
 	Test.Index.OrdersID = NewIndex("orders_id", Test.Tables.Orders)
 	Test.Index.UsersID = NewIndex("users_id", Test.Tables.Users)
 	// View
-	Test.View.General = NewView("general", "tg", Test.Tables.Users)
+	Test.View.OrdersGeneral = NewView("orders_general", "og", Test.Tables.Users)
+	Test.View.UsersGeneral = NewView("users_general", "ug", Test.Tables.Users)
 }
 
 func testAllDialects(t *testing.T, userFunc func(t *testing.T, supportDialect *SupportDialect)) {

@@ -655,9 +655,19 @@ func (strateger *mssqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlt
 	if err := baseRenderer.renderEntity(stmtAlter.entity, false, false, stmtAlter.ifExists, stmtAlter.ifNotExists); err != nil {
 		return err
 	}
+	switch stmtAlter.entity.(type) {
+	case *sourceIndex:
+	case *sourceSchema:
+	case *sourceTable:
+		//if err := baseRenderer.renderColumns(stmtAlter.columns, stmtAlter.constraints); err != nil {
+		//	return err
+		//}
+	case *sourceView:
+	}
 	return nil
 }
 func (strateger *mssqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
+	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCreate *stmtCreate) error {
@@ -833,6 +843,7 @@ func (strateger *mssqlStrateger) transformAlter(baseTransformer *baseTransformer
 	return nil
 }
 func (strateger *mssqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
+	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mssqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
@@ -917,6 +928,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 	return nil
 }
 func (strateger *mssqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
+	// !!!Внимание, находится в стадии разработки
 	return ErrUnsupportStatement
 }
 func (strateger *mssqlStrateger) validateCreate(baseValidator *baseValidator, stmtCreate *stmtCreate) error {

@@ -500,9 +500,19 @@ func (strateger *sqliteStrateger) renderAlter(baseRenderer *baseRenderer, stmtAl
 	if err := baseRenderer.renderEntity(stmtAlter.entity, false, false, stmtAlter.ifExists, stmtAlter.ifNotExists); err != nil {
 		return err
 	}
+	switch stmtAlter.entity.(type) {
+	case *sourceIndex:
+	case *sourceSchema:
+	case *sourceTable:
+		//if err := baseRenderer.renderColumns(stmtAlter.columns, stmtAlter.constraints); err != nil {
+		//	return err
+		//}
+	case *sourceView:
+	}
 	return nil
 }
 func (strateger *sqliteStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
+	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
@@ -685,6 +695,7 @@ func (strateger *sqliteStrateger) transformAlter(baseTransformer *baseTransforme
 	return nil
 }
 func (strateger *sqliteStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
+	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *sqliteStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
@@ -754,6 +765,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 	return nil
 }
 func (strateger *sqliteStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
+	// !!!Внимание, находится в стадии разработки
 	if err := baseValidator.validateOn(stmtComment.on); err != nil {
 		return err
 	}

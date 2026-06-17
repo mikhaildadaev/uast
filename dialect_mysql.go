@@ -445,9 +445,19 @@ func (strateger *mysqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlt
 	if err := baseRenderer.renderEntity(stmtAlter.entity, false, false, stmtAlter.ifExists, stmtAlter.ifNotExists); err != nil {
 		return err
 	}
+	switch stmtAlter.entity.(type) {
+	case *sourceIndex:
+	case *sourceSchema:
+	case *sourceTable:
+		//if err := baseRenderer.renderColumns(stmtAlter.columns, stmtAlter.constraints); err != nil {
+		//	return err
+		//}
+	case *sourceView:
+	}
 	return nil
 }
 func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
+	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}

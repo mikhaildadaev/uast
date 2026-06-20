@@ -9,6 +9,7 @@ import (
 
 // Публичные переменные
 var Test = struct {
+	// Constraint
 	Check struct {
 		OrdersNumber *CheckConstraint
 		UsersNumber  *CheckConstraint
@@ -17,28 +18,25 @@ var Test = struct {
 		OrdersUsers *ForeignConstraint
 		UsersOrders *ForeignConstraint
 	}
-	Index struct {
-		OrdersID *IndexSource
-		UsersID  *IndexSource
-	}
 	Primary struct {
 		OrdersID *PrimaryConstraint
 		UsersID  *PrimaryConstraint
-	}
-	Schema *SchemaSource
-	Tables struct {
-		Orders *TableSource
-		Users  *TableSource
 	}
 	Unique struct {
 		OrdersName *UniqueConstraint
 		UsersName  *UniqueConstraint
 	}
-	View struct {
-		OrdersGeneral *ViewSource
-		UsersGeneral  *ViewSource
+	// Source
+	Index struct {
+		OrdersID *IndexSource
+		UsersID  *IndexSource
 	}
-	Orders struct {
+	Schema *SchemaSource
+	Table  struct {
+		Orders *TableSource
+		Users  *TableSource
+	}
+	TableOrders struct {
 		Date   *ColumnSource[time.Time]
 		ID     *ColumnSource[int64]
 		Json   *ColumnSource[string]
@@ -48,7 +46,7 @@ var Test = struct {
 		Time   *ColumnSource[time.Time]
 		UserID *ColumnSource[int64]
 	}
-	Users struct {
+	TableUsers struct {
 		CreateAt *ColumnSource[time.Time]
 		DataID   *ColumnSource[int64]
 		Date     *ColumnSource[time.Time]
@@ -61,6 +59,10 @@ var Test = struct {
 		X        *ColumnSource[int]
 		Y        *ColumnSource[int]
 	}
+	View struct {
+		OrdersGeneral *ViewSource
+		UsersGeneral  *ViewSource
+	}
 }{
 	Schema: NewSchema("test"),
 }
@@ -72,12 +74,12 @@ func Test_Core_clauseGroupBy(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.String.Expr(),
+				Test.TableUsers.String.Expr(),
 			).
 			GroupBy(
-				Test.Users.String.Expr(),
+				Test.TableUsers.String.Expr(),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -101,12 +103,12 @@ func Test_Core_clauseHaving(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.String.Expr(),
+				Test.TableUsers.String.Expr(),
 			).
 			Having(
-				Greater(Count(Test.Users.ID.Expr(), false), Value[int64](2)),
+				Greater(Count(Test.TableUsers.ID.Expr(), false), Value[int64](2)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -130,19 +132,19 @@ func Test_Core_clauseJoin(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Orders).
+		stmtSelect := NewSelect(Test.Table.Orders).
 			Fields(
-				Test.Orders.ID.Expr(),
+				Test.TableOrders.ID.Expr(),
 			).
 			Join(
-				Cross(Test.Tables.Users),
-				Full(Test.Tables.Users, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
-				FullOuter(Test.Tables.Users, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
-				Inner(Test.Tables.Users, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
-				Left(Test.Tables.Users, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
-				LeftOuter(Test.Tables.Users, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
-				Right(Test.Tables.Users, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
-				RightOuter(Test.Tables.Users, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+				Cross(Test.Table.Users),
+				Full(Test.Table.Users, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
+				FullOuter(Test.Table.Users, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
+				Inner(Test.Table.Users, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
+				Left(Test.Table.Users, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
+				LeftOuter(Test.Table.Users, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
+				Right(Test.Table.Users, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
+				RightOuter(Test.Table.Users, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -201,13 +203,13 @@ func Test_Core_clauseOrderBy(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			OrderBy(
-				Asc(Test.Users.String.Expr()),
-				Desc(Test.Users.String.Expr()),
+				Asc(Test.TableUsers.String.Expr()),
+				Desc(Test.TableUsers.String.Expr()),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -241,9 +243,9 @@ func Test_Core_clausePagination(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Pagination(10, 0)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
@@ -268,10 +270,10 @@ func Test_Core_clauseReturning(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtDelete := NewDelete(Test.Tables.Users).
+		stmtDelete := NewDelete(Test.Table.Users).
 			Returning(
-				Test.Users.ID.Expr(),
-				Test.Users.String.Expr(),
+				Test.TableUsers.ID.Expr(),
+				Test.TableUsers.String.Expr(),
 			)
 		sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 		switch supportDialect {
@@ -295,9 +297,9 @@ func Test_Core_clauseSet(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtUpdate := NewUpdate(Test.Tables.Users).
+		stmtUpdate := NewUpdate(Test.Table.Users).
 			Set(
-				Assign(Test.Users.String.Expr(), Value("active")),
+				Assign(Test.TableUsers.String.Expr(), Value("active")),
 			)
 		sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 		switch supportDialect {
@@ -321,29 +323,29 @@ func Test_Core_clauseUnions(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.String.Expr(),
+				Test.TableUsers.String.Expr(),
 			).
 			Unions(
-				Union(NewSelect(Test.Tables.Users).
+				Union(NewSelect(Test.Table.Users).
 					Fields(
-						Test.Users.String.Expr(),
+						Test.TableUsers.String.Expr(),
 					),
 				),
-				UnionAll(NewSelect(Test.Tables.Users).
+				UnionAll(NewSelect(Test.Table.Users).
 					Fields(
-						Test.Users.String.Expr(),
+						Test.TableUsers.String.Expr(),
 					),
 				),
-				UnionExcept(NewSelect(Test.Tables.Users).
+				UnionExcept(NewSelect(Test.Table.Users).
 					Fields(
-						Test.Users.String.Expr(),
+						Test.TableUsers.String.Expr(),
 					),
 				),
-				UnionIntersect(NewSelect(Test.Tables.Users).
+				UnionIntersect(NewSelect(Test.Table.Users).
 					Fields(
-						Test.Users.String.Expr(),
+						Test.TableUsers.String.Expr(),
 					),
 				),
 			)
@@ -384,13 +386,13 @@ func Test_Core_clauseValues(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtInsert := NewInsert(Test.Tables.Users).
+		stmtInsert := NewInsert(Test.Table.Users).
 			Values(
-				Pair(Test.Users.String.Expr(), Value("ivan")),
-				Pair(Test.Users.Number.Expr(), Value(2)),
+				Pair(Test.TableUsers.String.Expr(), Value("ivan")),
+				Pair(Test.TableUsers.Number.Expr(), Value(2)),
 			).
 			Upsert(
-				Pair(Test.Users.String.Expr(), Value("updated")),
+				Pair(Test.TableUsers.String.Expr(), Value("updated")),
 			)
 		sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 		switch supportDialect {
@@ -418,12 +420,12 @@ func Test_Core_clauseWhere(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Where(
-				Equal(Test.Users.String.Expr(), Value("active")),
+				Equal(Test.TableUsers.String.Expr(), Value("active")),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -447,44 +449,44 @@ func Test_Core_clauseWith(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtWithN := WithN("cte_norecursive", NewSelect(Test.Tables.Users).
+		stmtWithN := WithN("cte_norecursive", NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
-				Test.Users.String.Expr(),
+				Test.TableUsers.ID.Expr(),
+				Test.TableUsers.String.Expr(),
 			).
 			Where(
-				Equal(Test.Users.String.Expr(), Value("active")),
+				Equal(Test.TableUsers.String.Expr(), Value("active")),
 			),
 			"id", "string",
 		)
-		stmtWithR := WithR("cte_recursive", NewSelect(Test.Tables.Users).
+		stmtWithR := WithR("cte_recursive", NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
-				Test.Users.String.Expr(),
+				Test.TableUsers.ID.Expr(),
+				Test.TableUsers.String.Expr(),
 			).
 			Where(
-				Equal(Test.Users.String.Expr(), Value("active")),
+				Equal(Test.TableUsers.String.Expr(), Value("active")),
 			).
 			Unions(
-				UnionAll(NewSelect(Test.Tables.Users).
+				UnionAll(NewSelect(Test.Table.Users).
 					Fields(
-						Test.Users.ID.Expr(),
-						Test.Users.String.Expr(),
+						Test.TableUsers.ID.Expr(),
+						Test.TableUsers.String.Expr(),
 					).
 					Join(
-						Inner(NewCTE("cte_recursive", "rec"), Equal(Test.Users.ID.Expr(), Field[int64]("rec", "id"))),
+						Inner(NewCTE("cte_recursive", "rec"), Equal(Test.TableUsers.ID.Expr(), Field[int64]("rec", "id"))),
 					),
 				),
 			),
 			"id", "string",
 		)
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
-				Test.Users.Number.Expr(),
+				Test.TableUsers.ID.Expr(),
+				Test.TableUsers.Number.Expr(),
 			).
 			Join(
-				Inner(NewCTE("cte_norecursive", "cnr"), Equal(Test.Users.ID.Expr(), Field[int64]("cnr", "id"))),
+				Inner(NewCTE("cte_norecursive", "cnr"), Equal(Test.TableUsers.ID.Expr(), Field[int64]("cnr", "id"))),
 			).
 			With(
 				stmtWithR,
@@ -522,7 +524,7 @@ func Test_Core_exprArray(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
 				Array(0, 1, 2),
 			)
@@ -548,22 +550,22 @@ func Test_Core_exprBinary(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Where(
 				And(
-					Equal(Test.Users.Number.Expr(), BitwiseAnd(Test.Users.Number.Expr(), Value(0b0010))),
-					Equal(Test.Users.Number.Expr(), BitwiseOr(Test.Users.Number.Expr(), Value(0b0010))),
-					Equal(Test.Users.Number.Expr(), BitwiseXor(Test.Users.Number.Expr(), Value(0b0010))),
-					Equal(Test.Users.Number.Expr(), Divide(Test.Users.Number.Expr(), Value(2))),
-					Equal(Test.Users.Number.Expr(), Minus(Test.Users.Number.Expr(), Value(2))),
-					Equal(Test.Users.Number.Expr(), Modulo(Test.Users.Number.Expr(), Value(2))),
-					Equal(Test.Users.Number.Expr(), Multiply(Test.Users.Number.Expr(), Value(2))),
-					Equal(Test.Users.Number.Expr(), Plus(Test.Users.Number.Expr(), Value(2))),
-					Equal(Test.Users.Number.Expr(), ShiftLeft(Test.Users.Number.Expr(), Value(2))),
-					Equal(Test.Users.Number.Expr(), ShiftRight(Test.Users.Number.Expr(), Value(2))),
+					Equal(Test.TableUsers.Number.Expr(), BitwiseAnd(Test.TableUsers.Number.Expr(), Value(0b0010))),
+					Equal(Test.TableUsers.Number.Expr(), BitwiseOr(Test.TableUsers.Number.Expr(), Value(0b0010))),
+					Equal(Test.TableUsers.Number.Expr(), BitwiseXor(Test.TableUsers.Number.Expr(), Value(0b0010))),
+					Equal(Test.TableUsers.Number.Expr(), Divide(Test.TableUsers.Number.Expr(), Value(2))),
+					Equal(Test.TableUsers.Number.Expr(), Minus(Test.TableUsers.Number.Expr(), Value(2))),
+					Equal(Test.TableUsers.Number.Expr(), Modulo(Test.TableUsers.Number.Expr(), Value(2))),
+					Equal(Test.TableUsers.Number.Expr(), Multiply(Test.TableUsers.Number.Expr(), Value(2))),
+					Equal(Test.TableUsers.Number.Expr(), Plus(Test.TableUsers.Number.Expr(), Value(2))),
+					Equal(Test.TableUsers.Number.Expr(), ShiftLeft(Test.TableUsers.Number.Expr(), Value(2))),
+					Equal(Test.TableUsers.Number.Expr(), ShiftRight(Test.TableUsers.Number.Expr(), Value(2))),
 				),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
@@ -633,9 +635,9 @@ func Test_Core_exprColumn(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -659,30 +661,30 @@ func Test_Core_exprComparison(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Where(
 				And(
-					Between(Test.Users.Number.Expr(), Value(0), Value(2)),
-					Equal(Test.Users.Number.Expr(), Value(2)),
-					Exists(Subquery[int](NewSelect(Test.Tables.Users).Fields(ConstIntOne()))),
-					Greater(Test.Users.Number.Expr(), Value(2)),
-					GreaterEqual(Test.Users.Number.Expr(), Value(2)),
-					ILike(Test.Users.String.Expr(), Value("%ivan%")),
-					In(Test.Users.String.Expr(), Array("active", "pending")),
-					IsNotNull(Test.Users.String.Expr()),
-					IsNull(Test.Users.String.Expr()),
-					Less(Test.Users.Number.Expr(), Value(2)),
-					LessEqual(Test.Users.Number.Expr(), Value(2)),
-					Like(Test.Users.String.Expr(), Value("%ivan%")),
-					NotBetween(Test.Users.Number.Expr(), Value(0), Value(2)),
-					NotEqual(Test.Users.Number.Expr(), Value(2)),
-					NotExists(Subquery[int](NewSelect(Test.Tables.Users).Fields(ConstIntOne()))),
-					NotILike(Test.Users.String.Expr(), Value("%ivan%")),
-					NotIn(Test.Users.String.Expr(), Array("active", "pending")),
-					NotLike(Test.Users.String.Expr(), Value("%ivan%")),
+					Between(Test.TableUsers.Number.Expr(), Value(0), Value(2)),
+					Equal(Test.TableUsers.Number.Expr(), Value(2)),
+					Exists(Subquery[int](NewSelect(Test.Table.Users).Fields(ConstIntOne()))),
+					Greater(Test.TableUsers.Number.Expr(), Value(2)),
+					GreaterEqual(Test.TableUsers.Number.Expr(), Value(2)),
+					ILike(Test.TableUsers.String.Expr(), Value("%ivan%")),
+					In(Test.TableUsers.String.Expr(), Array("active", "pending")),
+					IsNotNull(Test.TableUsers.String.Expr()),
+					IsNull(Test.TableUsers.String.Expr()),
+					Less(Test.TableUsers.Number.Expr(), Value(2)),
+					LessEqual(Test.TableUsers.Number.Expr(), Value(2)),
+					Like(Test.TableUsers.String.Expr(), Value("%ivan%")),
+					NotBetween(Test.TableUsers.Number.Expr(), Value(0), Value(2)),
+					NotEqual(Test.TableUsers.Number.Expr(), Value(2)),
+					NotExists(Subquery[int](NewSelect(Test.Table.Users).Fields(ConstIntOne()))),
+					NotILike(Test.TableUsers.String.Expr(), Value("%ivan%")),
+					NotIn(Test.TableUsers.String.Expr(), Array("active", "pending")),
+					NotLike(Test.TableUsers.String.Expr(), Value("%ivan%")),
 				))
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -791,9 +793,9 @@ func Test_Core_exprConstant(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Where(
 				And(
@@ -912,150 +914,150 @@ func Test_Core_exprFunction(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
 				// Функции агрегатные
-				Avg(Test.Users.Number.Expr(), false).As("aggregate_avg"),
-				BitAnd(Test.Users.Number.Expr(), false).As("aggregate_bitand"),
-				BitOr(Test.Users.Number.Expr(), false).As("aggregate_bitor"),
-				BitXor(Test.Users.Number.Expr(), false).As("aggregate_bitxor"),
-				Count(Test.Users.String.Expr(), false).As("aggregate_count"),
-				GroupConcat(Test.Users.String.Expr(), false).As("aggregate_groupconcat"),
-				Max(Test.Users.Number.Expr(), false).As("aggregate_max"),
-				Min(Test.Users.Number.Expr(), false).As("aggregate_min"),
-				StdDev(Test.Users.Number.Expr(), false).As("aggregate_stddev"),
-				Sum(Test.Users.Number.Expr(), false).As("aggregate_sum"),
-				Variance(Test.Users.Number.Expr(), false).As("aggregate_variance"),
+				Avg(Test.TableUsers.Number.Expr(), false).As("aggregate_avg"),
+				BitAnd(Test.TableUsers.Number.Expr(), false).As("aggregate_bitand"),
+				BitOr(Test.TableUsers.Number.Expr(), false).As("aggregate_bitor"),
+				BitXor(Test.TableUsers.Number.Expr(), false).As("aggregate_bitxor"),
+				Count(Test.TableUsers.String.Expr(), false).As("aggregate_count"),
+				GroupConcat(Test.TableUsers.String.Expr(), false).As("aggregate_groupconcat"),
+				Max(Test.TableUsers.Number.Expr(), false).As("aggregate_max"),
+				Min(Test.TableUsers.Number.Expr(), false).As("aggregate_min"),
+				StdDev(Test.TableUsers.Number.Expr(), false).As("aggregate_stddev"),
+				Sum(Test.TableUsers.Number.Expr(), false).As("aggregate_sum"),
+				Variance(Test.TableUsers.Number.Expr(), false).As("aggregate_variance"),
 				// Функции аналитические
-				FirstValue(Test.Users.Name.Expr()).Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+				FirstValue(Test.TableUsers.Name.Expr()).Over(
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 				).As("analytical_firstvalue"),
-				Lag(Test.Users.Number.Expr(), 2).Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Asc(Test.Users.Date.Expr())),
+				Lag(Test.TableUsers.Number.Expr(), 2).Over(
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Asc(Test.TableUsers.Date.Expr())),
 				).As("analytical_lag"),
-				LastValue(Test.Users.Name.Expr()).Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Asc(Test.Users.Number.Expr())),
+				LastValue(Test.TableUsers.Name.Expr()).Over(
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Asc(Test.TableUsers.Number.Expr())),
 					RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 				).As("analytical_lastvalue"),
-				Lead(Test.Users.Number.Expr(), 2).Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Asc(Test.Users.Date.Expr())),
+				Lead(Test.TableUsers.Number.Expr(), 2).Over(
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Asc(Test.TableUsers.Date.Expr())),
 				).As("analytical_lead"),
-				NthValue(Test.Users.Name.Expr(), 2).Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+				NthValue(Test.TableUsers.Name.Expr(), 2).Over(
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 					RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 				).As("analytical_nthvalue"),
 				// Функции условий
-				Case(CaseIf(CasePair(Less(Test.Users.Number.Expr(), Value(2)), Value("old"))), CaseElse(Value("new"))).As("condition_case"),
-				Coalesce(Test.Users.CreateAt.Expr(), Test.Users.UpdateAt.Expr()).As("condition_coalesce"),
-				Greatest(Test.Users.CreateAt.Expr(), Test.Users.UpdateAt.Expr()).As("condition_greauser"),
-				Least(Test.Users.CreateAt.Expr(), Test.Users.UpdateAt.Expr()).As("condition_least"),
-				NullIf(Test.Users.CreateAt.Expr(), Test.Users.UpdateAt.Expr()).As("condition_if"),
+				Case(CaseIf(CasePair(Less(Test.TableUsers.Number.Expr(), Value(2)), Value("old"))), CaseElse(Value("new"))).As("condition_case"),
+				Coalesce(Test.TableUsers.CreateAt.Expr(), Test.TableUsers.UpdateAt.Expr()).As("condition_coalesce"),
+				Greatest(Test.TableUsers.CreateAt.Expr(), Test.TableUsers.UpdateAt.Expr()).As("condition_greauser"),
+				Least(Test.TableUsers.CreateAt.Expr(), Test.TableUsers.UpdateAt.Expr()).As("condition_least"),
+				NullIf(Test.TableUsers.CreateAt.Expr(), Test.TableUsers.UpdateAt.Expr()).As("condition_if"),
 				// Функции конвертации
-				Cast(Test.Users.Number.Expr(), TypeString).As("convert_cast"),
-				CharLength(Test.Users.String.Expr()).As("convert_charlength"),
-				DateFormat(Test.Users.CreateAt.Expr(), Literal("%Y-%m-%d")).As("convert_dateformat"),
-				Degrees(Test.Users.Number.Expr()).As("convert_degrees"),
-				Length(Test.Users.String.Expr()).As("convert_length"),
-				Position(Test.Users.String.Expr(), Value("old")).As("convert_position"),
-				Radians(Test.Users.Number.Expr()).As("convert_radians"),
+				Cast(Test.TableUsers.Number.Expr(), TypeString).As("convert_cast"),
+				CharLength(Test.TableUsers.String.Expr()).As("convert_charlength"),
+				DateFormat(Test.TableUsers.CreateAt.Expr(), Literal("%Y-%m-%d")).As("convert_dateformat"),
+				Degrees(Test.TableUsers.Number.Expr()).As("convert_degrees"),
+				Length(Test.TableUsers.String.Expr()).As("convert_length"),
+				Position(Test.TableUsers.String.Expr(), Value("old")).As("convert_position"),
+				Radians(Test.TableUsers.Number.Expr()).As("convert_radians"),
 				// Функции даты и времени
 				CurDate().As("datetime_curdate"),
 				CurTime().As("datetime_curtime"),
-				DateAdd(Test.Users.CreateAt.Expr(), Literal("2 DAY")).As("datetime_dateadd"),
-				DateDiff(Test.Users.UpdateAt.Expr(), Test.Users.CreateAt.Expr()).As("datetime_datediff"),
-				DateSub(Test.Users.CreateAt.Expr(), Literal("2 DAY")).As("datetime_datesub"),
-				Day(Test.Users.CreateAt.Expr()).As("datetime_day"),
-				DayName(Test.Users.CreateAt.Expr()).As("datetime_dayname"),
-				Hour(Test.Users.CreateAt.Expr()).As("datetime_hour"),
-				Minute(Test.Users.CreateAt.Expr()).As("datetime_minute"),
-				Month(Test.Users.CreateAt.Expr()).As("datetime_month"),
-				MonthName(Test.Users.CreateAt.Expr()).As("datetime_monthname"),
+				DateAdd(Test.TableUsers.CreateAt.Expr(), Literal("2 DAY")).As("datetime_dateadd"),
+				DateDiff(Test.TableUsers.UpdateAt.Expr(), Test.TableUsers.CreateAt.Expr()).As("datetime_datediff"),
+				DateSub(Test.TableUsers.CreateAt.Expr(), Literal("2 DAY")).As("datetime_datesub"),
+				Day(Test.TableUsers.CreateAt.Expr()).As("datetime_day"),
+				DayName(Test.TableUsers.CreateAt.Expr()).As("datetime_dayname"),
+				Hour(Test.TableUsers.CreateAt.Expr()).As("datetime_hour"),
+				Minute(Test.TableUsers.CreateAt.Expr()).As("datetime_minute"),
+				Month(Test.TableUsers.CreateAt.Expr()).As("datetime_month"),
+				MonthName(Test.TableUsers.CreateAt.Expr()).As("datetime_monthname"),
 				Now().As("datetime_now"),
-				Quarter(Test.Users.CreateAt.Expr()).As("datetime_quarter"),
-				Second(Test.Users.CreateAt.Expr()).As("datetime_second"),
-				TimeAdd(Test.Users.CreateAt.Expr(), Literal("2 HOUR")).As("datetime_timeadd"),
-				TimeDiff(Test.Users.UpdateAt.Expr(), Test.Users.CreateAt.Expr()).As("datetime_timediff"),
-				TimeSub(Test.Users.CreateAt.Expr(), Literal("2 HOUR")).As("datetime_timesub"),
-				Week(Test.Users.CreateAt.Expr()).As("datetime_week"),
-				Year(Test.Users.CreateAt.Expr()).As("datetime_year"),
+				Quarter(Test.TableUsers.CreateAt.Expr()).As("datetime_quarter"),
+				Second(Test.TableUsers.CreateAt.Expr()).As("datetime_second"),
+				TimeAdd(Test.TableUsers.CreateAt.Expr(), Literal("2 HOUR")).As("datetime_timeadd"),
+				TimeDiff(Test.TableUsers.UpdateAt.Expr(), Test.TableUsers.CreateAt.Expr()).As("datetime_timediff"),
+				TimeSub(Test.TableUsers.CreateAt.Expr(), Literal("2 HOUR")).As("datetime_timesub"),
+				Week(Test.TableUsers.CreateAt.Expr()).As("datetime_week"),
+				Year(Test.TableUsers.CreateAt.Expr()).As("datetime_year"),
 				// Функции обмена данными
-				JsonArray(Test.Users.Json.Expr(), Value("val1"), Value("val2")).As("json_jsonarray"),
-				JsonArrayAgg(Test.Users.Json.Expr()).As("json_jsonarrayagg"),
-				JsonContains(Test.Users.Json.Expr(), Value(`{"key":"val"}`)).As("json_jsoncontains"),
-				JsonExtract(Test.Users.Json.Expr(), JsonGroup(JsonPath(JsonKey("parent"), JsonIndex(0), JsonKey("child"))), TypeString).As("json_jsonextract"),
-				JsonObject(JsonPair(JsonKey("key"), Count(Test.Users.Json.Expr(), false))).As("json_jsonobject"),
-				JsonObjectAgg(Test.Users.Json.Expr(), Test.Users.Number.Expr()).As("json_jsonobjectagg"),
-				JsonRemove(Test.Users.Json.Expr(), JsonGroup(JsonPath(JsonKey("key1"))), JsonGroup(JsonPath(JsonKey("key2")))).As("json_jsonremove"),
-				JsonSet(Test.Users.Json.Expr(), JsonGroup(JsonPath(JsonKey("key1")), Value("val1")), JsonGroup(JsonPath(JsonKey("key2")), Value("val2"))).As("json_jsonset"),
-				JsonType(Test.Users.Json.Expr()).As("json_jsontype"),
+				JsonArray(Test.TableUsers.Json.Expr(), Value("val1"), Value("val2")).As("json_jsonarray"),
+				JsonArrayAgg(Test.TableUsers.Json.Expr()).As("json_jsonarrayagg"),
+				JsonContains(Test.TableUsers.Json.Expr(), Value(`{"key":"val"}`)).As("json_jsoncontains"),
+				JsonExtract(Test.TableUsers.Json.Expr(), JsonGroup(JsonPath(JsonKey("parent"), JsonIndex(0), JsonKey("child"))), TypeString).As("json_jsonextract"),
+				JsonObject(JsonPair(JsonKey("key"), Count(Test.TableUsers.Json.Expr(), false))).As("json_jsonobject"),
+				JsonObjectAgg(Test.TableUsers.Json.Expr(), Test.TableUsers.Number.Expr()).As("json_jsonobjectagg"),
+				JsonRemove(Test.TableUsers.Json.Expr(), JsonGroup(JsonPath(JsonKey("key1"))), JsonGroup(JsonPath(JsonKey("key2")))).As("json_jsonremove"),
+				JsonSet(Test.TableUsers.Json.Expr(), JsonGroup(JsonPath(JsonKey("key1")), Value("val1")), JsonGroup(JsonPath(JsonKey("key2")), Value("val2"))).As("json_jsonset"),
+				JsonType(Test.TableUsers.Json.Expr()).As("json_jsontype"),
 				// Функции математические
-				Abs(Test.Users.X.Expr()).As("math_abs"),
-				ACos(Test.Users.X.Expr()).As("math_acos"),
-				ASin(Test.Users.X.Expr()).As("math_asin"),
-				ATan(Test.Users.X.Expr()).As("math_atan"),
-				ATan2(Test.Users.Y.Expr(), Test.Users.X.Expr()).As("math_atan2"),
-				Cbrt(Test.Users.X.Expr()).As("math_cbrt"),
-				Ceil(Test.Users.X.Expr()).As("math_ceil"),
-				Cos(Test.Users.X.Expr()).As("math_cos"),
-				Exp(Test.Users.X.Expr()).As("math_exp"),
-				Floor(Test.Users.X.Expr()).As("math_floor"),
-				Ln(Test.Users.X.Expr()).As("math_ln"),
-				Log(Test.Users.X.Expr(), Value(2)).As("math_log"),
-				Mod(Test.Users.X.Expr(), Value(2)).As("math_mod"),
+				Abs(Test.TableUsers.X.Expr()).As("math_abs"),
+				ACos(Test.TableUsers.X.Expr()).As("math_acos"),
+				ASin(Test.TableUsers.X.Expr()).As("math_asin"),
+				ATan(Test.TableUsers.X.Expr()).As("math_atan"),
+				ATan2(Test.TableUsers.Y.Expr(), Test.TableUsers.X.Expr()).As("math_atan2"),
+				Cbrt(Test.TableUsers.X.Expr()).As("math_cbrt"),
+				Ceil(Test.TableUsers.X.Expr()).As("math_ceil"),
+				Cos(Test.TableUsers.X.Expr()).As("math_cos"),
+				Exp(Test.TableUsers.X.Expr()).As("math_exp"),
+				Floor(Test.TableUsers.X.Expr()).As("math_floor"),
+				Ln(Test.TableUsers.X.Expr()).As("math_ln"),
+				Log(Test.TableUsers.X.Expr(), Value(2)).As("math_log"),
+				Mod(Test.TableUsers.X.Expr(), Value(2)).As("math_mod"),
 				Pi().As("math_pi"),
-				Power(Test.Users.X.Expr(), Value(2)).As("math_power"),
+				Power(Test.TableUsers.X.Expr(), Value(2)).As("math_power"),
 				Rand().As("math_rand"),
-				Round(Test.Users.X.Expr(), Value(2)).As("math_round"),
-				Sin(Test.Users.X.Expr()).As("math_sin"),
-				Sqrt(Test.Users.X.Expr()).As("math_sqrt"),
-				Tan(Test.Users.X.Expr()).As("math_tan"),
-				Trunc(Test.Users.X.Expr(), Value(2)).As("math_trunc"),
+				Round(Test.TableUsers.X.Expr(), Value(2)).As("math_round"),
+				Sin(Test.TableUsers.X.Expr()).As("math_sin"),
+				Sqrt(Test.TableUsers.X.Expr()).As("math_sqrt"),
+				Tan(Test.TableUsers.X.Expr()).As("math_tan"),
+				Trunc(Test.TableUsers.X.Expr(), Value(2)).As("math_trunc"),
 				// Функции ранжирующие
 				CumeDist().Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 				).As("ranking_cumedist"),
 				DenseRank().Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 				).As("ranking_denserank"),
 				NTile(2).Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 				).As("ranking_ntile"),
 				PercentRank().Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 				).As("ranking_percentrank"),
 				Rank().Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 				).As("ranking_rank"),
 				RowNumber().Over(
-					PartitionBy(Test.Users.ID.Expr()),
-					OrderBy(Desc(Test.Users.Number.Expr())),
+					PartitionBy(Test.TableUsers.ID.Expr()),
+					OrderBy(Desc(Test.TableUsers.Number.Expr())),
 				).As("ranking_rownumber"),
 				// Функции строковые
-				Concat(Test.Users.String.Expr(), Value("old"), Value("new")).As("string_concat"),
-				ConcatWs(Value("_"), Test.Users.String.Expr(), Value("old"), Value("new")).As("string_concatws"),
-				LeftString(Test.Users.String.Expr(), Value(2)).As("string_lstr"),
-				Lower(Test.Users.String.Expr()).As("string_lower"),
-				LPad(Test.Users.String.Expr(), Value(2), Value(",")).As("string_lpad"),
-				LTrim(Test.Users.String.Expr()).As("string_ltrim"),
-				Repeat(Test.Users.String.Expr(), Value(2)).As("string_repeat"),
-				Replace(Test.Users.String.Expr(), Value("old"), Value("new")).As("string_replace"),
-				Reverse(Test.Users.String.Expr()).As("string_reverse"),
-				RightString(Test.Users.String.Expr(), Value(2)).As("string_rstr"),
-				RPad(Test.Users.String.Expr(), Value(2), Value(",")).As("string_rpad"),
-				RTrim(Test.Users.String.Expr()).As("string_rtrim"),
-				SubString(Test.Users.String.Expr(), Value(0), Value(2)).As("string_substring"),
-				Trim(Test.Users.String.Expr()).As("string_trim"),
-				Upper(Test.Users.String.Expr()).As("string_upper"),
+				Concat(Test.TableUsers.String.Expr(), Value("old"), Value("new")).As("string_concat"),
+				ConcatWs(Value("_"), Test.TableUsers.String.Expr(), Value("old"), Value("new")).As("string_concatws"),
+				LeftString(Test.TableUsers.String.Expr(), Value(2)).As("string_lstr"),
+				Lower(Test.TableUsers.String.Expr()).As("string_lower"),
+				LPad(Test.TableUsers.String.Expr(), Value(2), Value(",")).As("string_lpad"),
+				LTrim(Test.TableUsers.String.Expr()).As("string_ltrim"),
+				Repeat(Test.TableUsers.String.Expr(), Value(2)).As("string_repeat"),
+				Replace(Test.TableUsers.String.Expr(), Value("old"), Value("new")).As("string_replace"),
+				Reverse(Test.TableUsers.String.Expr()).As("string_reverse"),
+				RightString(Test.TableUsers.String.Expr(), Value(2)).As("string_rstr"),
+				RPad(Test.TableUsers.String.Expr(), Value(2), Value(",")).As("string_rpad"),
+				RTrim(Test.TableUsers.String.Expr()).As("string_rtrim"),
+				SubString(Test.TableUsers.String.Expr(), Value(0), Value(2)).As("string_substring"),
+				Trim(Test.TableUsers.String.Expr()).As("string_trim"),
+				Upper(Test.TableUsers.String.Expr()).As("string_upper"),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1609,12 +1611,12 @@ func Test_Core_exprLiteral(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Where(
-				Equal(DateFormat(Test.Users.CreateAt.Expr(), Literal("%Y-%m-%d")), Value("2026-01-01")),
+				Equal(DateFormat(Test.TableUsers.CreateAt.Expr(), Literal("%Y-%m-%d")), Value("2026-01-01")),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1638,19 +1640,19 @@ func Test_Core_exprLogical(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Where(
 				And(
 					And(
-						Equal(Test.Users.String.Expr(), Value("active")),
-						Greater(Test.Users.Number.Expr(), Value(2)),
+						Equal(Test.TableUsers.String.Expr(), Value("active")),
+						Greater(Test.TableUsers.Number.Expr(), Value(2)),
 					),
 					Or(
-						Equal(Test.Users.String.Expr(), Value("active")),
-						Greater(Test.Users.Number.Expr(), Value(2)),
+						Equal(Test.TableUsers.String.Expr(), Value("active")),
+						Greater(Test.TableUsers.Number.Expr(), Value(2)),
 					),
 				),
 			)
@@ -1681,9 +1683,9 @@ func Test_Core_exprSubquery(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Subquery[int64](NewSelect(Test.Tables.Users).Fields(Test.Users.ID.Expr())).As("SUB"),
+				Subquery[int64](NewSelect(Test.Table.Users).Fields(Test.TableUsers.ID.Expr())).As("SUB"),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1708,12 +1710,12 @@ func Test_Core_exprValue(t *testing.T) {
 			WithDialect(supportDialect),
 		)
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Test.Users.ID.Expr(),
+				Test.TableUsers.ID.Expr(),
 			).
 			Where(
-				Equal(Test.Users.String.Expr(), Value(data)),
+				Equal(Test.TableUsers.String.Expr(), Value(data)),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -1738,14 +1740,14 @@ func Test_SQL(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmt := NewDelete(Test.Tables.Users).
+			stmt := NewDelete(Test.Table.Users).
 				Join(
-					Inner(Test.Tables.Orders, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+					Inner(Test.Table.Orders, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.Users.String.Expr(), Value("active")),
-						ILike(Test.Users.String.Expr(), Value("%ivan%")),
+						Equal(Test.TableUsers.String.Expr(), Value("active")),
+						ILike(Test.TableUsers.String.Expr(), Value("%ivan%")),
 					),
 				)
 			query1, _, _ := sql.Build(stmt)
@@ -1768,13 +1770,13 @@ func Test_SQL(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmt := NewInsert(Test.Tables.Users).
+			stmt := NewInsert(Test.Table.Users).
 				Values(
-					Pair(Test.Users.String.Expr(), Value("ivan")),
-					Pair(Test.Users.Number.Expr(), Value(2)),
+					Pair(Test.TableUsers.String.Expr(), Value("ivan")),
+					Pair(Test.TableUsers.Number.Expr(), Value(2)),
 				).
 				Upsert(
-					Pair(Test.Users.String.Expr(), Value("updated")),
+					Pair(Test.TableUsers.String.Expr(), Value("updated")),
 				)
 			query1, _, _ := sql.Build(stmt)
 			nextDialect := getNextDialect(supportDialect)
@@ -1796,36 +1798,36 @@ func Test_SQL(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmt := NewSelect(Test.Tables.Users).
+			stmt := NewSelect(Test.Table.Users).
 				Fields(
-					Avg(Test.Users.Number.Expr(), false).As("avg_result"),
-					Ceil(Test.Users.Number.Expr()).As("ceil_result"),
-					Count(Test.Users.String.Expr(), false).As("count_result"),
-					FirstValue(Test.Users.Name.Expr()).Over(
-						PartitionBy(Test.Users.ID.Expr()),
-						OrderBy(Desc(Test.Users.Number.Expr())),
+					Avg(Test.TableUsers.Number.Expr(), false).As("avg_result"),
+					Ceil(Test.TableUsers.Number.Expr()).As("ceil_result"),
+					Count(Test.TableUsers.String.Expr(), false).As("count_result"),
+					FirstValue(Test.TableUsers.Name.Expr()).Over(
+						PartitionBy(Test.TableUsers.ID.Expr()),
+						OrderBy(Desc(Test.TableUsers.Number.Expr())),
 					).As("first_value"),
-					Trunc(Test.Users.Number.Expr(), Value(2)).As("trunc_result"),
+					Trunc(Test.TableUsers.Number.Expr(), Value(2)).As("trunc_result"),
 				).
 				Join(
-					Inner(Test.Tables.Orders, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+					Inner(Test.Table.Orders, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.Users.String.Expr(), Value("active")),
-						Greater(Test.Users.Number.Expr(), Value(2)),
-						ILike(Test.Users.String.Expr(), Value("%ivan%")),
+						Equal(Test.TableUsers.String.Expr(), Value("active")),
+						Greater(Test.TableUsers.Number.Expr(), Value(2)),
+						ILike(Test.TableUsers.String.Expr(), Value("%ivan%")),
 					),
 				).
 				GroupBy(
-					Test.Users.ID.Expr(),
-					Test.Users.String.Expr(),
+					Test.TableUsers.ID.Expr(),
+					Test.TableUsers.String.Expr(),
 				).
 				Having(
-					Greater(Count(Test.Users.ID.Expr(), false), Value[int64](2)),
+					Greater(Count(Test.TableUsers.ID.Expr(), false), Value[int64](2)),
 				).
 				OrderBy(
-					Desc(Test.Users.Number.Expr()),
+					Desc(Test.TableUsers.Number.Expr()),
 				)
 			query1, _, _ := sql.Build(stmt)
 			nextDialect := getNextDialect(supportDialect)
@@ -1847,18 +1849,18 @@ func Test_SQL(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmt := NewUpdate(Test.Tables.Users).
+			stmt := NewUpdate(Test.Table.Users).
 				Set(
-					Assign(Test.Users.String.Expr(), Value("updated")),
-					Assign(Test.Users.Number.Expr(), Value(2)),
+					Assign(Test.TableUsers.String.Expr(), Value("updated")),
+					Assign(Test.TableUsers.Number.Expr(), Value(2)),
 				).
 				Join(
-					Inner(Test.Tables.Orders, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+					Inner(Test.Table.Orders, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.Users.String.Expr(), Value("active")),
-						ILike(Test.Users.String.Expr(), Value("%ivan%")),
+						Equal(Test.TableUsers.String.Expr(), Value("active")),
+						ILike(Test.TableUsers.String.Expr(), Value("%ivan%")),
 					),
 				)
 			query1, _, _ := sql.Build(stmt)
@@ -1923,10 +1925,10 @@ func Test_SQL_Alter(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			// ADD/DROP COLUMN, ADD/DROP CONSTRAINT, RENAME
-			stmtAlter := NewAlter(Test.Tables.Users).
+			stmtAlter := NewAlter(Test.Table.Users).
 				AddColumns(
-					Test.Users.String,
-					Test.Users.Date,
+					Test.TableUsers.String,
+					Test.TableUsers.Date,
 				).
 				AddConstraints(
 					Test.Check.OrdersNumber,
@@ -1934,8 +1936,8 @@ func Test_SQL_Alter(t *testing.T) {
 					Test.Unique.OrdersName,
 				).
 				DropColumns(
-					Test.Users.ID,
-					Test.Users.Name,
+					Test.TableUsers.ID,
+					Test.TableUsers.Name,
 				).
 				DropConstraints(
 					Test.Check.UsersNumber,
@@ -1988,7 +1990,7 @@ func Test_SQL_Comment(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtComment := NewComment(Test.Users.ID).
+			stmtComment := NewComment(Test.TableUsers.ID).
 				Is("user comment")
 			sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 			switch supportDialect {
@@ -2012,7 +2014,7 @@ func Test_SQL_Comment(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtComment := NewComment(Test.Tables.Users).Is("user comment")
+			stmtComment := NewComment(Test.Table.Users).Is("user comment")
 			sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2038,10 +2040,10 @@ func Test_SQL_Create(t *testing.T) {
 			stmtCreate := NewCreate(Test.Index.UsersID).
 				IfNotExists().
 				IsUnique().
-				On(Test.Tables.Users).
+				On(Test.Table.Users).
 				Columns(
-					Test.Users.String,
-					Test.Users.Number,
+					Test.TableUsers.String,
+					Test.TableUsers.Number,
 				)
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
@@ -2085,7 +2087,7 @@ func Test_SQL_Create(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtCreate := NewCreate(Test.Tables.Users).
+			stmtCreate := NewCreate(Test.Table.Users).
 				Constraints(
 					Test.Check.UsersNumber,
 					Test.Foreign.UsersOrders,
@@ -2094,8 +2096,8 @@ func Test_SQL_Create(t *testing.T) {
 				).
 				IfNotExists().
 				Columns(
-					Test.Users.ID.AutoIncrement(),
-					Test.Users.Name.NotNull(),
+					Test.TableUsers.ID.AutoIncrement(),
+					Test.TableUsers.Name.NotNull(),
 				)
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
@@ -2119,8 +2121,8 @@ func Test_SQL_Create(t *testing.T) {
 			defer sql.Close()
 			stmtCreate := NewCreate(Test.View.UsersGeneral).
 				IsReplace().
-				Source(NewSelect(Test.Tables.Users).
-					Fields(Test.Users.ID.Expr(), Test.Users.String.Expr()),
+				Source(NewSelect(Test.Table.Users).
+					Fields(Test.TableUsers.ID.Expr(), Test.TableUsers.String.Expr()),
 				)
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {
@@ -2144,12 +2146,12 @@ func Test_SQL_Delete(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtDelete := NewDelete(Test.Tables.Users).
+			stmtDelete := NewDelete(Test.Table.Users).
 				Join(
-					Inner(Test.Tables.Orders, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+					Inner(Test.Table.Orders, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
 				).
 				Where(
-					Equal(Test.Users.String.Expr(), Value("active")),
+					Equal(Test.TableUsers.String.Expr(), Value("active")),
 				)
 			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 			switch supportDialect {
@@ -2171,13 +2173,13 @@ func Test_SQL_Delete(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtDelete := NewDelete(Test.Tables.Users).
+			stmtDelete := NewDelete(Test.Table.Users).
 				Where(
-					Equal(Test.Users.String.Expr(), Value("active")),
+					Equal(Test.TableUsers.String.Expr(), Value("active")),
 				).
 				Returning(
-					Test.Users.ID.Expr(),
-					Test.Users.String.Expr(),
+					Test.TableUsers.ID.Expr(),
+					Test.TableUsers.String.Expr(),
 				)
 			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 			switch supportDialect {
@@ -2201,9 +2203,9 @@ func Test_SQL_Delete(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDelete := NewDelete(Test.Tables.Users).
+			stmtDelete := NewDelete(Test.Table.Users).
 				Where(
-					Equal(Test.Users.String.Expr(), Value("active")),
+					Equal(Test.TableUsers.String.Expr(), Value("active")),
 				)
 			sqlDeleteQuery, sqlDeleteArguments, err := sql.Build(stmtDelete)
 			switch supportDialect {
@@ -2225,14 +2227,14 @@ func Test_SQL_Delete(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtDelete := NewDelete(Test.Tables.Users).
+			stmtDelete := NewDelete(Test.Table.Users).
 				With(
-					WithN("old_users", NewSelect(Test.Tables.Users).
+					WithN("old_users", NewSelect(Test.Table.Users).
 						Fields(
-							Test.Users.ID.Expr(),
+							Test.TableUsers.ID.Expr(),
 						).
 						Where(
-							Less(Test.Users.Number.Expr(), Value(2)),
+							Less(Test.TableUsers.Number.Expr(), Value(2)),
 						),
 					),
 				)
@@ -2306,7 +2308,7 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(Test.Tables.Users).IsCascade()
+			stmtDrop := NewDrop(Test.Table.Users).IsCascade()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2398,7 +2400,7 @@ func Test_SQL_Drop(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtDrop := NewDrop(Test.Tables.Users).IfExists()
+			stmtDrop := NewDrop(Test.Table.Users).IfExists()
 			sqlDropQuery, sqlDropArguments, err := sql.Build(stmtDrop)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2444,14 +2446,14 @@ func Test_SQL_Insert(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtInsert := NewInsert(Test.Tables.Users).
+			stmtInsert := NewInsert(Test.Table.Users).
 				Values(
-					Pair(Test.Users.String.Expr(), Value("ivan")),
-					Pair(Test.Users.Number.Expr(), Value(2)),
+					Pair(Test.TableUsers.String.Expr(), Value("ivan")),
+					Pair(Test.TableUsers.Number.Expr(), Value(2)),
 				).
 				Returning(
-					Test.Users.ID.Expr(),
-					Test.Users.String.Expr(),
+					Test.TableUsers.ID.Expr(),
+					Test.TableUsers.String.Expr(),
 				)
 			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 			switch supportDialect {
@@ -2475,14 +2477,14 @@ func Test_SQL_Insert(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtInsert := NewInsert(Test.Tables.Users).
-				Source(NewSelect(Test.Tables.Users).
+			stmtInsert := NewInsert(Test.Table.Users).
+				Source(NewSelect(Test.Table.Users).
 					Fields(
-						Test.Users.String.Expr(),
-						Test.Users.Number.Expr(),
+						Test.TableUsers.String.Expr(),
+						Test.TableUsers.Number.Expr(),
 					).
 					Where(
-						Equal(Test.Users.String.Expr(), Value("active")),
+						Equal(Test.TableUsers.String.Expr(), Value("active")),
 					),
 				)
 			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
@@ -2505,13 +2507,13 @@ func Test_SQL_Insert(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtInsert := NewInsert(Test.Tables.Users).
+			stmtInsert := NewInsert(Test.Table.Users).
 				Values(
-					Pair(Test.Users.String.Expr(), Value("ivan")),
-					Pair(Test.Users.Number.Expr(), Value(2)),
+					Pair(Test.TableUsers.String.Expr(), Value("ivan")),
+					Pair(Test.TableUsers.Number.Expr(), Value(2)),
 				).
 				Upsert(
-					Pair(Test.Users.String.Expr(), Value("updated")),
+					Pair(Test.TableUsers.String.Expr(), Value("updated")),
 				)
 			sqlInsertQuery, sqlInsertArguments, err := sql.Build(stmtInsert)
 			switch supportDialect {
@@ -2533,18 +2535,18 @@ func Test_SQL_Insert(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtInsert := NewInsert(Test.Tables.Users).
+			stmtInsert := NewInsert(Test.Table.Users).
 				Values(
-					Pair(Test.Users.String.Expr(), Value("ivan")),
-					Pair(Test.Users.Number.Expr(), Value(2)),
+					Pair(Test.TableUsers.String.Expr(), Value("ivan")),
+					Pair(Test.TableUsers.Number.Expr(), Value(2)),
 				).
 				With(
-					WithN("old_users", NewSelect(Test.Tables.Users).
+					WithN("old_users", NewSelect(Test.Table.Users).
 						Fields(
-							Test.Users.ID.Expr(),
+							Test.TableUsers.ID.Expr(),
 						).
 						Where(
-							Less(Test.Users.Number.Expr(), Value(2)),
+							Less(Test.TableUsers.Number.Expr(), Value(2)),
 						),
 					),
 				)
@@ -2572,13 +2574,13 @@ func Test_SQL_Select(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Distinct().
 				Fields(
-					Test.Users.ID.Expr(),
+					Test.TableUsers.ID.Expr(),
 				).
 				Where(
-					Equal(Test.Users.Number.Expr(), Value(2)),
+					Equal(Test.TableUsers.Number.Expr(), Value(2)),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2602,12 +2604,12 @@ func Test_SQL_Select(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.ID.Expr(),
+					Test.TableUsers.ID.Expr(),
 				).
 				Where(
-					Equal(Test.Users.Number.Expr(), Value(2)),
+					Equal(Test.TableUsers.Number.Expr(), Value(2)),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2629,13 +2631,13 @@ func Test_SQL_Select(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.String.Expr(),
-					Count(Test.Users.ID.Expr(), false).As("cnt"),
+					Test.TableUsers.String.Expr(),
+					Count(Test.TableUsers.ID.Expr(), false).As("cnt"),
 				).
 				GroupBy(
-					Test.Users.String.Expr(),
+					Test.TableUsers.String.Expr(),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2657,16 +2659,16 @@ func Test_SQL_Select(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.String.Expr(),
-					Count(Test.Users.ID.Expr(), false).As("cnt"),
+					Test.TableUsers.String.Expr(),
+					Count(Test.TableUsers.ID.Expr(), false).As("cnt"),
 				).
 				GroupBy(
-					Test.Users.String.Expr(),
+					Test.TableUsers.String.Expr(),
 				).
 				Having(
-					Greater(Count(Test.Users.ID.Expr(), false), Value[int64](2)),
+					Greater(Count(Test.TableUsers.ID.Expr(), false), Value[int64](2)),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2688,13 +2690,13 @@ func Test_SQL_Select(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.ID.Expr(),
-					Test.Orders.String.Expr(),
+					Test.TableUsers.ID.Expr(),
+					Test.TableOrders.String.Expr(),
 				).
 				Join(
-					Inner(Test.Tables.Orders, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+					Inner(Test.Table.Orders, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2716,13 +2718,13 @@ func Test_SQL_Select(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.ID.Expr(),
+					Test.TableUsers.ID.Expr(),
 				).
 				OrderBy(
-					Desc(Test.Users.Number.Expr()),
-					Asc(Test.Users.String.Expr()),
+					Desc(Test.TableUsers.Number.Expr()),
+					Asc(Test.TableUsers.String.Expr()),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2744,9 +2746,9 @@ func Test_SQL_Select(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.ID.Expr(),
+					Test.TableUsers.ID.Expr(),
 				).
 				Pagination(10, 20)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
@@ -2769,14 +2771,14 @@ func Test_SQL_Select(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.String.Expr(),
+					Test.TableUsers.String.Expr(),
 				).
 				Unions(
-					UnionAll(NewSelect(Test.Tables.Orders).
+					UnionAll(NewSelect(Test.Table.Orders).
 						Fields(
-							Test.Orders.String.Expr(),
+							Test.TableOrders.String.Expr(),
 						),
 					),
 				)
@@ -2802,12 +2804,12 @@ func Test_SQL_Select(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtSelect := NewSelect(Test.Tables.Users).
+			stmtSelect := NewSelect(Test.Table.Users).
 				Fields(
-					Test.Users.ID.Expr(),
+					Test.TableUsers.ID.Expr(),
 				).
 				Where(
-					Equal(Test.Users.Number.Expr(), Value(2)),
+					Equal(Test.TableUsers.Number.Expr(), Value(2)),
 				)
 			sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 			switch supportDialect {
@@ -2834,12 +2836,12 @@ func Test_SQL_Select(t *testing.T) {
 					Field[int64]("ct", "id"),
 				).
 				With(
-					WithN("cte_user", NewSelect(Test.Tables.Users).
+					WithN("cte_user", NewSelect(Test.Table.Users).
 						Fields(
-							Test.Users.ID.Expr(),
+							Test.TableUsers.ID.Expr(),
 						).
 						Where(
-							Greater(Test.Users.Number.Expr(), Value(2)),
+							Greater(Test.TableUsers.Number.Expr(), Value(2)),
 						),
 					),
 				)
@@ -2867,7 +2869,7 @@ func Test_SQL_Truncate(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtTruncate := NewTruncate(Test.Tables.Users)
+			stmtTruncate := NewTruncate(Test.Table.Users)
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2890,7 +2892,7 @@ func Test_SQL_Truncate(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtTruncate := NewTruncate(Test.Tables.Users).
+			stmtTruncate := NewTruncate(Test.Table.Users).
 				IsCascade()
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
@@ -2914,7 +2916,7 @@ func Test_SQL_Truncate(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtTruncate := NewTruncate(Test.Tables.Users).
+			stmtTruncate := NewTruncate(Test.Table.Users).
 				IsRestartIdentity()
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
@@ -2938,15 +2940,15 @@ func Test_SQL_Update(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtUpdate := NewUpdate(Test.Tables.Users).
+			stmtUpdate := NewUpdate(Test.Table.Users).
 				Set(
-					Assign(Test.Users.String.Expr(), Value("active")),
+					Assign(Test.TableUsers.String.Expr(), Value("active")),
 				).
 				Join(
-					Inner(Test.Tables.Orders, Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+					Inner(Test.Table.Orders, Equal(Test.TableUsers.ID.Expr(), Test.TableOrders.ID.Expr())),
 				).
 				Where(
-					Equal(Test.Orders.String.Expr(), Value("active")),
+					Equal(Test.TableOrders.String.Expr(), Value("active")),
 				)
 			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 			switch supportDialect {
@@ -2968,16 +2970,16 @@ func Test_SQL_Update(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtUpdate := NewUpdate(Test.Tables.Users).
+			stmtUpdate := NewUpdate(Test.Table.Users).
 				Set(
-					Assign(Test.Users.String.Expr(), Value("active")),
+					Assign(Test.TableUsers.String.Expr(), Value("active")),
 				).
 				Where(
-					Equal(Test.Users.Number.Expr(), Value(2)),
+					Equal(Test.TableUsers.Number.Expr(), Value(2)),
 				).
 				Returning(
-					Test.Users.ID.Expr(),
-					Test.Users.String.Expr(),
+					Test.TableUsers.ID.Expr(),
+					Test.TableUsers.String.Expr(),
 				)
 			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 			switch supportDialect {
@@ -3001,12 +3003,12 @@ func Test_SQL_Update(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtUpdate := NewUpdate(Test.Tables.Users).
+			stmtUpdate := NewUpdate(Test.Table.Users).
 				Set(
-					Assign(Test.Users.String.Expr(), Value("active")),
+					Assign(Test.TableUsers.String.Expr(), Value("active")),
 				).
 				Where(
-					Equal(Test.Users.Number.Expr(), Value(2)),
+					Equal(Test.TableUsers.Number.Expr(), Value(2)),
 				)
 			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 			switch supportDialect {
@@ -3030,12 +3032,12 @@ func Test_SQL_Update(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtUpdate := NewUpdate(Test.Tables.Users).
+			stmtUpdate := NewUpdate(Test.Table.Users).
 				Set(
-					Assign(Test.Users.String.Expr(), Value("active")),
+					Assign(Test.TableUsers.String.Expr(), Value("active")),
 				).
 				Where(
-					Equal(Test.Users.Number.Expr(), Value(2)),
+					Equal(Test.TableUsers.Number.Expr(), Value(2)),
 				)
 			sqlUpdateQuery, sqlUpdateArguments, err := sql.Build(stmtUpdate)
 			switch supportDialect {
@@ -3057,17 +3059,17 @@ func Test_SQL_Update(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtUpdate := NewUpdate(Test.Tables.Users).
+			stmtUpdate := NewUpdate(Test.Table.Users).
 				Set(
-					Assign(Test.Users.String.Expr(), Value("updated")),
+					Assign(Test.TableUsers.String.Expr(), Value("updated")),
 				).
 				With(
-					WithN("old_users", NewSelect(Test.Tables.Users).
+					WithN("old_users", NewSelect(Test.Table.Users).
 						Fields(
-							Test.Users.ID.Expr(),
+							Test.TableUsers.ID.Expr(),
 						).
 						Where(
-							Less(Test.Users.Number.Expr(), Value(2)),
+							Less(Test.TableUsers.Number.Expr(), Value(2)),
 						),
 					),
 				)
@@ -3092,14 +3094,14 @@ func Test_Transformer_Comparison(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(WithDialect(supportDialect))
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
-			Fields(Test.Users.ID.Expr()).
+		stmtSelect := NewSelect(Test.Table.Users).
+			Fields(Test.TableUsers.ID.Expr()).
 			Where(
 				And(
-					ILike(Test.Users.String.Expr(), Value("%alex%")),
+					ILike(Test.TableUsers.String.Expr(), Value("%alex%")),
 					And(
-						ILike(Test.Users.String.Expr(), Value("%ivan%")),
-						ILike(Test.Users.String.Expr(), Value("%petr%")),
+						ILike(Test.TableUsers.String.Expr(), Value("%ivan%")),
+						ILike(Test.TableUsers.String.Expr(), Value("%petr%")),
 					),
 				),
 			)
@@ -3123,9 +3125,9 @@ func Test_Transformer_Function(t *testing.T) {
 	testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 		sql := NewSQL(WithDialect(supportDialect))
 		defer sql.Close()
-		stmtSelect := NewSelect(Test.Tables.Users).
+		stmtSelect := NewSelect(Test.Table.Users).
 			Fields(
-				Trunc(Ceil(Test.Users.Number.Expr()), Value(2)).As("result"),
+				Trunc(Ceil(Test.TableUsers.Number.Expr()), Value(2)).As("result"),
 			)
 		sqlSelectQuery, sqlSelectArguments, err := sql.Build(stmtSelect)
 		switch supportDialect {
@@ -3169,43 +3171,42 @@ func getNextDialect(dialect *SupportDialect) *SupportDialect {
 }
 func init() {
 	// Table
-	Test.Tables.Orders = NewTable("orders", "o")
-	Test.Tables.Users = NewTable("users", "u")
-	// Column
-	Test.Orders.Date = NewColumn[time.Time]("date", Test.Tables.Orders, TypeDate)
-	Test.Orders.ID = NewColumn[int64]("id", Test.Tables.Orders, TypeBigInt)
-	Test.Orders.Json = NewColumn[string]("json", Test.Tables.Orders, TypeJSON)
-	Test.Orders.Name = NewColumn[string]("string", Test.Tables.Orders, TypeVarChar)
-	Test.Orders.Number = NewColumn[int]("number", Test.Tables.Orders, TypeInt)
-	Test.Orders.String = NewColumn[string]("string", Test.Tables.Orders, TypeVarChar)
-	Test.Orders.Time = NewColumn[time.Time]("time", Test.Tables.Orders, TypeTime)
-	Test.Orders.UserID = NewColumn[int64]("data_id", Test.Tables.Orders, TypeBigInt)
-	Test.Users.CreateAt = NewColumn[time.Time]("createat", Test.Tables.Users, TypeTimestamp)
-	Test.Users.DataID = NewColumn[int64]("data_id", Test.Tables.Users, TypeBigInt)
-	Test.Users.Date = NewColumn[time.Time]("date", Test.Tables.Users, TypeDate)
-	Test.Users.ID = NewColumn[int64]("id", Test.Tables.Users, TypeBigInt)
-	Test.Users.Json = NewColumn[string]("json", Test.Tables.Users, TypeJSON)
-	Test.Users.Name = NewColumn[string]("name", Test.Tables.Users, TypeVarChar)
-	Test.Users.Number = NewColumn[int]("number", Test.Tables.Users, TypeInt)
-	Test.Users.String = NewColumn[string]("string", Test.Tables.Users, TypeVarChar)
-	Test.Users.UpdateAt = NewColumn[time.Time]("updateat", Test.Tables.Users, TypeTimestamp)
-	Test.Users.X = NewColumn[int]("x", Test.Tables.Users, TypeInt)
-	Test.Users.Y = NewColumn[int]("y", Test.Tables.Users, TypeInt)
-	// Constraint
-	Test.Check.OrdersNumber = NewCheck("ck_orders_number", Greater(Test.Orders.Number.Expr(), Value(0)))
-	Test.Check.UsersNumber = NewCheck("ck_users_number", Greater(Test.Users.Number.Expr(), Value(0)))
-	Test.Foreign.OrdersUsers = NewForeignKey("fk_orders_users", Test.Tables.Users, Cascade(), Restrict(), Relation(Test.Orders.UserID, Test.Users.ID), Relation(Test.Orders.Name, Test.Users.String))
-	Test.Foreign.UsersOrders = NewForeignKey("fk_users_orders", Test.Tables.Orders, Cascade(), Restrict(), Relation(Test.Users.DataID, Test.Orders.ID), Relation(Test.Users.Name, Test.Orders.String))
-	Test.Primary.OrdersID = NewPrimaryKey("pk_orders_id", Test.Orders.ID)
-	Test.Primary.UsersID = NewPrimaryKey("pk_users_id", Test.Users.ID)
-	Test.Unique.OrdersName = NewUnique("un_orders_name", Test.Orders.Name)
-	Test.Unique.UsersName = NewUnique("un_users_name", Test.Users.Name)
+	Test.Table.Orders = NewTable("orders", "o")
+	Test.Table.Users = NewTable("users", "u")
+	Test.TableOrders.Date = NewColumn[time.Time]("date", Test.Table.Orders, TypeDate)
+	Test.TableOrders.ID = NewColumn[int64]("id", Test.Table.Orders, TypeBigInt)
+	Test.TableOrders.Json = NewColumn[string]("json", Test.Table.Orders, TypeJSON)
+	Test.TableOrders.Name = NewColumn[string]("string", Test.Table.Orders, TypeVarChar)
+	Test.TableOrders.Number = NewColumn[int]("number", Test.Table.Orders, TypeInt)
+	Test.TableOrders.String = NewColumn[string]("string", Test.Table.Orders, TypeVarChar)
+	Test.TableOrders.Time = NewColumn[time.Time]("time", Test.Table.Orders, TypeTime)
+	Test.TableOrders.UserID = NewColumn[int64]("data_id", Test.Table.Orders, TypeBigInt)
+	Test.TableUsers.CreateAt = NewColumn[time.Time]("createat", Test.Table.Users, TypeTimestamp)
+	Test.TableUsers.DataID = NewColumn[int64]("data_id", Test.Table.Users, TypeBigInt)
+	Test.TableUsers.Date = NewColumn[time.Time]("date", Test.Table.Users, TypeDate)
+	Test.TableUsers.ID = NewColumn[int64]("id", Test.Table.Users, TypeBigInt)
+	Test.TableUsers.Json = NewColumn[string]("json", Test.Table.Users, TypeJSON)
+	Test.TableUsers.Name = NewColumn[string]("name", Test.Table.Users, TypeVarChar)
+	Test.TableUsers.Number = NewColumn[int]("number", Test.Table.Users, TypeInt)
+	Test.TableUsers.String = NewColumn[string]("string", Test.Table.Users, TypeVarChar)
+	Test.TableUsers.UpdateAt = NewColumn[time.Time]("updateat", Test.Table.Users, TypeTimestamp)
+	Test.TableUsers.X = NewColumn[int]("x", Test.Table.Users, TypeInt)
+	Test.TableUsers.Y = NewColumn[int]("y", Test.Table.Users, TypeInt)
 	// Index
-	Test.Index.OrdersID = NewIndex("orders_id", Test.Tables.Orders)
-	Test.Index.UsersID = NewIndex("users_id", Test.Tables.Users)
+	Test.Index.OrdersID = NewIndex("orders_id", Test.Table.Orders)
+	Test.Index.UsersID = NewIndex("users_id", Test.Table.Users)
 	// View
-	Test.View.OrdersGeneral = NewView("orders_general", "og", Test.Tables.Users)
-	Test.View.UsersGeneral = NewView("users_general", "ug", Test.Tables.Users)
+	Test.View.OrdersGeneral = NewView("orders_general", "og", Test.Table.Users)
+	Test.View.UsersGeneral = NewView("users_general", "ug", Test.Table.Users)
+	// Constraint
+	Test.Check.OrdersNumber = NewCheck("ck_orders_number", Greater(Test.TableOrders.Number.Expr(), Value(0)))
+	Test.Check.UsersNumber = NewCheck("ck_users_number", Greater(Test.TableUsers.Number.Expr(), Value(0)))
+	Test.Foreign.OrdersUsers = NewForeignKey("fk_orders_users", Test.Table.Users, Cascade(), Restrict(), Relation(Test.TableOrders.UserID, Test.TableUsers.ID), Relation(Test.TableOrders.Name, Test.TableUsers.String))
+	Test.Foreign.UsersOrders = NewForeignKey("fk_users_orders", Test.Table.Orders, Cascade(), Restrict(), Relation(Test.TableUsers.DataID, Test.TableOrders.ID), Relation(Test.TableUsers.Name, Test.TableOrders.String))
+	Test.Primary.OrdersID = NewPrimaryKey("pk_orders_id", Test.TableOrders.ID)
+	Test.Primary.UsersID = NewPrimaryKey("pk_users_id", Test.TableUsers.ID)
+	Test.Unique.OrdersName = NewUnique("un_orders_name", Test.TableOrders.Name)
+	Test.Unique.UsersName = NewUnique("un_users_name", Test.TableUsers.Name)
 }
 
 func testAllDialects(t *testing.T, userFunc func(t *testing.T, supportDialect *SupportDialect)) {

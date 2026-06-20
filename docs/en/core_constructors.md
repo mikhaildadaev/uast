@@ -191,45 +191,45 @@ DROP VIEW IF EXISTS "users"
 ## NewInsert
 Creates a new INSERT statement instance. Accepts a table source and returns a statement that can be configured with `Returning`, `Source/Values`, `With`.
 ```go
-stmtInsertReturning := uast.NewInsert(uast.NewTable("users", "u")).
-    Values(
-		uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
+stmtInsertReturning := uast.NewInsert(Test.Tables.Users).
+	Values(
+		uast.Pair(Test.Users.String.Expr(), uast.Value("ivan")),
+		uast.Pair(Test.Users.Number.Expr(), uast.Value(2)),
 	).
 	Returning(
-		uast.Field[int64]("u", "id"),
-		uast.Field[string]("u", "string"),
+		Test.Users.ID.Expr(),
+		Test.Users.String.Expr(),
 	)
-stmtInsertSource := uast.NewInsert(uast.NewTable("users", "u")).
-	Source(NewSelect(uast.NewTable("users", "u")).
-		Field(
-			uast.Field[string]("u", "string"),
-			uast.Field[int]("u", "number"),
+stmtInsertSource := uast.NewInsert(Test.Tables.Users).
+	Source(uast.NewSelect(Test.Tables.Users).
+		Fields(
+			Test.Users.String.Expr(),
+			Test.Users.Number.Expr(),
 		).
 		Where(
-			uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
+			uast.Equal(Test.Users.String.Expr(), uast.Value("active")),
 		),
 	)
-stmtInsertValues := uast.NewInsert(uast.NewTable("users", "u")).
-    Values(
-		uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
-	).
-    Upsert(
-		uast.Pair(uast.Field[string]("u", "string"), uast.Value("updated")),
-	)
-stmtInsertWith := NewInsert(uast.NewTable("users", "u")).
+stmtInsertValues := uast.NewInsert(Test.Tables.Users).
 	Values(
-		uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
+		uast.Pair(Test.Users.String.Expr(), uast.Value("ivan")),
+		uast.Pair(Test.Users.Number.Expr(), uast.Value(2)),
+	).
+	Upsert(
+		uast.Pair(Test.Users.String.Expr(), uast.Value("updated")),
+	)
+stmtInsertWith := uast.NewInsert(Test.Tables.Users).
+	Values(
+		uast.Pair(Test.Users.String.Expr(), uast.Value("ivan")),
+		uast.Pair(Test.Users.Number.Expr(), uast.Value(2)),
 	).
 	With(
-		uast.WithN("old_users", uast.NewSelect(uast.NewTable("users", "u")).
-			Field(
-                uast.Field[int64]("u", "id"),
-		    ).
+		uast.WithN("old_users", uast.NewSelect(Test.Tables.Users).
+			Fields(
+				Test.Users.ID.Expr(),
+			).
 			Where(
-				uast.Less(uast.Field[int]("u", "number"), uast.Value(2)),
+				uast.Less(Test.Users.Number.Expr(), uast.Value(2)),
 			),
 		),
 	)
@@ -273,91 +273,91 @@ WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < ?)
 ## NewSelect
 Creates a new SELECT statement instance. Accepts a table source and returns a statement that can be configured with `Distinct`, `Field`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
 ```go
-stmtSelectDistinct := uast.NewSelect(uast.NewTable("users", "u")).
-    Distinct().
-    Field(
-        uast.Field[int64]("u", "id"),
-    ).
-    Where(
-		uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
+stmtSelectDistinct := uast.NewSelect(Test.Tables.Users).
+	Distinct().
+	Fields(
+		Test.Users.ID.Expr(),
+	).
+	Where(
+		uast.Equal(Test.Users.Number.Expr(), uast.Value(2)),
 	)
-stmtSelectField := uast.NewSelect(uast.NewTable("users", "u")).
-    Field(
-        uast.Field[int64]("u", "id"),
-    ).
-    Where(
-		uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
+stmtSelectField := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.ID.Expr(),
+	).
+	Where(
+		uast.Equal(Test.Users.Number.Expr(), uast.Value(2)),
 	)
-stmtSelectGroupBy := uast.NewSelect(uast.NewTable("users", "u")).
-	Field(
-		uast.Field[string]("u", "string"),
-		uast.Count(uast.Field[int64]("u", "id"), false).As("cnt"),
+stmtSelectGroupBy := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.String.Expr(),
+		uast.Count(Test.Users.ID.Expr(), false).As("cnt"),
 	).
 	GroupBy(
-		uast.Field[string]("u", "string"),
+		Test.Users.String.Expr(),
 	)
-stmtSelectHaving := uast.NewSelect(uast.NewTable("users", "u")).
-	Field(
-		uast.Field[string]("u", "string"),
-		uast.Count(uast.Field[int64]("u", "id"), false).As("cnt"),
+stmtSelectHaving := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.String.Expr(),
+		uast.Count(Test.Users.ID.Expr(), false).As("cnt"),
 	).
 	GroupBy(
-        uast.Field[string]("u", "string"),
-    ).
+		Test.Users.String.Expr(),
+	).
 	Having(
-		uast.Greater(uast.Count(uast.Field[int64]("u", "id"), false), uast.Value[int64](2)),
+		uast.Greater(uast.Count(Test.Users.ID.Expr(), false), uast.Value[int64](2)),
 	)
-stmtSelectJoin := uast.NewSelect(uast.NewTable("users", "u")).
-	Field(
-		uast.Field[int64]("u", "id"),
-		uast.Field[string]("o", "string"),
+stmtSelectJoin := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.ID.Expr(),
+		Test.Orders.String.Expr(),
 	).
 	Join(
-		uast.Inner(uast.NewTable("orders", "o"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
+		uast.Inner(Test.Tables.Orders, uast.Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
 	)
-stmtSelectOrderBy := uast.NewSelect(uast.NewTable("users", "u")).
-	Field(
-		uast.Field[int64]("u", "id"),
+stmtSelectOrderBy := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.ID.Expr(),
 	).
 	OrderBy(
-		uast.Desc(uast.Field[int]("u", "number")),
-		uast.Asc(uast.Field[string]("u", "string")),
+		uast.Desc(Test.Users.Number.Expr()),
+		uast.Asc(Test.Users.String.Expr()),
 	)
-stmtSelectPagination := uast.NewSelect(uast.NewTable("users", "u")).
-	Field(
-		uast.Field[int64]("u", "id"),
+stmtSelectPagination := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.ID.Expr(),
 	).
 	Pagination(10, 20)
-stmtSelectUnions := uast.NewSelect(uast.NewTable("users", "u")).
-	Field(
-		uast.Field[string]("u", "string"),
+stmtSelectUnions := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.String.Expr(),
 	).
 	Unions(
-		uast.UnionAll(uast.NewSelect(uast.NewTable("orders", "o")).
-			Field(
-				uast.Field[string]("o", "string"),
+		uast.UnionAll(uast.NewSelect(Test.Tables.Orders).
+			Fields(
+				Test.Orders.String.Expr(),
 			),
 		),
 	)
-stmtSelectWhere := uast.NewSelect(uast.NewTable("users", "u")).
-	Field(
-		uast.Field[int64]("u", "id"),
+stmtSelectWhere := uast.NewSelect(Test.Tables.Users).
+	Fields(
+		Test.Users.ID.Expr(),
 	).
 	Where(
-		uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
+		uast.Equal(Test.Users.Number.Expr(), uast.Value(2)),
 	)
-stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_test", "ct")).
-	Field(
+stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_user", "ct")).
+	Fields(
 		uast.Field[int64]("ct", "id"),
 	).
 	With(
-		uast.WithN("cte_test", uast.NewSelect(uast.NewTable("users", "u")).
-			Field(
-                uast.Field[int64]("u", "id"),
-            ).
+		uast.WithN("cte_user", uast.NewSelect(Test.Tables.Users).
+			Fields(
+				Test.Users.ID.Expr(),
+			).
 			Where(
-                uast.Greater(uast.Field[int]("u", "number"), uast.Value(2)),
-            ),
+				uast.Greater(Test.Users.Number.Expr(), uast.Value(2)),
+			),
 		),
 	)
 ```
@@ -430,10 +430,10 @@ WITH "cte_test" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" > ?) 
 ## NewTruncate
 Creates a new TRUNCATE statement instance. Accepts a table source and returns a statement that can be configured with `Cascade()` or `RestartIdentity()`.
 ```go
-stmtTruncateDefault := uast.NewTruncate(uast.NewTable("users", "u"))
-stmtTruncateCascade := uast.NewTruncate(uast.NewTable("users", "u")).
+stmtTruncateDefault := uast.NewTruncate(Test.Tables.Users)
+stmtTruncateCascade := uast.NewTruncate(Test.Tables.Users).
     Cascade()
-stmtTruncateRestartIdentity := uast.NewTruncate(uast.NewTable("users", "u")).
+stmtTruncateRestartIdentity := uast.NewTruncate(Test.Tables.Users).
     RestartIdentity()
 ```
 Output MariaDB:
@@ -470,53 +470,53 @@ TRUNCATE TABLE "users"
 ## NewUpdate
 Creates a new UPDATE statement instance. Accepts a table source and returns a statement that can be configured with `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go
-stmtUpdateJoin := uast.NewUpdate(uast.NewTable("users", "u")).
-    Join(
-		uast.Inner(uast.NewTable("orders", "o"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
-    ).
-    Set(
-        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
-    ).
-    Where(
-        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
-    ).
-stmtUpdateReturning := uast.NewUpdate(uast.NewTable("users", "u")).
-    Set(
-        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
-    ).
-    Where(
-        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
-    ).
-    Returning(
-        uast.Field[int64]("u", "id"),
-        uast.Field[string]("u", "string")
-    )
-stmtUpdateSet := uast.NewUpdate(uast.NewTable("users", "u")).
-    Set(
-        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
-    ).
-    Where(
-        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
-    )
-stmtUpdateWhere := uast.NewUpdate(uast.NewTable("users", "u")).
-    Set(
-        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
-    ).
-    Where(
-        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
-    )
-stmtUpdateWith := NewUpdate(uast.NewTable("users", "u")).
+stmtUpdateJoin := uast.NewUpdate(Test.Tables.Users).
 	Set(
-		uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
+		uast.Assign(Test.Users.String.Expr(), uast.Value("active")),
+	).
+	Join(
+		uast.Inner(Test.Tables.Orders, uast.Equal(Test.Users.ID.Expr(), Test.Orders.ID.Expr())),
+	).
+	Where(
+		uast.Equal(Test.Orders.String.Expr(), uast.Value("active")),
+	)
+stmtUpdateReturning := uast.NewUpdate(Test.Tables.Users).
+	Set(
+		uast.Assign(Test.Users.String.Expr(), uast.Value("active")),
+	).
+	Where(
+		uast.Equal(Test.Users.Number.Expr(), uast.Value(2)),
+	).
+	Returning(
+		Test.Users.ID.Expr(),
+		Test.Users.String.Expr(),
+	)
+stmtUpdateSet := uast.NewUpdate(Test.Tables.Users).
+	Set(
+		uast.Assign(Test.Users.String.Expr(), uast.Value("active")),
+	).
+	Where(
+		uast.Equal(Test.Users.Number.Expr(), uast.Value(2)),
+	)
+stmtUpdateWhere := uast.NewUpdate(Test.Tables.Users).
+	Set(
+		uast.Assign(Test.Users.String.Expr(), uast.Value("active")),
+	).
+	Where(
+		uast.Equal(Test.Users.Number.Expr(), uast.Value(2)),
+	)
+stmtUpdateWith := uast.NewUpdate(Test.Tables.Users).
+	Set(
+		uast.Assign(Test.Users.String.Expr(), uast.Value("updated")),
 	).
 	With(
-		uast.WithN("old_users", uast.NewSelect(uast.NewTable("users", "u")).
-			Field(
-                uast.Field[int64]("u", "id"),
-            ).
+		uast.WithN("old_users", uast.NewSelect(Test.Tables.Users).
+			Fields(
+				Test.Users.ID.Expr(),
+			).
 			Where(
-                uast.Less(uast.Field[int]("u", "number"), uast.Value(2)),
-            ),
+				uast.Less(Test.Users.Number.Expr(), uast.Value(2)),
+			),
 		),
 	)
 ```

@@ -47,7 +47,7 @@ COMMENT ON TABLE "users" AS "u" IS 'Comment'
 ```go
 stmtDeleteJoin := uast.NewDelete(uast.NewTable("users", "u")).
     Join(
-		uast.Inner(uast.NewTable("data", "d"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("orders", "o"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
     ).
     Where(
         uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
@@ -78,35 +78,35 @@ stmtDeleteWith := NewDelete(uast.NewTable("users", "u")).
 ```
 Output MariaDB:
 ```text
-DELETE `u` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` WHERE `u`.`string` = ?
+DELETE `u` FROM `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` WHERE `u`.`string` = ?
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ? RETURNING `u`.`id`, `u`.`string`
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) DELETE `u` FROM `users` AS `u`
 ```
 Output MsSQL:
 ```text
-DELETE [u] FROM [users] AS [u] INNER JOIN [data] AS [d] ON [u].[id] = [d].[id] WHERE [u].[string] = @p1
+DELETE [u] FROM [users] AS [u] INNER JOIN [orders] AS [o] ON [u].[id] = [o].[id] WHERE [u].[string] = @p1
 DELETE [u] FROM [users] AS [u] OUTPUT [u].[id], [u].[string] WHERE [u].[string] = @p1
 DELETE [u] FROM [users] AS [u] WHERE [u].[string] = @p1
 WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p1) DELETE [u] FROM [users] AS [u]
 ```
 Output MySQL:
 ```text
-DELETE `u` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` WHERE `u`.`string` = ?
+DELETE `u` FROM `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` WHERE `u`.`string` = ?
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) DELETE `u` FROM `users` AS `u`
 ```
 Output PostgreSQL:
 ```text
-DELETE FROM "users" AS "u" USING "data" AS "d" WHERE ("u"."id" = "d"."id" AND "u"."string" = $1)
+DELETE FROM "users" AS "u" USING "orders" AS "o" WHERE ("u"."id" = "o"."id" AND "u"."string" = $1)
 DELETE FROM "users" AS "u" WHERE "u"."string" = $1 RETURNING "u"."id", "u"."string"
 DELETE FROM "users" AS "u" WHERE "u"."string" = $1
 WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1) DELETE FROM "users" AS "u"
 ```
 Output SQLite:
 ```text
-DELETE FROM "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id" WHERE "u"."string" = ?
+DELETE FROM "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id" WHERE "u"."string" = ?
 DELETE FROM "users" AS "u" WHERE "u"."string" = ? RETURNING "u"."id", "u"."string"
 DELETE FROM "users" AS "u" WHERE "u"."string" = ?
 WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < ?) DELETE FROM "users" AS "u"
@@ -310,10 +310,10 @@ stmtSelectHaving := uast.NewSelect(uast.NewTable("users", "u")).
 stmtSelectJoin := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
 		uast.Field[int64]("u", "id"),
-		uast.Field[string]("d", "string"),
+		uast.Field[string]("o", "string"),
 	).
 	Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("orders", "o"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
 	)
 stmtSelectOrderBy := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
@@ -333,9 +333,9 @@ stmtSelectUnions := uast.NewSelect(uast.NewTable("users", "u")).
 		uast.Field[string]("u", "string"),
 	).
 	Unions(
-		uast.UnionAll(uast.NewSelect(uast.NewTable("data", "d")).
+		uast.UnionAll(uast.NewSelect(uast.NewTable("orders", "o")).
 			Field(
-				uast.Field[string]("d", "string"),
+				uast.Field[string]("o", "string"),
 			),
 		),
 	)
@@ -367,10 +367,10 @@ SELECT DISTINCT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string`
 SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string` HAVING COUNT(`u`.`id`) > ?
-SELECT `u`.`id`, `d`.`string` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id`
+SELECT `u`.`id`, `o`.`string` FROM `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id`
 SELECT `u`.`id` FROM `users` AS `u` ORDER BY `u`.`number` DESC, `u`.`string` ASC
 SELECT `u`.`id` FROM `users` AS `u` LIMIT ? OFFSET ?
-SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `o`.`string` FROM `orders` AS `o`
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 WITH `cte_test` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
@@ -380,10 +380,10 @@ SELECT DISTINCT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
 SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
 SELECT [u].[string], COUNT([u].[id]) AS [cnt] FROM [users] AS [u] GROUP BY [u].[string]
 SELECT [u].[string], COUNT([u].[id]) AS [cnt] FROM [users] AS [u] GROUP BY [u].[string] HAVING COUNT([u].[id]) > @p1
-SELECT [u].[id], [d].[string] FROM [users] AS [u] INNER JOIN [data] AS [d] ON [u].[id] = [d].[id]
+SELECT [u].[id], [o].[string] FROM [users] AS [u] INNER JOIN [orders] AS [o] ON [u].[id] = [o].[id]
 SELECT [u].[id] FROM [users] AS [u] ORDER BY [u].[number] DESC, [u].[string] ASC
 SELECT [u].[id] FROM [users] AS [u] ORDER BY 1 ASC OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY
-SELECT [u].[string] FROM [users] AS [u] UNION ALL SELECT [d].[string] FROM [data] AS [d]
+SELECT [u].[string] FROM [users] AS [u] UNION ALL SELECT [o].[string] FROM [orders] AS [o]
 SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
 WITH [cte_test] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] > @p1) SELECT [ct].[id] FROM [cte_test] AS [ct]
 ```
@@ -393,10 +393,10 @@ SELECT DISTINCT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string`
 SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string` HAVING COUNT(`u`.`id`) > ?
-SELECT `u`.`id`, `d`.`string` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id`
+SELECT `u`.`id`, `o`.`string` FROM `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id`
 SELECT `u`.`id` FROM `users` AS `u` ORDER BY `u`.`number` DESC, `u`.`string` ASC
 SELECT `u`.`id` FROM `users` AS `u` LIMIT ? OFFSET ?
-SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `o`.`string` FROM `orders` AS `o`
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 WITH `cte_test` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
@@ -406,10 +406,10 @@ SELECT DISTINCT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
 SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
 SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string"
 SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string" HAVING COUNT("u"."id") > $1
-SELECT "u"."id", "d"."string" FROM "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id"
+SELECT "u"."id", "o"."string" FROM "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id"
 SELECT "u"."id" FROM "users" AS "u" ORDER BY "u"."number" DESC, "u"."string" ASC
 SELECT "u"."id" FROM "users" AS "u" LIMIT $1 OFFSET $2
-SELECT "u"."string" FROM "users" AS "u" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "u"."string" FROM "users" AS "u" UNION ALL SELECT "o"."string" FROM "orders" AS "o"
 SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
 WITH "cte_test" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" > $1) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
@@ -419,10 +419,10 @@ SELECT DISTINCT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
 SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
 SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string"
 SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string" HAVING COUNT("u"."id") > ?
-SELECT "u"."id", "d"."string" FROM "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id"
+SELECT "u"."id", "o"."string" FROM "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id"
 SELECT "u"."id" FROM "users" AS "u" ORDER BY "u"."number" DESC, "u"."string" ASC
 SELECT "u"."id" FROM "users" AS "u" LIMIT ? OFFSET ?
-SELECT "u"."string" FROM "users" AS "u" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "u"."string" FROM "users" AS "u" UNION ALL SELECT "o"."string" FROM "orders" AS "o"
 SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
 WITH "cte_test" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" > ?) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
@@ -472,7 +472,7 @@ TRUNCATE TABLE "users"
 ```go
 stmtUpdateJoin := uast.NewUpdate(uast.NewTable("users", "u")).
     Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("orders", "o"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
     ).
     Set(
         uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
@@ -522,7 +522,7 @@ stmtUpdateWith := NewUpdate(uast.NewTable("users", "u")).
 ```
 Output MariaDB:
 ```text
-UPDATE `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` SET `u`.`string` = ? WHERE `d`.`string` = ?
+UPDATE `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` SET `u`.`string` = ? WHERE `o`.`string` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ? RETURNING `u`.`id`, `u`.`string`
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
@@ -531,7 +531,7 @@ WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?)
 ```
 Output MsSQL:
 ```text
-UPDATE [users] AS [u] INNER JOIN [data] AS [d] ON [u].[id] = [d].[id] SET [u].[string] = @p1 WHERE [d].[string] = @p2
+UPDATE [users] AS [u] INNER JOIN [orders] AS [o] ON [u].[id] = [o].[id] SET [u].[string] = @p1 WHERE [o].[string] = @p2
 UPDATE [users] AS [u] OUTPUT [u].[id], [u].[string] SET [u].[string] = @p1 WHERE [u].[number] = @p2
 UPDATE [users] AS [u] SET [u].[string] = @p1 WHERE [u].[number] = @p2
 UPDATE [users] AS [u] SET [u].[string] = @p1 WHERE [u].[number] = @p2
@@ -539,7 +539,7 @@ WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p
 ```
 Output MySQL:
 ```text
-UPDATE `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` SET `u`.`string` = ? WHERE `d`.`string` = ?
+UPDATE `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` SET `u`.`string` = ? WHERE `o`.`string` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
@@ -547,7 +547,7 @@ WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?)
 ```
 Output PostgreSQL:
 ```text
-UPDATE "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id" SET "u"."string" = $1 WHERE "d"."string" = $2
+UPDATE "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id" SET "u"."string" = $1 WHERE "o"."string" = $2
 UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2 RETURNING "u"."id", "u"."string"
 UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2
 UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2
@@ -555,7 +555,7 @@ WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1
 ```
 Output SQLite:
 ```text
-UPDATE "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id" SET "u"."string" = ? WHERE "d"."string" = ?
+UPDATE "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id" SET "u"."string" = ? WHERE "o"."string" = ?
 UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ? RETURNING "u"."id", "u"."string"
 UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ?
 UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ?

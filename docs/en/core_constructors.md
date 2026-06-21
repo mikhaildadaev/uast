@@ -47,7 +47,7 @@ Creates a new DELETE statement instance. Accepts a table source and returns a st
 ```go
 stmtDeleteJoin := uast.NewDelete(uast.NewTable("users", "u")).
     Join(
-		uast.Inner(uast.NewTable("data", "d"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("orders", "o"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
     ).
     Where(
         uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
@@ -310,10 +310,10 @@ stmtSelectHaving := uast.NewSelect(uast.NewTable("users", "u")).
 stmtSelectJoin := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
 		uast.Field[int64]("u", "id"),
-		uast.Field[string]("d", "string"),
+		uast.Field[string]("o", "string"),
 	).
 	Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("orders", "o"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
 	)
 stmtSelectOrderBy := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
@@ -333,9 +333,9 @@ stmtSelectUnions := uast.NewSelect(uast.NewTable("users", "u")).
 		uast.Field[string]("u", "string"),
 	).
 	Unions(
-		uast.UnionAll(uast.NewSelect(uast.NewTable("data", "d")).
+		uast.UnionAll(uast.NewSelect(uast.NewTable("orders", "o")).
 			Field(
-				uast.Field[string]("d", "string"),
+				uast.Field[string]("o", "string"),
 			),
 		),
 	)
@@ -472,7 +472,7 @@ Creates a new UPDATE statement instance. Accepts a table source and returns a st
 ```go
 stmtUpdateJoin := uast.NewUpdate(uast.NewTable("users", "u")).
     Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("orders", "o"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("o", "id"))),
     ).
     Set(
         uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),

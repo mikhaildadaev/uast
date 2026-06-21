@@ -8,6 +8,32 @@ outline: deep
 本页面涵盖四个语句构造函数：`NewDelete`、`NewInsert`、`NewSelect`、`NewUpdate`。每个构造函数创建一个新的语句实例，可使用方法进行配置，并通过 `Build()` 编译为 SQL。
 :::
 
+## NewAlter
+...
+```go
+...
+```
+Output MariaDB:
+```text
+...
+```
+Output MsSQL:
+```text
+...
+```
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
+```text
+...
+```
+Output SQLite:
+```text
+...
+```
+
 ## NewComment
 创建一个新的 COMMENT 语句实例。接受注释文本，并返回一个可以使用 `OnColumn` 或 `OnTable` 进行配置的语句。
 ```go

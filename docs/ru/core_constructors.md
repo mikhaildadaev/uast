@@ -8,6 +8,32 @@ outline: deep
 Эта страница охватывает четыре конструктора операторов: `NewDelete`, `NewInsert`, `NewSelect`, `NewUpdate`. Каждый конструктор создаёт новый экземпляр оператора, который может быть настроен с помощью методов и скомпилирован в SQL с помощью `Build()`.
 :::
 
+## NewAlter
+...
+```go
+...
+```
+Output MariaDB:
+```text
+...
+```
+Output MsSQL:
+```text
+...
+```
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
+```text
+...
+```
+Output SQLite:
+```text
+...
+```
+
 ## NewComment
 Создаёт новый экземпляр оператора COMMENT. Принимает текст комментария и возвращает оператор, который можно настроить с помощью `OnColumn` или `OnTable`.
 ```go

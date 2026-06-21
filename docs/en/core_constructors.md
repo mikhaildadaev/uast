@@ -8,6 +8,32 @@ outline: deep
 This page covers the four statement constructors: `NewDelete`, `NewInsert`, `NewSelect`, `NewUpdate`. Each constructor creates a new statement instance that can be configured with methods and built into SQL using `Build()`.
 :::
 
+## NewAlter
+...
+```go
+...
+```
+Output MariaDB:
+```text
+...
+```
+Output MsSQL:
+```text
+...
+```
+Output MySQL:
+```text
+...
+```
+Output PostgreSQL:
+```text
+...
+```
+Output SQLite:
+```text
+...
+```
+
 ## NewComment
 Creates a new COMMENT statement instance. Accepts a comment text and returns a statement that can be configured with `OnColumn` or `OnTable`.
 ```go

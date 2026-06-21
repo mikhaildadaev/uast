@@ -50,8 +50,8 @@ stmtCreateIndex := uast.NewCreate(uast.NewIndex("users_id", uast.NewTable("users
 	IsUnique().
 	On(uast.NewTable("users", "u")).
 	Columns(
-		uast.Field[string]("u", "string")
-		uast.Field[int]("u", "number")
+		uast.Field[string]("u", "string"),
+		uast.Field[int]("u", "number"),
 	)
 stmtCreateScheme := uast.NewCreate(uast.NewSchema("test")).
 	IfNotExists()

@@ -11,15 +11,15 @@ outline: deep
 ## NewComment
 Создаёт новый экземпляр оператора COMMENT. Принимает текст комментария и возвращает оператор, который можно настроить с помощью `OnColumn` или `OnTable`.
 ```go
-stmtCommentColumn := uast.NewComment("Test comment").
+stmtCommentColumn := uast.NewComment("Comment").
     OnColumn(uast.Field[int64]("u", "id"))
-stmtCommentTable := uast.NewComment("Test comment").
+stmtCommentTable := uast.NewComment("Comment").
     OnTable(uast.NewTable("users", "u"))
 ```
 Output MariaDB:
 ```text
-COMMENT ON COLUMN `u`.`id` IS 'Test comment'
-COMMENT ON TABLE `users` AS `u` IS 'Test comment'
+COMMENT ON COLUMN `u`.`id` IS 'Comment'
+COMMENT ON TABLE `users` AS `u` IS 'Comment'
 ```
 Output MsSQL:
 ```text
@@ -28,18 +28,18 @@ Output MsSQL:
 ```
 Output MySQL:
 ```text
-COMMENT ON COLUMN `u`.`id` IS 'Test comment'
-COMMENT ON TABLE `users` AS `u` IS 'Test comment'
+COMMENT ON COLUMN `u`.`id` IS 'Comment'
+COMMENT ON TABLE `users` AS `u` IS 'Comment'
 ```
 Output PostgreSQL:
 ```text
-COMMENT ON COLUMN "u"."id" IS 'Test comment'
-COMMENT ON TABLE "users" AS "u" IS 'Test comment'
+COMMENT ON COLUMN "u"."id" IS 'Comment'
+COMMENT ON TABLE "users" AS "u" IS 'Comment'
 ```
 Output SQLite:
 ```text
-COMMENT ON COLUMN "u"."id" IS 'Test comment'
-COMMENT ON TABLE "users" AS "u" IS 'Test comment'
+COMMENT ON COLUMN "u"."id" IS 'Comment'
+COMMENT ON TABLE "users" AS "u" IS 'Comment'
 ```
 
 ## NewDelete
@@ -47,7 +47,7 @@ COMMENT ON TABLE "users" AS "u" IS 'Test comment'
 ```go
 stmtDeleteJoin := uast.NewDelete(uast.NewTable("users", "u")).
     Join(
-		Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("data", "d"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
     ).
     Where(
         uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
@@ -125,7 +125,7 @@ stmtDropCascadeView := uast.NewDrop(uast.NewView("users_general", "ug", uast.New
     Cascade()
 stmtDropIfExistsIndex := uast.NewDrop(uast.NewIndex("users")).
     IfExists()
-stmtDropIfExistsSchema := uast.NewDrop(uast.NewSchema("users")).
+stmtDropIfExistsSchema := uast.NewDrop(uast.NewSchema("test")).
     IfExists()
 stmtDropIfExistsTable := uast.NewDrop(uast.NewTable("users", "u")).
     IfExists()
@@ -168,22 +168,22 @@ DROP VIEW IF EXISTS `users`
 Output PostgreSQL:
 ```text
 DROP INDEX "users_id" CASCADE
-DROP SCHEMA "users" CASCADE
+DROP SCHEMA "test" CASCADE
 DROP TABLE "users" CASCADE
 DROP VIEW "users_general" CASCADE
 DROP INDEX IF EXISTS "users"
-DROP SCHEMA IF EXISTS "users"
+DROP SCHEMA IF EXISTS "test"
 DROP TABLE IF EXISTS "users"
 DROP VIEW IF EXISTS "users"
 ```
 Output SQLite:
 ```text
 DROP INDEX "users_id"
-DROP SCHEMA "users"
+DROP SCHEMA "test"
 DROP TABLE "users"
 DROP VIEW "users_general"
 DROP INDEX IF EXISTS "users"
-DROP SCHEMA "users"
+DROP SCHEMA "test"
 DROP TABLE IF EXISTS "users"
 DROP VIEW IF EXISTS "users"
 ```

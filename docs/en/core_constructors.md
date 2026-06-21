@@ -5,7 +5,7 @@ outline: deep
 # API / Core / Constructors
 
 ::: info **Info**
-This page covers the four statement constructors: `NewDelete`, `NewInsert`, `NewSelect`, `NewUpdate`. Each constructor creates a new statement instance that can be configured with methods and built into SQL using `Build()`.
+This page covers the four statement constructors: `NewAlter`, `NewComment`, `NewCreate`, `NewDelete`, `NewDrop`, `NewInsert`, `NewSelect`, `NewTruncate`, `NewUpdate`. Each constructor creates a new statement instance that can be configured with methods and built into SQL using `Build()`.
 :::
 
 ## NewAlter

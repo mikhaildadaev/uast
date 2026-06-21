@@ -1989,19 +1989,19 @@ func Test_SQL_Comment(t *testing.T) {
 			)
 			defer sql.Close()
 			stmtComment := NewComment(Test.Table.Users.ID).
-				Is("user comment")
+				Is("Comment")
 			sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'user comment'", "COMMENT")
+				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'Comment'", "COMMENT")
 			case DialectMsSQL:
 				// Not supported - COMMENT
 			case DialectMySQL:
-				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'user comment'", "COMMENT")
+				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'Comment'", "COMMENT")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'user comment'`, "COMMENT")
+				//assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'Comment'`, "COMMENT")
 			case DialectSQLite:
-				//assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'user comment'`, "COMMENT")
+				//assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'Comment'`, "COMMENT")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -2012,19 +2012,20 @@ func Test_SQL_Comment(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtComment := NewComment(Test.Table.User).Is("user comment")
+			stmtComment := NewComment(Test.Table.User).
+				Is("Comment")
 			sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `users` IS 'user comment'", "COMMENT")
+				//assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `users` IS 'Comment'", "COMMENT")
 			case DialectMsSQL:
 				// Not supported - COMMENT
 			case DialectMySQL:
-				//assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `users` IS 'user comment'", "COMMENT")
+				//assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `users` IS 'Comment'", "COMMENT")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `COMMENT ON TABLE "users" IS 'user comment'`, "COMMENT")
+				//assertContains(t, sqlCommentQuery, `COMMENT ON TABLE "users" IS 'Comment'`, "COMMENT")
 			case DialectSQLite:
-				//assertContains(t, sqlCommentQuery, `COMMENT ON TABLE "users" IS 'user comment'`, "COMMENT")
+				//assertContains(t, sqlCommentQuery, `COMMENT ON TABLE "users" IS 'Comment'`, "COMMENT")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})

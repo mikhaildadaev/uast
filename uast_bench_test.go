@@ -11,12 +11,12 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
 		builder.SetDialect(supportDialect)
 		b.Run("Simple", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Users).
+			stmt := NewSelect(Test.Table.User).
 				Fields(
-					Test.TableUsers.ID.Expr(),
+					Test.Table.Users.ID.Expr(),
 				).
 				Where(
-					Equal(Test.TableUsers.Number.Expr(), Value(0)),
+					Equal(Test.Table.Users.Number.Expr(), Value(0)),
 				)
 			b.ResetTimer()
 			b.RunParallel(func(pb *testing.PB) {
@@ -29,61 +29,61 @@ func Benchmark_Immutable_Multi(b *testing.B) {
 			})
 		})
 		b.Run("Complex", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Orders).
+			stmt := NewSelect(Test.Table.Order).
 				Fields(
-					Test.TableOrders.ID.Expr().As("test_id"),
-					Test.TableOrders.String.Expr().As("test_string"),
-					Test.TableOrders.Number.Expr().As("test_number"),
-					Subquery[int](NewSelect(Test.Table.Users).
+					Test.Table.Orders.ID.Expr().As("test_id"),
+					Test.Table.Orders.String.Expr().As("test_string"),
+					Test.Table.Orders.Number.Expr().As("test_number"),
+					Subquery[int](NewSelect(Test.Table.User).
 						Fields(
-							Count(Test.TableUsers.ID.Expr(), false),
+							Count(Test.Table.Users.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
+							Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table.Users, Equal(Test.TableOrders.ID.Expr(), Test.TableUsers.ID.Expr())),
-					Left(Test.Table.Users, Equal(Test.TableUsers.String.Expr(), Test.TableOrders.String.Expr())),
+					Inner(Test.Table.User, Equal(Test.Table.Orders.ID.Expr(), Test.Table.Users.ID.Expr())),
+					Left(Test.Table.User, Equal(Test.Table.Users.String.Expr(), Test.Table.Orders.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.TableUsers.String.Expr(), Value("active")),
-						Greater(Test.TableUsers.Number.Expr(), Value(2)),
-						In(Test.TableUsers.ID.Expr(), Subquery[int64](
-							NewSelect(Test.Table.Users).
+						Equal(Test.Table.Users.String.Expr(), Value("active")),
+						Greater(Test.Table.Users.Number.Expr(), Value(2)),
+						In(Test.Table.Users.ID.Expr(), Subquery[int64](
+							NewSelect(Test.Table.User).
 								Fields(
-									Test.TableUsers.ID.Expr().As("uid"),
+									Test.Table.Users.ID.Expr().As("uid"),
 								).
 								Where(
-									Greater(Test.TableUsers.Number.Expr(), Value(10)),
+									Greater(Test.Table.Users.Number.Expr(), Value(10)),
 								),
 						)),
-						Exists(Subquery[int](NewSelect(Test.Table.Users).
+						Exists(Subquery[int](NewSelect(Test.Table.User).
 							Fields(
-								Test.TableUsers.ID.Expr(),
+								Test.Table.Users.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
-									Equal(Test.TableUsers.String.Expr(), Value("active")),
+									Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
+									Equal(Test.Table.Users.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Test.TableOrders.ID.Expr(),
-					Test.TableOrders.String.Expr(),
-					Test.TableOrders.Number.Expr(),
+					Test.Table.Orders.ID.Expr(),
+					Test.Table.Orders.String.Expr(),
+					Test.Table.Orders.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.TableUsers.ID.Expr(), false), Value[int64](0)),
+					Greater(Count(Test.Table.Users.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Test.TableOrders.Number.Expr()),
-					Asc(Test.TableOrders.ID.Expr()),
+					Desc(Test.Table.Orders.Number.Expr()),
+					Asc(Test.Table.Orders.ID.Expr()),
 				).
 				Pagination(48, 0)
 			b.ResetTimer()
@@ -106,72 +106,72 @@ func Benchmark_Immutable_Single(b *testing.B) {
 	benchmarkAllDialects(b, func(b *testing.B, supportDialect *SupportDialect) {
 		builder.SetDialect(supportDialect)
 		b.Run("Simple", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Users).
+			stmt := NewSelect(Test.Table.User).
 				Fields(
-					Test.TableUsers.ID.Expr(),
+					Test.Table.Users.ID.Expr(),
 				).
 				Where(
-					Equal(Test.TableUsers.Number.Expr(), Value(0)),
+					Equal(Test.Table.Users.Number.Expr(), Value(0)),
 				)
 			for i := 0; i < b.N; i++ {
 				builder.Build(stmt)
 			}
 		})
 		b.Run("Complex", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Orders).
+			stmt := NewSelect(Test.Table.Order).
 				Fields(
-					Test.TableOrders.ID.Expr().As("test_id"),
-					Test.TableOrders.String.Expr().As("test_string"),
-					Test.TableOrders.Number.Expr().As("test_number"),
-					Subquery[int](NewSelect(Test.Table.Users).
+					Test.Table.Orders.ID.Expr().As("test_id"),
+					Test.Table.Orders.String.Expr().As("test_string"),
+					Test.Table.Orders.Number.Expr().As("test_number"),
+					Subquery[int](NewSelect(Test.Table.User).
 						Fields(
-							Count(Test.TableUsers.ID.Expr(), false),
+							Count(Test.Table.Users.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
+							Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table.Users, Equal(Test.TableOrders.ID.Expr(), Test.TableUsers.ID.Expr())),
-					Left(Test.Table.Users, Equal(Test.TableUsers.String.Expr(), Test.TableUsers.String.Expr())),
+					Inner(Test.Table.User, Equal(Test.Table.Orders.ID.Expr(), Test.Table.Users.ID.Expr())),
+					Left(Test.Table.User, Equal(Test.Table.Users.String.Expr(), Test.Table.Users.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.TableOrders.String.Expr(), Value("active")),
-						Greater(Test.TableOrders.Number.Expr(), Value(2)),
-						In(Test.TableOrders.ID.Expr(), Subquery[int64](NewSelect(Test.Table.Users).
+						Equal(Test.Table.Orders.String.Expr(), Value("active")),
+						Greater(Test.Table.Orders.Number.Expr(), Value(2)),
+						In(Test.Table.Orders.ID.Expr(), Subquery[int64](NewSelect(Test.Table.User).
 							Fields(
-								Test.TableUsers.ID.Expr().As("uid"),
+								Test.Table.Users.ID.Expr().As("uid"),
 							).
 							Where(
-								Greater(Test.TableUsers.Number.Expr(), Value(10)),
+								Greater(Test.Table.Users.Number.Expr(), Value(10)),
 							),
 						)),
-						Exists(Subquery[int](NewSelect(Test.Table.Users).
+						Exists(Subquery[int](NewSelect(Test.Table.User).
 							Fields(
-								Test.TableUsers.ID.Expr(),
+								Test.Table.Users.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
-									Equal(Test.TableUsers.String.Expr(), Value("active")),
+									Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
+									Equal(Test.Table.Users.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Test.TableOrders.ID.Expr(),
-					Test.TableOrders.String.Expr(),
-					Test.TableOrders.Number.Expr(),
+					Test.Table.Orders.ID.Expr(),
+					Test.Table.Orders.String.Expr(),
+					Test.Table.Orders.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.TableUsers.ID.Expr(), false), Value[int64](0)),
+					Greater(Count(Test.Table.Users.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Test.TableOrders.Number.Expr()),
-					Asc(Test.TableOrders.ID.Expr()),
+					Desc(Test.Table.Orders.Number.Expr()),
+					Asc(Test.Table.Orders.ID.Expr()),
 				).
 				Pagination(48, 0)
 			for i := 0; i < b.N; i++ {
@@ -188,12 +188,12 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 		)
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Users).
+			stmt := NewSelect(Test.Table.User).
 				Fields(
-					Test.TableUsers.ID.Expr(),
+					Test.Table.Users.ID.Expr(),
 				).
 				Where(
-					Equal(Test.TableUsers.Number.Expr(), Value(0)),
+					Equal(Test.Table.Users.Number.Expr(), Value(0)),
 				)
 			b.ResetTimer()
 			b.RunParallel(func(pb *testing.PB) {
@@ -206,61 +206,61 @@ func Benchmark_Mutable_Multi(b *testing.B) {
 			})
 		})
 		b.Run("Complex", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Orders).
+			stmt := NewSelect(Test.Table.Order).
 				Fields(
-					Test.TableOrders.ID.Expr().As("test_id"),
-					Test.TableOrders.String.Expr().As("test_string"),
-					Test.TableOrders.Number.Expr().As("test_number"),
-					Subquery[int](NewSelect(Test.Table.Users).
+					Test.Table.Orders.ID.Expr().As("test_id"),
+					Test.Table.Orders.String.Expr().As("test_string"),
+					Test.Table.Orders.Number.Expr().As("test_number"),
+					Subquery[int](NewSelect(Test.Table.User).
 						Fields(
-							Count(Test.TableUsers.ID.Expr(), false),
+							Count(Test.Table.Users.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
+							Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table.Users, Equal(Test.TableOrders.ID.Expr(), Test.TableUsers.ID.Expr())),
-					Left(Test.Table.Users, Equal(Test.TableUsers.String.Expr(), Test.TableOrders.String.Expr())),
+					Inner(Test.Table.User, Equal(Test.Table.Orders.ID.Expr(), Test.Table.Users.ID.Expr())),
+					Left(Test.Table.User, Equal(Test.Table.Users.String.Expr(), Test.Table.Orders.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.TableUsers.String.Expr(), Value("active")),
-						Greater(Test.TableUsers.Number.Expr(), Value(2)),
-						In(Test.TableUsers.ID.Expr(), Subquery[int64](
-							NewSelect(Test.Table.Users).
+						Equal(Test.Table.Users.String.Expr(), Value("active")),
+						Greater(Test.Table.Users.Number.Expr(), Value(2)),
+						In(Test.Table.Users.ID.Expr(), Subquery[int64](
+							NewSelect(Test.Table.User).
 								Fields(
-									Test.TableUsers.ID.Expr().As("uid"),
+									Test.Table.Users.ID.Expr().As("uid"),
 								).
 								Where(
-									Greater(Test.TableUsers.Number.Expr(), Value(10)),
+									Greater(Test.Table.Users.Number.Expr(), Value(10)),
 								),
 						)),
-						Exists(Subquery[int](NewSelect(Test.Table.Users).
+						Exists(Subquery[int](NewSelect(Test.Table.User).
 							Fields(
-								Test.TableUsers.ID.Expr(),
+								Test.Table.Users.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
-									Equal(Test.TableUsers.String.Expr(), Value("active")),
+									Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
+									Equal(Test.Table.Users.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Test.TableOrders.ID.Expr(),
-					Test.TableOrders.String.Expr(),
-					Test.TableOrders.Number.Expr(),
+					Test.Table.Orders.ID.Expr(),
+					Test.Table.Orders.String.Expr(),
+					Test.Table.Orders.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.TableUsers.ID.Expr(), false), Value[int64](0)),
+					Greater(Count(Test.Table.Users.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Test.TableOrders.Number.Expr()),
-					Asc(Test.TableOrders.ID.Expr()),
+					Desc(Test.Table.Orders.Number.Expr()),
+					Asc(Test.Table.Orders.ID.Expr()),
 				).
 				Pagination(48, 0)
 			b.ResetTimer()
@@ -285,72 +285,72 @@ func Benchmark_Mutable_Single(b *testing.B) {
 		)
 		defer builder.Close()
 		b.Run("Simple", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Users).
+			stmt := NewSelect(Test.Table.User).
 				Fields(
-					Test.TableUsers.ID.Expr(),
+					Test.Table.Users.ID.Expr(),
 				).
 				Where(
-					Equal(Test.TableUsers.Number.Expr(), Value(0)),
+					Equal(Test.Table.Users.Number.Expr(), Value(0)),
 				)
 			for i := 0; i < b.N; i++ {
 				builder.Build(stmt)
 			}
 		})
 		b.Run("Complex", func(b *testing.B) {
-			stmt := NewSelect(Test.Table.Orders).
+			stmt := NewSelect(Test.Table.Order).
 				Fields(
-					Test.TableOrders.ID.Expr().As("test_id"),
-					Test.TableOrders.String.Expr().As("test_string"),
-					Test.TableOrders.Number.Expr().As("test_number"),
-					Subquery[int](NewSelect(Test.Table.Users).
+					Test.Table.Orders.ID.Expr().As("test_id"),
+					Test.Table.Orders.String.Expr().As("test_string"),
+					Test.Table.Orders.Number.Expr().As("test_number"),
+					Subquery[int](NewSelect(Test.Table.User).
 						Fields(
-							Count(Test.TableUsers.ID.Expr(), false),
+							Count(Test.Table.Users.ID.Expr(), false),
 						).
 						Where(
-							Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
+							Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
 						),
 					).As("sub_count"),
 				).
 				Join(
-					Inner(Test.Table.Users, Equal(Test.TableOrders.ID.Expr(), Test.TableUsers.ID.Expr())),
-					Left(Test.Table.Users, Equal(Test.TableUsers.String.Expr(), Test.TableUsers.String.Expr())),
+					Inner(Test.Table.User, Equal(Test.Table.Orders.ID.Expr(), Test.Table.Users.ID.Expr())),
+					Left(Test.Table.User, Equal(Test.Table.Users.String.Expr(), Test.Table.Users.String.Expr())),
 				).
 				Where(
 					And(
-						Equal(Test.TableOrders.String.Expr(), Value("active")),
-						Greater(Test.TableOrders.Number.Expr(), Value(2)),
-						In(Test.TableOrders.ID.Expr(), Subquery[int64](NewSelect(Test.Table.Users).
+						Equal(Test.Table.Orders.String.Expr(), Value("active")),
+						Greater(Test.Table.Orders.Number.Expr(), Value(2)),
+						In(Test.Table.Orders.ID.Expr(), Subquery[int64](NewSelect(Test.Table.User).
 							Fields(
-								Test.TableUsers.ID.Expr().As("uid"),
+								Test.Table.Users.ID.Expr().As("uid"),
 							).
 							Where(
-								Greater(Test.TableUsers.Number.Expr(), Value(10)),
+								Greater(Test.Table.Users.Number.Expr(), Value(10)),
 							),
 						)),
-						Exists(Subquery[int](NewSelect(Test.Table.Users).
+						Exists(Subquery[int](NewSelect(Test.Table.User).
 							Fields(
-								Test.TableUsers.ID.Expr(),
+								Test.Table.Users.ID.Expr(),
 							).
 							Where(
 								And(
-									Equal(Test.TableUsers.Number.Expr(), Test.TableOrders.Number.Expr()),
-									Equal(Test.TableUsers.String.Expr(), Value("active")),
+									Equal(Test.Table.Users.Number.Expr(), Test.Table.Orders.Number.Expr()),
+									Equal(Test.Table.Users.String.Expr(), Value("active")),
 								),
 							),
 						)),
 					),
 				).
 				GroupBy(
-					Test.TableOrders.ID.Expr(),
-					Test.TableOrders.String.Expr(),
-					Test.TableOrders.Number.Expr(),
+					Test.Table.Orders.ID.Expr(),
+					Test.Table.Orders.String.Expr(),
+					Test.Table.Orders.Number.Expr(),
 				).
 				Having(
-					Greater(Count(Test.TableUsers.ID.Expr(), false), Value[int64](0)),
+					Greater(Count(Test.Table.Users.ID.Expr(), false), Value[int64](0)),
 				).
 				OrderBy(
-					Desc(Test.TableOrders.Number.Expr()),
-					Asc(Test.TableOrders.ID.Expr()),
+					Desc(Test.Table.Orders.Number.Expr()),
+					Asc(Test.Table.Orders.ID.Expr()),
 				).
 				Pagination(48, 0)
 			for i := 0; i < b.N; i++ {

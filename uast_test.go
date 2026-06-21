@@ -3173,7 +3173,7 @@ func init() {
 	// Table
 	Test.Table.Order = NewTable("orders", "o")
 	Test.Table.User = NewTable("users", "u")
-	// Columns
+	// Column
 	Test.Table.Orders.Date = NewColumn[time.Time]("date", Test.Table.Order, TypeDate)
 	Test.Table.Orders.ID = NewColumn[int64]("id", Test.Table.Order, TypeBigInt)
 	Test.Table.Orders.Json = NewColumn[string]("json", Test.Table.Order, TypeJSON)

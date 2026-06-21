@@ -2121,7 +2121,10 @@ func Test_SQL_Create(t *testing.T) {
 			stmtCreate := NewCreate(Test.View.UsersGeneral).
 				IsReplace().
 				Source(NewSelect(Test.Table.User).
-					Fields(Test.Table.Users.ID.Expr(), Test.Table.Users.String.Expr()),
+					Fields(
+						Test.Table.Users.ID.Expr(),
+						Test.Table.Users.String.Expr(),
+					),
 				)
 			sqlCreateQuery, sqlCreateArguments, err := sql.Build(stmtCreate)
 			switch supportDialect {

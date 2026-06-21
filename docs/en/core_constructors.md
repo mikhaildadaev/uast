@@ -115,13 +115,13 @@ WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < ?)
 ## NewDrop
 Creates a new DROP statement instance. Accepts a `Index/Schema/Table/View` source and returns a statement that can be configured with `Cascade()` or `IfExists()`.
 ```go
-stmtDropCascadeIndex := uast.NewDrop(Test.Index.UsersID).
+stmtDropCascadeIndex := uast.NewDrop(uast.NewIndex("users_id", uast.NewTable("users", "u"))).
     Cascade()
-stmtDropCascadeSchema := uast.NewDrop(Test.Schema).
+stmtDropCascadeSchema := uast.NewDrop(uast.NewSchema("test")).
     Cascade()
 stmtDropCascadeTable := uast.NewDrop(uast.NewTable("users", "u")).
     Cascade()
-stmtDropCascadeView := uast.NewDrop(Test.View.UsersGeneral).
+stmtDropCascadeView := uast.NewDrop(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
     Cascade()
 stmtDropIfExistsIndex := uast.NewDrop(uast.NewIndex("users")).
     IfExists()

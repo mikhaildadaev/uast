@@ -12,14 +12,14 @@ outline: deep
 Создаёт новый экземпляр оператора COMMENT. Принимает текст комментария и возвращает оператор, который можно настроить с помощью `OnColumn` или `OnTable`.
 ```go
 stmtCommentColumn := uast.NewComment("Test comment").
-    OnColumn(uast.Field[int64]("t", "id"))
+    OnColumn(uast.Field[int64]("u", "id"))
 stmtCommentTable := uast.NewComment("Test comment").
-    OnTable(uast.NewTable("test", "t"))
+    OnTable(uast.NewTable("users", "u"))
 ```
 Output MariaDB:
 ```text
-COMMENT ON COLUMN `t`.`id` IS 'Test comment'
-COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+COMMENT ON COLUMN `u`.`id` IS 'Test comment'
+COMMENT ON TABLE `users` AS `u` IS 'Test comment'
 ```
 Output MsSQL:
 ```text
@@ -28,288 +28,309 @@ Output MsSQL:
 ```
 Output MySQL:
 ```text
-COMMENT ON COLUMN `t`.`id` IS 'Test comment'
-COMMENT ON TABLE `test` AS `t` IS 'Test comment'
+COMMENT ON COLUMN `u`.`id` IS 'Test comment'
+COMMENT ON TABLE `users` AS `u` IS 'Test comment'
 ```
 Output PostgreSQL:
 ```text
-COMMENT ON COLUMN "t"."id" IS 'Test comment'
-COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+COMMENT ON COLUMN "u"."id" IS 'Test comment'
+COMMENT ON TABLE "users" AS "u" IS 'Test comment'
 ```
 Output SQLite:
 ```text
-COMMENT ON COLUMN "t"."id" IS 'Test comment'
-COMMENT ON TABLE "test" AS "t" IS 'Test comment'
+COMMENT ON COLUMN "u"."id" IS 'Test comment'
+COMMENT ON TABLE "users" AS "u" IS 'Test comment'
 ```
 
 ## NewDelete
 Создаёт новый экземпляр оператора DELETE. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Join`, `Returning`, `Where`, `With`.
 ```go
-stmtDeleteJoin := uast.NewDelete(uast.NewTable("test", "t")).
+stmtDeleteJoin := uast.NewDelete(uast.NewTable("users", "u")).
     Join(
-		Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("d", "id"))),
+		Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
     ).
     Where(
-        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
     )
-stmtDeleteReturning := uast.NewDelete(uast.NewTable("test", "t")).
+stmtDeleteReturning := uast.NewDelete(uast.NewTable("users", "u")).
     Where(
-        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
     ).
     Returning(
-		uast.Field[int64]("t", "id"),
-		uast.Field[string]("t", "string"),
+		uast.Field[int64]("u", "id"),
+		uast.Field[string]("u", "string"),
 	)
-stmtDeleteWhere := uast.NewDelete(uast.NewTable("test", "t")).
+stmtDeleteWhere := uast.NewDelete(uast.NewTable("users", "u")).
     Where(
-        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
     )
-stmtDeleteWith := NewDelete(uast.NewTable("test", "t")).
+stmtDeleteWith := NewDelete(uast.NewTable("users", "u")).
 	With(
-		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
+		uast.WithN("old_users", uast.NewSelect(uast.NewTable("users", "u")).
 			Field(
-                uast.Field[int64]("t", "id"),
+                uast.Field[int64]("u", "id"),
             ).
 			Where(
-                Less(uast.Field[int]("t", "number"), Value(2)),
+                Less(uast.Field[int]("u", "number"), Value(2)),
             ),
 		),
 	)
 ```
 Output MariaDB:
 ```text
-DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
-DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ? RETURNING `t`.`id`, `t`.`string`
-DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
-WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) DELETE `t` FROM `test` AS `t`
+DELETE `u` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` WHERE `u`.`string` = ?
+DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ? RETURNING `u`.`id`, `u`.`string`
+DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
+WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) DELETE `u` FROM `users` AS `u`
 ```
 Output MsSQL:
 ```text
-DELETE [t] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] WHERE [t].[string] = @p1
-DELETE [t] FROM [test] AS [t] OUTPUT [t].[id], [t].[string] WHERE [t].[string] = @p1
-DELETE [t] FROM [test] AS [t] WHERE [t].[string] = @p1
-WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) DELETE [t] FROM [test] AS [t]
+DELETE [u] FROM [users] AS [u] INNER JOIN [data] AS [d] ON [u].[id] = [d].[id] WHERE [u].[string] = @p1
+DELETE [u] FROM [users] AS [u] OUTPUT [u].[id], [u].[string] WHERE [u].[string] = @p1
+DELETE [u] FROM [users] AS [u] WHERE [u].[string] = @p1
+WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p1) DELETE [u] FROM [users] AS [u]
 ```
 Output MySQL:
 ```text
-DELETE `t` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` WHERE `t`.`string` = ?
-DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
-DELETE `t` FROM `test` AS `t` WHERE `t`.`string` = ?
-WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) DELETE `t` FROM `test` AS `t`
+DELETE `u` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` WHERE `u`.`string` = ?
+DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
+DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
+WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) DELETE `u` FROM `users` AS `u`
 ```
 Output PostgreSQL:
 ```text
-DELETE FROM "test" AS "t" USING "data" AS "d" WHERE ("t"."id" = "d"."id" AND "t"."string" = $1)
-DELETE FROM "test" AS "t" WHERE "t"."string" = $1 RETURNING "t"."id", "t"."string"
-DELETE FROM "test" AS "t" WHERE "t"."string" = $1
-WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) DELETE FROM "test" AS "t"
+DELETE FROM "users" AS "u" USING "data" AS "d" WHERE ("u"."id" = "d"."id" AND "u"."string" = $1)
+DELETE FROM "users" AS "u" WHERE "u"."string" = $1 RETURNING "u"."id", "u"."string"
+DELETE FROM "users" AS "u" WHERE "u"."string" = $1
+WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1) DELETE FROM "users" AS "u"
 ```
 Output SQLite:
 ```text
-DELETE FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" WHERE "t"."string" = ?
-DELETE FROM "test" AS "t" WHERE "t"."string" = ? RETURNING "t"."id", "t"."string"
-DELETE FROM "test" AS "t" WHERE "t"."string" = ?
-WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) DELETE FROM "test" AS "t"
+DELETE FROM "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id" WHERE "u"."string" = ?
+DELETE FROM "users" AS "u" WHERE "u"."string" = ? RETURNING "u"."id", "u"."string"
+DELETE FROM "users" AS "u" WHERE "u"."string" = ?
+WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < ?) DELETE FROM "users" AS "u"
 ```
 
 ## NewDrop
 Создаёт новый экземпляр оператора DROP. Принимает источник `Index/Schema/Table/View` и возвращает оператор, который может быть настроен с помощью `Cascade()` или `IfExists()`.
 ```go
-stmtDropCascade := uast.NewDrop(uast.NewTable("test", "t")).
+stmtDropCascadeIndex := uast.NewDrop(Test.Index.UsersID).
     Cascade()
-stmtDropIfExistsIndex := uast.NewDrop(uast.NewIndex("test")).
+stmtDropCascadeSchema := uast.NewDrop(Test.Schema).
+    Cascade()
+stmtDropCascadeTable := uast.NewDrop(uast.NewTable("users", "u")).
+    Cascade()
+stmtDropCascadeView := uast.NewDrop(Test.View.UsersGeneral).
+    Cascade()
+stmtDropIfExistsIndex := uast.NewDrop(uast.NewIndex("users")).
     IfExists()
-stmtDropIfExistsSchema := uast.NewDrop(uast.NewSchema("test")).
+stmtDropIfExistsSchema := uast.NewDrop(uast.NewSchema("users")).
     IfExists()
-stmtDropIfExistsTable := uast.NewDrop(uast.NewTable("test", "t")).
+stmtDropIfExistsTable := uast.NewDrop(uast.NewTable("users", "u")).
     IfExists()
-stmtDropIfExistsView := uast.NewDrop(uast.NewView("test", "t")).
+stmtDropIfExistsView := uast.NewDrop(uast.NewView("users", "u")).
     IfExists()
 ```
 Output MariaDB:
 ```text
-DROP TABLE `test` CASCADE
-DROP INDEX IF EXISTS `test`
+DROP INDEX `users_id` CASCADE
+DROP SCHEMA `test` CASCADE
+DROP TABLE `users`
+DROP VIEW `users_general` CASCADE
+DROP INDEX IF EXISTS `users`
 DROP SCHEMA IF EXISTS `test`
-DROP TABLE IF EXISTS `test`
-DROP VIEW IF EXISTS `test`
+DROP TABLE IF EXISTS `users`
+DROP VIEW IF EXISTS `users`
 ```
 Output MsSQL:
 ```text
-DROP TABLE [test]
-DROP INDEX [test]
+DROP INDEX [users_id]
+DROP SCHEMA [test]
+DROP TABLE [users]
+DROP VIEW [users_general]
+DROP INDEX [users]
 DROP SCHEMA IF EXISTS [test]
-DROP TABLE IF EXISTS [test]
-DROP VIEW IF EXISTS [test]
+DROP TABLE IF EXISTS [users]
+DROP VIEW IF EXISTS [users]
 ```
 Output MySQL:
 ```text
-DROP TABLE `test`
-DROP INDEX IF EXISTS `test`
+DROP INDEX `users_id`
 DROP SCHEMA `test`
-DROP TABLE IF EXISTS `test`
-DROP VIEW IF EXISTS `test`
+DROP TABLE `users`
+DROP VIEW `users_general`
+DROP INDEX IF EXISTS `users`
+DROP SCHEMA `test`
+DROP TABLE IF EXISTS `users`
+DROP VIEW IF EXISTS `users`
 ```
 Output PostgreSQL:
 ```text
-DROP TABLE "test" CASCADE
-DROP INDEX IF EXISTS "test"
-DROP SCHEMA IF EXISTS "test"
-DROP TABLE IF EXISTS "test"
-DROP VIEW IF EXISTS "test"
+DROP INDEX "users_id" CASCADE
+DROP SCHEMA "users" CASCADE
+DROP TABLE "users" CASCADE
+DROP VIEW "users_general" CASCADE
+DROP INDEX IF EXISTS "users"
+DROP SCHEMA IF EXISTS "users"
+DROP TABLE IF EXISTS "users"
+DROP VIEW IF EXISTS "users"
 ```
 Output SQLite:
 ```text
-DROP TABLE "test"
-DROP INDEX IF EXISTS "test"
-DROP SCHEMA "test"
-DROP TABLE IF EXISTS "test"
-DROP VIEW IF EXISTS "test"
+DROP INDEX "users_id"
+DROP SCHEMA "users"
+DROP TABLE "users"
+DROP VIEW "users_general"
+DROP INDEX IF EXISTS "users"
+DROP SCHEMA "users"
+DROP TABLE IF EXISTS "users"
+DROP VIEW IF EXISTS "users"
 ```
 
 ## NewInsert
 Создаёт новый экземпляр оператора INSERT. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Returning`, `Source/Values`, `With`.
 ```go
-stmtInsertReturning := uast.NewInsert(uast.NewTable("test", "t")).
+stmtInsertReturning := uast.NewInsert(uast.NewTable("users", "u")).
     Values(
-		uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
+		uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
 	).
 	Returning(
-		uast.Field[int64]("t", "id"),
-		uast.Field[string]("t", "string"),
+		uast.Field[int64]("u", "id"),
+		uast.Field[string]("u", "string"),
 	)
-stmtInsertSource := uast.NewInsert(uast.NewTable("test", "t")).
-	Source(NewSelect(uast.NewTable("test", "t")).
+stmtInsertSource := uast.NewInsert(uast.NewTable("users", "u")).
+	Source(NewSelect(uast.NewTable("users", "u")).
 		Field(
-			uast.Field[string]("t", "string"),
-			uast.Field[int]("t", "number"),
+			uast.Field[string]("u", "string"),
+			uast.Field[int]("u", "number"),
 		).
 		Where(
-			uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+			uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
 		),
 	)
-stmtInsertValues := uast.NewInsert(uast.NewTable("test", "t")).
+stmtInsertValues := uast.NewInsert(uast.NewTable("users", "u")).
     Values(
-		uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
+		uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
 	).
     Upsert(
-		uast.Pair(uast.Field[string]("t", "string"), uast.Value("updated")),
+		uast.Pair(uast.Field[string]("u", "string"), uast.Value("updated")),
 	)
-stmtInsertWith := NewInsert(uast.NewTable("test", "t")).
+stmtInsertWith := NewInsert(uast.NewTable("users", "u")).
 	Values(
-		uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
-		uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
+		uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
+		uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
 	).
 	With(
-		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
+		uast.WithN("old_users", uast.NewSelect(uast.NewTable("users", "u")).
 			Field(
-                uast.Field[int64]("t", "id"),
+                uast.Field[int64]("u", "id"),
 		    ).
 			Where(
-				uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
+				uast.Less(uast.Field[int]("u", "number"), uast.Value(2)),
 			),
 		),
 	)
 ```
 Output MariaDB:
 ```text
-INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) RETURNING `t`.`id`, `t`.`string`
-INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
-INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
-WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?) RETURNING `u`.`id`, `u`.`string`
+INSERT INTO `users` AS `u` (`string`, `number`) SELECT `u`.`string`, `u`.`number` FROM `users` AS `u` WHERE `u`.`string` = ?
+INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
+WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?)
 ```
 Output MsSQL:
 ```text
-INSERT INTO [test] AS [t] ([string], [number]) OUTPUT [t].[id], [t].[string] VALUES (@p1, @p2)
-INSERT INTO [test] AS [t] ([string], [number]) SELECT [t].[string], [t].[number] FROM [test] AS [t] WHERE [t].[string] = @p1
-INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p1, @p2)
-WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) INSERT INTO [test] AS [t] ([string], [number]) VALUES (@p2, @p3)
+INSERT INTO [users] AS [u] ([string], [number]) OUTPUT [u].[id], [u].[string] VALUES (@p1, @p2)
+INSERT INTO [users] AS [u] ([string], [number]) SELECT [u].[string], [u].[number] FROM [users] AS [u] WHERE [u].[string] = @p1
+INSERT INTO [users] AS [u] ([string], [number]) VALUES (@p1, @p2)
+WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p1) INSERT INTO [users] AS [u] ([string], [number]) VALUES (@p2, @p3)
 ```
 Output MySQL:
 ```text
-INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
-INSERT INTO `test` AS `t` (`string`, `number`) SELECT `t`.`string`, `t`.`number` FROM `test` AS `t` WHERE `t`.`string` = ?
-INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
-WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) INSERT INTO `test` AS `t` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?)
+INSERT INTO `users` AS `u` (`string`, `number`) SELECT `u`.`string`, `u`.`number` FROM `users` AS `u` WHERE `u`.`string` = ?
+INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
+WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?)
 ```
 Output PostgreSQL:
 ```text
-INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) RETURNING "t"."id", "t"."string"
-INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = $1
-INSERT INTO "test" AS "t" ("string", "number") VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3
-WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) INSERT INTO "test" AS "t" ("string", "number") VALUES ($2, $3)
+INSERT INTO "users" AS "u" ("string", "number") VALUES ($1, $2) RETURNING "u"."id", "u"."string"
+INSERT INTO "users" AS "u" ("string", "number") SELECT "u"."string", "u"."number" FROM "users" AS "u" WHERE "u"."string" = $1
+INSERT INTO "users" AS "u" ("string", "number") VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3
+WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1) INSERT INTO "users" AS "u" ("string", "number") VALUES ($2, $3)
 ```
 Output SQLite:
 ```text
-INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) RETURNING "t"."id", "t"."string"
-INSERT INTO "test" AS "t" ("string", "number") SELECT "t"."string", "t"."number" FROM "test" AS "t" WHERE "t"."string" = ?
-INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
-WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) INSERT INTO "test" AS "t" ("string", "number") VALUES (?, ?)
+INSERT INTO "users" AS "u" ("string", "number") VALUES (?, ?) RETURNING "u"."id", "u"."string"
+INSERT INTO "users" AS "u" ("string", "number") SELECT "u"."string", "u"."number" FROM "users" AS "u" WHERE "u"."string" = ?
+INSERT INTO "users" AS "u" ("string", "number") VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
+WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < ?) INSERT INTO "users" AS "u" ("string", "number") VALUES (?, ?)
 ```
 
 ## NewSelect
 Создаёт новый экземпляр оператора SELECT. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Distinct`, `Field`, `GroupBy`, `Having`, `Join`, `OrderBy`, `Pagination`, `Unions`, `Where`, `With`.
 ```go
-stmtSelectDistinct := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectDistinct := uast.NewSelect(uast.NewTable("users", "u")).
     Distinct().
     Field(
-        uast.Field[int64]("t", "id"),
+        uast.Field[int64]("u", "id"),
     ).
     Where(
-		uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
+		uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
 	)
-stmtSelectField := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectField := uast.NewSelect(uast.NewTable("users", "u")).
     Field(
-        uast.Field[int64]("t", "id"),
+        uast.Field[int64]("u", "id"),
     ).
     Where(
-		uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
+		uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
 	)
-stmtSelectGroupBy := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectGroupBy := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
-		uast.Field[string]("t", "string"),
-		uast.Count(uast.Field[int64]("t", "id"), false).As("cnt"),
+		uast.Field[string]("u", "string"),
+		uast.Count(uast.Field[int64]("u", "id"), false).As("cnt"),
 	).
 	GroupBy(
-		uast.Field[string]("t", "string"),
+		uast.Field[string]("u", "string"),
 	)
-stmtSelectHaving := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectHaving := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
-		uast.Field[string]("t", "string"),
-		uast.Count(uast.Field[int64]("t", "id"), false).As("cnt"),
+		uast.Field[string]("u", "string"),
+		uast.Count(uast.Field[int64]("u", "id"), false).As("cnt"),
 	).
 	GroupBy(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ).
 	Having(
-		uast.Greater(uast.Count(uast.Field[int64]("t", "id"), false), uast.Value[int64](2)),
+		uast.Greater(uast.Count(uast.Field[int64]("u", "id"), false), uast.Value[int64](2)),
 	)
-stmtSelectJoin := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectJoin := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
-		uast.Field[int64]("t", "id"),
+		uast.Field[int64]("u", "id"),
 		uast.Field[string]("d", "string"),
 	).
 	Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
 	)
-stmtSelectOrderBy := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectOrderBy := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
-		uast.Field[int64]("t", "id"),
+		uast.Field[int64]("u", "id"),
 	).
 	OrderBy(
-		uast.Desc(uast.Field[int]("t", "number")),
-		uast.Asc(uast.Field[string]("t", "string")),
+		uast.Desc(uast.Field[int]("u", "number")),
+		uast.Asc(uast.Field[string]("u", "string")),
 	)
-stmtSelectPagination := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectPagination := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
-		uast.Field[int64]("t", "id"),
+		uast.Field[int64]("u", "id"),
 	).
 	Pagination(10, 20)
-stmtSelectUnions := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectUnions := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
-		uast.Field[string]("t", "string"),
+		uast.Field[string]("u", "string"),
 	).
 	Unions(
 		uast.UnionAll(uast.NewSelect(uast.NewTable("data", "d")).
@@ -318,130 +339,130 @@ stmtSelectUnions := uast.NewSelect(uast.NewTable("test", "t")).
 			),
 		),
 	)
-stmtSelectWhere := uast.NewSelect(uast.NewTable("test", "t")).
+stmtSelectWhere := uast.NewSelect(uast.NewTable("users", "u")).
 	Field(
-		uast.Field[int64]("t", "id"),
+		uast.Field[int64]("u", "id"),
 	).
 	Where(
-		uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
+		uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
 	)
 stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_test", "ct")).
 	Field(
 		uast.Field[int64]("ct", "id"),
 	).
 	With(
-		uast.WithN("cte_test", uast.NewSelect(uast.NewTable("test", "t")).
+		uast.WithN("cte_test", uast.NewSelect(uast.NewTable("users", "u")).
 			Field(
-                uast.Field[int64]("t", "id"),
+                uast.Field[int64]("u", "id"),
             ).
 			Where(
-                uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
+                uast.Greater(uast.Field[int]("u", "number"), uast.Value(2)),
             ),
 		),
 	)
 ```
 Output MariaDB:
 ```text
-SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
-SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
-SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`
-SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
-SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`
-SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC
-SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?
-SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
-SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
-WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
+SELECT DISTINCT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
+SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
+SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string`
+SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string` HAVING COUNT(`u`.`id`) > ?
+SELECT `u`.`id`, `d`.`string` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id`
+SELECT `u`.`id` FROM `users` AS `u` ORDER BY `u`.`number` DESC, `u`.`string` ASC
+SELECT `u`.`id` FROM `users` AS `u` LIMIT ? OFFSET ?
+SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
+WITH `cte_test` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
 Output MsSQL:
 ```text
-SELECT DISTINCT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
-SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
-SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string]
-SELECT [t].[string], COUNT([t].[id]) AS [cnt] FROM [test] AS [t] GROUP BY [t].[string] HAVING COUNT([t].[id]) > @p1
-SELECT [t].[id], [d].[string] FROM [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id]
-SELECT [t].[id] FROM [test] AS [t] ORDER BY [t].[number] DESC, [t].[string] ASC
-SELECT [t].[id] FROM [test] AS [t] ORDER BY 1 ASC OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY
-SELECT [t].[string] FROM [test] AS [t] UNION ALL SELECT [d].[string] FROM [data] AS [d]
-SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] = @p1
-WITH [cte_test] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] > @p1) SELECT [ct].[id] FROM [cte_test] AS [ct]
+SELECT DISTINCT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
+SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
+SELECT [u].[string], COUNT([u].[id]) AS [cnt] FROM [users] AS [u] GROUP BY [u].[string]
+SELECT [u].[string], COUNT([u].[id]) AS [cnt] FROM [users] AS [u] GROUP BY [u].[string] HAVING COUNT([u].[id]) > @p1
+SELECT [u].[id], [d].[string] FROM [users] AS [u] INNER JOIN [data] AS [d] ON [u].[id] = [d].[id]
+SELECT [u].[id] FROM [users] AS [u] ORDER BY [u].[number] DESC, [u].[string] ASC
+SELECT [u].[id] FROM [users] AS [u] ORDER BY 1 ASC OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY
+SELECT [u].[string] FROM [users] AS [u] UNION ALL SELECT [d].[string] FROM [data] AS [d]
+SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
+WITH [cte_test] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] > @p1) SELECT [ct].[id] FROM [cte_test] AS [ct]
 ```
 Output MySQL:
 ```text
-SELECT DISTINCT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
-SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
-SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string`
-SELECT `t`.`string`, COUNT(`t`.`id`) AS `cnt` FROM `test` AS `t` GROUP BY `t`.`string` HAVING COUNT(`t`.`id`) > ?
-SELECT `t`.`id`, `d`.`string` FROM `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id`
-SELECT `t`.`id` FROM `test` AS `t` ORDER BY `t`.`number` DESC, `t`.`string` ASC
-SELECT `t`.`id` FROM `test` AS `t` LIMIT ? OFFSET ?
-SELECT `t`.`string` FROM `test` AS `t` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
-SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` = ?
-WITH `cte_test` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
+SELECT DISTINCT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
+SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
+SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string`
+SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string` HAVING COUNT(`u`.`id`) > ?
+SELECT `u`.`id`, `d`.`string` FROM `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id`
+SELECT `u`.`id` FROM `users` AS `u` ORDER BY `u`.`number` DESC, `u`.`string` ASC
+SELECT `u`.`id` FROM `users` AS `u` LIMIT ? OFFSET ?
+SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `d`.`string` FROM `data` AS `d`
+SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
+WITH `cte_test` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
 Output PostgreSQL:
 ```text
-SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
-SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
-SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"
-SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > $1
-SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"
-SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC
-SELECT "t"."id" FROM "test" AS "t" LIMIT $1 OFFSET $2
-SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"
-SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = $1
-WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > $1) SELECT "ct"."id" FROM "cte_test" AS "ct"
+SELECT DISTINCT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
+SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
+SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string"
+SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string" HAVING COUNT("u"."id") > $1
+SELECT "u"."id", "d"."string" FROM "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id"
+SELECT "u"."id" FROM "users" AS "u" ORDER BY "u"."number" DESC, "u"."string" ASC
+SELECT "u"."id" FROM "users" AS "u" LIMIT $1 OFFSET $2
+SELECT "u"."string" FROM "users" AS "u" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
+WITH "cte_test" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" > $1) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
 Output SQLite:
 ```text
-SELECT DISTINCT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
-SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
-SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string"
-SELECT "t"."string", COUNT("t"."id") AS "cnt" FROM "test" AS "t" GROUP BY "t"."string" HAVING COUNT("t"."id") > ?
-SELECT "t"."id", "d"."string" FROM "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id"
-SELECT "t"."id" FROM "test" AS "t" ORDER BY "t"."number" DESC, "t"."string" ASC
-SELECT "t"."id" FROM "test" AS "t" LIMIT ? OFFSET ?
-SELECT "t"."string" FROM "test" AS "t" UNION ALL SELECT "d"."string" FROM "data" AS "d"
-SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" = ?
-WITH "cte_test" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" > ?) SELECT "ct"."id" FROM "cte_test" AS "ct"
+SELECT DISTINCT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
+SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
+SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string"
+SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string" HAVING COUNT("u"."id") > ?
+SELECT "u"."id", "d"."string" FROM "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id"
+SELECT "u"."id" FROM "users" AS "u" ORDER BY "u"."number" DESC, "u"."string" ASC
+SELECT "u"."id" FROM "users" AS "u" LIMIT ? OFFSET ?
+SELECT "u"."string" FROM "users" AS "u" UNION ALL SELECT "d"."string" FROM "data" AS "d"
+SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
+WITH "cte_test" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" > ?) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
 
 ## NewTruncate
 Создаёт новый экземпляр оператора TRUNCATE. Принимает источник таблицы и возвращает оператор, который можно настроить с помощью `Cascade()` или `RestartIdentity()`.
 ```go
-stmtTruncateDefault := uast.NewTruncate(uast.NewTable("test", "t"))
-stmtTruncateCascade := uast.NewTruncate(uast.NewTable("test", "t")).
+stmtTruncateDefault := uast.NewTruncate(uast.NewTable("users", "u"))
+stmtTruncateCascade := uast.NewTruncate(uast.NewTable("users", "u")).
     Cascade()
-stmtTruncateRestartIdentity := uast.NewTruncate(uast.NewTable("test", "t")).
+stmtTruncateRestartIdentity := uast.NewTruncate(uast.NewTable("users", "u")).
     RestartIdentity()
 ```
 Output MariaDB:
 ```text
-TRUNCATE TABLE `test`
-TRUNCATE TABLE `test` CASCADE
-TRUNCATE TABLE `test` RESTART IDENTITY
+TRUNCATE TABLE `users`
+TRUNCATE TABLE `users` CASCADE
+TRUNCATE TABLE `users` RESTART IDENTITY
 ```
 Output MsSQL:
 ```text
-TRUNCATE TABLE [test]
+TRUNCATE TABLE [users]
 // Not supported
 // Not supported
 ```
 Output MySQL:
 ```text
-TRUNCATE TABLE `test`
+TRUNCATE TABLE `users`
 // Not supported
 // Not supported
 ```
 Output PostgreSQL:
 ```text
-TRUNCATE TABLE "test"
-TRUNCATE TABLE "test" CASCADE
-TRUNCATE TABLE "test" RESTART IDENTITY
+TRUNCATE TABLE "users"
+TRUNCATE TABLE "users" CASCADE
+TRUNCATE TABLE "users" RESTART IDENTITY
 ```
 Output SQLite:
 ```text
-TRUNCATE TABLE "test"
+TRUNCATE TABLE "users"
 // Not supported
 // Not supported
 ```
@@ -449,94 +470,94 @@ TRUNCATE TABLE "test"
 ## NewUpdate
 Создаёт новый экземпляр оператора UPDATE. Принимает источник таблицы и возвращает оператор, который может быть настроен с помощью `Join`, `Returning`, `Set`, `Where`, `With`.
 ```go
-stmtUpdateJoin := uast.NewUpdate(uast.NewTable("test", "t")).
+stmtUpdateJoin := uast.NewUpdate(uast.NewTable("users", "u")).
     Join(
-		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("d", "id"))),
+		uast.Inner(uast.NewTable("data", "d"), Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("d", "id"))),
     ).
     Set(
-        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
     ).
-stmtUpdateReturning := uast.NewUpdate(uast.NewTable("test", "t")).
+stmtUpdateReturning := uast.NewUpdate(uast.NewTable("users", "u")).
     Set(
-        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
     ).
     Returning(
-        uast.Field[int64]("t", "id"),
-        uast.Field[string]("t", "string")
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "string")
     )
-stmtUpdateSet := uast.NewUpdate(uast.NewTable("test", "t")).
+stmtUpdateSet := uast.NewUpdate(uast.NewTable("users", "u")).
     Set(
-        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
     )
-stmtUpdateWhere := uast.NewUpdate(uast.NewTable("test", "t")).
+stmtUpdateWhere := uast.NewUpdate(uast.NewTable("users", "u")).
     Set(
-        uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "number"), uast.Value(2)),
+        uast.Equal(uast.Field[int]("u", "number"), uast.Value(2)),
     )
-stmtUpdateWith := NewUpdate(uast.NewTable("test", "t")).
+stmtUpdateWith := NewUpdate(uast.NewTable("users", "u")).
 	Set(
-		uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
+		uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
 	).
 	With(
-		uast.WithN("old_users", uast.NewSelect(uast.NewTable("test", "t")).
+		uast.WithN("old_users", uast.NewSelect(uast.NewTable("users", "u")).
 			Field(
-                uast.Field[int64]("t", "id"),
+                uast.Field[int64]("u", "id"),
             ).
 			Where(
-                uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
+                uast.Less(uast.Field[int]("u", "number"), uast.Value(2)),
             ),
 		),
 	)
 ```
 Output MariaDB:
 ```text
-UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`string` = ? WHERE `d`.`string` = ?
-UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ? RETURNING `t`.`id`, `t`.`string`
-UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
-UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
-WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ?
+UPDATE `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` SET `u`.`string` = ? WHERE `d`.`string` = ?
+UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ? RETURNING `u`.`id`, `u`.`string`
+UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
+UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
+WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) UPDATE `users` AS `u` SET `u`.`string` = ?
 
 ```
 Output MsSQL:
 ```text
-UPDATE [test] AS [t] INNER JOIN [data] AS [d] ON [t].[id] = [d].[id] SET [t].[string] = @p1 WHERE [d].[string] = @p2
-UPDATE [test] AS [t] OUTPUT [t].[id], [t].[string] SET [t].[string] = @p1 WHERE [t].[number] = @p2
-UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2
-UPDATE [test] AS [t] SET [t].[string] = @p1 WHERE [t].[number] = @p2
-WITH [old_users] AS (SELECT [t].[id] FROM [test] AS [t] WHERE [t].[number] < @p1) UPDATE [test] AS [t] SET [t].[string] = @p2
+UPDATE [users] AS [u] INNER JOIN [data] AS [d] ON [u].[id] = [d].[id] SET [u].[string] = @p1 WHERE [d].[string] = @p2
+UPDATE [users] AS [u] OUTPUT [u].[id], [u].[string] SET [u].[string] = @p1 WHERE [u].[number] = @p2
+UPDATE [users] AS [u] SET [u].[string] = @p1 WHERE [u].[number] = @p2
+UPDATE [users] AS [u] SET [u].[string] = @p1 WHERE [u].[number] = @p2
+WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p1) UPDATE [users] AS [u] SET [u].[string] = @p2
 ```
 Output MySQL:
 ```text
-UPDATE `test` AS `t` INNER JOIN `data` AS `d` ON `t`.`id` = `d`.`id` SET `t`.`string` = ? WHERE `d`.`string` = ?
-UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
-UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
-UPDATE `test` AS `t` SET `t`.`string` = ? WHERE `t`.`number` = ?
-WITH `old_users` AS (SELECT `t`.`id` FROM `test` AS `t` WHERE `t`.`number` < ?) UPDATE `test` AS `t` SET `t`.`string` = ?
+UPDATE `users` AS `u` INNER JOIN `data` AS `d` ON `u`.`id` = `d`.`id` SET `u`.`string` = ? WHERE `d`.`string` = ?
+UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
+UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
+UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
+WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) UPDATE `users` AS `u` SET `u`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."string" = $1 WHERE "d"."string" = $2
-UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2 RETURNING "t"."id", "t"."string"
-UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
-UPDATE "test" AS "t" SET "t"."string" = $1 WHERE "t"."number" = $2
-WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < $1) UPDATE "test" AS "t" SET "t"."string" = $2
+UPDATE "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id" SET "u"."string" = $1 WHERE "d"."string" = $2
+UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2 RETURNING "u"."id", "u"."string"
+UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2
+UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2
+WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1) UPDATE "users" AS "u" SET "u"."string" = $2
 ```
 Output SQLite:
 ```text
-UPDATE "test" AS "t" INNER JOIN "data" AS "d" ON "t"."id" = "d"."id" SET "t"."string" = ? WHERE "d"."string" = ?
-UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ? RETURNING "t"."id", "t"."string"
-UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
-UPDATE "test" AS "t" SET "t"."string" = ? WHERE "t"."number" = ?
-WITH "old_users" AS (SELECT "t"."id" FROM "test" AS "t" WHERE "t"."number" < ?) UPDATE "test" AS "t" SET "t"."string" = ?
+UPDATE "users" AS "u" INNER JOIN "data" AS "d" ON "u"."id" = "d"."id" SET "u"."string" = ? WHERE "d"."string" = ?
+UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ? RETURNING "u"."id", "u"."string"
+UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ?
+UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ?
+WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < ?) UPDATE "users" AS "u" SET "u"."string" = ?
 ```

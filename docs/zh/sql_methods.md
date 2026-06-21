@@ -12,9 +12,9 @@ outline: deep
 ### Exec
 构建语句并通过 `db.Exec()` 执行。返回 `sql.Result` 和错误。适用于不返回行的 INSERT、UPDATE、DELETE 语句。
 ```go
-stmt := uast.NewInsert(uast.NewTable("test").As("t")).
+stmt := uast.NewInsert(uast.NewTable("users").As("u")).
     Values(
-        uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+        uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer builder.Close()
@@ -28,20 +28,20 @@ rowsAffected, _ := result.RowsAffected()
 ```
 Output:
 ```text
-// Executes: INSERT INTO "test" AS "t" ("string") VALUES ($1)
+// Executes: INSERT INTO "users" AS "u" ("string") VALUES ($1)
 // Returns: sql.Result with LastInsertId and RowsAffected
 ```
 
 ### Query
 构建语句并通过 `db.Query()` 执行。返回 `*sql.Rows` 和错误。适用于返回多行的 SELECT 语句。
 ```go
-stmt := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[int64]("t", "id"),
-        uast.Field[string]("t", "string"),
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer sbuilderql.Close()
@@ -61,20 +61,20 @@ for rows.Next() {
 ```
 Output:
 ```text
-// Executes: SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
+// Executes: SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = $1
 // Returns: *sql.Rows iterator
 ```
 
 ### QueryRow
 构建语句并通过 `db.QueryRow()` 执行。返回 `*sql.Row` 和来自 `Build()` 的错误。适用于返回单行的 SELECT 语句。
 ```go
-stmt := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[int64]("t", "id"),
-        uast.Field[string]("t", "string"),
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int64]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int64]("u", "id"), uast.Value(1)),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer builder.Close()
@@ -94,7 +94,7 @@ fmt.Printf("id: %d, string: %s\n", id, str)
 ```
 Output:
 ```text
-// Executes: SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+// Executes: SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 // Returns: *sql.Row, scanned via row.Scan()
 ```
 

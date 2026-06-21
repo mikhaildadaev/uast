@@ -11,12 +11,12 @@ This page covers SQL builder configuration options: `WithDialect` and `WithMutat
 ## WithDialect/SetDialect
 `WithDialect` sets the dialect at creation time. `SetDialect` switches the dialect of an existing instance at runtime without recreating the connection pool.
 ```go
-stmt := uast.NewSelect(uast.Field[string]("t", "string")).
+stmt := uast.NewSelect(uast.Field[string]("u", "string")).
     From(
-        uast.NewTable("test").As("t"),
+        uast.NewTable("users").As("u"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
 builder := uast.NewSQL(
     uast.WithDialect(uast.DialectMariaDB)
@@ -34,34 +34,34 @@ sqliteQuery, sqliteArgs, _ := builder.Build(stmt)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
+SELECT `u`.`string` FROM `users` AS `u` WHERE `u`.`id` = ?
 ```
 Output MsSQL:
 ```text
-SELECT [t].[string] FROM [test] AS [t] WHERE [t].[id] = @p1
+SELECT [u].[string] FROM [users] AS [u] WHERE [u].[id] = @p1
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
+SELECT `u`.`string` FROM `users` AS `u` WHERE `u`.`id` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = ?
 ```
 
 ## WithMutate/SetMutate
 `WithMutate` marks the builder as mutable at creation time. `SetMutate` switches mutation mode on or off at runtime. When mutation is enabled, `Build()` mutates the original statement instead of cloning it, improving performance for single-use statements. When mutation is disabled, `Build()` clones the statement before building, preserving the original for reuse. `SetDialect` is blocked while mutation is enabled.
 ```go
-stmt1 := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt1 := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
 immutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
@@ -72,19 +72,19 @@ query2, _, _ := immutableBuilder.Build(stmt1)
 immutableBuilder.SetMutate(true)
 query3, _, _ := immutableBuilder.Build(stmt1)
 query4, _, _ := immutableBuilder.Build(stmt1)
-stmt2 := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt2 := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
-stmt3 := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt3 := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
 mutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
@@ -99,15 +99,15 @@ query8, _, _ := mutableBuilder.Build(stmt3)
 ```
 Output Query1:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query2:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query3:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query4:
 ```text
@@ -115,7 +115,7 @@ Output Query4:
 ```
 Output Query5:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query6:
 ```text
@@ -127,7 +127,7 @@ Output Query7:
 ```
 Output Query8:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 
 ::: tip Note

@@ -11,12 +11,12 @@ outline: deep
 ## WithDialect/SetDialect
 `WithDialect` 在创建实例时设置方言。 `SetDialect` 在运行时切换现有实例的方言，无需重新创建连接池。
 ```go
-stmt := uast.NewSelect(uast.Field[string]("t", "string")).
+stmt := uast.NewSelect(uast.Field[string]("u", "string")).
     From(
-        uast.NewTable("test").As("t"),
+        uast.NewTable("users").As("u"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
 builder := uast.NewSQL(
     uast.WithDialect(uast.DialectMariaDB)
@@ -34,34 +34,34 @@ sqliteQuery, sqliteArgs, _ := builder.Build(stmt)
 ```
 Output MariaDB:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
+SELECT `u`.`string` FROM `users` AS `u` WHERE `u`.`id` = ?
 ```
 Output MsSQL:
 ```text
-SELECT [t].[string] FROM [test] AS [t] WHERE [t].[id] = @p1
+SELECT [u].[string] FROM [users] AS [u] WHERE [u].[id] = @p1
 ```
 Output MySQL:
 ```text
-SELECT `t`.`string` FROM `test` AS `t` WHERE `t`.`id` = ?
+SELECT `u`.`string` FROM `users` AS `u` WHERE `u`.`id` = ?
 ```
 Output PostgreSQL:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output SQLite:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = ?
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = ?
 ```
 
 ## WithMutate/SetMutate
 `WithMutate` 在创建时将构建器标记为可变。`SetMutate` 在运行时打开或关闭可变模式。启用可变模式时，`Build()` 直接修改原始语句而不是克隆它，从而提高一次性查询的性能。禁用可变模式时，`Build()` 在构建之前克隆语句，保留原始语句以供重用。可变模式启用时，`SetDialect` 被阻止。
 ```go
-stmt1 := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt1 := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
 immutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
@@ -72,19 +72,19 @@ query2, _, _ := immutableBuilder.Build(stmt1)
 immutableBuilder.SetMutate(true)
 query3, _, _ := immutableBuilder.Build(stmt1)
 query4, _, _ := immutableBuilder.Build(stmt1)
-stmt2 := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt2 := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
-stmt3 := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt3 := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int]("u", "id"), uast.Value(1)),
     )
 mutableBuilder := uast.NewSQL(
     uast.WithDialect(uast.DialectPostgreSQL),
@@ -99,15 +99,15 @@ query8, _, _ := mutableBuilder.Build(stmt3)
 ```
 Output Query1:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query2:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query3:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query4:
 ```text
@@ -115,7 +115,7 @@ Output Query4:
 ```
 Output Query5:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 Output Query6:
 ```text
@@ -127,7 +127,7 @@ Output Query7:
 ```
 Output Query8:
 ```text
-SELECT "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 
 ::: tip 注

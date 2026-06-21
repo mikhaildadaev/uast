@@ -12,9 +12,9 @@ outline: deep
 ### Exec
 Собирает оператор и выполняет его через `db.Exec()`. Возвращает `sql.Result` и ошибку. Подходит для операторов INSERT, UPDATE, DELETE, которые не возвращают строки.
 ```go
-stmt := uast.NewInsert(uast.NewTable("test").As("t")).
+stmt := uast.NewInsert(uast.NewTable("users").As("u")).
     Values(
-        uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
+        uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer builder.Close()
@@ -28,20 +28,20 @@ rowsAffected, _ := result.RowsAffected()
 ```
 Output:
 ```text
-// Executes: INSERT INTO "test" AS "t" ("string") VALUES ($1)
+// Executes: INSERT INTO "users" AS "u" ("string") VALUES ($1)
 // Returns: sql.Result with LastInsertId and RowsAffected
 ```
 
 ### Query
 Собирает оператор и выполняет его через `db.Query()`. Возвращает `*sql.Rows` и ошибку. Подходит для операторов SELECT, которые возвращают несколько строк.
 ```go
-stmt := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[int64]("t", "id"),
-        uast.Field[string]("t", "string"),
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer builder.Close()
@@ -61,20 +61,20 @@ for rows.Next() {
 ```
 Output:
 ```text
-// Executes: SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1
+// Executes: SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = $1
 // Returns: *sql.Rows iterator
 ```
 
 ### QueryRow
 Собирает оператор и выполняет его через `db.QueryRow()`. Возвращает `*sql.Row` и ошибку от `Build()`. Подходит для операторов SELECT, которые возвращают одну строку.
 ```go
-stmt := uast.NewSelect(uast.NewTable("test").As("t")).
+stmt := uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[int64]("t", "id"),
-        uast.Field[string]("t", "string"),
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[int64]("t", "id"), uast.Value(1)),
+        uast.Equal(uast.Field[int64]("u", "id"), uast.Value(1)),
     )
 builder := uast.NewSQL(uast.WithDialect(uast.DialectPostgreSQL))
 defer builder.Close()
@@ -94,7 +94,7 @@ fmt.Printf("id: %d, string: %s\n", id, str)
 ```
 Output:
 ```text
-// Executes: SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."id" = $1
+// Executes: SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 // Returns: *sql.Row, scanned via row.Scan()
 ```
 

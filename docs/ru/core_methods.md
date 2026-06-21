@@ -12,108 +12,108 @@ outline: deep
 ### As
 Назначает псевдоним выражению-колонке.
 ```go
-column := uast.Field[string]("t", "string").As("alias")
+column := uast.Field[string]("u", "string").As("alias")
 ```
 Output MariaDB:
 ```text
-`t`.`string` AS `alias`
+`u`.`string` AS `alias`
 ```
 Output MsSQL:
 ```text
-[t].[string] AS [alias]
+[u].[string] AS [alias]
 ```
 Output MySQL:
 ```text
-`t`.`string` AS `alias`
+`u`.`string` AS `alias`
 ```
 Output PostgreSQL:
 ```text
-"t"."string" AS "alias"
+"u"."string" AS "alias"
 ```
 Output SQLite:
 ```text
-"t"."string" AS "alias"
+"u"."string" AS "alias"
 ```
 
 ## exprFunction
 ### As
 Назначает псевдоним выражению-функции.
 ```go
-function := uast.Avg(uast.Field[int]("t", "number"), false).As("alias")
+function := uast.Avg(uast.Field[int]("u", "number"), false).As("alias")
 ```
 Output MariaDB:
 ```text
-AVG(`t`.`number`) AS `alias`
+AVG(`u`.`number`) AS `alias`
 ```
 Output MsSQL:
 ```text
-AVG([t].[number]) AS [alias]
+AVG([u].[number]) AS [alias]
 ```
 Output MySQL:
 ```text
-AVG(`t`.`number`) AS `alias`
+AVG(`u`.`number`) AS `alias`
 ```
 Output PostgreSQL:
 ```text
-AVG("t"."number") AS "alias"
+AVG("u"."number") AS "alias"
 ```
 Output SQLite:
 ```text
-AVG("t"."number") AS "alias"
+AVG("u"."number") AS "alias"
 ```
 
 ### Over
 Добавляет оконную спецификацию к функции, превращая её в оконную функцию.
 ```go
-function := uast.Avg(uast.Field[int]("t", "number"), false).Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+function := uast.Avg(uast.Field[int]("u", "number"), false).Over(
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+AVG(`u`.`number`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-AVG([t].[number]) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+AVG([u].[number]) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-AVG(`t`.`number`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+AVG(`u`.`number`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+AVG("u"."number") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-AVG("t"."number") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+AVG("u"."number") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 ## exprSubquery
 ### As
 Назначает псевдоним выражению-подзапросу.
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("t", "id")).From(uast.NewTable("test", "t"))).As("alias")
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("u", "id")).From(uast.NewTable("users", "u"))).As("alias")
 ```
 Output MariaDB:
 ```text
-(SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
+(SELECT `u`.`id` FROM `users` AS `u`) AS `alias`
 ```
 Output MsSQL:
 ```text
-(SELECT [t].[id] FROM [test] AS [t]) AS [alias]
+(SELECT [u].[id] FROM [users] AS [u]) AS [alias]
 ```
 Output MySQL:
 ```text
-(SELECT `t`.`id` FROM `test` AS `t`) AS `alias`
+(SELECT `u`.`id` FROM `users` AS `u`) AS `alias`
 ```
 Output PostgreSQL:
 ```text
-(SELECT "t"."id" FROM "test" AS "t") AS "alias"
+(SELECT "u"."id" FROM "users" AS "u") AS "alias"
 ```
 Output SQLite:
 ```text
-(SELECT "t"."id" FROM "test" AS "t") AS "alias"
+(SELECT "u"."id" FROM "users" AS "u") AS "alias"
 ```

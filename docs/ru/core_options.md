@@ -12,235 +12,235 @@ outline: deep
 Добавляет оператор GROUP BY для группировки строк по указанным колонкам или выражениям.
 ```go
 groupBy := GroupBy(
-	uast.Field[string]("t", "string"),
+	uast.Field[string]("u", "string"),
 )
 ```
 Output MariaDB:
 ```text
-GROUP BY `t`.`string`
+GROUP BY `u`.`string`
 ```
 Output MsSQL:
 ```text
-GROUP BY [t].[string]
+GROUP BY [u].[string]
 ```
 Output MySQL:
 ```text
-GROUP BY `t`.`string`
+GROUP BY `u`.`string`
 ```
 Output PostgreSQL:
 ```text
-GROUP BY "t"."string"
+GROUP BY "u"."string"
 ```
 Output SQLite:
 ```text
-GROUP BY "t"."string"
+GROUP BY "u"."string"
 ```
 
 ## clauseHaving
 Добавляет оператор HAVING для фильтрации групп. Используется с GROUP BY для фильтрации агрегированных результатов.
 ```go
 having := Having(
-	uast.Greater(uast.Count(uast.Field[int64]("t", "id"), false), uast.Value[int64](2)),
+	uast.Greater(uast.Count(uast.Field[int64]("u", "id"), false), uast.Value[int64](2)),
 )
 ```
 Output MariaDB:
 ```text
-HAVING COUNT(`t`.`id`) > ?
+HAVING COUNT(`u`.`id`) > ?
 ```
 Output MsSQL:
 ```text
-HAVING COUNT([t].[id]) > @p1
+HAVING COUNT([u].[id]) > @p1
 ```
 Output MySQL:
 ```text
-HAVING COUNT(`t`.`id`) > ?
+HAVING COUNT(`u`.`id`) > ?
 ```
 Output PostgreSQL:
 ```text
-HAVING COUNT("t"."id") > $1
+HAVING COUNT("u"."id") > $1
 ```
 Output SQLite:
 ```text
-HAVING COUNT("t"."id") > ?
+HAVING COUNT("u"."id") > ?
 ```
 
 ## clauseJoin
 ### Cross
 Добавляет CROSS JOIN к запросу. Возвращает декартово произведение обеих таблиц.
 ```go
-join := uast.Cross(uast.NewTable("test").As("t"))
+join := uast.Cross(uast.NewTable("users").As("u"))
 ```
 Output MariaDB:
 ```text
-CROSS JOIN `test` AS `t`
+CROSS JOIN `users` AS `u`
 ```
 Output MsSQL:
 ```text
-CROSS JOIN [test] AS [t]
+CROSS JOIN [users] AS [u]
 ```
 Output MySQL:
 ```text
-CROSS JOIN `test` AS `t`
+CROSS JOIN `users` AS `u`
 ```
 Output PostgreSQL:
 ```text
-CROSS JOIN "test" AS "t"
+CROSS JOIN "users" AS "u"
 ```
 Output SQLite:
 ```text
-CROSS JOIN "test" AS "t"
+CROSS JOIN "users" AS "u"
 ```
 
 ### Full
 Добавляет FULL JOIN к запросу. Возвращает все строки из обеих таблиц, с NULL там, где нет совпадений.
 ```go
-join := uast.Full(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
+join := uast.Full(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
-FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+FULL JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-FULL JOIN [test] AS [t] ON [t].[id] = [t1].[id]
+FULL JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
-FULL JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+FULL JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+FULL JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-FULL JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+FULL JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
 ### FullOuter
 Добавляет FULL OUTER JOIN к запросу. Возвращает все строки из обеих таблиц, с NULL там, где нет совпадений.
 ```go
-join := uast.FullOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
+join := uast.FullOuter(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
-FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+FULL OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-FULL OUTER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
+FULL OUTER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
-FULL OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+FULL OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+FULL OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-FULL OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+FULL OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
 ### Inner
 Добавляет INNER JOIN к запросу. Возвращает строки, имеющие совпадающие значения в обеих таблицах.
 ```go
-join := uast.Inner(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
+join := uast.Inner(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
-INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+INNER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-INNER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
+INNER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
-INNER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+INNER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+INNER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-INNER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+INNER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
 ### Left
 Добавляет LEFT JOIN к запросу. Возвращает все строки из левой таблицы и совпадающие строки из правой таблицы.
 ```go
-join := uast.Left(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
+join := uast.Left(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
-LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+LEFT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-LEFT JOIN [test] AS [t] ON [t].[id] = [t1].[id]
+LEFT JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
-LEFT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+LEFT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+LEFT JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-LEFT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+LEFT JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
 ### LeftOuter
 Добавляет LEFT OUTER JOIN к запросу. Возвращает все строки из левой таблицы и совпадающие строки из правой таблицы.
 ```go
-join := uast.LeftOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
+join := uast.LeftOuter(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
-LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+LEFT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-LEFT OUTER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
+LEFT OUTER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
-LEFT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+LEFT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+LEFT OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
-LEFT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+LEFT OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
 ### Right
 Добавляет RIGHT JOIN к запросу. Возвращает все строки из правой таблицы и совпадающие строки из левой таблицы. Не поддерживается SQLite.
 ```go
-join := uast.Right(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
+join := uast.Right(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
-RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+RIGHT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-RIGHT JOIN [test] AS [t] ON [t].[id] = [t1].[id]
+RIGHT JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
-RIGHT JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+RIGHT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-RIGHT JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+RIGHT JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
@@ -250,23 +250,23 @@ Output SQLite:
 ### RightOuter
 Добавляет RIGHT OUTER JOIN к запросу. Возвращает все строки из правой таблицы и совпадающие строки из левой таблицы. Не поддерживается SQLite.
 ```go
-join := uast.RightOuter(uast.NewTable("test").As("t"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("t1", "id")))
+join := uast.RightOuter(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
 Output MariaDB:
 ```text
-RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+RIGHT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output MsSQL:
 ```text
-RIGHT OUTER JOIN [test] AS [t] ON [t].[id] = [t1].[id]
+RIGHT OUTER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
 Output MySQL:
 ```text
-RIGHT OUTER JOIN `test` AS `t` ON `t`.`id` = `t1`.`id`
+RIGHT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
 Output PostgreSQL:
 ```text
-RIGHT OUTER JOIN "test" AS "t" ON "t"."id" = "t1"."id"
+RIGHT OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 Output SQLite:
 ```text
@@ -277,53 +277,53 @@ Output SQLite:
 ### Asc
 Указывает порядок сортировки по возрастанию (сначала наименьшие, от А до Я). Используется для сортировки строк в запросе или в рамках оконной функции.
 ```go
-orderBy := uast.Asc(uast.Field[string]("t", "string"))
+orderBy := uast.Asc(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` ASC
+`u`.`string` ASC
 ```
 Output MsSQL:
 ```text
-[t].[string] ASC
+[u].[string] ASC
 ```
 Output MySQL:
 ```text
-`t`.`string` ASC
+`u`.`string` ASC
 ```
 Output PostgreSQL:
 ```text
-"t"."string" ASC
+"u"."string" ASC
 ```
 Output SQLite:
 ```text
-"t"."string" ASC
+"u"."string" ASC
 ```
 
 ### Desc
 Указывает порядок сортировки по убыванию (сначала наибольшие, от Я до А). Используется для сортировки строк в запросе или в рамках оконной функции.
 ```go
-orderBy := uast.Desc(uast.Field[string]("t", "string"))
+orderBy := uast.Desc(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` DESC
+`u`.`string` DESC
 ```
 Output MsSQL:
 ```text
-[t].[string] DESC
+[u].[string] DESC
 ```
 Output MySQL:
 ```text
-`t`.`string` DESC
+`u`.`string` DESC
 ```
 Output PostgreSQL:
 ```text
-"t"."string" DESC
+"u"."string" DESC
 ```
 Output SQLite:
 ```text
-"t"."string" DESC
+"u"."string" DESC
 ```
 
 ## clausePagination
@@ -356,17 +356,17 @@ LIMIT ? OFFSET ?
 Добавляет оператор RETURNING для возврата изменённых строк. Поддерживается MariaDB, PostgreSQL и SQLite. MySQL не поддерживает этот оператор.
 ```go
 returning = Returning(
-	uast.Field[int64]("t", "id")
-    uast.Field[string]("t", "string")
+	uast.Field[int64]("u", "id")
+    uast.Field[string]("u", "string")
 )
 ```
 Output MariaDB:
 ```text
-RETURNING `t`.`id`, `t`.`string`
+RETURNING `u`.`id`, `u`.`string`
 ```
 Output MsSQL:
 ```text
-OUTPUT [t].[id], [t].[string]
+OUTPUT [u].[id], [u].[string]
 ```
 Output MySQL:
 ```text
@@ -374,11 +374,11 @@ Output MySQL:
 ```
 Output PostgreSQL:
 ```text
-RETURNING "t"."id", "t"."string"
+RETURNING "u"."id", "u"."string"
 ```
 Output SQLite:
 ```text
-RETURNING "t"."id", "t"."string"
+RETURNING "u"."id", "u"."string"
 ```
 
 ## clauseSet
@@ -386,149 +386,149 @@ RETURNING "t"."id", "t"."string"
 Указывает колонки и их новые значения с помощью `Assign` для связывания колонок со значениями. Поддерживает несколько пар для обновления нескольких колонок.
 ```go
 set := Set(
-	uast.Assign(uast.Field[string]("t", "string"), uast.Value("active")),
+	uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
 ```text
-UPDATE `test` AS `t` SET `t`.`string` = ?
+UPDATE `users` AS `u` SET `u`.`string` = ?
 ```
 Output MsSQL:
 ```text
-UPDATE [test] AS [t] SET [t].[string] = @p1
+UPDATE [users] AS [u] SET [u].[string] = @p1
 ```
 Output MySQL:
 ```text
-UPDATE `test` AS `t` SET `t`.`string` = ?
+UPDATE `users` AS `u` SET `u`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-UPDATE "test" AS "t" SET "t"."string" = $1
+UPDATE "users" AS "u" SET "u"."string" = $1
 ```
 Output SQLite:
 ```text
-UPDATE "test" AS "t" SET "t"."string" = ?
+UPDATE "users" AS "u" SET "u"."string" = ?
 ```
 
 ## clauseUnions
 ### Union
 Объединяет результаты нескольких операторов SELECT. UNION возвращает уникальные строки.
 ```go
-unions := uast.Union(uast.NewSelect(uast.NewTable("test").As("t")).
+unions := uast.Union(uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ),
 )
 ```
 Output MariaDB:
 ```text
-UNION SELECT `t`.`string` FROM `test` AS `t` 
+UNION SELECT `u`.`string` FROM `users` AS `u` 
 ```
 Output MsSQL:
 ```text
-UNION SELECT [t].[string] FROM [test] AS [t]
+UNION SELECT [u].[string] FROM [users] AS [u]
 ```
 Output MySQL:
 ```text
-UNION SELECT `t`.`string` FROM `test` AS `t`
+UNION SELECT `u`.`string` FROM `users` AS `u`
 ```
 Output PostgreSQL:
 ```text
-UNION SELECT "t"."string" FROM "test" AS "t"
+UNION SELECT "u"."string" FROM "users" AS "u"
 ```
 Output SQLite:
 ```text
-UNION SELECT "t"."string" FROM "test" AS "t"
+UNION SELECT "u"."string" FROM "users" AS "u"
 ```
 
 ### UnionAll
 Объединяет результаты нескольких операторов SELECT. UNION ALL возвращает все строки, включая дубликаты.
 ```go
-unions := uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
+unions := uast.UnionAll(uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ),
 )
 ```
 Output MariaDB:
 ```text
-UNION ALL SELECT `t`.`string` FROM `test` AS `t`
+UNION ALL SELECT `u`.`string` FROM `users` AS `u`
 ```
 Output MsSQL:
 ```text
-UNION ALL SELECT [t].[string] FROM [test] AS [t]
+UNION ALL SELECT [u].[string] FROM [users] AS [u]
 ```
 Output MySQL:
 ```text
-UNION ALL SELECT `t`.`string` FROM `test` AS `t`
+UNION ALL SELECT `u`.`string` FROM `users` AS `u`
 ```
 Output PostgreSQL:
 ```text
-UNION ALL SELECT "t"."string" FROM "test" AS "t"
+UNION ALL SELECT "u"."string" FROM "users" AS "u"
 ```
 Output SQLite:
 ```text
-UNION ALL SELECT "t"."string" FROM "test" AS "t"
+UNION ALL SELECT "u"."string" FROM "users" AS "u"
 ```
 
 ### UnionExcept
 Объединяет результаты нескольких операторов SELECT. EXCEPT возвращает уникальные строки из первого запроса, которых нет во втором.
 ```go
-unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("test").As("t")).
+unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[string]("t", "string"),
+        uast.Field[string]("u", "string"),
     ),
 )
 ```
 Output MariaDB:
 ```text
-EXCEPT SELECT `t`.`string` FROM `test` AS `t`
+EXCEPT SELECT `u`.`string` FROM `users` AS `u`
 ```
 Output MsSQL:
 ```text
-EXCEPT SELECT [t].[string] FROM [test] AS [t]
+EXCEPT SELECT [u].[string] FROM [users] AS [u]
 ```
 Output MySQL:
 ```text
-EXCEPT SELECT `t`.`string` FROM `test` AS `t`
+EXCEPT SELECT `u`.`string` FROM `users` AS `u`
 ```
 Output PostgreSQL:
 ```text
-EXCEPT SELECT "t"."string" FROM "test" AS "t"
+EXCEPT SELECT "u"."string" FROM "users" AS "u"
 ```
 Output SQLite:
 ```text
-EXCEPT SELECT "t"."string" FROM "test" AS "t"
+EXCEPT SELECT "u"."string" FROM "users" AS "u"
 ```
 
 ### UnionIntersect
 Объединяет результаты нескольких операторов SELECT. INTERSECT возвращает уникальные строки, общие для обоих запросов.
 ```go
-unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("test").As("t")).
+unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("users").As("u")).
 	Field(
-		uast.Field[string]("t", "string"),
+		uast.Field[string]("u", "string"),
 	),
 )
 ```
 Output MariaDB:
 ```text
-INTERSECT SELECT `t`.`string` FROM `test` AS `t`
+INTERSECT SELECT `u`.`string` FROM `users` AS `u`
 ```
 Output MsSQL:
 ```text
-INTERSECT SELECT [t].[string] FROM [test] AS [t]
+INTERSECT SELECT [u].[string] FROM [users] AS [u]
 ```
 Output MySQL:
 ```text
-INTERSECT SELECT `t`.`string` FROM `test` AS `t`
+INTERSECT SELECT `u`.`string` FROM `users` AS `u`
 ```
 Output PostgreSQL:
 ```text
-INTERSECT SELECT "t"."string" FROM "test" AS "t"
+INTERSECT SELECT "u"."string" FROM "users" AS "u"
 ```
 Output SQLite:
 ```text
-INTERSECT SELECT "t"."string" FROM "test" AS "t"
+INTERSECT SELECT "u"."string" FROM "users" AS "u"
 ```
 
 ## clauseValues
@@ -536,8 +536,8 @@ INTERSECT SELECT "t"."string" FROM "test" AS "t"
 Указывает значения для вставки с помощью `Pair` для связывания колонок со значениями. Колонки автоматически определяются из пар.
 ```go
 values := Values(
-    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
@@ -565,11 +565,11 @@ VALUES (?, ?)
 Добавляет оператор upsert к INSERT ... VALUES с помощью `Upsert`. Связывает колонки со значениями.
 ```go
 values := Values(
-    uast.Pair(uast.Field[string]("t", "string"), uast.Value("ivan")),
-	uast.Pair(uast.Field[int]("t", "number"), uast.Value(2)),
+    uast.Pair(uast.Field[string]("u", "string"), uast.Value("ivan")),
+	uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
 ).
 Upsert(
-    uast.Pair(uast.Field[string]("t", "string"), uast.Value("updated")),
+    uast.Pair(uast.Field[string]("u", "string"), uast.Value("updated")),
 )
 ```
 Output MariaDB:
@@ -597,85 +597,85 @@ VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
 Добавляет оператор WHERE для фильтрации строк перед группировкой или агрегацией. Принимает выражения сравнения, логические операторы и подзапросы.
 ```go
 where = Where(
-	uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+	uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
 )
 ```
 Output MariaDB:
 ```text
-WHERE `t`.`string` = ?
+WHERE `u`.`string` = ?
 ```
 Output MsSQL:
 ```text
-WHERE [t].[string] = @p1
+WHERE [u].[string] = @p1
 ```
 Output MySQL:
 ```text
-WHERE `t`.`string` = ?
+WHERE `u`.`string` = ?
 ```
 Output PostgreSQL:
 ```text
-WHERE "t"."string" = $1
+WHERE "u"."string" = $1
 ```
 Output SQLite:
 ```text
-WHERE "t"."string" = ?
+WHERE "u"."string" = ?
 ```
 
 ## clauseWith
 ### Norecursive
 Добавляет нерекурсивное общее табличное выражение (CTE) к запросу с помощью `WithN`. Колонки получают псевдонимы через вариативные строковые аргументы.
 ```go
-with := WithN("cte_norecursive", NewSelect(uast.NewTable("test").As("t")).
+with := WithN("cte_norecursive", NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[int64]("t", "id"),
-        uast.Field[string]("t", "string"),
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
     ),
     "id", "string",
 )
 ```
 Output MariaDB:
 ```text
-WITH `cte_norecursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?)
+WITH `cte_norecursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ?)
 ```
 Output MsSQL:
 ```text
-WITH [cte_norecursive] ([id], [string]) AS (SELECT [t].[id], [t].[string] FROM [test] AS [t] WHERE [t].[string] = @p1)
+WITH [cte_norecursive] ([id], [string]) AS (SELECT [u].[id], [u].[string] FROM [users] AS [u] WHERE [u].[string] = @p1)
 ```
 Output MySQL:
 ```text
-WITH `cte_norecursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ?)
+WITH `cte_norecursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ?)
 ```
 Output PostgreSQL:
 ```text
-WITH "cte_norecursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1)
+WITH "cte_norecursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = $1)
 ```
 Output SQLite:
 ```text
-WITH "cte_norecursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = ?)
+WITH "cte_norecursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = ?)
 ```
 
 ### Recursive
 Добавляет рекурсивное общее табличное выражение (CTE) к запросу с помощью `WithR`. Требует оператор `Unions` с `UnionAll` для определения рекурсивного шага.
 ```go
-with := WithR("cte_recursive", NewSelect(uast.NewTable("test").As("t")).
+with := WithR("cte_recursive", NewSelect(uast.NewTable("users").As("u")).
     Field(
-        uast.Field[int64]("t", "id"),
-        uast.Field[string]("t", "string"),
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "string"),
     ).
     Where(
-        uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
+        uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
     ).
     Unions(
-        uast.UnionAll(uast.NewSelect(uast.NewTable("test").As("t")).
+        uast.UnionAll(uast.NewSelect(uast.NewTable("users").As("u")).
             Field(
-                uast.Field[int64]("t", "id"),
-                uast.Field[string]("t", "string"),
+                uast.Field[int64]("u", "id"),
+                uast.Field[string]("u", "string"),
             ).
             Join(
-                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Field[int64]("t", "id"), uast.Field[int64]("rec", "id"))),
+                uast.Inner(uast.NewCTE("cte_recursive", "rec"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("rec", "id"))),
             ),
         ),
     ),
@@ -684,23 +684,23 @@ with := WithR("cte_recursive", NewSelect(uast.NewTable("test").As("t")).
 ```
 Output MariaDB:
 ```text
-WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ? UNION ALL SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` INNER JOIN `cte_recursive` AS `rec` ON `t`.`id` = `rec`.`id`)
+WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ? UNION ALL SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` INNER JOIN `cte_recursive` AS `rec` ON `u`.`id` = `rec`.`id`)
 ```
 Output MsSQL:
 ```text
-WITH RECURSIVE [cte_recursive] ([id], [string]) AS (SELECT [t].[id], [t].[string] FROM [test] AS [t] WHERE [t].[string] = @p1 UNION ALL SELECT [t].[id], [t].[string] FROM [test] AS [t] INNER JOIN [cte_recursive] AS [rec] ON [t].[id] = [rec].[id])
+WITH RECURSIVE [cte_recursive] ([id], [string]) AS (SELECT [u].[id], [u].[string] FROM [users] AS [u] WHERE [u].[string] = @p1 UNION ALL SELECT [u].[id], [u].[string] FROM [users] AS [u] INNER JOIN [cte_recursive] AS [rec] ON [u].[id] = [rec].[id])
 ```
 Output MySQL:
 ```text
-WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` WHERE `t`.`string` = ? UNION ALL SELECT `t`.`id`, `t`.`string` FROM `test` AS `t` INNER JOIN `cte_recursive` AS `rec` ON `t`.`id` = `rec`.`id`)
+WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ? UNION ALL SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` INNER JOIN `cte_recursive` AS `rec` ON `u`.`id` = `rec`.`id`)
 ```
 Output PostgreSQL:
 ```text
-WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = $1 UNION ALL SELECT "t"."id", "t"."string" FROM "test" AS "t" INNER JOIN "cte_recursive" AS "rec" ON "t"."id" = "rec"."id")
+WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = $1 UNION ALL SELECT "u"."id", "u"."string" FROM "users" AS "u" INNER JOIN "cte_recursive" AS "rec" ON "u"."id" = "rec"."id")
 ```
 Output SQLite:
 ```text
-WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "t"."id", "t"."string" FROM "test" AS "t" WHERE "t"."string" = ? UNION ALL SELECT "t"."id", "t"."string" FROM "test" AS "t" INNER JOIN "cte_recursive" AS "rec" ON "t"."id" = "rec"."id")
+WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = ? UNION ALL SELECT "u"."id", "u"."string" FROM "users" AS "u" INNER JOIN "cte_recursive" AS "rec" ON "u"."id" = "rec"."id")
 ```
 
 ## exprArray
@@ -733,722 +733,722 @@ ARRAY[?, ?, ?]
 ### BitwiseAnd
 Выполняет побитовую операцию И между двумя выражениями.
 ```go
-binary := uast.BitwiseAnd(uast.Field[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseAnd(uast.Field[int]("u", "number"), uast.Value(0b0010))
 ```
 Output MsSQL:
 ```text
-[t].[number] & @p1
+[u].[number] & @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` & ?
+`u`.`number` & ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" & $1
+"u"."number" & $1
 ```
 
 ### BitwiseOr
 Выполняет побитовую операцию ИЛИ между двумя выражениями.
 ```go
-binary := uast.BitwiseOr(uast.Field[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseOr(uast.Field[int]("u", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
-`t`.`number` | ?
+`u`.`number` | ?
 ```
 Output MsSQL:
 ```text
-[t].[number] | @p1
+[u].[number] | @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` | ?
+`u`.`number` | ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" | $1
+"u"."number" | $1
 ```
 Output SQLite:
 ```text
-"t"."number" | ?
+"u"."number" | ?
 ```
 
 ### BitwiseXor
 Выполняет побитовую операцию исключающего ИЛИ между двумя выражениями.
 ```go
-binary := uast.BitwiseXor(uast.Field[int]("t", "number"), uast.Value(0b0010))
+binary := uast.BitwiseXor(uast.Field[int]("u", "number"), uast.Value(0b0010))
 ```
 Output MariaDB:
 ```text
-`t`.`number` ^ ?
+`u`.`number` ^ ?
 ```
 Output MsSQL:
 ```text
-[t].[number] ^ @p1
+[u].[number] ^ @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` ^ ?
+`u`.`number` ^ ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" ^ $1
+"u"."number" ^ $1
 ```
 Output SQLite:
 ```text
-"t"."number" ^ ?
+"u"."number" ^ ?
 ```
 
 ### Divide
 Делит левое выражение на правое.
 ```go
-binary := uast.Divide(uast.Field[int]("t", "number"), uast.Value(2))
+binary := uast.Divide(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` / ?
+`u`.`number` / ?
 ```
 Output MsSQL:
 ```text
-[t].[number] / @p1
+[u].[number] / @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` / ?
+`u`.`number` / ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" / $1
+"u"."number" / $1
 ```
 Output SQLite:
 ```text
-"t"."number" / ?
+"u"."number" / ?
 ```
 
 ### Minus
 Вычитает правое выражение из левого.
 ```go
-binary := uast.Minus(uast.Field[int]("t", "number"), uast.Value(2))
+binary := uast.Minus(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` - ?
+`u`.`number` - ?
 ```
 Output MsSQL:
 ```text
-[t].[number] - @p1
+[u].[number] - @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` - ?
+`u`.`number` - ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" - $1
+"u"."number" - $1
 ```
 Output SQLite:
 ```text
-"t"."number" - ?
+"u"."number" - ?
 ```
 
 ### Modulo
 Возвращает остаток от деления левого выражения на правое.
 ```go
-binary := uast.Modulo(uast.Field[int]("t", "number"), uast.Value(2))
+binary := uast.Modulo(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` % ?
+`u`.`number` % ?
 ```
 Output MsSQL:
 ```text
-[t].[number] % @p1
+[u].[number] % @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` % ?
+`u`.`number` % ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" % $1
+"u"."number" % $1
 ```
 Output SQLite:
 ```text
-"t"."number" % ?
+"u"."number" % ?
 ```
 
 ### Multiply
 Умножает левое выражение на правое.
 ```go
-binary := uast.Multiply(uast.Field[int]("t", "number"), uast.Value(2))
+binary := uast.Multiply(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` * ?
+`u`.`number` * ?
 ```
 Output MsSQL:
 ```text
-[t].[number] * @p1
+[u].[number] * @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` * ?
+`u`.`number` * ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" * $1
+"u"."number" * $1
 ```
 Output SQLite:
 ```text
-"t"."number" * ?
+"u"."number" * ?
 ```
 
 ### Plus
 Складывает левое выражение с правым.
 ```go
-binary := uast.Plus(uast.Field[int]("t", "number"), uast.Value(2))
+binary := uast.Plus(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` + ?
+`u`.`number` + ?
 ```
 Output MsSQL:
 ```text
-[t].[number] + @p1
+[u].[number] + @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` + ?
+`u`.`number` + ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" + $1
+"u"."number" + $1
 ```
 Output SQLite:
 ```text
-"t"."number" + ?
+"u"."number" + ?
 ```
 
 ### ShiftLeft
 Выполняет побитовый сдвиг влево левого выражения на количество бит, указанное в правом выражении.
 ```go
-binary := uast.ShiftLeft(uast.Field[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftLeft(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` << ?
+`u`.`number` << ?
 ```
 Output MsSQL:
 ```text
-[t].[number] << @p1
+[u].[number] << @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` << ?
+`u`.`number` << ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" << $1
+"u"."number" << $1
 ```
 Output SQLite:
 ```text
-"t"."number" << ?
+"u"."number" << ?
 ```
 
 ### ShiftRight
 Выполняет побитовый сдвиг вправо левого выражения на количество бит, указанное в правом выражении.
 ```go
-binary := uast.ShiftRight(uast.Field[int]("t", "number"), uast.Value(2))
+binary := uast.ShiftRight(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` >> ?
+`u`.`number` >> ?
 ```
 Output MsSQL:
 ```text
-[t].[number] >> @p1
+[u].[number] >> @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` >> ?
+`u`.`number` >> ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" >> $1
+"u"."number" >> $1
 ```
 Output SQLite:
 ```text
-"t"."number" >> ?
+"u"."number" >> ?
 ```
 
 ## exprComparison
 ### Between
 Проверяет, попадает ли левое выражение в диапазон, заданный valueStart и valueEnd (включительно).
 ```go
-comparison := uast.Between(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.Between(uast.Field[int]("u", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` BETWEEN ? AND ?
+`u`.`number` BETWEEN ? AND ?
 ```
 Output MsSQL:
 ```text
-[t].[number] BETWEEN @p1 AND @p2
+[u].[number] BETWEEN @p1 AND @p2
 ```
 Output MySQL:
 ```text
-`t`.`number` BETWEEN ? AND ?
+`u`.`number` BETWEEN ? AND ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" BETWEEN $1 AND $2
+"u"."number" BETWEEN $1 AND $2
 ```
 Output SQLite:
 ```text
-"t"."number" BETWEEN ? AND ?
+"u"."number" BETWEEN ? AND ?
 ```
 
 ### Equal
 Сравнивает два выражения на равенство (`=`).
 ```go
-comparison := uast.Equal(uast.Field[int]("t", "number"), uast.Value(2))
+comparison := uast.Equal(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` = ?
+`u`.`number` = ?
 ```
 Output MsSQL:
 ```text
-[t].[number] = @p1
+[u].[number] = @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` = ?
+`u`.`number` = ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" = $1
+"u"."number" = $1
 ```
 Output SQLite:
 ```text
-"t"."number" = ?
+"u"."number" = ?
 ```
 
 ### Exists
 Проверяет, возвращает ли подзапрос какие-либо строки. Возвращает `true` если существует хотя бы одна строка.
 ```go
-comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
+comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("users").As("u"))))
 ```
 Output MariaDB:
 ```text
-EXISTS (SELECT 1 FROM `test` AS `t`)
+EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
 Output MsSQL:
 ```text
-EXISTS (SELECT 1 FROM [test] AS [t])
+EXISTS (SELECT 1 FROM [users] AS [u])
 ```
 Output MySQL:
 ```text
-EXISTS (SELECT 1 FROM `test` AS `t`)
+EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
 Output PostgreSQL:
 ```text
-EXISTS (SELECT 1 FROM "test" AS "t")
+EXISTS (SELECT 1 FROM "users" AS "u")
 ```
 Output SQLite:
 ```text
-EXISTS (SELECT 1 FROM "test" AS "t")
+EXISTS (SELECT 1 FROM "users" AS "u")
 ```
 
 ### Greater
 Сравнивает, больше ли левое выражение правого (`>`).
 ```go
-comparison := uast.Greater(uast.Field[int]("t", "number"), uast.Value(2))
+comparison := uast.Greater(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` > ?
+`u`.`number` > ?
 ```
 Output MsSQL:
 ```text
-[t].[number] > @p1
+[u].[number] > @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` > ?
+`u`.`number` > ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" > $1
+"u"."number" > $1
 ```
 Output SQLite:
 ```text
-"t"."number" > ?
+"u"."number" > ?
 ```
 
 ### GreaterEqual
 Сравнивает, больше или равно ли левое выражение правому (`>=`).
 ```go
-comparison := uast.GreaterEqual(uast.Field[int]("t", "number"), uast.Value(2))
+comparison := uast.GreaterEqual(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` >= ?
+`u`.`number` >= ?
 ```
 Output MsSQL:
 ```text
-[t].[number] >= @p1
+[u].[number] >= @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` >= ?
+`u`.`number` >= ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" >= $1
+"u"."number" >= $1
 ```
 Output SQLite:
 ```text
-"t"."number" >= ?
+"u"."number" >= ?
 ```
 
 ### ILike
 Выполняет регистронезависимое сравнение с шаблоном. Правое выражение должно содержать шаблон с `%` (любая последовательность) и `_` (один символ).
 ```go
-comparison := uast.ILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.ILike(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
-LOWER(`t`.`string`) LIKE LOWER(?)
+LOWER(`u`.`string`) LIKE LOWER(?)
 ```
 Output MsSQL:
 ```text
-LOWER([t].[string]) LIKE LOWER(@p1)
+LOWER([u].[string]) LIKE LOWER(@p1)
 ```
 Output MySQL:
 ```text
-LOWER(`t`.`string`) LIKE LOWER(?)
+LOWER(`u`.`string`) LIKE LOWER(?)
 ```
 Output PostgreSQL:
 ```text
-"t"."string" ILIKE $1
+"u"."string" ILIKE $1
 ```
 Output SQLite:
 ```text
-LOWER("t"."string") LIKE LOWER(?)
+LOWER("u"."string") LIKE LOWER(?)
 ```
 
 ### In
 Проверяет, соответствует ли левое выражение любому значению, содержащемуся в правом выражении (обычно подзапрос или массив).
 ```go
-comparison := uast.In(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.In(uast.Field[string]("u", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` IN (?, ?)
+`u`.`string` IN (?, ?)
 ```
 Output MsSQL:
 ```text
-[t].[string] IN (@p1, @p2)
+[u].[string] IN (@p1, @p2)
 ```
 Output MySQL:
 ```text
-`t`.`string` IN (?, ?)
+`u`.`string` IN (?, ?)
 ```
 Output PostgreSQL:
 ```text
-"t"."string" IN ($1, $2)
+"u"."string" IN ($1, $2)
 ```
 Output SQLite:
 ```text
-"t"."string" IN (?, ?)
+"u"."string" IN (?, ?)
 ```
 
 ### IsNotNull
 Проверяет, что выражение не `NULL`.
 ```go
-comparison := uast.IsNotNull(uast.Field[string]("t", "string"))
+comparison := uast.IsNotNull(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` IS NOT NULL
+`u`.`string` IS NOT NULL
 ```
 Output MsSQL:
 ```text
-[t].[string] IS NOT NULL
+[u].[string] IS NOT NULL
 ```
 Output MySQL:
 ```text
-`t`.`string` IS NOT NULL
+`u`.`string` IS NOT NULL
 ```
 Output PostgreSQL:
 ```text
-"t"."string" IS NOT NULL
+"u"."string" IS NOT NULL
 ```
 Output SQLite:
 ```text
-"t"."string" IS NOT NULL
+"u"."string" IS NOT NULL
 ```
 
 ### IsNull
 Проверяет, что выражение является `NULL`.
 ```go
-comparison := uast.IsNull(uast.Field[string]("t", "string"))
+comparison := uast.IsNull(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` IS NULL
+`u`.`string` IS NULL
 ```
 Output MsSQL:
 ```text
-[t].[string] IS NULL
+[u].[string] IS NULL
 ```
 Output MySQL:
 ```text
-`t`.`string` IS NULL
+`u`.`string` IS NULL
 ```
 Output PostgreSQL:
 ```text
-"t"."string" IS NULL
+"u"."string" IS NULL
 ```
 Output SQLite:
 ```text
-"t"."string" IS NULL
+"u"."string" IS NULL
 ```
 
 ### Less
 Сравнивает, меньше ли левое выражение правого (`<`).
 ```go
-comparison := uast.Less(uast.Field[int]("t", "number"), uast.Value(2))
+comparison := uast.Less(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` < ?
+`u`.`number` < ?
 ```
 Output MsSQL:
 ```text
-[t].[number] < @p1
+[u].[number] < @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` < ?
+`u`.`number` < ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" < $1
+"u"."number" < $1
 ```
 Output SQLite:
 ```text
-"t"."number" < ?
+"u"."number" < ?
 ```
 
 ### LessEqual
 Сравнивает, меньше или равно ли левое выражение правому (`<=`).
 ```go
-comparison := uast.LessEqual(uast.Field[int]("t", "number"), uast.Value(2))
+comparison := uast.LessEqual(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` <= ?
+`u`.`number` <= ?
 ```
 Output MsSQL:
 ```text
-[t].[number] <= @p1
+[u].[number] <= @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` <= ?
+`u`.`number` <= ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" <= $1
+"u"."number" <= $1
 ```
 Output SQLite:
 ```text
-"t"."number" <= ?
+"u"."number" <= ?
 ```
 
 ### Like
 Выполняет регистрозависимое сравнение с шаблоном. Правое выражение должно содержать шаблон с `%` и `_`.
 ```go
-comparison := uast.Like(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.Like(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` LIKE ?
+`u`.`string` LIKE ?
 ```
 Output MsSQL:
 ```text
-[t].[number] LIKE @p1
+[u].[number] LIKE @p1
 ```
 Output MySQL:
 ```text
-`t`.`string` LIKE ?
+`u`.`string` LIKE ?
 ```
 Output PostgreSQL:
 ```text
-"t"."string" LIKE $1
+"u"."string" LIKE $1
 ```
 Output SQLite:
 ```text
-"t"."string" LIKE ?
+"u"."string" LIKE ?
 ```
 
 ### NotBetween
 Проверяет, находится ли левое выражение вне диапазона, заданного `valueStart` и `valueEnd`.
 ```go
-comparison := uast.NotBetween(uast.Field[int]("t", "number"), uast.Value(0), uast.Value(2))
+comparison := uast.NotBetween(uast.Field[int]("u", "number"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` NOT BETWEEN ? AND ?
+`u`.`number` NOT BETWEEN ? AND ?
 ```
 Output MsSQL:
 ```text
-[t].[number] NOT BETWEEN @p1 AND @p2
+[u].[number] NOT BETWEEN @p1 AND @p2
 ```
 Output MySQL:
 ```text
-`t`.`number` NOT BETWEEN ? AND ?
+`u`.`number` NOT BETWEEN ? AND ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" NOT BETWEEN $1 AND $2
+"u"."number" NOT BETWEEN $1 AND $2
 ```
 Output SQLite:
 ```text
-"t"."number" NOT BETWEEN ? AND ?
+"u"."number" NOT BETWEEN ? AND ?
 ```
 
 ### NotEqual
 Сравнивает два выражения на неравенство (`!=` or `<>`).
 ```go
-comparison := uast.NotEqual(uast.Field[int]("t", "number"), uast.Value(2))
+comparison := uast.NotEqual(uast.Field[int]("u", "number"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-`t`.`number` != ?
+`u`.`number` != ?
 ```
 Output MsSQL:
 ```text
-[t].[number] != @p1
+[u].[number] != @p1
 ```
 Output MySQL:
 ```text
-`t`.`number` != ?
+`u`.`number` != ?
 ```
 Output PostgreSQL:
 ```text
-"t"."number" != $1
+"u"."number" != $1
 ```
 Output SQLite:
 ```text
-"t"."number" != ?
+"u"."number" != ?
 ```
 
 ### NotExists
 Проверяет, что подзапрос не возвращает строк. Возвращает `true` если результат подзапроса пуст.
 ```go
-comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("test").As("t"))))
+comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("users").As("u"))))
 ```
 Output MariaDB:
 ```text
-NOT EXISTS (SELECT 1 FROM `test` AS `t`)
+NOT EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
 Output MsSQL:
 ```text
-NOT EXISTS (SELECT 1 FROM [test] AS [t])
+NOT EXISTS (SELECT 1 FROM [users] AS [u])
 ```
 Output MySQL:
 ```text
-NOT EXISTS (SELECT 1 FROM `test` AS `t`)
+NOT EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
 Output PostgreSQL:
 ```text
-NOT EXISTS (SELECT 1 FROM "test" AS "t")
+NOT EXISTS (SELECT 1 FROM "users" AS "u")
 ```
 Output SQLite:
 ```text
-NOT EXISTS (SELECT 1 FROM "test" AS "t")
+NOT EXISTS (SELECT 1 FROM "users" AS "u")
 ```
 
 ### NotILike
 Выполняет отрицательное регистронезависимое сравнение с шаблоном.
 ```go
-comparison := uast.NotILike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotILike(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
-LOWER(`t`.`string`) NOT LIKE LOWER(?)
+LOWER(`u`.`string`) NOT LIKE LOWER(?)
 ```
 Output MsSQL:
 ```text
-LOWER([t].[string]) NOT LIKE LOWER(@p1)
+LOWER([u].[string]) NOT LIKE LOWER(@p1)
 ```
 Output MySQL:
 ```text
-LOWER(`t`.`string`) NOT LIKE LOWER(?)
+LOWER(`u`.`string`) NOT LIKE LOWER(?)
 ```
 Output PostgreSQL:
 ```text
-"t"."string" NOT ILIKE $1
+"u"."string" NOT ILIKE $1
 ```
 Output SQLite:
 ```text
-LOWER("t"."string") NOT LIKE LOWER(?)
+LOWER("u"."string") NOT LIKE LOWER(?)
 ```
 
 ### NotIn
 Проверяет, что левое выражение не соответствует ни одному значению, содержащемуся в правом выражении.
 ```go
-comparison := uast.NotIn(uast.Field[string]("t", "string"), uast.Array("active", "pending"))
+comparison := uast.NotIn(uast.Field[string]("u", "string"), uast.Array("active", "pending"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` NOT IN (?, ?)
+`u`.`string` NOT IN (?, ?)
 ```
 Output MsSQL:
 ```text
-[t].[string] NOT IN (@p1, @p2)
+[u].[string] NOT IN (@p1, @p2)
 ```
 Output MySQL:
 ```text
-`t`.`string` NOT IN (?, ?)
+`u`.`string` NOT IN (?, ?)
 ```
 Output PostgreSQL:
 ```text
-"t"."string" NOT IN ($1, $2)
+"u"."string" NOT IN ($1, $2)
 ```
 Output SQLite:
 ```text
-"t"."string" NOT IN (?, ?)
+"u"."string" NOT IN (?, ?)
 ```
 
 ### NotLike
 Выполняет отрицательное регистрозависимое сравнение с шаблоном.
 ```go
-comparison := uast.NotLike(uast.Field[string]("t", "string"), uast.Value("%ivan%"))
+comparison := uast.NotLike(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
 Output MariaDB:
 ```text
-`t`.`string` NOT LIKE ?
+`u`.`string` NOT LIKE ?
 ```
 Output MsSQL:
 ```text
-[t].[string] NOT LIKE @p1
+[u].[string] NOT LIKE @p1
 ```
 Output MySQL:
 ```text
-`t`.`string` NOT LIKE ?
+`u`.`string` NOT LIKE ?
 ```
 Output PostgreSQL:
 ```text
-"t"."string" NOT LIKE $1
+"u"."string" NOT LIKE $1
 ```
 Output SQLite:
 ```text
-"t"."string" NOT LIKE ?
+"u"."string" NOT LIKE ?
 ```
 
 ## exprConstant
@@ -1616,27 +1616,27 @@ Output:
 ### Field
 Создаёт ссылку на колонку таблицы, опционально квалифицированную псевдонимом таблицы. Это основной способ ссылаться на колонки базы данных в выражениях.
 ```go
-field := uast.Field[string]("t", "string")
+field := uast.Field[string]("u", "string")
 ```
 Output MariaDB:
 ```text
-`t`.`string`
+`u`.`string`
 ```
 Output MsSQL:
 ```text
-[t].[string]
+[u].[string]
 ```
 Output MySQL:
 ```text
-`t`.`string`
+`u`.`string`
 ```
 Output PostgreSQL:
 ```text
-"t"."string"
+"u"."string"
 ```
 Output SQLite:
 ```text
-"t"."string"
+"u"."string"
 ```
 
 ## exprFunction
@@ -1644,501 +1644,501 @@ Output SQLite:
 #### Avg
 Возвращает среднее арифметическое всех не-NULL значений в выражении. Если `distinct` равен `true`, среднее вычисляется только по уникальным значениям.
 ```go
-function := uast.Avg(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.Avg(uast.Field[int]("t", "number"), true)
+function := uast.Avg(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.Avg(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-AVG(`t`.`number`)
-AVG(DISTINCT `t`.`number`)
+AVG(`u`.`number`)
+AVG(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-AVG([t].[number])
-AVG(DISTINCT [t].[number])
+AVG([u].[number])
+AVG(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-AVG(`t`.`number`)
-AVG(DISTINCT `t`.`number`)
+AVG(`u`.`number`)
+AVG(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-AVG("t"."number")
-AVG(DISTINCT "t"."number")
+AVG("u"."number")
+AVG(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-AVG("t"."number")
-AVG(DISTINCT "t"."number")
+AVG("u"."number")
+AVG(DISTINCT "u"."number")
 ```
 
 #### BitAnd
 Возвращает побитовое И всех битов в выражении. Имеет смысл только для целочисленных типов.
 ```go
-function := uast.BitAnd(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.BitAnd(uast.Field[int]("t", "number"), true)
+function := uast.BitAnd(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.BitAnd(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-BIT_AND(`t`.`number`)
-BIT_AND(DISTINCT `t`.`number`)
+BIT_AND(`u`.`number`)
+BIT_AND(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-BIT_AND([t].[number])
-BIT_AND(DISTINCT [t].[number])
+BIT_AND([u].[number])
+BIT_AND(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-BIT_AND(`t`.`number`)
-BIT_AND(DISTINCT `t`.`number`)
+BIT_AND(`u`.`number`)
+BIT_AND(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-BIT_AND("t"."number")
-BIT_AND(DISTINCT "t"."number")
+BIT_AND("u"."number")
+BIT_AND(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-BIT_AND("t"."number")
-BIT_AND(DISTINCT "t"."number")
+BIT_AND("u"."number")
+BIT_AND(DISTINCT "u"."number")
 ```
 
 #### BitOr
 Возвращает побитовое ИЛИ всех битов в выражении.
 ```go
-function := uast.BitOr(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.BitOr(uast.Field[int]("t", "number"), true)
+function := uast.BitOr(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.BitOr(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-BIT_OR(`t`.`number`)
-BIT_OR(DISTINCT `t`.`number`)
+BIT_OR(`u`.`number`)
+BIT_OR(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-BIT_OR([t].[number])
-BIT_OR(DISTINCT [t].[number])
+BIT_OR([u].[number])
+BIT_OR(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-BIT_OR(`t`.`number`)
-BIT_OR(DISTINCT `t`.`number`)
+BIT_OR(`u`.`number`)
+BIT_OR(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-BIT_OR("t"."number")
-BIT_OR(DISTINCT "t"."number")
+BIT_OR("u"."number")
+BIT_OR(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-BIT_OR("t"."number")
-BIT_OR(DISTINCT "t"."number")
+BIT_OR("u"."number")
+BIT_OR(DISTINCT "u"."number")
 ```
 
 #### BitXor
 Возвращает побитовое исключающее ИЛИ всех битов в выражении.
 ```go
-function := uast.BitXor(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.BitXor(uast.Field[int]("t", "number"), true)
+function := uast.BitXor(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.BitXor(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-BIT_XOR(`t`.`number`)
-BIT_XOR(DISTINCT `t`.`number`)
+BIT_XOR(`u`.`number`)
+BIT_XOR(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-BIT_XOR([t].[number])
-BIT_XOR(DISTINCT [t].[number])
+BIT_XOR([u].[number])
+BIT_XOR(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-BIT_XOR(`t`.`number`)
-BIT_XOR(DISTINCT `t`.`number`)
+BIT_XOR(`u`.`number`)
+BIT_XOR(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-BIT_XOR("t"."number")
-BIT_XOR(DISTINCT "t"."number")
+BIT_XOR("u"."number")
+BIT_XOR(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-BIT_XOR("t"."number")
-BIT_XOR(DISTINCT "t"."number")
+BIT_XOR("u"."number")
+BIT_XOR(DISTINCT "u"."number")
 ```
 
 #### Count
 Возвращает количество строк, соответствующих запросу, или количество не-NULL значений, если указано выражение. Когда `distinct` равен `true`, подсчитываются только уникальные значения.
 ```go
-function := uast.Count(uast.Field[string]("t", "string"), false)
-functionWithDistinct := uast.Count(uast.Field[string]("t", "string"), true)
+function := uast.Count(uast.Field[string]("u", "string"), false)
+functionWithDistinct := uast.Count(uast.Field[string]("u", "string"), true)
 ```
 Output MariaDB:
 ```text
-COUNT(`t`.`string`)
-COUNT(DISTINCT `t`.`string`)
+COUNT(`u`.`string`)
+COUNT(DISTINCT `u`.`string`)
 ```
 Output MsSQL:
 ```text
-COUNT([t].[string])
-COUNT(DISTINCT [t].[string])
+COUNT([u].[string])
+COUNT(DISTINCT [u].[string])
 ```
 Output MySQL:
 ```text
-COUNT(`t`.`string`)
-COUNT(DISTINCT `t`.`string`)
+COUNT(`u`.`string`)
+COUNT(DISTINCT `u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-COUNT("t"."string")
-COUNT(DISTINCT "t"."string")
+COUNT("u"."string")
+COUNT(DISTINCT "u"."string")
 ```
 Output SQLite:
 ```text
-COUNT("t"."string")
-COUNT(DISTINCT "t"."string")
+COUNT("u"."string")
+COUNT(DISTINCT "u"."string")
 ```
 
 #### GroupConcat
 Объединяет значения из группы в одну строку, разделённую стандартным разделителем (обычно запятая). Флаг `distinct` удаляет дубликаты перед объединением.
 ```go
-function := uast.GroupConcat(uast.Field[string]("t", "string"), false)
-functionWithDistinct := uast.GroupConcat(uast.Field[string]("t", "string"), true)
+function := uast.GroupConcat(uast.Field[string]("u", "string"), false)
+functionWithDistinct := uast.GroupConcat(uast.Field[string]("u", "string"), true)
 ```
 Output MariaDB:
 ```text
-GROUP_CONCAT(`t`.`string` SEPARATOR ',')
-GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ',')
+GROUP_CONCAT(`u`.`string` SEPARATOR ',')
+GROUP_CONCAT(DISTINCT `u`.`string` SEPARATOR ',')
 ```
 Output MsSQL:
 ```text
-GROUP_CONCAT([t].[string], ',')
-GROUP_CONCAT(DISTINCT [t].[string], ',')
+GROUP_CONCAT([u].[string], ',')
+GROUP_CONCAT(DISTINCT [u].[string], ',')
 ```
 Output MySQL:
 ```text
-GROUP_CONCAT(`t`.`string` SEPARATOR ',')
-GROUP_CONCAT(DISTINCT `t`.`string` SEPARATOR ',')
+GROUP_CONCAT(`u`.`string` SEPARATOR ',')
+GROUP_CONCAT(DISTINCT `u`.`string` SEPARATOR ',')
 ```
 Output PostgreSQL:
 ```text
-STRING_AGG("t"."string", ',')
-STRING_AGG(DISTINCT "t"."string", ',')
+STRING_AGG("u"."string", ',')
+STRING_AGG(DISTINCT "u"."string", ',')
 ```
 Output SQLite:
 ```text
-GROUP_CONCAT("t"."string" SEPARATOR ',')
-GROUP_CONCAT(DISTINCT "t"."string" SEPARATOR ',')
+GROUP_CONCAT("u"."string" SEPARATOR ',')
+GROUP_CONCAT(DISTINCT "u"."string" SEPARATOR ',')
 ```
 
 #### Max
 Возвращает максимальное значение выражения по всем строкам в группе.
 ```go
-function := uast.Max(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.Max(uast.Field[int]("t", "number"), true)
+function := uast.Max(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.Max(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-MAX(`t`.`number`)
-MAX(DISTINCT `t`.`number`)
+MAX(`u`.`number`)
+MAX(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-MAX([t].[number])
-MAX(DISTINCT [t].[number])
+MAX([u].[number])
+MAX(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-MAX(`t`.`number`)
-MAX(DISTINCT `t`.`number`)
+MAX(`u`.`number`)
+MAX(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-MAX("t"."number")
-MAX(DISTINCT "t"."number")
+MAX("u"."number")
+MAX(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-MAX("t"."number")
-MAX(DISTINCT "t"."number")
+MAX("u"."number")
+MAX(DISTINCT "u"."number")
 ```
 
 #### Min
 Возвращает минимальное значение выражения по всем строкам в группе.
 ```go
-function := uast.Min(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.Min(uast.Field[int]("t", "number"), true)
+function := uast.Min(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.Min(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-MIN(`t`.`number`)
-MIN(DISTINCT `t`.`number`)
+MIN(`u`.`number`)
+MIN(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-MIN([t].[number])
-MIN(DISTINCT [t].[number])
+MIN([u].[number])
+MIN(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-MIN(`t`.`number`)
-MIN(DISTINCT `t`.`number`)
+MIN(`u`.`number`)
+MIN(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-MIN("t"."number")
-MIN(DISTINCT "t"."number")
+MIN("u"."number")
+MIN(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-MIN("t"."number")
-MIN(DISTINCT "t"."number")
+MIN("u"."number")
+MIN(DISTINCT "u"."number")
 ```
 
 #### StdDev
 Возвращает популяционное стандартное отклонение выражения.
 ```go
-function := uast.StdDev(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.StdDev(uast.Field[int]("t", "number"), true)
+function := uast.StdDev(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.StdDev(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-STDDEV(`t`.`number`)
-STDDEV(DISTINCT `t`.`number`)
+STDDEV(`u`.`number`)
+STDDEV(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-STDEV([t].[number])
-STDEV(DISTINCT [t].[number])
+STDEV([u].[number])
+STDEV(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-STDDEV(`t`.`number`)
-STDDEV(DISTINCT `t`.`number`)
+STDDEV(`u`.`number`)
+STDDEV(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-STDDEV_SAMP("t"."number")
-STDDEV_SAMP(DISTINCT "t"."number")
+STDDEV_SAMP("u"."number")
+STDDEV_SAMP(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-STDEV("t"."number")
-STDEV(DISTINCT "t"."number")
+STDEV("u"."number")
+STDEV(DISTINCT "u"."number")
 ```
 
 #### Sum
 Возвращает сумму всех значений в выражении. Если `distinct` равен `true`, суммируются только уникальные значения.
 ```go
-function := uast.Sum(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.Sum(uast.Field[int]("t", "number"), true)
+function := uast.Sum(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.Sum(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-SUM(`t`.`number`)
-SUM(DISTINCT `t`.`number`)
+SUM(`u`.`number`)
+SUM(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-SUM([t].[number])
-SUM(DISTINCT [t].[number])
+SUM([u].[number])
+SUM(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-SUM(`t`.`number`)
-SUM(DISTINCT `t`.`number`)
+SUM(`u`.`number`)
+SUM(DISTINCT `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-SUM("t"."number")
-SUM(DISTINCT "t"."number")
+SUM("u"."number")
+SUM(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-SUM("t"."number")
-SUM(DISTINCT "t"."number")
+SUM("u"."number")
+SUM(DISTINCT "u"."number")
 ```
 
 #### Variance
 Возвращает популяционную дисперсию выражения.
 ```go
-function := uast.Variance(uast.Field[int]("t", "number"), false)
-functionWithDistinct := uast.Variance(uast.Field[int]("t", "number"), true)
+function := uast.Variance(uast.Field[int]("u", "number"), false)
+functionWithDistinct := uast.Variance(uast.Field[int]("u", "number"), true)
 ```
 Output MariaDB:
 ```text
-VARIANCE(`t`.`number`)
-VARIANCE(DISTINCT `t`.`number`)
+VARIANCE(`u`.`number`)
+VARIANCE(DISTINCT `u`.`number`)
 ```
 Output MsSQL:
 ```text
-VAR([t].[number])
-VAR(DISTINCT [t].[number])
+VAR([u].[number])
+VAR(DISTINCT [u].[number])
 ```
 Output MySQL:
 ```text
-VARIANCE(`t`.`number`)
-VARIANCE(DISTINCT "t"."number")
+VARIANCE(`u`.`number`)
+VARIANCE(DISTINCT "u"."number")
 ```
 Output PostgreSQL:
 ```text
-VAR_SAMP("t"."number")
-VAR_SAMP(DISTINCT "t"."number")
+VAR_SAMP("u"."number")
+VAR_SAMP(DISTINCT "u"."number")
 ```
 Output SQLite:
 ```text
-VARIANCE("t"."number")
-VARIANCE(DISTINCT "t"."number")
+VARIANCE("u"."number")
+VARIANCE(DISTINCT "u"."number")
 ```
 
 ### Analytical
 #### FirstValue
 Возвращает значение выражения из первой строки оконного фрейма. Требует оператор `OVER` с оконной спецификацией.
 ```go
-function := uast.FirstValue(uast.Field[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+function := uast.FirstValue(uast.Field[string]("u", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+FIRST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-FIRST_VALUE([t].[string]) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+FIRST_VALUE([u].[string]) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-FIRST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+FIRST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+FIRST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-FIRST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+FIRST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 #### Lag
 Возвращает значение выражения из строки, смещённой на `offset` строк назад от текущей строки в рамках раздела.
 ```go
-function := uast.Lag(uast.Field[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
+function := uast.Lag(uast.Field[int]("u", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("u", "date"))),
 )
 ```
 Output MariaDB:
 ```text
-LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+LAG(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
 Output MsSQL:
 ```text
-LAG([t].[number], 2) OVER (PARTITION BY [t].[id] ORDER BY [t].[date] ASC)
+LAG([u].[number], 2) OVER (PARTITION BY [u].[id] ORDER BY [u].[date] ASC)
 ```
 Output MySQL:
 ```text
-LAG(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+LAG(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
 Output PostgreSQL:
 ```text
-LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
+LAG("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
 Output SQLite:
 ```text
-LAG("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
+LAG("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
 
 #### LastValue
 Возвращает значение выражения из последней строки оконного фрейма.
 ```go
-function := uast.LastValue(uast.Field[string]("t", "string")).Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Field[int]("t", "number"))),
+function := uast.LastValue(uast.Field[string]("u", "string")).Over(
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[int]("u", "number"))),
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
 Output MariaDB:
 ```text
-LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+LAST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 Output MsSQL:
 ```text
-LAST_VALUE([t].[string]) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+LAST_VALUE([u].[string]) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 Output MySQL:
 ```text
-LAST_VALUE(`t`.`string`) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+LAST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 Output PostgreSQL:
 ```text
-LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+LAST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 Output SQLite:
 ```text
-LAST_VALUE("t"."string") OVER (PARTITION BY "t"."id" ORDER BY "t"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+LAST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 
 #### Lead
 Возвращает значение выражения из строки, смещённой на `offset` строк вперёд от текущей строки в рамках раздела.
 ```go
-function := uast.Lead(uast.Field[int]("t", "number"), 2).Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Asc(uast.Field[time.Time]("t", "date"))),
+function := uast.Lead(uast.Field[int]("u", "number"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Asc(uast.Field[time.Time]("u", "date"))),
 )
 ```
 Output MariaDB:
 ```text
-LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+LEAD(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
 Output MsSQL:
 ```text
-LEAD([t].[number], 2) OVER (PARTITION BY [t].[id] ORDER BY [t].[date] ASC)
+LEAD([u].[number], 2) OVER (PARTITION BY [u].[id] ORDER BY [u].[date] ASC)
 ```
 Output MySQL:
 ```text
-LEAD(`t`.`number`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`date` ASC)
+LEAD(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
 Output PostgreSQL:
 ```text
-LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
+LEAD("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
 Output SQLite:
 ```text
-LEAD("t"."number", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."date" ASC)
+LEAD("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
 
 #### NthValue
 Возвращает значение выражения из `n-й` строки оконного фрейма.
 ```go
-function := uast.NthValue(uast.Field[string]("t", "string"), 2).Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+function := uast.NthValue(uast.Field[string]("u", "string"), 2).Over(
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
 ```
 Output MariaDB:
 ```text
-NTH_VALUE(`t`.`string`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+NTH_VALUE(`u`.`string`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 Output MsSQL:
 ```text
-NTH_VALUE([t].[string], 2) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+NTH_VALUE([u].[string], 2) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 Output MySQL:
 ```text
-NTH_VALUE(`t`.`string`, 2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+NTH_VALUE(`u`.`string`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 Output PostgreSQL:
 ```text
-NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+NTH_VALUE("u"."string", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 Output SQLite:
 ```text
-NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+NTH_VALUE("u"."string", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 
 ### Condition
@@ -2147,7 +2147,7 @@ NTH_VALUE("t"."string", 2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DES
 ```go
 pairs := uast.CaseIf(
     uast.CasePair(
-        uast.Less(uast.Field[int]("t", "number"), uast.Value(2)),
+        uast.Less(uast.Field[int]("u", "number"), uast.Value(2)),
         uast.Value("old"),
     ),
 )
@@ -2156,310 +2156,310 @@ function := uast.Case(pairs, elseExpr)
 ```
 Output MariaDB:
 ```text
-CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
+CASE WHEN `u`.`number` < ? THEN ? ELSE ? END
 ```
 Output MsSQL:
 ```text
-CASE WHEN [t].[number] < @p1 THEN @p2 ELSE @p3 END
+CASE WHEN [u].[number] < @p1 THEN @p2 ELSE @p3 END
 ```
 Output MySQL:
 ```text
-CASE WHEN `t`.`number` < ? THEN ? ELSE ? END
+CASE WHEN `u`.`number` < ? THEN ? ELSE ? END
 ```
 Output PostgreSQL:
 ```text
-CASE WHEN "t"."number" < $1 THEN $2 ELSE $3 END
+CASE WHEN "u"."number" < $1 THEN $2 ELSE $3 END
 ```
 Output SQLite:
 ```text
-CASE WHEN "t"."number" < ? THEN ? ELSE ? END
+CASE WHEN "u"."number" < ? THEN ? ELSE ? END
 ```
 
 #### Coalesce
 Возвращает первое не-NULL выражение из предоставленного списка. Полезно для указания запасных значений.
 ```go
-function := uast.Coalesce(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
+function := uast.Coalesce(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
 Output MariaDB:
 ```text
-COALESCE(`t`.`createat`, `t`.`updateat`)
+COALESCE(`u`.`createat`, `u`.`updateat`)
 ```
 Output MsSQL:
 ```text
-COALESCE([t].[createat], [t].[updateat])
+COALESCE([u].[createat], [u].[updateat])
 ```
 Output MySQL:
 ```text
-COALESCE(`t`.`createat`, `t`.`updateat`)
+COALESCE(`u`.`createat`, `u`.`updateat`)
 ```
 Output PostgreSQL:
 ```text
-COALESCE("t"."createat", "t"."updateat")
+COALESCE("u"."createat", "u"."updateat")
 ```
 Output SQLite:
 ```text
-COALESCE("t"."createat", "t"."updateat")
+COALESCE("u"."createat", "u"."updateat")
 ```
 
 #### Greatest
 Возвращает наибольшее значение из предоставленного списка выражений.
 ```go
-function := uast.Greatest(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
+function := uast.Greatest(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
 Output MariaDB:
 ```text
-GREATEST(`t`.`createat`, `t`.`updateat`)
+GREATEST(`u`.`createat`, `u`.`updateat`)
 ```
 Output MsSQL:
 ```text
-GREATEST([t].[createat], [t].[updateat])
+GREATEST([u].[createat], [u].[updateat])
 ```
 Output MySQL:
 ```text
-GREATEST(`t`.`createat`, `t`.`updateat`)
+GREATEST(`u`.`createat`, `u`.`updateat`)
 ```
 Output PostgreSQL:
 ```text
-GREATEST("t"."createat", "t"."updateat")
+GREATEST("u"."createat", "u"."updateat")
 ```
 Output SQLite:
 ```text
-GREATEST("t"."createat", "t"."updateat")
+GREATEST("u"."createat", "u"."updateat")
 ```
 
 #### Least
 Возвращает наименьшее значение из предоставленного списка выражений.
 ```go
-function := uast.Least(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
+function := uast.Least(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
 Output MariaDB:
 ```text
-LEAST(`t`.`createat`, `t`.`updateat`)
+LEAST(`u`.`createat`, `u`.`updateat`)
 ```
 Output MsSQL:
 ```text
-LEAST([t].[createat], [t].[updateat])
+LEAST([u].[createat], [u].[updateat])
 ```
 Output MySQL:
 ```text
-LEAST(`t`.`createat`, `t`.`updateat`)
+LEAST(`u`.`createat`, `u`.`updateat`)
 ```
 Output PostgreSQL:
 ```text
-LEAST("t"."createat", "t"."updateat")
+LEAST("u"."createat", "u"."updateat")
 ```
 Output SQLite:
 ```text
-LEAST("t"."createat", "t"."updateat")
+LEAST("u"."createat", "u"."updateat")
 ```
 
 #### NullIf
 Возвращает `NULL` если два выражения равны; иначе возвращает первое выражение.
 ```go
-function := uast.NullIf(uast.Field[time.Time]("t", "createat"), uast.Field[time.Time]("t", "updateat"))
+function := uast.NullIf(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
 Output MariaDB:
 ```text
-NULLIF(`t`.`createat`, `t`.`updateat`)
+NULLIF(`u`.`createat`, `u`.`updateat`)
 ```
 Output MsSQL:
 ```text
-NULLIF([t].[createat], [t].[updateat])
+NULLIF([u].[createat], [u].[updateat])
 ```
 Output MySQL:
 ```text
-NULLIF(`t`.`createat`, `t`.`updateat`)
+NULLIF(`u`.`createat`, `u`.`updateat`)
 ```
 Output PostgreSQL:
 ```text
-NULLIF("t"."createat", "t"."updateat")
+NULLIF("u"."createat", "u"."updateat")
 ```
 Output SQLite:
 ```text
-NULLIF("t"."createat", "t"."updateat")
+NULLIF("u"."createat", "u"."updateat")
 ```
 
 ### Convert
 #### Cast
 Преобразует выражение к указанному типу данных.
 ```go
-function := uast.Cast(uast.Field[int]("t", "number"), uast.TypeString)
+function := uast.Cast(uast.Field[int]("u", "number"), uast.TypeString)
 ```
 Output MariaDB:
 ```text
-CAST(`t`.`number` AS CHAR)
+CAST(`u`.`number` AS CHAR)
 ```
 Output MsSQL:
 ```text
-CAST([t].[number] AS NVARCHAR)
+CAST([u].[number] AS NVARCHAR)
 ```
 Output MySQL:
 ```text
-CAST(`t`.`number` AS CHAR)
+CAST(`u`.`number` AS CHAR)
 ```
 Output PostgreSQL:
 ```text
-CAST("t"."number" AS VARCHAR)
+CAST("u"."number" AS VARCHAR)
 ```
 Output SQLite:
 ```text
-CAST("t"."number" AS TEXT)
+CAST("u"."number" AS TEXT)
 ```
 
 #### CharLength
 Возвращает количество символов в строковом выражении.
 ```go
-function := uast.CharLength(uast.Field[string]("t", "string"))
+function := uast.CharLength(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-CHAR_LENGTH(`t`.`string`)
+CHAR_LENGTH(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-CHAR_LENGTH([t].[string])
+CHAR_LENGTH([u].[string])
 ```
 Output MySQL:
 ```text
-CHAR_LENGTH(`t`.`string`)
+CHAR_LENGTH(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-CHAR_LENGTH("t"."string")
+CHAR_LENGTH("u"."string")
 ```
 Output SQLite:
 ```text
-CHAR_LENGTH("t"."string")
+CHAR_LENGTH("u"."string")
 ```
 
 #### DateFormat
 Форматирует выражение даты/времени в соответствии с указанной маской формата.
 ```go
-function := uast.DateFormat(uast.Field[time.Time]("t", "createat"), uast.Value("%Y-%m-%d"))
+function := uast.DateFormat(uast.Field[time.Time]("u", "createat"), uast.Value("%Y-%m-%d"))
 ```
 Output MariaDB:
 ```text
-DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
+DATE_FORMAT(`u`.`createat`, '%Y-%m-%d')
 ```
 Output MsSQL:
 ```text
-FORMAT([t].[createat], '%Y-%m-%d')
+FORMAT([u].[createat], '%Y-%m-%d')
 ```
 Output MySQL:
 ```text
-DATE_FORMAT(`t`.`createat`, '%Y-%m-%d')
+DATE_FORMAT(`u`.`createat`, '%Y-%m-%d')
 ```
 Output PostgreSQL:
 ```text
-TO_CHAR("t"."createat", '%Y-%m-%d')
+TO_CHAR("u"."createat", '%Y-%m-%d')
 ```
 Output SQLite:
 ```text
-STRFTIME("t"."createat", '%Y-%m-%d')
+STRFTIME("u"."createat", '%Y-%m-%d')
 ```
 
 #### Degrees
 Преобразует угол из радиан в градусы.
 ```go
-function := uast.Degrees(uast.Field[int]("t", "number"))
+function := uast.Degrees(uast.Field[int]("u", "number"))
 ```
 Output MariaDB:
 ```text
-DEGREES(`t`.`number`)
+DEGREES(`u`.`number`)
 ```
 Output MsSQL:
 ```text
-DEGREES([t].[number])
+DEGREES([u].[number])
 ```
 Output MySQL:
 ```text
-DEGREES(`t`.`number`)
+DEGREES(`u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-DEGREES("t"."number")
+DEGREES("u"."number")
 ```
 Output SQLite:
 ```text
-DEGREES("t"."number")
+DEGREES("u"."number")
 ```
 
 #### Length
 Возвращает длину строкового выражения в байтах.
 ```go
-function := uast.Length(uast.Field[string]("t", "string"))
+function := uast.Length(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-LENGTH(`t`.`string`)
+LENGTH(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-LEN([t].[string])
+LEN([u].[string])
 ```
 Output MySQL:
 ```text
-LENGTH(`t`.`string`)
+LENGTH(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-LENGTH("t"."string")
+LENGTH("u"."string")
 ```
 Output SQLite:
 ```text
-LENGTH("t"."string")
+LENGTH("u"."string")
 ```
 
 #### Position
 Возвращает начальную позицию первого вхождения подстроки в строку.
 ```go
-function := uast.Position(uast.Field[string]("t", "string"), uast.Value("old"))
+function := uast.Position(uast.Field[string]("u", "string"), uast.Value("old"))
 ```
 Output MariaDB:
 ```text
-POSITION(? IN `t`.`string`)
+POSITION(? IN `u`.`string`)
 ```
 Output MsSQL:
 ```text
-CHARINDEX(@p1, [t].[string])
+CHARINDEX(@p1, [u].[string])
 ```
 Output MySQL:
 ```text
-POSITION(? IN `t`.`string`)
+POSITION(? IN `u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-POSITION($1 IN "t"."string")
+POSITION($1 IN "u"."string")
 ```
 Output SQLite:
 ```text
-POSITION(? IN "t"."string")
+POSITION(? IN "u"."string")
 ```
 
 #### Radians
 Преобразует угол из градусов в радианы.
 ```go
-function := uast.Radians(uast.Field[int]("t", "number"))
+function := uast.Radians(uast.Field[int]("u", "number"))
 ```
 Output MariaDB:
 ```text
-RADIANS(`t`.`number`)
+RADIANS(`u`.`number`)
 ```
 Output MsSQL:
 ```text
-RADIANS([t].[number])
+RADIANS([u].[number])
 ```
 Output MySQL:
 ```text
-RADIANS(`t`.`number`)
+RADIANS(`u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-RADIANS("t"."number")
+RADIANS("u"."number")
 ```
 Output SQLite:
 ```text
-RADIANS("t"."number")
+RADIANS("u"."number")
 ```
 
 ### Date and time
@@ -2518,235 +2518,235 @@ TIME('now')
 #### DateAdd
 Добавляет интервал даты/времени к выражению даты/времени и возвращает результирующую дату/время.
 ```go
-function := uast.DateAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateAdd(uast.Field[time.Time]("u", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
-DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
+DATE_ADD(`u`.`createat`, INTERVAL 2 DAY)
 ```
 Output MsSQL:
 ```text
-DATEADD(DAY, 2, [t].[createat])
+DATEADD(DAY, 2, [u].[createat])
 ```
 Output MySQL:
 ```text
-DATE_ADD(`t`.`createat`, INTERVAL 2 DAY)
+DATE_ADD(`u`.`createat`, INTERVAL 2 DAY)
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" + INTERVAL '2 DAY')
+("u"."createat" + INTERVAL '2 DAY')
 ```
 Output SQLite:
 ```text
-DATETIME("t"."createat", '+2 DAY')
+DATETIME("u"."createat", '+2 DAY')
 ```
 
 #### DateDiff
 Возвращает разницу в днях между двумя выражениями даты/времени (`datetimeEnd` - `datetimeStart`).
 ```go
-function := uast.DateDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
+function := uast.DateDiff(uast.Field[time.Time]("u", "updateat"), uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-DATEDIFF(`t`.`updateat`, `t`.`createat`)
+DATEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATEDIFF([t].[updateat], [t].[createat])
+DATEDIFF([u].[updateat], [u].[createat])
 ```
 Output MySQL:
 ```text
-DATEDIFF(`t`.`updateat`, `t`.`createat`)
+DATEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-DATE_PART('day', "t"."updateat" - "t"."createat")
+DATE_PART('day', "u"."updateat" - "u"."createat")
 ```
 Output SQLite:
 ```text
-DATEDIFF("t"."updateat", "t"."createat")
+DATEDIFF("u"."updateat", "u"."createat")
 ```
 
 #### DateSub
 Вычитает интервал даты/времени из выражения даты/времени и возвращает результирующую дату/время.
 ```go
-function := uast.DateSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 DAY"))
+function := uast.DateSub(uast.Field[time.Time]("u", "createat"), uast.Value("2 DAY"))
 ```
 Output MariaDB:
 ```text
-DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
+DATE_SUB(`u`.`createat`, INTERVAL 2 DAY)
 ```
 Output MsSQL:
 ```text
-DATEADD(DAY, -2, [t].[createat])
+DATEADD(DAY, -2, [u].[createat])
 ```
 Output MySQL:
 ```text
-DATE_SUB(`t`.`createat`, INTERVAL 2 DAY)
+DATE_SUB(`u`.`createat`, INTERVAL 2 DAY)
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" - INTERVAL '2 DAY')
+("u"."createat" - INTERVAL '2 DAY')
 ```
 Output SQLite:
 ```text
-DATETIME("t"."createat", '-2 DAY')
+DATETIME("u"."createat", '-2 DAY')
 ```
 
 #### Day
 Извлекает день месяца (1–31) из выражения даты/времени.
 ```go
-function := uast.Day(uast.Field[time.Time]("t", "createat"))
+function := uast.Day(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-DAY(`t`.`createat`)
+DAY(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DAY([t].[createat])
+DAY([u].[createat])
 ```
 Output MySQL:
 ```text
-DAY(`t`.`createat`)
+DAY(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(DAY FROM "t"."createat")
+EXTRACT(DAY FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-DAY("t"."createat")
+DAY("u"."createat")
 ```
 
 #### DayName
 Возвращает название дня недели (например, 'Понедельник', 'Вторник') для заданного выражения даты/времени.
 ```go
-function := uast.DayName(uast.Field[time.Time]("t", "createat"))
+function := uast.DayName(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-DAYNAME(`t`.`createat`)
+DAYNAME(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATENAME(WEEKDAY, [t].[createat])
+DATENAME(WEEKDAY, [u].[createat])
 ```
 Output MySQL:
 ```text
-DAYNAME(`t`.`createat`)
+DAYNAME(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-TO_CHAR("t"."createat", 'Day')
+TO_CHAR("u"."createat", 'Day')
 ```
 Output SQLite:
 ```text
-STRFTIME('%w', "t"."createat")
+STRFTIME('%w', "u"."createat")
 ```
 
 #### Hour
 Извлекает час (0–23) из выражения даты/времени.
 ```go
-function := uast.Hour(uast.Field[time.Time]("t", "createat"))
+function := uast.Hour(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-HOUR(`t`.`createat`)
+HOUR(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATEPART(HOUR, [t].[createat])
+DATEPART(HOUR, [u].[createat])
 ```
 Output MySQL:
 ```text
-HOUR(`t`.`createat`)
+HOUR(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(HOUR FROM "t"."createat")
+EXTRACT(HOUR FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-HOUR("t"."createat")
+HOUR("u"."createat")
 ```
 
 #### Minute
 Извлекает минуту (0–59) из выражения даты/времени.
 ```go
-function := uast.Minute(uast.Field[time.Time]("t", "createat"))
+function := uast.Minute(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-MINUTE(`t`.`createat`)
+MINUTE(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATEPART(MINUTE, [t].[createat])
+DATEPART(MINUTE, [u].[createat])
 ```
 Output MySQL:
 ```text
-MINUTE(`t`.`createat`)
+MINUTE(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(MINUTE FROM "t"."createat")
+EXTRACT(MINUTE FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-MINUTE("t"."createat")
+MINUTE("u"."createat")
 ```
 
 #### Month
 Извлекает месяц (1–12) из выражения даты/времени.
 ```go
-function := uast.Month(uast.Field[time.Time]("t", "createat"))
+function := uast.Month(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-MONTH(`t`.`createat`)
+MONTH(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-MONTH([t].[createat])
+MONTH([u].[createat])
 ```
 Output MySQL:
 ```text
-MONTH(`t`.`createat`)
+MONTH(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(MONTH FROM "t"."createat")
+EXTRACT(MONTH FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-MONTH("t"."createat")
+MONTH("u"."createat")
 ```
 
 #### MonthName
 Возвращает название месяца (например, 'Январь', 'Февраль') для заданного выражения даты/времени.
 ```go
-function := uast.MonthName(uast.Field[time.Time]("t", "createat"))
+function := uast.MonthName(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-MONTHNAME(`t`.`createat`)
+MONTHNAME(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATENAME(MONTH, [t].[createat])
+DATENAME(MONTH, [u].[createat])
 ```
 Output MySQL:
 ```text
-MONTHNAME(`t`.`createat`)
+MONTHNAME(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-TO_CHAR("t"."createat", 'Month')
+TO_CHAR("u"."createat", 'Month')
 ```
 Output SQLite:
 ```text
-STRFTIME('%m', "t"."createat")
+STRFTIME('%m', "u"."createat")
 ```
 
 #### Now
@@ -2778,183 +2778,183 @@ DATETIME('now')
 #### Quarter
 Извлекает квартал (1–4) из выражения даты/времени.
 ```go
-function := uast.Quarter(uast.Field[time.Time]("t", "createat"))
+function := uast.Quarter(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-QUARTER(`t`.`createat`)
+QUARTER(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATEPART(QUARTER, [t].[createat])
+DATEPART(QUARTER, [u].[createat])
 ```
 Output MySQL:
 ```text
-QUARTER(`t`.`createat`)
+QUARTER(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(QUARTER FROM "t"."createat")
+EXTRACT(QUARTER FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-QUARTER("t"."createat")
+QUARTER("u"."createat")
 ```
 
 #### Second
 Извлекает секунду (0–59) из выражения даты/времени.
 ```go
-function := uast.Second(uast.Field[time.Time]("t", "createat"))
+function := uast.Second(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-SECOND(`t`.`createat`)
+SECOND(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATEPART(SECOND, [t].[createat])
+DATEPART(SECOND, [u].[createat])
 ```
 Output MySQL:
 ```text
-SECOND(`t`.`createat`)
+SECOND(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(SECOND FROM "t"."createat")
+EXTRACT(SECOND FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-SECOND("t"."createat")
+SECOND("u"."createat")
 ```
 
 #### TimeAdd
 Добавляет интервал времени к выражению времени/даты/времени и возвращает результирующее время.
 ```go
-function := uast.TimeAdd(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeAdd(uast.Field[time.Time]("u", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
-TIME_ADD(`t`.`createat`, '2 HOUR')
+TIME_ADD(`u`.`createat`, '2 HOUR')
 ```
 Output MsSQL:
 ```text
-DATEADD(HOUR, 2, [t].[createat])
+DATEADD(HOUR, 2, [u].[createat])
 ```
 Output MySQL:
 ```text
-TIME_ADD(`t`.`createat`, '2 HOUR')
+TIME_ADD(`u`.`createat`, '2 HOUR')
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" + INTERVAL '2 HOUR')
+("u"."createat" + INTERVAL '2 HOUR')
 ```
 Output SQLite:
 ```text
-TIME("t"."createat", '+2 HOUR')
+TIME("u"."createat", '+2 HOUR')
 ```
 
 #### TimeDiff
 Возвращает разницу между двумя выражениями времени/даты/времени (`timeEnd` - `timeStart`).
 ```go
-function := uast.TimeDiff(uast.Field[time.Time]("t", "updateat"), uast.Field[time.Time]("t", "createat"))
+function := uast.TimeDiff(uast.Field[time.Time]("u", "updateat"), uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-TIMEDIFF(`t`.`updateat`, `t`.`createat`)
+TIMEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
 Output MsSQL:
 ```text
-TIMEDIFF([t].[updateat], [t].[createat])
+TIMEDIFF([u].[updateat], [u].[createat])
 ```
 Output MySQL:
 ```text
-TIMEDIFF(`t`.`updateat`, `t`.`createat`)
+TIMEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-DATE_PART('time', "t"."updateat" - "t"."createat")
+DATE_PART('time', "u"."updateat" - "u"."createat")
 ```
 Output SQLite:
 ```text
-TIMEDIFF("t"."updateat", "t"."createat")
+TIMEDIFF("u"."updateat", "u"."createat")
 ```
 
 #### TimeSub
 Вычитает интервал времени из выражения времени/даты/времени и возвращает результирующее время.
 ```go
-function := uast.TimeSub(uast.Field[time.Time]("t", "createat"), uast.Value("2 HOUR"))
+function := uast.TimeSub(uast.Field[time.Time]("u", "createat"), uast.Value("2 HOUR"))
 ```
 Output MariaDB:
 ```text
-TIME_SUB(`t`.`createat`, '2 HOUR')
+TIME_SUB(`u`.`createat`, '2 HOUR')
 ```
 Output MsSQL:
 ```text
-DATEADD(HOUR, -2, [t].[createat])
+DATEADD(HOUR, -2, [u].[createat])
 ```
 Output MySQL:
 ```text
-TIME_SUB(`t`.`createat`, '2 HOUR')
+TIME_SUB(`u`.`createat`, '2 HOUR')
 ```
 Output PostgreSQL:
 ```text
-("t"."createat" - INTERVAL '2 HOUR')
+("u"."createat" - INTERVAL '2 HOUR')
 ```
 Output SQLite:
 ```text
-TIME("t"."createat", '-2 HOUR')
+TIME("u"."createat", '-2 HOUR')
 ```
 
 #### Week
 Извлекает номер недели (1–53) из выражения даты/времени.
 ```go
-function := uast.Week(uast.Field[time.Time]("t", "createat"))
+function := uast.Week(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-WEEK(`t`.`createat`)
+WEEK(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-DATEPART(WEEK, [t].[createat])
+DATEPART(WEEK, [u].[createat])
 ```
 Output MySQL:
 ```text
-WEEK(`t`.`createat`)
+WEEK(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(WEEK FROM "t"."createat")
+EXTRACT(WEEK FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-WEEK("t"."createat")
+WEEK("u"."createat")
 ```
 
 #### Year
 Извлекает год из выражения даты/времени.
 ```go
-function := uast.Year(uast.Field[time.Time]("t", "createat"))
+function := uast.Year(uast.Field[time.Time]("u", "createat"))
 ```
 Output MariaDB:
 ```text
-YEAR(`t`.`createat`)
+YEAR(`u`.`createat`)
 ```
 Output MsSQL:
 ```text
-YEAR([t].[createat])
+YEAR([u].[createat])
 ```
 Output MySQL:
 ```text
-YEAR(`t`.`createat`)
+YEAR(`u`.`createat`)
 ```
 Output PostgreSQL:
 ```text
-EXTRACT(YEAR FROM "t"."createat")
+EXTRACT(YEAR FROM "u"."createat")
 ```
 Output SQLite:
 ```text
-YEAR("t"."createat")
+YEAR("u"."createat")
 ```
 
 ### Json
@@ -2962,71 +2962,71 @@ YEAR("t"."createat")
 Создаёт JSON-массив из заданного выражения и опциональных дополнительных значений.
 ```go
 function := uast.JsonArray(
-    uast.Field[string]("t", "json"), 
+    uast.Field[string]("u", "json"), 
     uast.Value("val1"), 
     uast.Value("val2"),
 )
 ```
 Output MariaDB:
 ```text
-JSON_ARRAY(`t`.`json`, ?, ?)
+JSON_ARRAY(`u`.`json`, ?, ?)
 ```
 Output MsSQL:
 ```text
-JSON_ARRAY([t].[json], @p1, @p2)
+JSON_ARRAY([u].[json], @p1, @p2)
 ```
 Output MySQL:
 ```text
-JSON_ARRAY(`t`.`json`, ?, ?)
+JSON_ARRAY(`u`.`json`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-JSON_ARRAY("t"."json", $1, $2)
+JSON_ARRAY("u"."json", $1, $2)
 ```
 Output SQLite:
 ```text
-JSON_ARRAY("t"."json", ?, ?)
+JSON_ARRAY("u"."json", ?, ?)
 ```
 
 #### JsonArrayAgg
 Агрегирует значения из группы в JSON-массив.
 ```go
 function := uast.JsonArrayAgg(
-    uast.Field[string]("t", "json"),
+    uast.Field[string]("u", "json"),
 )
 ```
 Output MariaDB:
 ```text
-JSON_ARRAYAGG(`t`.`json`)
+JSON_ARRAYAGG(`u`.`json`)
 ```
 Output MsSQL:
 ```text
-JSON_ARRAYAGG([t].[json])
+JSON_ARRAYAGG([u].[json])
 ```
 Output MySQL:
 ```text
-JSON_ARRAYAGG(`t`.`json`)
+JSON_ARRAYAGG(`u`.`json`)
 ```
 Output PostgreSQL:
 ```text
-JSON_AGG("t"."json")
+JSON_AGG("u"."json")
 ```
 Output SQLite:
 ```text
-JSON_GROUP_ARRAY("t"."json")
+JSON_GROUP_ARRAY("u"."json")
 ```
 
 #### JsonContains
 Проверяет, содержит ли JSON-документ указанное значение.
 ```go
 function := uast.JsonContains(
-    uast.Field[string]("t", "json"),
+    uast.Field[string]("u", "json"),
     uast.Value(`{"key":"val"}`),
 )
 ```
 Output MariaDB:
 ```text
-JSON_CONTAINS(`t`.`json`, '{"key":"val"}')
+JSON_CONTAINS(`u`.`json`, '{"key":"val"}')
 ```
 Output MsSQL:
 ```text
@@ -3034,22 +3034,22 @@ Output MsSQL:
 ```
 Output MySQL:
 ```text
-JSON_CONTAINS(`t`.`json`, '{"key":"val"}')
+JSON_CONTAINS(`u`.`json`, '{"key":"val"}')
 ```
 Output PostgreSQL:
 ```text
-("t"."json" @> '{"key":"val"}')
+("u"."json" @> '{"key":"val"}')
 ```
 Output SQLite:
 ```text
-JSON_CONTAINS("t"."json", '{"key":"val"}')
+JSON_CONTAINS("u"."json", '{"key":"val"}')
 ```
 
 #### JsonExtract
 Извлекает значение из JSON-документа по указанному пути. Параметр `json` строится с помощью `JsonPath` и опциональных `JsonKey`/`JsonIndex`.
 ```go
 function := JsonExtract(
-    uast.Field[string]("t", "json"), 
+    uast.Field[string]("u", "json"), 
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("parent"), 
@@ -3062,23 +3062,23 @@ function := JsonExtract(
 ```
 Output MariaDB:
 ```text
-(`t`.`json` ->> '$.parent[0].child')
+(`u`.`json` ->> '$.parent[0].child')
 ```
 Output MsSQL:
 ```text
-JSON_VALUE([t].[json], '$.parent[0].child')
+JSON_VALUE([u].[json], '$.parent[0].child')
 ```
 Output MySQL:
 ```text
-(`t`.`json` ->> '$.parent[0].child')
+(`u`.`json` ->> '$.parent[0].child')
 ```
 Output PostgreSQL:
 ```text
-("t"."json" #>> '{parent,0,child}')
+("u"."json" #>> '{parent,0,child}')
 ```
 Output SQLite:
 ```text
-("t"."json" ->> '$.parent[0].child')
+("u"."json" ->> '$.parent[0].child')
 ```
 
 #### JsonObject
@@ -3087,65 +3087,65 @@ Output SQLite:
 function := uast.JsonObject(
     uast.JsonPair(
         uast.JsonKey("key"), 
-        uast.Count(uast.Field[string]("t", "json"), false),
+        uast.Count(uast.Field[string]("u", "json"), false),
     ),
 )
 ```
 Output MariaDB:
 ```text
-JSON_OBJECT('key', COUNT(`t`.`json`))
+JSON_OBJECT('key', COUNT(`u`.`json`))
 ```
 Output MsSQL:
 ```text
-JSON_OBJECT('key', COUNT([t].[json]))
+JSON_OBJECT('key', COUNT([u].[json]))
 ```
 Output MySQL:
 ```text
-JSON_OBJECT('key', COUNT(`t`.`json`))
+JSON_OBJECT('key', COUNT(`u`.`json`))
 ```
 Output PostgreSQL:
 ```text
-JSON_BUILD_OBJECT('key', COUNT("t"."json"))
+JSON_BUILD_OBJECT('key', COUNT("u"."json"))
 ```
 Output SQLite:
 ```text
-JSON_OBJECT('key', COUNT("t"."json"))
+JSON_OBJECT('key', COUNT("u"."json"))
 ```
 
 #### JsonObjectAgg
 Агрегирует пары ключ-значение из группы в один JSON-объект.
 ```go
 function := uast.JsonObjectAgg(
-    uast.Field[string]("t", "json"),
-    uast.Field[int]("t", "number"),
+    uast.Field[string]("u", "json"),
+    uast.Field[int]("u", "number"),
 )
 ```
 Output MariaDB:
 ```text
-JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
+JSON_OBJECTAGG(`u`.`json`, `u`.`number`)
 ```
 Output MsSQL:
 ```text
-JSON_OBJECTAGG([t].[json], [t].[number])
+JSON_OBJECTAGG([u].[json], [u].[number])
 ```
 Output MySQL:
 ```text
-JSON_OBJECTAGG(`t`.`json`, `t`.`number`)
+JSON_OBJECTAGG(`u`.`json`, `u`.`number`)
 ```
 Output PostgreSQL:
 ```text
-JSON_OBJECT_AGG("t"."json", "t"."number")
+JSON_OBJECT_AGG("u"."json", "u"."number")
 ```
 Output SQLite:
 ```text
-JSON_GROUP_OBJECT("t"."json", "t"."number")
+JSON_GROUP_OBJECT("u"."json", "u"."number")
 ```
 
 #### JsonRemove
 Удаляет значение из JSON-документа по указанному пути(ям).
 ```go
 function := uast.JsonRemove(
-    uast.Field[string]("t", "json"),
+    uast.Field[string]("u", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3160,30 +3160,30 @@ function := uast.JsonRemove(
 ```
 Output MariaDB:
 ```text
-JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
+JSON_REMOVE(`u`.`json`, '$.key1', '$.key2')
 ```
 Output MsSQL:
 ```text
-JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', NULL), '$.key2', NULL)
+JSON_MODIFY(JSON_MODIFY([u].[json], '$.key1', NULL), '$.key2', NULL)
 ```
 Output MySQL:
 ```text
-JSON_REMOVE(`t`.`json`, '$.key1', '$.key2')
+JSON_REMOVE(`u`.`json`, '$.key1', '$.key2')
 ```
 Output PostgreSQL:
 ```text
-("t"."json" - '{key1}' - '{key2}')
+("u"."json" - '{key1}' - '{key2}')
 ```
 Output SQLite:
 ```text
-JSON_REMOVE("t"."json", '$.key1', '$.key2')
+JSON_REMOVE("u"."json", '$.key1', '$.key2')
 ```
 
 #### JsonSet
 Устанавливает значение в JSON-документе по указанному пути(ям). Создаёт путь, если он не существует.
 ```go
 function := uast.JsonSet(
-    uast.Field[string]("t", "json"),
+    uast.Field[string]("u", "json"),
     uast.JsonGroup(
         uast.JsonPath(
             uast.JsonKey("key1"),
@@ -3200,33 +3200,33 @@ function := uast.JsonSet(
 ```
 Output MariaDB:
 ```text
-JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
+JSON_SET(`u`.`json`, '$.key1', ?, '$.key2', ?)
 ```
 Output MsSQL:
 ```text
-JSON_MODIFY(JSON_MODIFY([t].[json], '$.key1', @p1), '$.key2', @p2)
+JSON_MODIFY(JSON_MODIFY([u].[json], '$.key1', @p1), '$.key2', @p2)
 ```
 Output MySQL:
 ```text
-JSON_SET(`t`.`json`, '$.key1', ?, '$.key2', ?)
+JSON_SET(`u`.`json`, '$.key1', ?, '$.key2', ?)
 ```
 Output PostgreSQL:
 ```text
-jsonb_set(jsonb_set("t"."json", '{key1}', $1), '{key2}', $2)
+jsonb_set(jsonb_set("u"."json", '{key1}', $1), '{key2}', $2)
 ```
 Output SQLite:
 ```text
-JSON_SET("t"."json", '$.key1', ?, '$.key2', ?)
+JSON_SET("u"."json", '$.key1', ?, '$.key2', ?)
 ```
 
 #### JsonType
 Возвращает тип JSON-значения (например, 'OBJECT', 'ARRAY', 'STRING', 'INTEGER', 'NULL').
 ```go
-function := uast.JsonType(uast.Field[string]("t", "json"))
+function := uast.JsonType(uast.Field[string]("u", "json"))
 ```
 Output MariaDB:
 ```text
-JSON_TYPE(`t`.`json`)
+JSON_TYPE(`u`.`json`)
 ```
 Output MsSQL:
 ```text
@@ -3234,354 +3234,354 @@ Output MsSQL:
 ```
 Output MySQL:
 ```text
-JSON_TYPE(`t`.`json`)
+JSON_TYPE(`u`.`json`)
 ```
 Output PostgreSQL:
 ```text
-jsonb_typeof("t"."json")
+jsonb_typeof("u"."json")
 ```
 Output SQLite:
 ```text
-JSON_TYPE("t"."json")
+JSON_TYPE("u"."json")
 ```
 
 ### Math
 #### Abs
 Возвращает абсолютное (неотрицательное) значение числового выражения.
 ```go
-function := uast.Abs(uast.Field[int]("t", "x"))
+function := uast.Abs(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-ABS(`t`.`x`)
+ABS(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-ABS([t].[x])
+ABS([u].[x])
 ```
 Output MySQL:
 ```text
-ABS(`t`.`x`)
+ABS(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ABS("t"."x")
+ABS("u"."x")
 ```
 Output SQLite:
 ```text
-ABS("t"."x")
+ABS("u"."x")
 ```
 
 #### ACos
 Возвращает арккосинус (обратный косинус) выражения в радианах.
 ```go
-function := uast.ACos(uast.Field[int]("t", "x"))
+function := uast.ACos(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-ACOS(`t`.`x`)
+ACOS(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-ACOS([t].[x])
+ACOS([u].[x])
 ```
 Output MySQL:
 ```text
-ACOS(`t`.`x`)
+ACOS(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ACOS("t"."x")
+ACOS("u"."x")
 ```
 Output SQLite:
 ```text
-ACOS("t"."x")
+ACOS("u"."x")
 ```
 
 #### ASin
 Возвращает арксинус (обратный синус) выражения в радианах.
 ```go
-function := uast.ASin(uast.Field[int]("t", "x"))
+function := uast.ASin(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-ASIN(`t`.`x`)
+ASIN(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-ASIN([t].[x])
+ASIN([u].[x])
 ```
 Output MySQL:
 ```text
-ASIN(`t`.`x`)
+ASIN(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ASIN("t"."x")
+ASIN("u"."x")
 ```
 Output SQLite:
 ```text
-ASIN("t"."x")
+ASIN("u"."x")
 ```
 
 #### ATan
 Возвращает арктангенс (обратный тангенс) выражения в радианах.
 ```go
-function := uast.ATan(uast.Field[int]("t", "x"))
+function := uast.ATan(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-ATAN(`t`.`x`)
+ATAN(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-ATAN([t].[x])
+ATAN([u].[x])
 ```
 Output MySQL:
 ```text
-ATAN(`t`.`x`)
+ATAN(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ATAN("t"."x")
+ATAN("u"."x")
 ```
 Output SQLite:
 ```text
-ATAN("t"."x")
+ATAN("u"."x")
 ```
 
 #### ATan2
 Возвращает арктангенс частного двух аргументов (`y`/`x`), используя их знаки для определения квадранта.
 ```go
-function := uast.ATan2(uast.Field[int]("t", "y"), uast.Field[int]("t", "x"))
+function := uast.ATan2(uast.Field[int]("u", "y"), uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-ATAN2(`t`.`y`, `t`.`x`)
+ATAN2(`u`.`y`, `u`.`x`)
 ```
 Output MsSQL:
 ```text
-ATAN2([t].[y], [t].[x])
+ATAN2([u].[y], [u].[x])
 ```
 Output MySQL:
 ```text
-ATAN2(`t`.`y`, `t`.`x`)
+ATAN2(`u`.`y`, `u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-ATAN2("t"."y", "t"."x")
+ATAN2("u"."y", "u"."x")
 ```
 Output SQLite:
 ```text
-ATAN2("t"."y", "t"."x")
+ATAN2("u"."y", "u"."x")
 ```
 
 #### Cbrt
 Возвращает кубический корень числового выражения.
 ```go
-function := uast.Cbrt(uast.Field[int]("t", "x"))
+function := uast.Cbrt(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-CBRT(`t`.`x`)
+CBRT(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-CBRT([t].[x])
+CBRT([u].[x])
 ```
 Output MySQL:
 ```text
-CBRT(`t`.`x`)
+CBRT(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-CBRT("t"."x")
+CBRT("u"."x")
 ```
 Output SQLite:
 ```text
-CBRT("t"."x")
+CBRT("u"."x")
 ```
 
 #### Ceil
 Возвращает наименьшее целое значение, не меньшее аргумента (округление вверх).
 ```go
-function := uast.Ceil(uast.Field[int]("t", "x"))
+function := uast.Ceil(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-CEILING(`t`.`x`)
+CEILING(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-CEILING([t].[x])
+CEILING([u].[x])
 ```
 Output MySQL:
 ```text
-CEILING(`t`.`x`)
+CEILING(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-CEIL("t"."x")
+CEIL("u"."x")
 ```
 Output SQLite:
 ```text
-CEIL("t"."x")
+CEIL("u"."x")
 ```
 
 #### Cos
 Возвращает косинус выражения в радианах.
 ```go
-function := uast.Cos(uast.Field[int]("t", "x"))
+function := uast.Cos(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-COS(`t`.`x`)
+COS(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-COS([t].[x])
+COS([u].[x])
 ```
 Output MySQL:
 ```text
-COS(`t`.`x`)
+COS(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-COS("t"."x")
+COS("u"."x")
 ```
 Output SQLite:
 ```text
-COS("t"."x")
+COS("u"."x")
 ```
 
 #### Exp
 Возвращает число Эйлера `e` (~2.71828) возведённое в степень выражения.
 ```go
-function := uast.Exp(uast.Field[int]("t", "x"))
+function := uast.Exp(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-EXP(`t`.`x`)
+EXP(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-EXP([t].[x])
+EXP([u].[x])
 ```
 Output MySQL:
 ```text
-EXP(`t`.`x`)
+EXP(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-EXP("t"."x")
+EXP("u"."x")
 ```
 Output SQLite:
 ```text
-EXP("t"."x")
+EXP("u"."x")
 ```
 
 #### Floor
 Возвращает наибольшее целое значение, не большее аргумента (округление вниз).
 ```go
-function := uast.Floor(uast.Field[int]("t", "x"))
+function := uast.Floor(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-FLOOR(`t`.`x`)
+FLOOR(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-FLOOR([t].[x])
+FLOOR([u].[x])
 ```
 Output MySQL:
 ```text
-FLOOR(`t`.`x`)
+FLOOR(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-FLOOR("t"."x")
+FLOOR("u"."x")
 ```
 Output SQLite:
 ```text
-FLOOR("t"."x")
+FLOOR("u"."x")
 ```
 
 #### Ln
 Возвращает натуральный логарифм (по основанию `e`) выражения.
 ```go
-function := uast.Ln(uast.Field[int]("t", "x"))
+function := uast.Ln(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-LN(`t`.`x`)
+LN(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-LN([t].[x])
+LN([u].[x])
 ```
 Output MySQL:
 ```text
-LN(`t`.`x`)
+LN(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-LN("t"."x")
+LN("u"."x")
 ```
 Output SQLite:
 ```text
-LN("t"."x")
+LN("u"."x")
 ```
 
 #### Log
 Возвращает логарифм выражения по указанному основанию.
 ```go
-function := uast.Log(uast.Field[int]("t", "x"), uast.Value(2))
+function := uast.Log(uast.Field[int]("u", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-LOG(`t`.`x`, ?)
+LOG(`u`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-LOG([t].[x], @p1)
+LOG([u].[x], @p1)
 ```
 Output MySQL:
 ```text
-LOG(`t`.`x`, ?)
+LOG(`u`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-LOG("t"."x", $1)
+LOG("u"."x", $1)
 ```
 Output SQLite:
 ```text
-LOG("t"."x", ?)
+LOG("u"."x", ?)
 ```
 
 #### Mod
 Возвращает остаток (модуль) от деления первого выражения на второе.
 ```go
-function := uast.Mod(uast.Field[int]("t", "x"), uast.Value(2))
+function := uast.Mod(uast.Field[int]("u", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-MOD(`t`.`x`, ?)
+MOD(`u`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-MOD([t].[x], @p1)
+MOD([u].[x], @p1)
 ```
 Output MySQL:
 ```text
-MOD(`t`.`x`, ?)
+MOD(`u`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-MOD("t"."x", $1)
+MOD("u"."x", $1)
 ```
 Output SQLite:
 ```text
-MOD("t"."x", ?)
+MOD("u"."x", ?)
 ```
 
 #### Pi
@@ -3613,27 +3613,27 @@ PI()
 #### Power
 Возвращает выражение, возведённое в степень экспоненты.
 ```go
-function := uast.Power(uast.Field[int]("t", "x"), uast.Value(2))
+function := uast.Power(uast.Field[int]("u", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-POWER(`t`.`x`, ?)
+POWER(`u`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-POWER([t].[x], @p1)
+POWER([u].[x], @p1)
 ```
 Output MySQL:
 ```text
-POWER(`t`.`x`, ?)
+POWER(`u`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-POWER("t"."x", $1)
+POWER("u"."x", $1)
 ```
 Output SQLite:
 ```text
-POWER("t"."x", ?)
+POWER("u"."x", ?)
 ```
 
 #### Rand
@@ -3665,131 +3665,131 @@ RANDOM()
 #### Round
 Округляет выражение до указанного количества знаков после запятой.
 ```go
-function := uast.Round(uast.Field[int]("t", "x"), uast.Value(2))
+function := uast.Round(uast.Field[int]("u", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-ROUND(`t`.`x`, ?)
+ROUND(`u`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-ROUND([t].[x], @p1)
+ROUND([u].[x], @p1)
 ```
 Output MySQL:
 ```text
-ROUND(`t`.`x`, ?)
+ROUND(`u`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-ROUND("t"."x", $1)
+ROUND("u"."x", $1)
 ```
 Output SQLite:
 ```text
-ROUND("t"."x", ?)
+ROUND("u"."x", ?)
 ```
 
 #### Sin
 Возвращает синус выражения в радианах.
 ```go
-function := uast.Sin(uast.Field[int]("t", "x"))
+function := uast.Sin(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-SIN(`t`.`x`)
+SIN(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-SIN([t].[x])
+SIN([u].[x])
 ```
 Output MySQL:
 ```text
-SIN(`t`.`x`)
+SIN(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-SIN("t"."x")
+SIN("u"."x")
 ```
 Output SQLite:
 ```text
-SIN("t"."x")
+SIN("u"."x")
 ```
 
 #### Sqrt
 Возвращает квадратный корень выражения.
 ```go
-function := uast.Sqrt(uast.Field[int]("t", "x"))
+function := uast.Sqrt(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-SQRT(`t`.`x`)
+SQRT(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-SQRT([t].[x])
+SQRT([u].[x])
 ```
 Output MySQL:
 ```text
-SQRT(`t`.`x`)
+SQRT(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-SQRT("t"."x")
+SQRT("u"."x")
 ```
 Output SQLite:
 ```text
-SQRT("t"."x")
+SQRT("u"."x")
 ```
 
 #### Tan
 Возвращает тангенс выражения в радианах.
 ```go
-function := uast.Tan(uast.Field[int]("t", "x"))
+function := uast.Tan(uast.Field[int]("u", "x"))
 ```
 Output MariaDB:
 ```text
-TAN(`t`.`x`)
+TAN(`u`.`x`)
 ```
 Output MsSQL:
 ```text
-TAN([t].[x])
+TAN([u].[x])
 ```
 Output MySQL:
 ```text
-TAN(`t`.`x`)
+TAN(`u`.`x`)
 ```
 Output PostgreSQL:
 ```text
-TAN("t"."x")
+TAN("u"."x")
 ```
 Output SQLite:
 ```text
-TAN("t"."x")
+TAN("u"."x")
 ```
 
 #### Trunc
 Усекает числовое выражение до указанного количества знаков после запятой (без округления).
 ```go
-function := uast.Trunc(uast.Field[int]("t", "x"), uast.Value(2))
+function := uast.Trunc(uast.Field[int]("u", "x"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-TRUNCATE(`t`.`x`, ?)
+TRUNCATE(`u`.`x`, ?)
 ```
 Output MsSQL:
 ```text
-ROUND([t].[x], @p1, 1)
+ROUND([u].[x], @p1, 1)
 ```
 Output MySQL:
 ```text
-TRUNCATE(`t`.`x`, ?)
+TRUNCATE(`u`.`x`, ?)
 ```
 Output PostgreSQL:
 ```text
-TRUNC("t"."x", $1)
+TRUNC("u"."x", $1)
 ```
 Output SQLite:
 ```text
-TRUNC("t"."x", ?)
+TRUNC("u"."x", ?)
 ```
 
 ### Ranking
@@ -3797,565 +3797,565 @@ TRUNC("t"."x", ?)
 Возвращает кумулятивное распределение значения в рамках раздела (отношение строк, которые идут до или равны текущей строке). Должна использоваться с оператором `OVER`.
 ```go
 function := uast.CumeDist().Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+CUME_DIST() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-CUME_DIST() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+CUME_DIST() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-CUME_DIST() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+CUME_DIST() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+CUME_DIST() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-CUME_DIST() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+CUME_DIST() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 #### DenseRank
 Возвращает ранг строки без пропусков. Строки с равными значениями получают одинаковый ранг, а следующий ранг является непосредственно следующим целым числом. Требует `OVER`.
 ```go
 function := uast.DenseRank().Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+DENSE_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-DENSE_RANK() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+DENSE_RANK() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-DENSE_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+DENSE_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+DENSE_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-DENSE_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+DENSE_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 #### NTile
 Делит строки в рамках раздела на `n` приблизительно равных групп и возвращает номер группы (от 1 до `n`) для каждой строки.
 ```go
 function := uast.NTile(2).Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+NTILE(2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-NTILE(2) OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+NTILE(2) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-NTILE(2) OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+NTILE(2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+NTILE(2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-NTILE(2) OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+NTILE(2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 #### PercentRank
 Возвращает процентильный ранг строки в рамках раздела (диапазон от 0 до 1). Ранг первой строки всегда равен 0. Требует `OVER`.
 ```go
 function := uast.PercentRank().Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+PERCENT_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-PERCENT_RANK() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+PERCENT_RANK() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-PERCENT_RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+PERCENT_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+PERCENT_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-PERCENT_RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+PERCENT_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 #### Rank
 Возвращает ранг строки с пропусками. Равные значения получают одинаковый ранг, а следующее отличное значение пропускает ранги. Требует `OVER`.
 ```go
 function := uast.Rank().Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-RANK() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+RANK() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-RANK() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-RANK() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 #### RowNumber
 Присваивает уникальный последовательный номер каждой строке в рамках раздела, начиная с 1. Порядок определяет последовательность нумерации.
 ```go
 function := uast.RowNumber().Over(
-    uast.PartitionBy(uast.Field[int64]("t", "id")),
-    uast.OrderBy(uast.Desc(uast.Field[int]("t", "number"))),
+    uast.PartitionBy(uast.Field[int64]("u", "id")),
+    uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
 Output MariaDB:
 ```text
-ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+ROW_NUMBER() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output MsSQL:
 ```text
-ROW_NUMBER() OVER (PARTITION BY [t].[id] ORDER BY [t].[number] DESC)
+ROW_NUMBER() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
 Output MySQL:
 ```text
-ROW_NUMBER() OVER (PARTITION BY `t`.`id` ORDER BY `t`.`number` DESC)
+ROW_NUMBER() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
 Output PostgreSQL:
 ```text
-ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+ROW_NUMBER() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 Output SQLite:
 ```text
-ROW_NUMBER() OVER (PARTITION BY "t"."id" ORDER BY "t"."number" DESC)
+ROW_NUMBER() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
 ### String
 #### Concat
 Объединяет два или более строковых выражения в одну строку. Аргументы `NULL` рассматриваются как пустые строки в большинстве диалектов.
 ```go
-function := uast.Concat(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Concat(uast.Field[string]("u", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
-CONCAT(`t`.`string`, ?, ?)
+CONCAT(`u`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-CONCAT([t].[string], @p1, @p2)
+CONCAT([u].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
-CONCAT(`t`.`string`, ?, ?)
+CONCAT(`u`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-CONCAT("t"."string", $1, $2)
+CONCAT("u"."string", $1, $2)
 ```
 Output SQLite:
 ```text
-CONCAT("t"."string", ?, ?)
+CONCAT("u"."string", ?, ?)
 ```
 
 #### ConcatWs
 Объединяет два или более строковых выражения с указанным разделителем между ними. Пропускает аргументы `NULL`.
 ```go
-function := uast.ConcatWs(uast.Value("_"), uast.Field[string]("t", "string"), uast.Value("old"),uast.Value("new"))
+function := uast.ConcatWs(uast.Value("_"), uast.Field[string]("u", "string"), uast.Value("old"),uast.Value("new"))
 ```
 Output MariaDB:
 ```text
-CONCAT_WS(?, `t`.`string`, ?, ?)
+CONCAT_WS(?, `u`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-CONCAT_WS(@p1, [t].[string], @p2, @p3)
+CONCAT_WS(@p1, [u].[string], @p2, @p3)
 ```
 Output MySQL:
 ```text
-CONCAT_WS(?, `t`.`string`, ?, ?)
+CONCAT_WS(?, `u`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-CONCAT_WS($1, "t"."string", $2, $3)
+CONCAT_WS($1, "u"."string", $2, $3)
 ```
 Output SQLite:
 ```text
-CONCAT_WS(?, "t"."string", ?, ?)
+CONCAT_WS(?, "u"."string", ?, ?)
 ```
 
 #### LeftString
 Возвращает крайние слева `count` символов из строкового выражения.
 ```go
-function := uast.LeftString(uast.Field[string]("t", "string"), uast.Value(2))
+function := uast.LeftString(uast.Field[string]("u", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-LEFT(`t`.`string`, ?)
+LEFT(`u`.`string`, ?)
 ```
 Output MsSQL:
 ```text
-LEFT([t].[string], @p1)
+LEFT([u].[string], @p1)
 ```
 Output MySQL:
 ```text
-LEFT(`t`.`string`, ?)
+LEFT(`u`.`string`, ?)
 ```
 Output PostgreSQL:
 ```text
-LEFT("t"."string", $1)
+LEFT("u"."string", $1)
 ```
 Output SQLite:
 ```text
-LEFT("t"."string", ?)
+LEFT("u"."string", ?)
 ```
 
 #### Lower
 Преобразует строковое выражение в нижний регистр.
 ```go
-function := uast.Lower(uast.Field[string]("t", "string"))
+function := uast.Lower(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-LOWER(`t`.`string`)
+LOWER(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-LOWER([t].[string])
+LOWER([u].[string])
 ```
 Output MySQL:
 ```text
-LOWER(`t`.`string`)
+LOWER(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-LOWER("t"."string")
+LOWER("u"."string")
 ```
 Output SQLite:
 ```text
-LOWER("t"."string")
+LOWER("u"."string")
 ```
 
 #### LPad
 Дополняет строковое выражение слева указанным разделителем до общей длины `count` символов.
 ```go
-function := uast.LPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.LPad(uast.Field[string]("u", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
-LPAD(`t`.`string`, ?, ?)
+LPAD(`u`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-LPAD([t].[string], @p1, @p2)
+LPAD([u].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
-LPAD(`t`.`string`, ?, ?)
+LPAD(`u`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-LPAD("t"."string", $1, $2)
+LPAD("u"."string", $1, $2)
 ```
 Output SQLite:
 ```text
-LPAD("t"."string", ?, ?)
+LPAD("u"."string", ?, ?)
 ```
 
 #### LTrim
 Удаляет начальные пробелы из строкового выражения.
 ```go
-function := uast.LTrim(uast.Field[string]("t", "string"))
+function := uast.LTrim(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-LTRIM(`t`.`string`)
+LTRIM(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-LTRIM([t].[string])
+LTRIM([u].[string])
 ```
 Output MySQL:
 ```text
-LTRIM(`t`.`string`)
+LTRIM(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-LTRIM("t"."string")
+LTRIM("u"."string")
 ```
 Output SQLite:
 ```text
-LTRIM("t"."string")
+LTRIM("u"."string")
 ```
 
 #### Repeat
 Повторяет строковое выражение `count` раз.
 ```go
-function := uast.Repeat(uast.Field[string]("t", "string"), uast.Value(2))
+function := uast.Repeat(uast.Field[string]("u", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-REPEAT(`t`.`string`, ?)
+REPEAT(`u`.`string`, ?)
 ```
 Output MsSQL:
 ```text
-REPEAT([t].[string], @p1)
+REPEAT([u].[string], @p1)
 ```
 Output MySQL:
 ```text
-REPEAT(`t`.`string`, ?)
+REPEAT(`u`.`string`, ?)
 ```
 Output PostgreSQL:
 ```text
-REPEAT("t"."string", $1)
+REPEAT("u"."string", $1)
 ```
 Output SQLite:
 ```text
-REPEAT("t"."string", ?)
+REPEAT("u"."string", ?)
 ```
 
 #### Replace
 Заменяет все вхождения подстроки в строке на новую подстроку.
 ```go
-function := uast.Replace(uast.Field[string]("t", "string"), uast.Value("old"), uast.Value("new"))
+function := uast.Replace(uast.Field[string]("u", "string"), uast.Value("old"), uast.Value("new"))
 ```
 Output MariaDB:
 ```text
-REPLACE(`t`.`string`, ?, ?)
+REPLACE(`u`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-REPLACE([t].[string], @p1, @p2)
+REPLACE([u].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
-REPLACE(`t`.`string`, ?, ?)
+REPLACE(`u`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-REPLACE("t"."string", $1, $2)
+REPLACE("u"."string", $1, $2)
 ```
 Output SQLite:
 ```text
-REPLACE("t"."string", ?, ?)
+REPLACE("u"."string", ?, ?)
 ```
 
 #### Reverse
 Переворачивает символы в строковом выражении.
 ```go
-function := uast.Reverse(uast.Field[string]("t", "string"))
+function := uast.Reverse(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-REVERSE(`t`.`string`)
+REVERSE(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-REVERSE([t].[string])
+REVERSE([u].[string])
 ```
 Output MySQL:
 ```text
-REVERSE(`t`.`string`)
+REVERSE(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-REVERSE("t"."string")
+REVERSE("u"."string")
 ```
 Output SQLite:
 ```text
-REVERSE("t"."string")
+REVERSE("u"."string")
 ```
 
 #### RightString
 Возвращает крайние справа `count` символов из строкового выражения.
 ```go
-function := uast.RightString(uast.Field[string]("t", "string"), uast.Value(2))
+function := uast.RightString(uast.Field[string]("u", "string"), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-RIGHT(`t`.`string`, ?)
+RIGHT(`u`.`string`, ?)
 ```
 Output MsSQL:
 ```text
-RIGHT([t].[string], @p1)
+RIGHT([u].[string], @p1)
 ```
 Output MySQL:
 ```text
-RIGHT(`t`.`string`, ?)
+RIGHT(`u`.`string`, ?)
 ```
 Output PostgreSQL:
 ```text
-RIGHT("t"."string", $1)
+RIGHT("u"."string", $1)
 ```
 Output SQLite:
 ```text
-RIGHT("t"."string", ?)
+RIGHT("u"."string", ?)
 ```
 
 #### RPad
 Дополняет строковое выражение справа указанным разделителем до общей длины `count` символов.
 ```go
-function := uast.RPad(uast.Field[string]("t", "string"), uast.Value(2), uast.Value(","))
+function := uast.RPad(uast.Field[string]("u", "string"), uast.Value(2), uast.Value(","))
 ```
 Output MariaDB:
 ```text
-RPAD(`t`.`string`, ?, ?)
+RPAD(`u`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-RPAD([t].[string], @p1, @p2)
+RPAD([u].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
-RPAD(`t`.`string`, ?, ?)
+RPAD(`u`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-RPAD("t"."string", $1, $2)
+RPAD("u"."string", $1, $2)
 ```
 Output SQLite:
 ```text
-RPAD("t"."string", ?, ?)
+RPAD("u"."string", ?, ?)
 ```
 
 #### RTrim
 Удаляет конечные пробелы из строкового выражения.
 ```go
-function := uast.RTrim(uast.Field[string]("t", "string"))
+function := uast.RTrim(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-RTRIM(`t`.`string`)
+RTRIM(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-RTRIM([t].[string])
+RTRIM([u].[string])
 ```
 Output MySQL:
 ```text
-RTRIM(`t`.`string`)
+RTRIM(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-RTRIM("t"."string")
+RTRIM("u"."string")
 ```
 Output SQLite:
 ```text
-RTRIM("t"."string")
+RTRIM("u"."string")
 ```
 
 #### SubString
 Извлекает подстроку из строкового выражения, начиная с `startPos` (начиная с 1) длиной `lengthStr` символов.
 ```go
-function := uast.SubString(uast.Field[string]("t", "string"), uast.Value(0), uast.Value(2))
+function := uast.SubString(uast.Field[string]("u", "string"), uast.Value(0), uast.Value(2))
 ```
 Output MariaDB:
 ```text
-SUBSTRING(`t`.`string`, ?, ?)
+SUBSTRING(`u`.`string`, ?, ?)
 ```
 Output MsSQL:
 ```text
-SUBSTRING([t].[string], @p1, @p2)
+SUBSTRING([u].[string], @p1, @p2)
 ```
 Output MySQL:
 ```text
-SUBSTRING(`t`.`string`, ?, ?)
+SUBSTRING(`u`.`string`, ?, ?)
 ```
 Output PostgreSQL:
 ```text
-SUBSTRING("t"."string", $1, $2)
+SUBSTRING("u"."string", $1, $2)
 ```
 Output SQLite:
 ```text
-SUBSTRING("t"."string", ?, ?)
+SUBSTRING("u"."string", ?, ?)
 ```
 
 #### Trim
 Удаляет как начальные, так и конечные пробелы из строкового выражения.
 ```go
-function := uast.Trim(uast.Field[string]("t", "string"))
+function := uast.Trim(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-TRIM(`t`.`string`)
+TRIM(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-TRIM([t].[string])
+TRIM([u].[string])
 ```
 Output MySQL:
 ```text
-TRIM(`t`.`string`)
+TRIM(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-TRIM("t"."string")
+TRIM("u"."string")
 ```
 Output SQLite:
 ```text
-TRIM("t"."string")
+TRIM("u"."string")
 ```
 
 #### Upper
 Преобразует строковое выражение в верхний регистр.
 ```go
-function := uast.Upper(uast.Field[string]("t", "string"))
+function := uast.Upper(uast.Field[string]("u", "string"))
 ```
 Output MariaDB:
 ```text
-UPPER(`t`.`string`)
+UPPER(`u`.`string`)
 ```
 Output MsSQL:
 ```text
-UPPER([t].[string])
+UPPER([u].[string])
 ```
 Output MySQL:
 ```text
-UPPER(`t`.`string`)
+UPPER(`u`.`string`)
 ```
 Output PostgreSQL:
 ```text
-UPPER("t"."string")
+UPPER("u"."string")
 ```
 Output SQLite:
 ```text
-UPPER("t"."string")
+UPPER("u"."string")
 ```
 
 ## exprLiteral
@@ -4374,85 +4374,85 @@ Output:
 Комбинирует несколько условий логическим `AND`. Все условия должны быть истинными для истинности комбинированного выражения.
 ```go
 logical := uast.And(
-    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("u", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
 ```text
-(`t`.`string` = ? AND `t`.`number` > ?)
+(`u`.`string` = ? AND `u`.`number` > ?)
 ```
 Output MsSQL:
 ```text
-([t].[string] = @p1 AND [t].[number] > @p2)
+([u].[string] = @p1 AND [u].[number] > @p2)
 ```
 Output MySQL:
 ```text
-(`t`.`string` = ? AND `t`.`number` > ?)
+(`u`.`string` = ? AND `u`.`number` > ?)
 ```
 Output PostgreSQL:
 ```text
-("t"."string" = $1 AND "t"."number" > $2)
+("u"."string" = $1 AND "u"."number" > $2)
 ```
 Output SQLite:
 ```text
-("t"."string" = ? AND "t"."number" > ?)
+("u"."string" = ? AND "u"."number" > ?)
 ```
 
 ### Or
 Комбинирует несколько условий логическим `OR`. Хотя бы одно условие должно быть истинным для истинности комбинированного выражения.
 ```go
 logical := uast.Or(
-    uast.Equal(uast.Field[string]("t", "string"), uast.Value("active")),
-    uast.Greater(uast.Field[int]("t", "number"), uast.Value(2)),
+    uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
+    uast.Greater(uast.Field[int]("u", "number"), uast.Value(2)),
 )
 ```
 Output MariaDB:
 ```text
-(`t`.`string` = ? OR `t`.`number` > ?)
+(`u`.`string` = ? OR `u`.`number` > ?)
 ```
 Output MsSQL:
 ```text
-([t].[string] = @p1 OR [t].[number] > @p2)
+([u].[string] = @p1 OR [u].[number] > @p2)
 ```
 Output MySQL:
 ```text
-(`t`.`string` = ? OR `t`.`number` > ?)
+(`u`.`string` = ? OR `u`.`number` > ?)
 ```
 Output PostgreSQL:
 ```text
-("t"."string" = $1 OR "t"."number" > $2)
+("u"."string" = $1 OR "u"."number" > $2)
 ```
 Output SQLite:
 ```text
-("t"."string" = ? OR "t"."number" > ?)
+("u"."string" = ? OR "u"."number" > ?)
 ```
 
 ## exprSubquery
 ### Subquery
-Оборачивает оператор `SELECT` как типизированное выражение, которое может использоваться в сравнениях (`In`, `Exists`, `Equal` и т.д.) или как колонка в операторе `SELECT`. Обобщённый параметр `T` указывает скалярный тип единственной колонки, возвращаемой подзапросом.
+Оборачивает оператор `SELECT` как типизированное выражение, которое может использоваться в сравнениях (`In`, `Exists`, `Equal` и т.д.) или как колонка в операторе `SELECT`. Обобщённый параметр `u` указывает скалярный тип единственной колонки, возвращаемой подзапросом.
 ```go
-subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("t", "id")).From(uast.NewTable("test").As("t")))
+subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("u", "id")).From(uast.NewTable("users").As("u")))
 ```
 Output MariaDB:
 ```text
-(SELECT `t`.`id` FROM `test` AS `t`)
+(SELECT `u`.`id` FROM `users` AS `u`)
 ```
 Output MsSQL:
 ```text
-(SELECT [t].[id] FROM [test] AS [t])
+(SELECT [u].[id] FROM [users] AS [u])
 ```
 Output MySQL:
 ```text
-(SELECT `t`.`id` FROM `test` AS `t`)
+(SELECT `u`.`id` FROM `users` AS `u`)
 ```
 Output PostgreSQL:
 ```text
-(SELECT "t"."id" FROM "test" AS "t")
+(SELECT "u"."id" FROM "users" AS "u")
 ```
 Output SQLite:
 ```text
-(SELECT "t"."id" FROM "test" AS "t")
+(SELECT "u"."id" FROM "users" AS "u")
 ```
 
 ## exprValue

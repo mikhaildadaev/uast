@@ -1884,15 +1884,15 @@ func Test_SQL_Alter(t *testing.T) {
 			defer sql.Close()
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [INDEX RENAME]
+				// Not supported - ALTER [INDEX RENAME TO]
 			case DialectMsSQL:
-				// Not supported - ALTER [INDEX RENAME]
+				// Not supported - ALTER [INDEX RENAME TO]
 			case DialectMySQL:
-				// Not supported - ALTER [INDEX RENAME]
+				// Not supported - ALTER [INDEX RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER INDEX ... RENAME TO`, "RENAME")
+				//assertContains(t, sqlCommentQuery, `ALTER INDEX ... RENAME TO`, "RENAME TO")
 			case DialectSQLite:
-				// Not supported - ALTER [INDEX RENAME]
+				// Not supported - ALTER [INDEX RENAME TO]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -1903,15 +1903,15 @@ func Test_SQL_Alter(t *testing.T) {
 			defer sql.Close()
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [SCHEMA RENAME]
+				// Not supported - ALTER [SCHEMA RENAME TO]
 			case DialectMsSQL:
-				//assertContains(t, sqlCommentQuery, "ALTER SCHEMA ... RENAME TO", "RENAME")
+				//assertContains(t, sqlCommentQuery, "ALTER SCHEMA ... RENAME TO", "RENAME TO")
 			case DialectMySQL:
-				// Not supported - ALTER [SCHEMA RENAME]
+				// Not supported - ALTER [SCHEMA RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER SCHEMA ... RENAME TO`, "RENAME")
+				//assertContains(t, sqlCommentQuery, `ALTER SCHEMA ... RENAME TO`, "RENAME TO")
 			case DialectSQLite:
-				// Not supported - ALTER [SCHEMA RENAME]
+				// Not supported - ALTER [SCHEMA RENAME TO]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -1962,15 +1962,15 @@ func Test_SQL_Alter(t *testing.T) {
 			defer sql.Close()
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [VIEW RENAME]
+				// Not supported - ALTER [VIEW RENAME TO]
 			case DialectMsSQL:
-				//assertContains(t, sqlCommentQuery, "ALTER VIEW ... RENAME TO", "RENAME")
+				//assertContains(t, sqlCommentQuery, "ALTER VIEW ... RENAME TO", "RENAME TO")
 			case DialectMySQL:
-				// Not supported - ALTER [VIEW RENAME]
+				// Not supported - ALTER [VIEW RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER VIEW ... RENAME TO`, "RENAME")
+				//assertContains(t, sqlCommentQuery, `ALTER VIEW ... RENAME TO`, "RENAME TO")
 			case DialectSQLite:
-				// Not supported - ALTER [VIEW RENAME]
+				// Not supported - ALTER [VIEW RENAME TO]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})

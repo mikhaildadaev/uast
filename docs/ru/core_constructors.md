@@ -9,29 +9,69 @@ outline: deep
 :::
 
 ## NewAlter
-...
+Создает новый экземпляр запроса ALTER. Принимает источник типа `Index/Schema/Table/View` и возвращает запрос, который можно настроить с помощью методов `AddColumns`, `AddConstraints`, `DropColumns`, `DropConstraints`, `Rename`.
 ```go
-...
+stmtAlterIndex := uast.NewAlter(uast.NewIndex("users_id", uast.NewTable("users", "u"))).
+	Rename("users_id_new")
+stmtAlterSchema := uast.NewAlter(uast.NewTable("test")).
+	Rename("test_new")
+stmtAlterTable := uast.NewAlter(uast.NewTable("users", "u")).
+	AddColumns(
+		Test.Table.Users.String,
+		Test.Table.Users.Date,
+	).
+	AddConstraints(
+		Test.Check.OrdersNumber,
+		Test.Primary.OrdersID,
+		Test.Unique.OrdersName,
+	).
+	DropColumns(
+		Test.Table.Users.ID,
+		Test.Table.Users.Name,
+	).
+	DropConstraints(
+		Test.Check.UsersNumber,
+		Test.Foreign.UsersOrders,
+		Test.Primary.UsersID,
+		Test.Unique.UsersName,
+	)
+stmtAlterView := uast.NewAlter(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
+	Rename("users_general_new")
 ```
 Output MariaDB:
 ```text
-...
+// In development
+// In development
+ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
+// In development
 ```
 Output MsSQL:
 ```text
-...
+// In development
+// In development
+ALTER TABLE [users] ADD COLUMN [string] NVARCHAR, ADD COLUMN [date] DATE, ADD CONSTRAINT [ck_orders_number] CHECK([o].[number] > @p1), ADD CONSTRAINT [pk_orders_id] PRIMARY KEY([id]), ADD CONSTRAINT [un_orders_name] UNIQUE([string]), DROP COLUMN [id], DROP COLUMN [name], DROP CONSTRAINT [ck_users_number], DROP CONSTRAINT [fk_users_orders], DROP CONSTRAINT [pk_users_id], DROP CONSTRAINT [un_users_name]
+// In development
 ```
 Output MySQL:
 ```text
-...
+// In development
+// In development
+ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
+// In development
 ```
 Output PostgreSQL:
 ```text
-...
+// In development
+// In development
+ALTER TABLE "users" ADD COLUMN "string" VARCHAR, ADD COLUMN "date" DATE, ADD CONSTRAINT "ck_orders_number" CHECK("o"."number" > $1), ADD CONSTRAINT "pk_orders_id" PRIMARY KEY("id"), ADD CONSTRAINT "un_orders_name" UNIQUE("string"), DROP COLUMN "id", DROP COLUMN "name", DROP CONSTRAINT "ck_users_number", DROP CONSTRAINT "fk_users_orders", DROP CONSTRAINT "pk_users_id", DROP CONSTRAINT "un_users_name"
+// In development
 ```
 Output SQLite:
 ```text
-...
+// In development
+// In development
+ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
+// In development
 ```
 
 ## NewComment

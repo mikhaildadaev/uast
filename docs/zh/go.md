@@ -32,7 +32,6 @@ go test -race ./...
 - **150+ 函数** — 聚合、分析、条件、转换、日期/时间、JSON、数学、排名、字符串函数。
 
 ## Limits
-- **无代码生成**：表结构需手动定义（代码生成已列入计划）。
 - **MsSQL**：不支持 `JSON CONTAINS` / `JSON TYPE` 函数（MsSQL 自身限制）。
 - **MySQL**：不支持 `RETURNING` 子句（MySQL 限制）。
 - **SQLite**：不支持 `RIGHT JOIN` / `RIGHT OUTER JOIN`（SQLite 限制）。

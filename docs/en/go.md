@@ -32,7 +32,6 @@ go test -race ./...
 - **150+ functions** — Aggregate, analytical, conditional, conversion, date/time, JSON, math, ranking, string.
 
 ## Limits
-- **No code generation**: Table schemas are defined manually (code-gen planned).
 - **MsSQL**: `JSON CONTAINS` / `JSON TYPE` function not supported (MsSQL limitation).
 - **MySQL**: `RETURNING` clause not supported (MySQL limitation).
 - **SQLite**: `RIGHT JOIN` / `RIGHT OUTER JOIN` not supported (SQLite limitation).

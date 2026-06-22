@@ -27,12 +27,11 @@ go test -race ./...
 - **零依赖** — 仅使用 Go 标准库。
 - **跨数据库文档** — 每个函数都附带了在所有支持的数据库方言中的 SQL 输出示例。
 - **热切换方言** — `SetDialect()` 在运行时切换方言，无需重建连接池。
-- **部分 DDL 支持** — COMMENT、DROP、TRUNCATE。
+- **完整的 DDL** — ALTER、COMMENT、CREATE、DROP、TRUNCATE。
 - **完整的 DML** — DELETE, INSERT, SELECT, UPDATE 支持所有标准子句（JOIN、CTE、UPSERT、窗口函数、JSON）。
 - **150+ 函数** — 聚合、分析、条件、转换、日期/时间、JSON、数学、排名、字符串函数。
 
 ## Limits
-- **DDL 支持不完整**：ALTER、CREATE 将在 v2 版本中提供。
 - **无代码生成**：表结构需手动定义（代码生成已列入计划）。
 - **MsSQL**：不支持 `JSON CONTAINS` / `JSON TYPE` 函数（MsSQL 自身限制）。
 - **MySQL**：不支持 `RETURNING` 子句（MySQL 限制）。

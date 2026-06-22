@@ -1882,6 +1882,9 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
+			stmtAlter := NewAlter(Test.Index.UsersID)
+			//.Rename()
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
 				// Not supported - ALTER [INDEX RENAME TO]
@@ -1894,13 +1897,16 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectSQLite:
 				// Not supported - ALTER [INDEX RENAME TO]
 			}
-			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
 	t.Run("Schema", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
+			stmtAlter := NewAlter(Test.Schema)
+			//.Rename()
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
 				// Not supported - ALTER [SCHEMA RENAME TO]
@@ -1913,7 +1919,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectSQLite:
 				// Not supported - ALTER [SCHEMA RENAME TO]
 			}
-			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
 	t.Run("Table", func(t *testing.T) {
@@ -1960,6 +1966,9 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
+			stmtAlter := NewAlter(Test.View.UsersGeneral)
+			//.Rename()
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
 				// Not supported - ALTER [VIEW RENAME TO]
@@ -1972,7 +1981,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectSQLite:
 				// Not supported - ALTER [VIEW RENAME TO]
 			}
-			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
 }

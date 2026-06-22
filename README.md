@@ -33,13 +33,11 @@ go test -race ./...
 - **Zero dependencies** — Only Go standard library.
 - **Cross-dialect docs** — Every function documented with SQL output for each supported dialect.
 - **Hot dialect switch** — `SetDialect()` changes dialect at runtime without recreating the pool.
-- **Partial DDL** — COMMENT, DROP, TRUNCATE.
+- **Complete DDL** — ALTER, COMMENT, CREATE, DROP, TRUNCATE.
 - **Complete DML** — SELECT, INSERT, UPDATE, DELETE with all standard clauses (JOIN, CTE, UPSERT, window functions, JSON).
 - **150+ functions** — Aggregate, analytical, conditional, conversion, date/time, JSON, math, ranking, string.
 
 ### Limits
-- **No сomplete DDL**: ALTER, CREATE coming in v2.
-- **No code generation**: Table schemas are defined manually (code-gen planned).
 - **MsSQL**: `JSON CONTAINS` / `JSON TYPE` function not supported (MsSQL limitation).
 - **MySQL**: `RETURNING` clause not supported (MySQL limitation).
 - **SQLite**: `RIGHT JOIN` / `RIGHT OUTER JOIN` not supported (SQLite limitation).
@@ -114,5 +112,5 @@ func main() {
 ```
 
 ## Roadmap
-- **DDL** — `ALTER` (ADD, DROP, ALTER, RENAME COLUMN, CONSTRAINT), `COMMENT`, `CREATE` (TABLE, INDEX, VIEW), `DROP` (TABLE, INDEX, VIEW), `TRUNCATE`.
+- **Code generation** — Planned for future releases. Currently, schemas are defined manually.
 - **Dialects** — `ClickHouse`, `Oracle` support.

@@ -40,24 +40,24 @@ stmtAlterView := uast.NewAlter(uast.NewView("users_general", "ug", uast.NewTable
 ```
 Output MariaDB:
 ```text
-// In development
-// In development
+// Not supported
+// Not supported
 ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
-// In development
+// Not supported
 ```
 Output MsSQL:
 ```text
-// In development
+// Not supported
 // In development
 ALTER TABLE [users] ADD COLUMN [string] NVARCHAR, ADD COLUMN [date] DATE, ADD CONSTRAINT [ck_orders_number] CHECK([o].[number] > @p1), ADD CONSTRAINT [pk_orders_id] PRIMARY KEY([id]), ADD CONSTRAINT [un_orders_name] UNIQUE([string]), DROP COLUMN [id], DROP COLUMN [name], DROP CONSTRAINT [ck_users_number], DROP CONSTRAINT [fk_users_orders], DROP CONSTRAINT [pk_users_id], DROP CONSTRAINT [un_users_name]
 // In development
 ```
 Output MySQL:
 ```text
-// In development
-// In development
+// Not supported
+// Not supported
 ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
-// In development
+// Not supported
 ```
 Output PostgreSQL:
 ```text
@@ -68,10 +68,10 @@ ALTER TABLE "users" ADD COLUMN "string" VARCHAR, ADD COLUMN "date" DATE, ADD CON
 ```
 Output SQLite:
 ```text
-// In development
-// In development
+// Not supported
+// Not supported
 ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
-// In development
+// Not supported
 ```
 
 ## NewComment

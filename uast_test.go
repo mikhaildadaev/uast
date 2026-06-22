@@ -189,8 +189,8 @@ func Test_Core_clauseJoin(t *testing.T) {
 			assertContains(t, sqlSelectQuery, `INNER JOIN "users" AS "u" ON "u"."id" = "o"."id"`, "INNER JOIN")
 			assertContains(t, sqlSelectQuery, `LEFT JOIN "users" AS "u" ON "u"."id" = "o"."id"`, "LEFT JOIN")
 			assertContains(t, sqlSelectQuery, `LEFT OUTER JOIN "users" AS "u" ON "u"."id" = "o"."id"`, "LEFT OUTER JOIN")
-			// Not supported - RIGHT JOIN
-			// Not supported - RIGHT OUTER JOIN
+			// Not supported - JOIN [RIGHT JOIN]
+			// Not supported - JOIN [RIGHT OUTER JOIN]
 		}
 		t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlSelectArguments, supportDialect.name, sqlSelectQuery)
 	})
@@ -1223,13 +1223,13 @@ func Test_Core_exprFunction(t *testing.T) {
 			// Функции обмена данными
 			assertContains(t, sqlSelectQuery, "JSON_ARRAY([u].[json], @p1, @p2)", "FUNCTION JSONARRAY")
 			assertContains(t, sqlSelectQuery, "JSON_ARRAYAGG([u].[json])", "FUNCTION JSONARRAYAGG")
-			// Not supported - FUNCTION JSONCONTAINS
+			// Not supported - FUNCTION [JSONCONTAINS]
 			assertContains(t, sqlSelectQuery, "JSON_VALUE([u].[json], '$.parent[0].child')", "FUNCTION JSONEXTRACT")
 			assertContains(t, sqlSelectQuery, "JSON_OBJECT('key', COUNT([u].[json]))", "FUNCTION JSONOBJECT")
 			assertContains(t, sqlSelectQuery, "JSON_OBJECTAGG([u].[json], [u].[number])", "FUNCTION JSONOBJECTAGG")
 			assertContains(t, sqlSelectQuery, "JSON_MODIFY(JSON_MODIFY([u].[json], '$.key1', NULL), '$.key2', NULL)", "FUNCTION JSONREMOVE")
 			assertContains(t, sqlSelectQuery, "JSON_MODIFY(JSON_MODIFY([u].[json], '$.key1', @p1), '$.key2', @p2)", "FUNCTION JSONSET")
-			// Not supported - FUNCTION JSONTYPE
+			// Not supported - FUNCTION [JSONTYPE]
 			// Функции математические
 			assertContains(t, sqlSelectQuery, "ABS([u].[x])", "FUNCTION ABS")
 			assertContains(t, sqlSelectQuery, "ACOS([u].[x])", "FUNCTION ACOS")
@@ -1882,18 +1882,17 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			// ALTER INDEX ... RENAME TO ...
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			case DialectMsSQL:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			case DialectMySQL:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `RENAME`, "RENAME")
+				//assertContains(t, sqlCommentQuery, `ALTER INDEX ... RENAME TO`, "RENAME")
 			case DialectSQLite:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -1902,18 +1901,17 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			// ALTER SCHEMA ... RENAME TO ...
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			case DialectMsSQL:
-				//assertContains(t, sqlCommentQuery, "RENAME", "RENAME")
+				//assertContains(t, sqlCommentQuery, "ALTER SCHEMA ... RENAME TO", "RENAME")
 			case DialectMySQL:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `RENAME`, "RENAME")
+				//assertContains(t, sqlCommentQuery, `ALTER SCHEMA ... RENAME TO`, "RENAME")
 			case DialectSQLite:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -1922,7 +1920,6 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			// ADD/DROP COLUMN, ADD/DROP CONSTRAINT, RENAME
 			stmtAlter := NewAlter(Test.Table.User).
 				AddColumns(
 					Test.Table.Users.String,
@@ -1963,18 +1960,17 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			// ALTER VIEW ... RENAME TO ...
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			case DialectMsSQL:
-				//assertContains(t, sqlCommentQuery, "RENAME", "RENAME")
+				//assertContains(t, sqlCommentQuery, "ALTER VIEW ... RENAME TO", "RENAME")
 			case DialectMySQL:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `RENAME`, "RENAME")
+				//assertContains(t, sqlCommentQuery, `ALTER VIEW ... RENAME TO`, "RENAME")
 			case DialectSQLite:
-				// Not supported - RENAME
+				// Not supported - ALTER [RENAME]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -1995,7 +1991,7 @@ func Test_SQL_Comment(t *testing.T) {
 			case DialectMariaDB:
 				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'Comment'", "COMMENT")
 			case DialectMsSQL:
-				// Not supported - COMMENT
+				// Not supported - COMMENT [ON COLUMN]
 			case DialectMySQL:
 				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'Comment'", "COMMENT")
 			case DialectPostgreSQL:
@@ -2019,7 +2015,7 @@ func Test_SQL_Comment(t *testing.T) {
 			case DialectMariaDB:
 				//assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `users` IS 'Comment'", "COMMENT")
 			case DialectMsSQL:
-				// Not supported - COMMENT
+				// Not supported - COMMENT [ON TABLE]
 			case DialectMySQL:
 				//assertContains(t, sqlCommentQuery, "COMMENT ON TABLE `users` IS 'Comment'", "COMMENT")
 			case DialectPostgreSQL:
@@ -2077,7 +2073,7 @@ func Test_SQL_Create(t *testing.T) {
 			case DialectPostgreSQL:
 				assertContains(t, sqlCreateQuery, `CREATE SCHEMA IF NOT EXISTS "test"`, "CREATE SCHEMA")
 			case DialectSQLite:
-				// Not supported
+				// Not supported - CREATE [SCHEMA]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})
@@ -2899,15 +2895,15 @@ func Test_SQL_Truncate(t *testing.T) {
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - CASCADE
+				// Not supported - TRUNCATE [CASCADE]
 			case DialectMsSQL:
-				// Not supported - CASCADE
+				// Not supported - TRUNCATE [CASCADE]
 			case DialectMySQL:
-				// Not supported - CASCADE
+				// Not supported - TRUNCATE [CASCADE]
 			case DialectPostgreSQL:
 				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "users" CASCADE`, "TRUNCATE CASCADE")
 			case DialectSQLite:
-				// Not supported - CASCADE
+				// Not supported - TRUNCATE [CASCADE]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
 		})
@@ -2925,13 +2921,13 @@ func Test_SQL_Truncate(t *testing.T) {
 			case DialectMariaDB:
 				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `users` RESTART IDENTITY", "TRUNCATE RESTART IDENTITY")
 			case DialectMsSQL:
-				// Not supported - RESTART IDENTITY
+				// Not supported - TRUNCATE [RESTART IDENTITY]
 			case DialectMySQL:
-				// Not supported - RESTART IDENTITY
+				// Not supported - TRUNCATE [RESTART IDENTITY]
 			case DialectPostgreSQL:
 				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "users" RESTART IDENTITY`, "TRUNCATE RESTART IDENTITY")
 			case DialectSQLite:
-				// Not supported - RESTART IDENTITY
+				// Not supported - TRUNCATE [RESTART IDENTITY]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
 		})

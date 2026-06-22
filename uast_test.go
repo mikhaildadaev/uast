@@ -1884,15 +1884,15 @@ func Test_SQL_Alter(t *testing.T) {
 			defer sql.Close()
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [INDEX RENAME]
 			case DialectMsSQL:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [INDEX RENAME]
 			case DialectMySQL:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [INDEX RENAME]
 			case DialectPostgreSQL:
 				//assertContains(t, sqlCommentQuery, `ALTER INDEX ... RENAME TO`, "RENAME")
 			case DialectSQLite:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [INDEX RENAME]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -1903,15 +1903,15 @@ func Test_SQL_Alter(t *testing.T) {
 			defer sql.Close()
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [SCHEMA RENAME]
 			case DialectMsSQL:
 				//assertContains(t, sqlCommentQuery, "ALTER SCHEMA ... RENAME TO", "RENAME")
 			case DialectMySQL:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [SCHEMA RENAME]
 			case DialectPostgreSQL:
 				//assertContains(t, sqlCommentQuery, `ALTER SCHEMA ... RENAME TO`, "RENAME")
 			case DialectSQLite:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [SCHEMA RENAME]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -1962,15 +1962,15 @@ func Test_SQL_Alter(t *testing.T) {
 			defer sql.Close()
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [VIEW RENAME]
 			case DialectMsSQL:
 				//assertContains(t, sqlCommentQuery, "ALTER VIEW ... RENAME TO", "RENAME")
 			case DialectMySQL:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [VIEW RENAME]
 			case DialectPostgreSQL:
 				//assertContains(t, sqlCommentQuery, `ALTER VIEW ... RENAME TO`, "RENAME")
 			case DialectSQLite:
-				// Not supported - ALTER [RENAME]
+				// Not supported - ALTER [VIEW RENAME]
 			}
 			//t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})
@@ -2073,7 +2073,7 @@ func Test_SQL_Create(t *testing.T) {
 			case DialectPostgreSQL:
 				assertContains(t, sqlCreateQuery, `CREATE SCHEMA IF NOT EXISTS "test"`, "CREATE SCHEMA")
 			case DialectSQLite:
-				// Not supported - CREATE [SCHEMA]
+				// Not supported - CREATE [SCHEMA IF NOT EXISTS]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCreateArguments, supportDialect.name, sqlCreateQuery)
 		})
@@ -2895,15 +2895,15 @@ func Test_SQL_Truncate(t *testing.T) {
 			sqlTruncateQuery, sqlTruncateArguments, err := sql.Build(stmtTruncate)
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - TRUNCATE [CASCADE]
+				// Not supported - TRUNCATE [TABLE CASCADE]
 			case DialectMsSQL:
-				// Not supported - TRUNCATE [CASCADE]
+				// Not supported - TRUNCATE [TABLE CASCADE]
 			case DialectMySQL:
-				// Not supported - TRUNCATE [CASCADE]
+				// Not supported - TRUNCATE [TABLE CASCADE]
 			case DialectPostgreSQL:
 				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "users" CASCADE`, "TRUNCATE CASCADE")
 			case DialectSQLite:
-				// Not supported - TRUNCATE [CASCADE]
+				// Not supported - TRUNCATE [TABLE CASCADE]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
 		})
@@ -2921,13 +2921,13 @@ func Test_SQL_Truncate(t *testing.T) {
 			case DialectMariaDB:
 				assertContains(t, sqlTruncateQuery, "TRUNCATE TABLE `users` RESTART IDENTITY", "TRUNCATE RESTART IDENTITY")
 			case DialectMsSQL:
-				// Not supported - TRUNCATE [RESTART IDENTITY]
+				// Not supported - TRUNCATE [TABLE RESTART IDENTITY]
 			case DialectMySQL:
-				// Not supported - TRUNCATE [RESTART IDENTITY]
+				// Not supported - TRUNCATE [TABLE RESTART IDENTITY]
 			case DialectPostgreSQL:
 				assertContains(t, sqlTruncateQuery, `TRUNCATE TABLE "users" RESTART IDENTITY`, "TRUNCATE RESTART IDENTITY")
 			case DialectSQLite:
-				// Not supported - TRUNCATE [RESTART IDENTITY]
+				// Not supported - TRUNCATE [TABLE RESTART IDENTITY]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlTruncateArguments, supportDialect.name, sqlTruncateQuery)
 		})

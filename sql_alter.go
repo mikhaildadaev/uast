@@ -32,6 +32,10 @@ func (stmt *stmtAlter) DropConstraints(constraints ...ConstraintBase) *stmtAlter
 	stmt.dropConstraints = append(stmt.dropConstraints, constraints...)
 	return stmt
 }
+func (stmt *stmtAlter) RenameTo(name string) *stmtAlter {
+	stmt.renameTo = name
+	return stmt
+}
 
 // Приватные структуры
 type stmtAlter struct {
@@ -44,6 +48,7 @@ type stmtAlter struct {
 	ifExists        bool
 	ifNotExists     bool
 	on              SourceBase
+	renameTo        string
 }
 
 // Приватные методы

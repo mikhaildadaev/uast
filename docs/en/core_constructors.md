@@ -78,14 +78,14 @@ ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
 Creates a new COMMENT statement instance. Accepts a comment text and returns a statement that can be configured with `OnColumn` or `OnTable`.
 ```go
 stmtCommentColumn := uast.NewComment(uast.Field[int64]("u", "id")).
-    Is("Comment")
+    Is("text")
 stmtCommentTable := uast.NewComment(uast.NewTable("users", "u")).
-    Is("Comment")
+    Is("text")
 ```
 Output MariaDB:
 ```text
-COMMENT ON COLUMN `u`.`id` IS 'Comment'
-COMMENT ON TABLE `users` AS `u` IS 'Comment'
+COMMENT ON COLUMN `u`.`id` IS 'text'
+COMMENT ON TABLE `users` AS `u` IS 'text'
 ```
 Output MsSQL:
 ```text
@@ -94,18 +94,18 @@ Output MsSQL:
 ```
 Output MySQL:
 ```text
-COMMENT ON COLUMN `u`.`id` IS 'Comment'
-COMMENT ON TABLE `users` AS `u` IS 'Comment'
+COMMENT ON COLUMN `u`.`id` IS 'text'
+COMMENT ON TABLE `users` AS `u` IS 'text'
 ```
 Output PostgreSQL:
 ```text
-COMMENT ON COLUMN "u"."id" IS 'Comment'
-COMMENT ON TABLE "users" AS "u" IS 'Comment'
+COMMENT ON COLUMN "u"."id" IS 'text'
+COMMENT ON TABLE "users" AS "u" IS 'text'
 ```
 Output SQLite:
 ```text
-COMMENT ON COLUMN "u"."id" IS 'Comment'
-COMMENT ON TABLE "users" AS "u" IS 'Comment'
+COMMENT ON COLUMN "u"."id" IS 'text'
+COMMENT ON TABLE "users" AS "u" IS 'text'
 ```
 
 ## NewCreate

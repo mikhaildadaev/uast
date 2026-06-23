@@ -9,12 +9,12 @@ outline: deep
 :::
 
 ## NewAlter
-创建一个新的 ALTER 语句实例。接受 `Index/Schema/Table/View` 类型的源，并返回一个可以通过 `AddColumns`、`AddConstraints`、`DropColumns`、`DropConstraints`、`Rename` 方法进行配置的语句。
+创建一个新的 ALTER 语句实例。接受 `Index/Schema/Table/View` 类型的源，并返回一个可以通过 `AddColumns`、`AddConstraints`、`DropColumns`、`DropConstraints`、`RenameTo` 方法进行配置的语句。
 ```go
 stmtAlterIndex := uast.NewAlter(uast.NewIndex("users_id", uast.NewTable("users", "u"))).
-	Rename("users_id_new")
+	RenameTo("users_id_new")
 stmtAlterSchema := uast.NewAlter(uast.NewTable("test")).
-	Rename("test_new")
+	RenameTo("test_new")
 stmtAlterTable := uast.NewAlter(uast.NewTable("users", "u")).
 	AddColumns(
 		Test.Table.Users.String,
@@ -36,7 +36,7 @@ stmtAlterTable := uast.NewAlter(uast.NewTable("users", "u")).
 		Test.Unique.UsersName,
 	)
 stmtAlterView := uast.NewAlter(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
-	Rename("users_general_new")
+	RenameTo("users_general_new")
 ```
 Output MariaDB:
 ```text

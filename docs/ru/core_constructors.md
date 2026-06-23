@@ -9,12 +9,12 @@ outline: deep
 :::
 
 ## NewAlter
-Создает новый экземпляр запроса ALTER. Принимает источник типа `Index/Schema/Table/View` и возвращает запрос, который можно настроить с помощью методов `AddColumns`, `AddConstraints`, `DropColumns`, `DropConstraints`, `Rename`.
+Создает новый экземпляр запроса ALTER. Принимает источник типа `Index/Schema/Table/View` и возвращает запрос, который можно настроить с помощью методов `AddColumns`, `AddConstraints`, `DropColumns`, `DropConstraints`, `RenameTo`.
 ```go
 stmtAlterIndex := uast.NewAlter(uast.NewIndex("users_id", uast.NewTable("users", "u"))).
-	Rename("users_id_new")
+	RenameTo("users_id_new")
 stmtAlterSchema := uast.NewAlter(uast.NewTable("test")).
-	Rename("test_new")
+	RenameTo("test_new")
 stmtAlterTable := uast.NewAlter(uast.NewTable("users", "u")).
 	AddColumns(
 		Test.Table.Users.String,
@@ -36,7 +36,7 @@ stmtAlterTable := uast.NewAlter(uast.NewTable("users", "u")).
 		Test.Unique.UsersName,
 	)
 stmtAlterView := uast.NewAlter(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
-	Rename("users_general_new")
+	RenameTo("users_general_new")
 ```
 Output MariaDB:
 ```text

@@ -1893,7 +1893,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectMySQL:
 				// Not supported - ALTER [INDEX RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER INDEX ... RENAME TO`, "RENAME TO")
+				//assertContains(t, sqlCommentQuery, `ALTER INDEX "users_id" RENAME TO "new_name"`, "RENAME TO")
 			case DialectSQLite:
 				// Not supported - ALTER [INDEX RENAME TO]
 			}
@@ -1911,11 +1911,11 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectMariaDB:
 				// Not supported - ALTER [SCHEMA RENAME TO]
 			case DialectMsSQL:
-				//assertContains(t, sqlCommentQuery, "ALTER SCHEMA ... RENAME TO", "RENAME TO")
+				// Not supported - ALTER [SCHEMA RENAME TO]
 			case DialectMySQL:
 				// Not supported - ALTER [SCHEMA RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER SCHEMA ... RENAME TO`, "RENAME TO")
+				//assertContains(t, sqlCommentQuery, `ALTER SCHEMA "test" RENAME TO "new_name"`, "RENAME TO")
 			case DialectSQLite:
 				// Not supported - ALTER [SCHEMA RENAME TO]
 			}
@@ -1973,11 +1973,11 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectMariaDB:
 				// Not supported - ALTER [VIEW RENAME TO]
 			case DialectMsSQL:
-				//assertContains(t, sqlCommentQuery, "ALTER VIEW ... RENAME TO", "RENAME TO")
+				// Not supported - ALTER [VIEW RENAME TO]
 			case DialectMySQL:
 				// Not supported - ALTER [VIEW RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER VIEW ... RENAME TO`, "RENAME TO")
+				//assertContains(t, sqlCommentQuery, `ALTER VIEW "users_general" RENAME TO "new_name"`, "RENAME TO")
 			case DialectSQLite:
 				// Not supported - ALTER [VIEW RENAME TO]
 			}

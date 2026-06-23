@@ -262,13 +262,13 @@ stmtDropCascadeTable := uast.NewDrop(uast.NewTable("users", "u")).
     Cascade()
 stmtDropCascadeView := uast.NewDrop(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
     Cascade()
-stmtDropIfExistsIndex := uast.NewDrop(uast.NewIndex("users")).
+stmtDropIfExistsIndex := uast.NewDrop(uast.NewIndex("users_id", uast.NewTable("users", "u"))).
     IfExists()
 stmtDropIfExistsSchema := uast.NewDrop(uast.NewSchema("test")).
     IfExists()
 stmtDropIfExistsTable := uast.NewDrop(uast.NewTable("users", "u")).
     IfExists()
-stmtDropIfExistsView := uast.NewDrop(uast.NewView("users", "u")).
+stmtDropIfExistsView := uast.NewDrop(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
     IfExists()
 ```
 Output MariaDB:
@@ -277,10 +277,10 @@ DROP INDEX `users_id` CASCADE
 DROP SCHEMA `test` CASCADE
 DROP TABLE `users`
 DROP VIEW `users_general` CASCADE
-DROP INDEX IF EXISTS `users`
+DROP INDEX IF EXISTS `users_id`
 DROP SCHEMA IF EXISTS `test`
 DROP TABLE IF EXISTS `users`
-DROP VIEW IF EXISTS `users`
+DROP VIEW IF EXISTS `users_general`
 ```
 Output MsSQL:
 ```text
@@ -288,10 +288,10 @@ DROP INDEX [users_id]
 DROP SCHEMA [test]
 DROP TABLE [users]
 DROP VIEW [users_general]
-DROP INDEX [users]
+DROP INDEX [users_id]
 DROP SCHEMA IF EXISTS [test]
 DROP TABLE IF EXISTS [users]
-DROP VIEW IF EXISTS [users]
+DROP VIEW IF EXISTS [users_general]
 ```
 Output MySQL:
 ```text
@@ -299,10 +299,10 @@ DROP INDEX `users_id`
 DROP SCHEMA `test`
 DROP TABLE `users`
 DROP VIEW `users_general`
-DROP INDEX IF EXISTS `users`
+DROP INDEX IF EXISTS `users_id`
 DROP SCHEMA `test`
 DROP TABLE IF EXISTS `users`
-DROP VIEW IF EXISTS `users`
+DROP VIEW IF EXISTS `users_general`
 ```
 Output PostgreSQL:
 ```text
@@ -310,10 +310,10 @@ DROP INDEX "users_id" CASCADE
 DROP SCHEMA "test" CASCADE
 DROP TABLE "users" CASCADE
 DROP VIEW "users_general" CASCADE
-DROP INDEX IF EXISTS "users"
+DROP INDEX IF EXISTS "users_id"
 DROP SCHEMA IF EXISTS "test"
 DROP TABLE IF EXISTS "users"
-DROP VIEW IF EXISTS "users"
+DROP VIEW IF EXISTS "users_general"
 ```
 Output SQLite:
 ```text
@@ -321,10 +321,10 @@ DROP INDEX "users_id"
 DROP SCHEMA "test"
 DROP TABLE "users"
 DROP VIEW "users_general"
-DROP INDEX IF EXISTS "users"
+DROP INDEX IF EXISTS "users_id"
 DROP SCHEMA "test"
 DROP TABLE IF EXISTS "users"
-DROP VIEW IF EXISTS "users"
+DROP VIEW IF EXISTS "users_general"
 ```
 
 ## NewInsert

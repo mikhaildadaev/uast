@@ -1883,7 +1883,7 @@ func Test_SQL_Alter(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtAlter := NewAlter(Test.Index.UsersID)
-			//.Rename()
+			//.RenameTo()
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -1905,7 +1905,7 @@ func Test_SQL_Alter(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtAlter := NewAlter(Test.Schema)
-			//.Rename()
+			//.RenameTo()
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -1967,7 +1967,7 @@ func Test_SQL_Alter(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtAlter := NewAlter(Test.View.UsersGeneral)
-			//.Rename()
+			//.RenameTo()
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:

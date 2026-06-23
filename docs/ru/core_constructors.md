@@ -77,10 +77,10 @@ ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
 ## NewComment
 Создаёт новый экземпляр оператора COMMENT. Принимает текст комментария и возвращает оператор, который можно настроить с помощью `OnColumn` или `OnTable`.
 ```go
-stmtCommentColumn := uast.NewComment("Comment").
-    OnColumn(uast.Field[int64]("u", "id"))
-stmtCommentTable := uast.NewComment("Comment").
-    OnTable(uast.NewTable("users", "u"))
+stmtCommentColumn := uast.NewComment(OnColumn(uast.Field[int64]("u", "id"))).
+    Is("Comment")
+stmtCommentTable := uast.NewComment(OnTable(uast.NewTable("users", "u"))).
+    Is("Comment")
 ```
 Output MariaDB:
 ```text

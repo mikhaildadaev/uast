@@ -77,10 +77,10 @@ ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
 ## NewComment
 创建一个新的 COMMENT 语句实例。接受注释文本，并返回一个可以使用 `OnColumn` 或 `OnTable` 进行配置的语句。
 ```go
-stmtCommentColumn := uast.NewComment("Comment").
-    OnColumn(uast.Field[int64]("u", "id"))
-stmtCommentTable := uast.NewComment("Comment").
-    OnTable(uast.NewTable("users", "u"))
+stmtCommentColumn := uast.NewComment(OnColumn(uast.Field[int64]("u", "id"))).
+    Is("Comment")
+stmtCommentTable := uast.NewComment(OnTable(uast.NewTable("users", "u"))).
+    Is("Comment")
 ```
 Output MariaDB:
 ```text

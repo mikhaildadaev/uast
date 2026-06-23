@@ -77,9 +77,9 @@ ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
 ## NewComment
 Creates a new COMMENT statement instance. Accepts a comment text and returns a statement that can be configured with `OnColumn` or `OnTable`.
 ```go
-stmtCommentColumn := uast.NewComment(OnColumn(uast.Field[int64]("u", "id"))).
+stmtCommentColumn := uast.NewComment(uast.Field[int64]("u", "id")).
     Is("Comment")
-stmtCommentTable := uast.NewComment(OnTable(uast.NewTable("users", "u"))).
+stmtCommentTable := uast.NewComment(uast.NewTable("users", "u")).
     Is("Comment")
 ```
 Output MariaDB:

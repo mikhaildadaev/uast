@@ -747,7 +747,7 @@ func (strateger *mssqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 	if err := baseRenderer.renderCommand(stmtInsert.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderInto(stmtInsert.into); err != nil {
+	if err := baseRenderer.renderInTo(stmtInsert.inTo); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFields(stmtInsert.fields, true); err != nil {
@@ -825,7 +825,7 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	if err := baseRenderer.renderCommand(stmtUpdate.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnto(stmtUpdate.onto); err != nil {
+	if err := baseRenderer.renderOnTo(stmtUpdate.onTo); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderReturning(stmtUpdate.returning); err != nil {
@@ -989,7 +989,7 @@ func (strateger *mssqlStrateger) validateInsert(baseValidator *baseValidator, st
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateInto(stmtInsert.into); err != nil {
+	if err := baseValidator.validateInTo(stmtInsert.inTo); err != nil {
 		return err
 	}
 	if err := baseValidator.validateFields(stmtInsert.fields); err != nil {
@@ -1049,7 +1049,7 @@ func (strateger *mssqlStrateger) validateUpdate(baseValidator *baseValidator, st
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateOnto(stmtUpdate.onto); err != nil {
+	if err := baseValidator.validateOnTo(stmtUpdate.onTo); err != nil {
 		return err
 	}
 	if err := baseValidator.validateReturning(stmtUpdate.returning); err != nil {

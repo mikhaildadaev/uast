@@ -465,7 +465,7 @@ func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtC
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
+	if err := baseRenderer.renderOnFrom(stmtComment.onTable, stmtComment.onColumn); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderIsData(stmtComment.comment); err != nil {
@@ -546,7 +546,7 @@ func (strateger *mysqlStrateger) renderInsert(baseRenderer *baseRenderer, stmtIn
 	if err := baseRenderer.renderCommand(stmtInsert.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderInto(stmtInsert.into); err != nil {
+	if err := baseRenderer.renderInTo(stmtInsert.inTo); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFields(stmtInsert.fields, true); err != nil {
@@ -624,7 +624,7 @@ func (strateger *mysqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	if err := baseRenderer.renderCommand(stmtUpdate.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnto(stmtUpdate.onto); err != nil {
+	if err := baseRenderer.renderOnTo(stmtUpdate.onTo); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderJoin(stmtUpdate.join); err != nil {
@@ -706,7 +706,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 	return nil
 }
 func (strateger *mysqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	if err := baseValidator.validateOn(stmtComment.on); err != nil {
+	if err := baseValidator.validateOn(stmtComment.onTable); err != nil {
 		return err
 	}
 	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {
@@ -768,7 +768,7 @@ func (strateger *mysqlStrateger) validateInsert(baseValidator *baseValidator, st
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateInto(stmtInsert.into); err != nil {
+	if err := baseValidator.validateInTo(stmtInsert.inTo); err != nil {
 		return err
 	}
 	if err := baseValidator.validateFields(stmtInsert.fields); err != nil {
@@ -828,7 +828,7 @@ func (strateger *mysqlStrateger) validateUpdate(baseValidator *baseValidator, st
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateOnto(stmtUpdate.onto); err != nil {
+	if err := baseValidator.validateOnTo(stmtUpdate.onTo); err != nil {
 		return err
 	}
 	if err := baseValidator.validateJoin(stmtUpdate.join); err != nil {

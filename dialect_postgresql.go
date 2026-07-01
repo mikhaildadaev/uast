@@ -733,7 +733,7 @@ func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, 
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOn(stmtComment.on); err != nil {
+	if err := baseRenderer.renderOnFrom(stmtComment.onTable, stmtComment.onColumn); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderIsData(stmtComment.comment); err != nil {
@@ -811,7 +811,7 @@ func (strateger *postgresqlStrateger) renderInsert(baseRenderer *baseRenderer, s
 	if err := baseRenderer.renderCommand(stmtInsert.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderInto(stmtInsert.into); err != nil {
+	if err := baseRenderer.renderInTo(stmtInsert.inTo); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderFields(stmtInsert.fields, true); err != nil {
@@ -889,7 +889,7 @@ func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, s
 	if err := baseRenderer.renderCommand(stmtUpdate.command); err != nil {
 		return err
 	}
-	if err := baseRenderer.renderOnto(stmtUpdate.onto); err != nil {
+	if err := baseRenderer.renderOnTo(stmtUpdate.onTo); err != nil {
 		return err
 	}
 	if err := baseRenderer.renderJoin(stmtUpdate.join); err != nil {
@@ -985,7 +985,7 @@ func (strateger *postgresqlStrateger) validateAlter(baseValidator *baseValidator
 }
 func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
 	// !!!Внимание, находится в стадии разработки
-	if err := baseValidator.validateOn(stmtComment.on); err != nil {
+	if err := baseValidator.validateOn(stmtComment.onTable); err != nil {
 		return err
 	}
 	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {
@@ -1047,7 +1047,7 @@ func (strateger *postgresqlStrateger) validateInsert(baseValidator *baseValidato
 	if err := baseValidator.validateWith(stmtInsert.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateInto(stmtInsert.into); err != nil {
+	if err := baseValidator.validateInTo(stmtInsert.inTo); err != nil {
 		return err
 	}
 	if err := baseValidator.validateFields(stmtInsert.fields); err != nil {
@@ -1107,7 +1107,7 @@ func (strateger *postgresqlStrateger) validateUpdate(baseValidator *baseValidato
 	if err := baseValidator.validateWith(stmtUpdate.with); err != nil {
 		return err
 	}
-	if err := baseValidator.validateOnto(stmtUpdate.onto); err != nil {
+	if err := baseValidator.validateOnTo(stmtUpdate.onTo); err != nil {
 		return err
 	}
 	if err := baseValidator.validateJoin(stmtUpdate.join); err != nil {

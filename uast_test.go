@@ -1986,27 +1986,26 @@ func Test_SQL_Alter(t *testing.T) {
 	})
 }
 func Test_SQL_Comment(t *testing.T) {
-	// !!!Внимание, находится в стадии разработки
 	t.Run("Column", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtComment := NewComment(Test.Table.Users.ID).
+			stmtComment := NewComment(Test.Table.User).OnColumn(Test.Table.Users.ID).
 				Is("text")
 			sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'text'", "COMMENT")
+				assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'text'", "COMMENT")
 			case DialectMsSQL:
 				// Not supported - COMMENT [ON COLUMN]
 			case DialectMySQL:
-				//assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'text'", "COMMENT")
+				assertContains(t, sqlCommentQuery, "COMMENT ON COLUMN `users`.`id` IS 'text'", "COMMENT")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'text'`, "COMMENT")
+				assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'text'`, "COMMENT")
 			case DialectSQLite:
-				//assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'text'`, "COMMENT")
+				assertContains(t, sqlCommentQuery, `COMMENT ON COLUMN "users"."id" IS 'text'`, "COMMENT")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlCommentArguments, supportDialect.name, sqlCommentQuery)
 		})

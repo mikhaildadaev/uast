@@ -461,7 +461,6 @@ func (strateger *mysqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlt
 	return nil
 }
 func (strateger *mysqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
@@ -706,7 +705,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 	return nil
 }
 func (strateger *mysqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	if err := baseValidator.validateOn(stmtComment.onTable); err != nil {
+	if err := baseValidator.validateOnFrom(stmtComment.onTable, stmtComment.onColumn); err != nil {
 		return err
 	}
 	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {

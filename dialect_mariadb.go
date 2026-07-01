@@ -461,7 +461,6 @@ func (strateger *mariadbStrateger) renderAlter(baseRenderer *baseRenderer, stmtA
 	return nil
 }
 func (strateger *mariadbStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
@@ -646,7 +645,6 @@ func (strateger *mariadbStrateger) transformAlter(baseTransformer *baseTransform
 	return nil
 }
 func (strateger *mariadbStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
-	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariadbStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
@@ -707,8 +705,7 @@ func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, s
 	return nil
 }
 func (strateger *mariadbStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	// !!!Внимание, находится в стадии разработки
-	if err := baseValidator.validateOn(stmtComment.onTable); err != nil {
+	if err := baseValidator.validateOnFrom(stmtComment.onTable, stmtComment.onColumn); err != nil {
 		return err
 	}
 	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {

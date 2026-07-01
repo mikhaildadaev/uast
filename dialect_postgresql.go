@@ -729,7 +729,6 @@ func (strateger *postgresqlStrateger) renderAlter(baseRenderer *baseRenderer, st
 	return nil
 }
 func (strateger *postgresqlStrateger) renderComment(baseRenderer *baseRenderer, stmtComment *stmtComment) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtComment.command); err != nil {
 		return err
 	}
@@ -911,7 +910,6 @@ func (strateger *postgresqlStrateger) transformAlter(baseTransformer *baseTransf
 	return nil
 }
 func (strateger *postgresqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {
-	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *postgresqlStrateger) transformCreate(baseTransformer *baseTransformer, stmtCreate *stmtCreate) error {
@@ -984,8 +982,7 @@ func (strateger *postgresqlStrateger) validateAlter(baseValidator *baseValidator
 	return nil
 }
 func (strateger *postgresqlStrateger) validateComment(baseValidator *baseValidator, stmtComment *stmtComment) error {
-	// !!!Внимание, находится в стадии разработки
-	if err := baseValidator.validateOn(stmtComment.onTable); err != nil {
+	if err := baseValidator.validateOnFrom(stmtComment.onTable, stmtComment.onColumn); err != nil {
 		return err
 	}
 	if err := baseValidator.validateIsData(stmtComment.comment); err != nil {

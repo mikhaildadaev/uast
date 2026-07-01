@@ -1992,7 +1992,8 @@ func Test_SQL_Comment(t *testing.T) {
 				WithDialect(supportDialect),
 			)
 			defer sql.Close()
-			stmtComment := NewComment(Test.Table.User).OnColumn(Test.Table.Users.ID).
+			stmtComment := NewComment(Test.Table.User).
+				OnColumn(Test.Table.Users.ID).
 				Is("text")
 			sqlCommentQuery, sqlCommentArguments, err := sql.Build(stmtComment)
 			switch supportDialect {

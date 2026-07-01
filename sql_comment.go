@@ -1,7 +1,5 @@
 package uast
 
-// !!!Внимание, находится в стадии разработки
-
 // Публичные конструкторы
 func NewComment(onTable SourceBase) *stmtComment {
 	return &stmtComment{

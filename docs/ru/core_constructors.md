@@ -75,16 +75,16 @@ ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
 ```
 
 ## NewComment
-Создаёт новый экземпляр оператора COMMENT. Принимает текст комментария и возвращает оператор, который можно настроить с помощью `OnColumn` или `OnTable`.
+Создаёт новый экземпляр оператора COMMENT. Принимает текст комментария и возвращает оператор, который можно настроить с помощью `OnColumn` или `Is`.
 ```go
-stmtCommentColumn := uast.NewComment(uast.Field[int64]("u", "id")).
+stmtCommentColumn := uast.NewComment(uast.NewTable("users", "u")).OnColumn(uast.Field[int64]("u", "id")).
     Is("text")
 stmtCommentTable := uast.NewComment(uast.NewTable("users", "u")).
     Is("text")
 ```
 Output MariaDB:
 ```text
-COMMENT ON COLUMN `u`.`id` IS 'text'
+COMMENT ON COLUMN `users`.`id` IS 'text'
 COMMENT ON TABLE `users` AS `u` IS 'text'
 ```
 Output MsSQL:
@@ -94,17 +94,17 @@ Output MsSQL:
 ```
 Output MySQL:
 ```text
-COMMENT ON COLUMN `u`.`id` IS 'text'
+COMMENT ON COLUMN `users`.`id` IS 'text'
 COMMENT ON TABLE `users` AS `u` IS 'text'
 ```
 Output PostgreSQL:
 ```text
-COMMENT ON COLUMN "u"."id" IS 'text'
+COMMENT ON COLUMN "users"."id" IS 'text'
 COMMENT ON TABLE "users" AS "u" IS 'text'
 ```
 Output SQLite:
 ```text
-COMMENT ON COLUMN "u"."id" IS 'text'
+COMMENT ON COLUMN "users"."id" IS 'text'
 COMMENT ON TABLE "users" AS "u" IS 'text'
 ```
 

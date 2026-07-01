@@ -428,30 +428,26 @@ func (validator *baseValidator) validateJoin(joins []*clauseJoin) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validatePagination(pagination *clausePagination) error {
-	if pagination == nil {
-		return nil
-	}
-	if pagination.valueLimit > validator.config.lengthMaxLimit {
-		return ErrOverflowLimit
-	}
-	if pagination.valueLimit > uastCountMaxLimit {
-		return ErrExcessMaxLimit
-	}
-	if pagination.valueLimit < 0 {
-		return ErrInvalidStatementLimit
-	}
-	if pagination.valueOffset < 0 {
-		return ErrInvalidStatementOffset
-	}
-	return nil
-}
 func (validator *baseValidator) validateOn(on SourceBase) error {
 	if on == nil {
 		return nil
 	}
 	if err := on.validate(validator); err != nil {
 		return err
+	}
+	return nil
+}
+func (validator *baseValidator) validateOnFrom(onTable, onColumn SourceBase) error {
+	if onTable == nil {
+		return nil
+	}
+	if err := onTable.validate(validator); err != nil {
+		return err
+	}
+	if onColumn != nil {
+		if err := onColumn.validate(validator); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -472,6 +468,24 @@ func (validator *baseValidator) validateOrderBy(orders []markOrderable) error {
 		if err := order.validate(validator); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+func (validator *baseValidator) validatePagination(pagination *clausePagination) error {
+	if pagination == nil {
+		return nil
+	}
+	if pagination.valueLimit > validator.config.lengthMaxLimit {
+		return ErrOverflowLimit
+	}
+	if pagination.valueLimit > uastCountMaxLimit {
+		return ErrExcessMaxLimit
+	}
+	if pagination.valueLimit < 0 {
+		return ErrInvalidStatementLimit
+	}
+	if pagination.valueOffset < 0 {
+		return ErrInvalidStatementOffset
 	}
 	return nil
 }

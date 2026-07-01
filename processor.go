@@ -118,6 +118,7 @@ type componentValidator interface {
 	validateIsData(data string) error
 	validateJoin(joins []*clauseJoin) error
 	validateOn(on SourceBase) error
+	validateOnFrom(onTable, onColumn SourceBase) error
 	validateOnTo(onTo SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validatePagination(pagination *clausePagination) error

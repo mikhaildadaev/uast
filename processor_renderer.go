@@ -512,16 +512,25 @@ func (renderer *baseRenderer) renderOn(on SourceBase) error {
 	renderer.renderName(on.getName())
 	return nil
 }
-func (renderer *baseRenderer) renderOnFrom(onTable SourceBase, onColumn ...SourceBase) error {
+func (renderer *baseRenderer) renderOnFrom(onTable SourceBase, onColumn SourceBase) error {
 	if onTable == nil {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastModifierOn)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierTable)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(onTable.getName())
+	if onColumn == nil {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierTable)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(onTable.getName())
+	} else {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierColumn)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(onTable.getName())
+		renderer.renderOperator(uastCompositeSinglePoint)
+		renderer.renderName(onColumn.getName())
+	}
 	return nil
 }
 func (renderer *baseRenderer) renderOnTo(onTo SourceBase) error {

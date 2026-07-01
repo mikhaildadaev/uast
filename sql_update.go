@@ -1,10 +1,10 @@
 package uast
 
 // Публичные конструкторы
-func NewUpdate(onto SourceBase) *stmtUpdate {
+func NewUpdate(onTo SourceBase) *stmtUpdate {
 	return &stmtUpdate{
 		command: uastManagementUpdate,
-		onto:    onto,
+		onTo:    onTo,
 	}
 }
 
@@ -13,8 +13,8 @@ func (stmt *stmtUpdate) Join(joins ...*clauseJoin) *stmtUpdate {
 	stmt.join = joins
 	return stmt
 }
-func (stmt *stmtUpdate) Onto(onto SourceBase) *stmtUpdate {
-	stmt.onto = onto
+func (stmt *stmtUpdate) Onto(onTo SourceBase) *stmtUpdate {
+	stmt.onTo = onTo
 	return stmt
 }
 func (stmt *stmtUpdate) Returning(returnings ...markReturnable) *stmtUpdate {
@@ -41,7 +41,7 @@ func (stmt *stmtUpdate) With(with ...*clauseWith) *stmtUpdate {
 type stmtUpdate struct {
 	command   managementService
 	join      []*clauseJoin
-	onto      SourceBase
+	onTo      SourceBase
 	returning *clauseReturning
 	set       []*clauseSet
 	where     markPredicable
@@ -57,8 +57,8 @@ func (stmt *stmtUpdate) clone() statement {
 			copy.join[i] = j.clone()
 		}
 	}
-	if stmt.onto != nil {
-		copy.onto = stmt.onto.clone()
+	if stmt.onTo != nil {
+		copy.onTo = stmt.onTo.clone()
 	}
 	if stmt.returning != nil {
 		copy.returning = stmt.returning.clone()

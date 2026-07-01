@@ -3,16 +3,16 @@ package uast
 import "time"
 
 // Публичные конструкторы
-func NewInsert(into SourceBase) *stmtInsert {
+func NewInsert(inTo SourceBase) *stmtInsert {
 	return &stmtInsert{
 		command: uastManagementInsert,
-		into:    into,
+		inTo:    inTo,
 	}
 }
 
 // Публичные методы
-func (stmt *stmtInsert) Into(into SourceBase) *stmtInsert {
-	stmt.into = into
+func (stmt *stmtInsert) Into(inTo SourceBase) *stmtInsert {
+	stmt.inTo = inTo
 	return stmt
 }
 func (stmt *stmtInsert) Returning(returnings ...markReturnable) *stmtInsert {
@@ -86,7 +86,7 @@ func (stmt *stmtInsert) With(with ...*clauseWith) *stmtInsert {
 type stmtInsert struct {
 	command   managementService
 	fields    []markExpressable
-	into      SourceBase
+	inTo      SourceBase
 	source    statement
 	returning *clauseReturning
 	values    *clauseValues

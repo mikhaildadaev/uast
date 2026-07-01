@@ -3,14 +3,18 @@ package uast
 // !!!Внимание, находится в стадии разработки
 
 // Публичные конструкторы
-func NewComment(on SourceBase) *stmtComment {
+func NewComment(onTable SourceBase) *stmtComment {
 	return &stmtComment{
 		command: uastManagementComment,
-		on:      on,
+		onTable: onTable,
 	}
 }
 
 // Публичные методы
+func (stmt *stmtComment) OnColumn(onColumn SourceBase) *stmtComment {
+	stmt.onColumn = onColumn
+	return stmt
+}
 func (stmt *stmtComment) Is(comment string) *stmtComment {
 	stmt.comment = comment
 	return stmt
@@ -18,9 +22,10 @@ func (stmt *stmtComment) Is(comment string) *stmtComment {
 
 // Приватные структуры
 type stmtComment struct {
-	command managementService
-	comment string
-	on      SourceBase
+	command  managementService
+	comment  string
+	onColumn SourceBase
+	onTable  SourceBase
 }
 
 // Приватные методы

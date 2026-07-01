@@ -464,14 +464,14 @@ func (renderer *baseRenderer) renderIndex(columns []markSourceable) error {
 	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
-func (renderer *baseRenderer) renderInto(into SourceBase) error {
-	if into == nil {
+func (renderer *baseRenderer) renderInTo(inTo SourceBase) error {
+	if inTo == nil {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderService(uastManagementInto)
 	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := into.render(renderer); err != nil {
+	if err := inTo.render(renderer); err != nil {
 		return err
 	}
 	return nil
@@ -512,12 +512,24 @@ func (renderer *baseRenderer) renderOn(on SourceBase) error {
 	renderer.renderName(on.getName())
 	return nil
 }
-func (renderer *baseRenderer) renderOnto(onto SourceBase) error {
-	if onto == nil {
+func (renderer *baseRenderer) renderOnFrom(onTable SourceBase, onColumn ...SourceBase) error {
+	if onTable == nil {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := onto.render(renderer); err != nil {
+	renderer.renderService(uastModifierOn)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierTable)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(onTable.getName())
+	return nil
+}
+func (renderer *baseRenderer) renderOnTo(onTo SourceBase) error {
+	if onTo == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := onTo.render(renderer); err != nil {
 		return err
 	}
 	return nil

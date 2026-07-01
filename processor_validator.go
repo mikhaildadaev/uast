@@ -399,11 +399,11 @@ func (validator *baseValidator) validateHaving(having ExpressionBase) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validateInto(into SourceBase) error {
-	if into == nil {
+func (validator *baseValidator) validateInTo(inTo SourceBase) error {
+	if inTo == nil {
 		return ErrInvalidStatementInto
 	}
-	if err := into.validate(validator); err != nil {
+	if err := inTo.validate(validator); err != nil {
 		return err
 	}
 	return nil
@@ -455,11 +455,11 @@ func (validator *baseValidator) validateOn(on SourceBase) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validateOnto(onto SourceBase) error {
-	if onto == nil {
+func (validator *baseValidator) validateOnTo(onTo SourceBase) error {
+	if onTo == nil {
 		return ErrInvalidStatementOnto
 	}
-	if err := onto.validate(validator); err != nil {
+	if err := onTo.validate(validator); err != nil {
 		return err
 	}
 	return nil

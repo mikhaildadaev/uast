@@ -30,11 +30,12 @@ type componentRenderer interface {
 	renderIfExists(ifExists bool) error
 	renderIfNotExists(ifNotExists bool) error
 	renderIndex(columns []markSourceable) error
-	renderInto(into SourceBase) error
+	renderInTo(inTo SourceBase) error
 	renderIsData(data string) error
 	renderJoin(joins []*clauseJoin) error
 	renderOn(on SourceBase) error
-	renderOnto(onto SourceBase) error
+	renderOnFrom(onTable SourceBase, onColumn SourceBase) error
+	renderOnTo(onTo SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
 	renderReplace(replace bool) error
@@ -113,11 +114,11 @@ type componentValidator interface {
 	validateFrom(from SourceBase) error
 	validateGroupBy(groups []markGroupable) error
 	validateHaving(having ExpressionBase) error
-	validateInto(into SourceBase) error
+	validateInTo(inTo SourceBase) error
 	validateIsData(data string) error
 	validateJoin(joins []*clauseJoin) error
-	validateOn(onsource SourceBase) error
-	validateOnto(onto SourceBase) error
+	validateOn(on SourceBase) error
+	validateOnTo(onTo SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validatePagination(pagination *clausePagination) error
 	validateReturning(returnings *clauseReturning) error

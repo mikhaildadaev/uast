@@ -1878,7 +1878,47 @@ func Test_SQL(t *testing.T) {
 }
 func Test_SQL_Alter(t *testing.T) {
 	// !!!Внимание, находится в стадии разработки
-	t.Run("Index", func(t *testing.T) {
+	t.Run("Index_Default", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Index.UsersID).
+				AddColumns(
+					Test.Table.Users.String,
+					Test.Table.Users.Date,
+				).
+				AddConstraints(
+					Test.Check.OrdersNumber,
+					Test.Primary.OrdersID,
+					Test.Unique.OrdersName,
+				).
+				DropColumns(
+					Test.Table.Users.ID,
+					Test.Table.Users.Name,
+				).
+				DropConstraints(
+					Test.Check.UsersNumber,
+					Test.Foreign.UsersOrders,
+					Test.Primary.UsersID,
+					Test.Unique.UsersName,
+				)
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				// Not supported - ALTER [INDEX DEFAULT]
+			case DialectMsSQL:
+				// Not supported - ALTER [INDEX DEFAULT]
+			case DialectMySQL:
+				// Not supported - ALTER [INDEX DEFAULT]
+			case DialectPostgreSQL:
+				// Not supported - ALTER [INDEX DEFAULT]
+			case DialectSQLite:
+				// Not supported - ALTER [INDEX DEFAULT]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("Index_RenameTo", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
@@ -1900,7 +1940,47 @@ func Test_SQL_Alter(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
-	t.Run("Schema", func(t *testing.T) {
+	t.Run("Schema_Default", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Schema).
+				AddColumns(
+					Test.Table.Users.String,
+					Test.Table.Users.Date,
+				).
+				AddConstraints(
+					Test.Check.OrdersNumber,
+					Test.Primary.OrdersID,
+					Test.Unique.OrdersName,
+				).
+				DropColumns(
+					Test.Table.Users.ID,
+					Test.Table.Users.Name,
+				).
+				DropConstraints(
+					Test.Check.UsersNumber,
+					Test.Foreign.UsersOrders,
+					Test.Primary.UsersID,
+					Test.Unique.UsersName,
+				)
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				// Not supported - ALTER [SCHEMA DEFAULT]
+			case DialectMsSQL:
+				// Not supported - ALTER [SCHEMA DEFAULT]
+			case DialectMySQL:
+				// Not supported - ALTER [SCHEMA DEFAULT]
+			case DialectPostgreSQL:
+				// Not supported - ALTER [SCHEMA DEFAULT]
+			case DialectSQLite:
+				// Not supported - ALTER [SCHEMA DEFAULT]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("Schema_RenameTo", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
@@ -1922,7 +2002,7 @@ func Test_SQL_Alter(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
-	t.Run("Table", func(t *testing.T) {
+	t.Run("Table_Default", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
@@ -1962,7 +2042,91 @@ func Test_SQL_Alter(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
-	t.Run("View", func(t *testing.T) {
+	t.Run("Table_RenameColumn", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Table.User)
+			//.RenameColumn(Test.Table.User, "new_name")
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `old_name` TO `new_name`", "RENAME COLUMN")
+			case DialectMsSQL:
+				// Not supported - ALTER [RENAME COLUMN]
+			case DialectMySQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `old_name` TO `new_name`", "RENAME COLUMN")
+			case DialectPostgreSQL:
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME COLUMN "old_name" TO "new_name"`, "RENAME COLUMN")
+			case DialectSQLite:
+				// Not supported - ALTER [RENAME COLUMN]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("Table_RenameTo", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Table.User)
+			//.RenameTo("new_name")
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME TO `new_name`", "RENAME TO")
+			case DialectMsSQL:
+				// Not supported - ALTER [RENAME TO]
+			case DialectMySQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME TO `new_name`", "RENAME TO")
+			case DialectPostgreSQL:
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME TO "new_name"`, "RENAME TO")
+			case DialectSQLite:
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME TO "new_name"`, "RENAME TO")
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("View_Default", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.View.UsersGeneral).
+				AddColumns(
+					Test.Table.Users.String,
+					Test.Table.Users.Date,
+				).
+				AddConstraints(
+					Test.Check.OrdersNumber,
+					Test.Primary.OrdersID,
+					Test.Unique.OrdersName,
+				).
+				DropColumns(
+					Test.Table.Users.ID,
+					Test.Table.Users.Name,
+				).
+				DropConstraints(
+					Test.Check.UsersNumber,
+					Test.Foreign.UsersOrders,
+					Test.Primary.UsersID,
+					Test.Unique.UsersName,
+				)
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				// Not supported - ALTER [VIEW DEFAULT]
+			case DialectMsSQL:
+				// Not supported - ALTER [VIEW DEFAULT]
+			case DialectMySQL:
+				// Not supported - ALTER [VIEW DEFAULT]
+			case DialectPostgreSQL:
+				// Not supported - ALTER [VIEW DEFAULT]
+			case DialectSQLite:
+				// Not supported - ALTER [VIEW DEFAULT]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("View_RenameTo", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()

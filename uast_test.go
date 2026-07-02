@@ -2042,24 +2042,68 @@ func Test_SQL_Alter(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
+	t.Run("Table_ModifyColumn", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Table.User)
+			//.ModifyColumn(Test.Table.Users.String, uast.TypeText)
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "MODIFY COLUMN")
+			case DialectMsSQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE [users] ALTER COLUMN [string] NVARCHAR(MAX)", "MODIFY COLUMN")
+			case DialectMySQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "MODIFY COLUMN")
+			case DialectPostgreSQL:
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "string" TYPE TEXT`, "MODIFY COLUMN")
+			case DialectSQLite:
+				// Not supported - ALTER [MODIFY COLUMN]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
 	t.Run("Table_RenameColumn", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtAlter := NewAlter(Test.Table.User)
-			//.RenameColumn(Test.Table.User, "new_name")
+			//.RenameColumn(Test.Table.Users.ID, "new_name")
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `old_name` TO `new_name`", "RENAME COLUMN")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `id` TO `new_name`", "RENAME COLUMN")
 			case DialectMsSQL:
 				// Not supported - ALTER [RENAME COLUMN]
 			case DialectMySQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `old_name` TO `new_name`", "RENAME COLUMN")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `id` TO `new_name`", "RENAME COLUMN")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME COLUMN "old_name" TO "new_name"`, "RENAME COLUMN")
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME COLUMN "id" TO "new_name"`, "RENAME COLUMN")
 			case DialectSQLite:
 				// Not supported - ALTER [RENAME COLUMN]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("Table_RenameConstraint", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Table.User)
+			//.RenameConstraint("old_name", "new_name")
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME CONSTRAINT `old_name` TO `new_name`", "RENAME CONSTRAINT")
+			case DialectMsSQL:
+				// Not supported - ALTER [RENAME CONSTRAINT]
+			case DialectMySQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME CONSTRAINT `old_name` TO `new_name`", "RENAME CONSTRAINT")
+			case DialectPostgreSQL:
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME CONSTRAINT "old_name" TO "new_name"`, "RENAME CONSTRAINT")
+			case DialectSQLite:
+				// Not supported - ALTER [RENAME CONSTRAINT]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})

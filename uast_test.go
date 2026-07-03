@@ -1878,7 +1878,7 @@ func Test_SQL(t *testing.T) {
 }
 func Test_SQL_Alter(t *testing.T) {
 	// !!!Внимание, находится в стадии разработки
-	t.Run("Index_Default", func(t *testing.T) {
+	t.Run("Index_AddDrop", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
@@ -1905,15 +1905,15 @@ func Test_SQL_Alter(t *testing.T) {
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [INDEX DEFAULT]
+				// Not supported - ALTER [INDEX ADD/DROP]
 			case DialectMsSQL:
-				// Not supported - ALTER [INDEX DEFAULT]
+				// Not supported - ALTER [INDEX ADD/DROP]
 			case DialectMySQL:
-				// Not supported - ALTER [INDEX DEFAULT]
+				// Not supported - ALTER [INDEX ADD/DROP]
 			case DialectPostgreSQL:
-				// Not supported - ALTER [INDEX DEFAULT]
+				// Not supported - ALTER [INDEX ADD/DROP]
 			case DialectSQLite:
-				// Not supported - ALTER [INDEX DEFAULT]
+				// Not supported - ALTER [INDEX ADD/DROP]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
@@ -1940,7 +1940,7 @@ func Test_SQL_Alter(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
-	t.Run("Schema_Default", func(t *testing.T) {
+	t.Run("Schema_AddDrop", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
@@ -1967,15 +1967,15 @@ func Test_SQL_Alter(t *testing.T) {
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [SCHEMA DEFAULT]
+				// Not supported - ALTER [SCHEMA ADD/DROP]
 			case DialectMsSQL:
-				// Not supported - ALTER [SCHEMA DEFAULT]
+				// Not supported - ALTER [SCHEMA ADD/DROP]
 			case DialectMySQL:
-				// Not supported - ALTER [SCHEMA DEFAULT]
+				// Not supported - ALTER [SCHEMA ADD/DROP]
 			case DialectPostgreSQL:
-				// Not supported - ALTER [SCHEMA DEFAULT]
+				// Not supported - ALTER [SCHEMA ADD/DROP]
 			case DialectSQLite:
-				// Not supported - ALTER [SCHEMA DEFAULT]
+				// Not supported - ALTER [SCHEMA ADD/DROP]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
@@ -2002,7 +2002,7 @@ func Test_SQL_Alter(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
-	t.Run("Table_Default", func(t *testing.T) {
+	t.Run("Table_AddDrop", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
@@ -2038,28 +2038,6 @@ func Test_SQL_Alter(t *testing.T) {
 				assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ADD COLUMN "string" VARCHAR, ADD COLUMN "date" DATE, ADD CONSTRAINT "ck_orders_number" CHECK("o"."number" > $1), ADD CONSTRAINT "pk_orders_id" PRIMARY KEY("id"), ADD CONSTRAINT "un_orders_name" UNIQUE("string"), DROP COLUMN "id", DROP COLUMN "name", DROP CONSTRAINT "ck_users_number", DROP CONSTRAINT "fk_users_orders", DROP CONSTRAINT "pk_users_id", DROP CONSTRAINT "un_users_name"`, "ALTER TABLE")
 			case DialectSQLite:
 				assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT`, "ALTER TABLE")
-			}
-			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
-		})
-	})
-	t.Run("Table_ModifyColumn", func(t *testing.T) {
-		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
-			sql := NewSQL(WithDialect(supportDialect))
-			defer sql.Close()
-			stmtAlter := NewAlter(Test.Table.User)
-			//.ModifyColumn(Test.Table.Users.String, uast.TypeText)
-			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
-			switch supportDialect {
-			case DialectMariaDB:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "MODIFY COLUMN")
-			case DialectMsSQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE [users] ALTER COLUMN [string] NVARCHAR(MAX)", "MODIFY COLUMN")
-			case DialectMySQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "MODIFY COLUMN")
-			case DialectPostgreSQL:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "string" TYPE TEXT`, "MODIFY COLUMN")
-			case DialectSQLite:
-				// Not supported - ALTER [MODIFY COLUMN]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
@@ -2130,7 +2108,56 @@ func Test_SQL_Alter(t *testing.T) {
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
 	})
-	t.Run("View_Default", func(t *testing.T) {
+	t.Run("Table_SetColumnType", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Table.User)
+			//.SetColumnType(Test.Table.Users.String, uast.TypeText)
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "SET COLUMN TYPE")
+			case DialectMsSQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE [users] ALTER COLUMN [string] NVARCHAR(MAX)", "SET COLUMN TYPE")
+			case DialectMySQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "SET COLUMN TYPE")
+			case DialectPostgreSQL:
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "string" TYPE TEXT`, "SET COLUMN TYPE")
+			case DialectSQLite:
+				// Not supported - ALTER [SET COLUMN TYPE]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("Table_SetColumnValue", func(t *testing.T) {
+		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
+			sql := NewSQL(WithDialect(supportDialect))
+			defer sql.Close()
+			stmtAlter := NewAlter(Test.Table.User)
+			//.SetDefault(
+			//	Test.Table.Users.String,
+			//)
+			//.SetNotNull(
+			//	Test.Check.OrdersNumber,
+			//)
+			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
+			switch supportDialect {
+			case DialectMariaDB:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users`", "SET COLUMN VALUE")
+			case DialectMsSQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE [users]", "SET COLUMN VALUE")
+			case DialectMySQL:
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users`", "SET COLUMN VALUE")
+			case DialectPostgreSQL:
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users"`, "SET COLUMN VALUE")
+			case DialectSQLite:
+				// Not supported - ALTER [SET COLUMN VALUE]
+			}
+			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
+		})
+	})
+	t.Run("View_AddDrop", func(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
@@ -2157,15 +2184,15 @@ func Test_SQL_Alter(t *testing.T) {
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				// Not supported - ALTER [VIEW DEFAULT]
+				// Not supported - ALTER [VIEW ADD/DROP]
 			case DialectMsSQL:
-				// Not supported - ALTER [VIEW DEFAULT]
+				// Not supported - ALTER [VIEW ADD/DROP]
 			case DialectMySQL:
-				// Not supported - ALTER [VIEW DEFAULT]
+				// Not supported - ALTER [VIEW ADD/DROP]
 			case DialectPostgreSQL:
-				// Not supported - ALTER [VIEW DEFAULT]
+				// Not supported - ALTER [VIEW ADD/DROP]
 			case DialectSQLite:
-				// Not supported - ALTER [VIEW DEFAULT]
+				// Not supported - ALTER [VIEW ADD/DROP]
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})

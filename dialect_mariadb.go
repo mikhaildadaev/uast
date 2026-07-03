@@ -462,12 +462,24 @@ func (strateger *mariadbStrateger) renderAlter(baseRenderer *baseRenderer, stmtA
 	}
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
+		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+			return err
+		}
 	case *sourceSchema:
+		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+			return err
+		}
 	case *sourceTable:
 		if err := baseRenderer.renderColumns(stmtAlter.command, stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints); err != nil {
 			return err
 		}
+		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+			return err
+		}
 	case *sourceView:
+		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -712,6 +724,44 @@ func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, s
 	// !!!Внимание, находится в стадии разработки
 	if err := baseValidator.validateEntity(stmtAlter.entity); err != nil {
 		return err
+	}
+	switch stmtAlter.entity.(type) {
+	case *sourceIndex:
+		if stmtAlter.renameTo != "" {
+			if !baseValidator.config.supportAlterRenameIndex {
+				return ErrUnsupportEntityIndex
+			}
+			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
+		}
+	case *sourceSchema:
+		if stmtAlter.renameTo != "" {
+			if !baseValidator.config.supportAlterRenameSchema {
+				return ErrUnsupportEntitySchema
+			}
+			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
+		}
+	case *sourceTable:
+		if stmtAlter.renameTo != "" {
+			if !baseValidator.config.supportAlterRenameTable {
+				return ErrUnsupportEntityTable
+			}
+			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
+		}
+	case *sourceView:
+		if stmtAlter.renameTo != "" {
+			if !baseValidator.config.supportAlterRenameView {
+				return ErrUnsupportEntityView
+			}
+			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

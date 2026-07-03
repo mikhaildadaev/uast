@@ -1882,8 +1882,8 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtAlter := NewAlter(Test.Index.UsersID)
-			//.RenameTo("new_name")
+			stmtAlter := NewAlter(Test.Index.UsersID).
+				RenameTo("new_name")
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -1893,7 +1893,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectMySQL:
 				// Not supported - ALTER [INDEX RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER INDEX "users_id" RENAME TO "new_name"`, "RENAME TO")
+				assertContains(t, sqlAlterQuery, `ALTER INDEX "users_id" RENAME TO "new_name"`, "RENAME TO")
 			case DialectSQLite:
 				// Not supported - ALTER [INDEX RENAME TO]
 			}
@@ -1904,8 +1904,8 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtAlter := NewAlter(Test.Schema)
-			//.RenameTo("new_name")
+			stmtAlter := NewAlter(Test.Schema).
+				RenameTo("new_name")
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -1915,7 +1915,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectMySQL:
 				// Not supported - ALTER [SCHEMA RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER SCHEMA "test" RENAME TO "new_name"`, "RENAME TO")
+				assertContains(t, sqlAlterQuery, `ALTER SCHEMA "test" RENAME TO "new_name"`, "RENAME TO")
 			case DialectSQLite:
 				// Not supported - ALTER [SCHEMA RENAME TO]
 			}
@@ -2010,20 +2010,20 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtAlter := NewAlter(Test.Table.User)
-			//.RenameTo("new_name")
+			stmtAlter := NewAlter(Test.Table.User).
+				RenameTo("new_name")
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME TO `new_name`", "RENAME TO")
+				assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME TO `new_name`", "RENAME TO")
 			case DialectMsSQL:
 				// Not supported - ALTER [RENAME TO]
 			case DialectMySQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME TO `new_name`", "RENAME TO")
+				assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME TO `new_name`", "RENAME TO")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME TO "new_name"`, "RENAME TO")
+				assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME TO "new_name"`, "RENAME TO")
 			case DialectSQLite:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME TO "new_name"`, "RENAME TO")
+				assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME TO "new_name"`, "RENAME TO")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})
@@ -2058,8 +2058,8 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtAlter := NewAlter(Test.View.UsersGeneral)
-			//.RenameTo("new_name")
+			stmtAlter := NewAlter(Test.View.UsersGeneral).
+				RenameTo("new_name")
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
@@ -2069,7 +2069,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectMySQL:
 				// Not supported - ALTER [VIEW RENAME TO]
 			case DialectPostgreSQL:
-				//assertContains(t, sqlCommentQuery, `ALTER VIEW "users_general" RENAME TO "new_name"`, "RENAME TO")
+				assertContains(t, sqlAlterQuery, `ALTER VIEW "users_general" RENAME TO "new_name"`, "RENAME TO")
 			case DialectSQLite:
 				// Not supported - ALTER [VIEW RENAME TO]
 			}

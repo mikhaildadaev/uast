@@ -598,6 +598,15 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderRenameTo(renameTo string) error {
+	if renameTo != "" {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierRenameTo)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(renameTo)
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderReplace(replace bool) error {
 	if replace {
 		renderer.renderOperator(uastCompositeSingleSpace)

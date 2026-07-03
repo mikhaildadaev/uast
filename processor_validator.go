@@ -489,6 +489,15 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	}
 	return nil
 }
+func (validator *baseValidator) validateRenameTo(renameTo string) error {
+	if renameTo == "" {
+		return nil
+	}
+	if err := validator.validateLiteral(renameTo); err != nil {
+		return err
+	}
+	return nil
+}
 func (validator *baseValidator) validateReturning(returnings *clauseReturning) error {
 	if returnings == nil {
 		return nil

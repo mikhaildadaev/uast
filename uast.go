@@ -340,6 +340,7 @@ const (
 	uastModifierQuery           modifierService = "QUERY"
 	uastModifierRecursive       modifierService = "RECURSIVE"
 	uastModifierReferences      modifierService = "REFERENCES"
+	uastModifierRenameTo        modifierService = "RENAME TO"
 	uastModifierRestartIdentity modifierService = "RESTART IDENTITY"
 	uastModifierRows            modifierService = "ROWS"
 	uastModifierRowsOnly        modifierService = "ROWS ONLY"

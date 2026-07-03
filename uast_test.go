@@ -1971,13 +1971,13 @@ func Test_SQL_Alter(t *testing.T) {
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `id` TO `new_name`", "RENAME COLUMN")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `id` TO `new_column_name`", "RENAME COLUMN")
 			case DialectMsSQL:
 				// Not supported - ALTER [RENAME COLUMN]
 			case DialectMySQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `id` TO `new_name`", "RENAME COLUMN")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME COLUMN `id` TO `new_column_name`", "RENAME COLUMN")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME COLUMN "id" TO "new_name"`, "RENAME COLUMN")
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME COLUMN "id" TO "new_column_name"`, "RENAME COLUMN")
 			case DialectSQLite:
 				// Not supported - ALTER [RENAME COLUMN]
 			}
@@ -1989,17 +1989,17 @@ func Test_SQL_Alter(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtAlter := NewAlter(Test.Table.User)
-			//.RenameConstraint("old_name", "new_name")
+			//.RenameConstraint(Test.Check.UsersNumber, "new_name")
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME CONSTRAINT `old_name` TO `new_name`", "RENAME CONSTRAINT")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME CONSTRAINT `ck_users_number` TO `new_ck_name`", "RENAME CONSTRAINT")
 			case DialectMsSQL:
 				// Not supported - ALTER [RENAME CONSTRAINT]
 			case DialectMySQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME CONSTRAINT `old_name` TO `new_name`", "RENAME CONSTRAINT")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` RENAME CONSTRAINT `ck_users_number` TO `new_ck_name`", "RENAME CONSTRAINT")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME CONSTRAINT "old_name" TO "new_name"`, "RENAME CONSTRAINT")
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" RENAME CONSTRAINT "ck_users_number" TO "new_ck_name"`, "RENAME CONSTRAINT")
 			case DialectSQLite:
 				// Not supported - ALTER [RENAME CONSTRAINT]
 			}

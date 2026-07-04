@@ -2032,22 +2032,22 @@ func Test_SQL_Alter(t *testing.T) {
 		testAllDialects(t, func(t *testing.T, supportDialect *SupportDialect) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
-			stmtAlter := NewAlter(Test.Table.User)
-			//.SetColumns(
-			//  Test.Table.Users.ID.Type(uast.TypeInt64),
-			//  Test.Table.Users.String.DefaultValue(),
-			//  Test.Table.Users.Date.NotNull(),
-			//)
+			stmtAlter := NewAlter(Test.Table.User).
+				SetColumns(
+					Test.Table.Users.ID.SetType(TypeUUID),
+					Test.Table.Users.String.SetDefault("_"),
+					Test.Table.Users.Date.SetNotNull(),
+				)
 			sqlAlterQuery, sqlAlterArguments, err := sql.Build(stmtAlter)
 			switch supportDialect {
 			case DialectMariaDB:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "SET COLUMNS")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `id` UUID, ALTER COLUMN `string` SET DEFAULT '_', MODIFY COLUMN `date` NOT NULL", "SET COLUMNS")
 			case DialectMsSQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE [users] ALTER COLUMN [string] NVARCHAR(MAX)", "SET COLUMNS")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE [users] ALTER COLUMN [id] UNIQUEIDENTIFIER, ADD DEFAULT '_' FOR [string], ALTER COLUMN [date] NOT NULL", "SET COLUMNS")
 			case DialectMySQL:
-				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `string` TEXT", "SET COLUMNS")
+				//assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `id` UUID, ALTER COLUMN `string` SET DEFAULT '_', MODIFY COLUMN `date` NOT NULL", "SET COLUMNS")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "string" TYPE TEXT`, "SET COLUMNS")
+				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "id" TYPE UUID, ALTER COLUMN "string" SET DEFAULT '_', ALTER COLUMN "date" SET NOT NULL`, "SET COLUMNS")
 			case DialectSQLite:
 				// Not supported - ALTER [SET COLUMNS]
 			}

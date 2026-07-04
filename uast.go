@@ -349,6 +349,7 @@ const (
 	uastModifierTable           modifierService = "TABLE"
 	uastModifierThen            modifierService = "THEN"
 	uastModifierTo              modifierService = "TO"
+	uastModifierType            modifierService = "TYPE"
 	uastModifierUnique          modifierService = "UNIQUE"
 	uastModifierView            modifierService = "VIEW"
 	uastModifierWeekday         modifierService = "WEEKDAY"

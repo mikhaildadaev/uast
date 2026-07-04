@@ -598,10 +598,42 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderRenameColumn(columnRename *columnRename) error {
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierRename)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierColumn)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(columnRename.column.getName())
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierTo)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := renderer.renderName(columnRename.name); err != nil {
+		return err
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderRenameConstraint(constraintRename *constraintRename) error {
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierRename)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierConstraint)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(constraintRename.constraint.getName())
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierTo)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := renderer.renderName(constraintRename.name); err != nil {
+		return err
+	}
+	return nil
+}
 func (renderer *baseRenderer) renderRenameTo(renameTo string) error {
 	if renameTo != "" {
 		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierRenameTo)
+		renderer.renderService(uastModifierRename)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierTo)
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderName(renameTo)
 	}

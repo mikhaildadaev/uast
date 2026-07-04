@@ -38,6 +38,8 @@ type componentRenderer interface {
 	renderOnTo(onTo SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
+	renderRenameColumn(columnRename *columnRename) error
+	renderRenameConstraint(constraintRename *constraintRename) error
 	renderRenameTo(name string) error
 	renderReplace(replace bool) error
 	renderRestartIdentity(restartIdentity bool) error
@@ -123,6 +125,8 @@ type componentValidator interface {
 	validateOnTo(onTo SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validatePagination(pagination *clausePagination) error
+	validateRenameColumn(columnRename *columnRename) error
+	validateRenameConstraint(constraintRename *constraintRename) error
 	validateRenameTo(name string) error
 	validateReturning(returnings *clauseReturning) error
 	validateSet(sets []*clauseSet) error

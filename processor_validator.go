@@ -489,6 +489,30 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	}
 	return nil
 }
+func (validator *baseValidator) validateRenameColumn(columnRename *columnRename) error {
+	if columnRename == nil {
+		return nil
+	}
+	if err := columnRename.column.validate(validator); err != nil {
+		return err
+	}
+	if err := validator.validateLiteral(columnRename.name); err != nil {
+		return err
+	}
+	return nil
+}
+func (validator *baseValidator) validateRenameConstraint(constraintRename *constraintRename) error {
+	if constraintRename == nil {
+		return nil
+	}
+	if err := constraintRename.constraint.validate(validator); err != nil {
+		return err
+	}
+	if err := validator.validateLiteral(constraintRename.name); err != nil {
+		return err
+	}
+	return nil
+}
 func (validator *baseValidator) validateRenameTo(renameTo string) error {
 	if renameTo == "" {
 		return nil

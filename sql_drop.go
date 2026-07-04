@@ -29,6 +29,9 @@ type stmtDrop struct {
 // Приватные методы
 func (stmt *stmtDrop) clone() statement {
 	copy := *stmt
+	if stmt.entity != nil {
+		copy.entity = stmt.entity.clone()
+	}
 	return &copy
 }
 func (stmt *stmtDrop) render(baseRenderer *baseRenderer) error {

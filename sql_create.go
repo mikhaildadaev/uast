@@ -59,6 +59,27 @@ type stmtCreate struct {
 // Приватные методы
 func (stmt *stmtCreate) clone() statement {
 	copy := *stmt
+	if stmt.entity != nil {
+		copy.entity = stmt.entity.clone()
+	}
+	if stmt.on != nil {
+		copy.on = stmt.on.clone()
+	}
+	if stmt.source != nil {
+		copy.source = stmt.source.clone()
+	}
+	if len(stmt.columns) > 0 {
+		copy.columns = make([]markSourceable, len(stmt.columns))
+		for i, col := range stmt.columns {
+			copy.columns[i] = col.clone().(markSourceable)
+		}
+	}
+	if len(stmt.constraints) > 0 {
+		copy.constraints = make([]ConstraintBase, len(stmt.constraints))
+		for i, constraint := range stmt.constraints {
+			copy.constraints[i] = constraint.clone()
+		}
+	}
 	return &copy
 }
 func (stmt *stmtCreate) render(baseRenderer *baseRenderer) error {

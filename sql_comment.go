@@ -29,6 +29,12 @@ type stmtComment struct {
 // Приватные методы
 func (stmt *stmtComment) clone() statement {
 	copy := *stmt
+	if stmt.onColumn != nil {
+		copy.onColumn = stmt.onColumn.clone()
+	}
+	if stmt.onTable != nil {
+		copy.onTable = stmt.onTable.clone()
+	}
 	return &copy
 }
 func (stmt *stmtComment) render(baseRenderer *baseRenderer) error {

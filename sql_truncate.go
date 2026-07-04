@@ -32,8 +32,7 @@ type stmtTruncate struct {
 func (stmt *stmtTruncate) clone() statement {
 	copy := *stmt
 	if stmt.table != nil {
-		t := *stmt.table
-		copy.table = &t
+		copy.table = stmt.table.clone().(*TableSource)
 	}
 	return &copy
 }

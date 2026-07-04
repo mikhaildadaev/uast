@@ -517,23 +517,71 @@ func (strateger *sqliteStrateger) renderAlter(baseRenderer *baseRenderer, stmtAl
 	}
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
-		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-			return err
+		if stmtAlter.renameColumn != nil {
+			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameTo != "" {
+			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
 		}
 	case *sourceSchema:
-		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-			return err
+		if stmtAlter.renameColumn != nil {
+			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameTo != "" {
+			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
 		}
 	case *sourceTable:
 		if err := baseRenderer.renderColumns(stmtAlter.command, stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-			return err
+		if stmtAlter.renameColumn != nil {
+			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameTo != "" {
+			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
 		}
 	case *sourceView:
-		if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-			return err
+		if stmtAlter.renameColumn != nil {
+			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameTo != "" {
+			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -789,6 +837,22 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 	}
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
+		if stmtAlter.renameColumn != nil {
+			if !baseValidator.config.supportAlterRenameColumn {
+				return ErrUnsupportEntityIndex
+			}
+			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if !baseValidator.config.supportAlterRenameConstraint {
+				return ErrUnsupportEntityIndex
+			}
+			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportAlterRenameIndex {
 				return ErrUnsupportEntityIndex
@@ -798,6 +862,22 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 	case *sourceSchema:
+		if stmtAlter.renameColumn != nil {
+			if !baseValidator.config.supportAlterRenameColumn {
+				return ErrUnsupportEntitySchema
+			}
+			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if !baseValidator.config.supportAlterRenameConstraint {
+				return ErrUnsupportEntitySchema
+			}
+			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportAlterRenameSchema {
 				return ErrUnsupportEntitySchema
@@ -807,6 +887,25 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 	case *sourceTable:
+		if stmtAlter.renameColumn != nil && stmtAlter.renameConstraint != nil {
+			return ErrUnsupportEntityTable
+		}
+		if stmtAlter.renameColumn != nil {
+			if !baseValidator.config.supportAlterRenameColumn {
+				return ErrUnsupportEntityTable
+			}
+			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if !baseValidator.config.supportAlterRenameConstraint {
+				return ErrUnsupportEntityTable
+			}
+			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportAlterRenameTable {
 				return ErrUnsupportEntityTable
@@ -816,6 +915,22 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 	case *sourceView:
+		if stmtAlter.renameColumn != nil {
+			if !baseValidator.config.supportAlterRenameColumn {
+				return ErrUnsupportEntityView
+			}
+			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
+				return err
+			}
+		}
+		if stmtAlter.renameConstraint != nil {
+			if !baseValidator.config.supportAlterRenameConstraint {
+				return ErrUnsupportEntityView
+			}
+			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportAlterRenameView {
 				return ErrUnsupportEntityView

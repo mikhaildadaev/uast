@@ -124,6 +124,10 @@ type registerStatement interface {
 var queryCounter atomic.Int64
 
 // Приватные структуры
+type columnRename struct {
+	column SourceBase
+	name   string
+}
 type sourceColumn[T typeScalar] struct {
 	defaultValue    ExpressionBase
 	field           *exprField[T]

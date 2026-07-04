@@ -95,6 +95,10 @@ type constraintPrimary struct {
 	columns []SourceBase
 	name    string
 }
+type constraintRename struct {
+	constraint ConstraintBase
+	name       string
+}
 type constraintUnique struct {
 	columns []SourceBase
 	name    string

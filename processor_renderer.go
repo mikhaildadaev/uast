@@ -282,12 +282,12 @@ func (renderer *baseRenderer) renderColumns(command managementService, addColumn
 		}
 		renderer.renderOperator(uastCompositeParenRight)
 	} else {
-		if renderer.config.supportAlterAddColumn {
+		if renderer.config.supportAdd[uastModifierColumn] {
 			for _, column := range addColumns {
 				if needComma {
 					renderer.renderOperator(uastCompositeCommaSpace)
 				}
-				renderer.renderService(uastManagementAdd)
+				renderer.renderService(uastModifierAdd)
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderService(uastModifierColumn)
 				renderer.renderOperator(uastCompositeSingleSpace)
@@ -297,12 +297,12 @@ func (renderer *baseRenderer) renderColumns(command managementService, addColumn
 				needComma = true
 			}
 		}
-		if renderer.config.supportAlterAddConstraint {
+		if renderer.config.supportAdd[uastModifierConstraint] {
 			for _, constraint := range addConstraints {
 				if needComma {
 					renderer.renderOperator(uastCompositeCommaSpace)
 				}
-				renderer.renderService(uastManagementAdd)
+				renderer.renderService(uastModifierAdd)
 				renderer.renderOperator(uastCompositeSingleSpace)
 				if err := constraint.render(renderer); err != nil {
 					return err
@@ -310,12 +310,12 @@ func (renderer *baseRenderer) renderColumns(command managementService, addColumn
 				needComma = true
 			}
 		}
-		if renderer.config.supportAlterDropColumn {
+		if renderer.config.supportDrop[uastModifierColumn] {
 			for _, column := range dropColumns {
 				if needComma {
 					renderer.renderOperator(uastCompositeCommaSpace)
 				}
-				renderer.renderService(uastManagementDrop)
+				renderer.renderService(uastModifierDrop)
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderService(uastModifierColumn)
 				renderer.renderOperator(uastCompositeSingleSpace)
@@ -323,12 +323,12 @@ func (renderer *baseRenderer) renderColumns(command managementService, addColumn
 				needComma = true
 			}
 		}
-		if renderer.config.supportAlterDropConstraint {
+		if renderer.config.supportDrop[uastModifierConstraint] {
 			for _, constraint := range dropConstraints {
 				if needComma {
 					renderer.renderOperator(uastCompositeCommaSpace)
 				}
-				renderer.renderService(uastManagementDrop)
+				renderer.renderService(uastModifierDrop)
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderService(uastModifierConstraint)
 				renderer.renderOperator(uastCompositeSingleSpace)
@@ -647,7 +647,7 @@ func (renderer *baseRenderer) renderReplace(replace bool) error {
 	return nil
 }
 func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error {
-	if restartIdentity && renderer.config.supportRestartIdentity {
+	if restartIdentity && renderer.config.supportOptions[uastModifierRestartIdentity] {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierRestartIdentity)
 	}
@@ -787,7 +787,7 @@ func (renderer *baseRenderer) renderValues(values *clauseValues) error {
 		}
 	}
 	renderer.renderOperator(uastCompositeParenRight)
-	if values.upsert != nil && renderer.config.supportUpsert {
+	if values.upsert != nil && renderer.config.supportOptions[uastModifierUpsert] {
 		values.upsert.render(renderer)
 	}
 	return nil

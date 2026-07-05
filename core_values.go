@@ -17,7 +17,7 @@ type clausePair struct {
 }
 type clauseUpsert struct {
 	pairs   []*clausePair
-	service managementService
+	service modifierService
 }
 type clauseValues struct {
 	pairs  []*clausePair

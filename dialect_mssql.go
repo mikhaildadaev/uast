@@ -9,47 +9,38 @@ import (
 // Публичные переменные
 var DialectMsSQL = &SupportDialect{
 	config: &config{
-		lengthMaxArray:               128,
-		lengthMaxConst:               63,
-		lengthMaxFunc:                48,
-		lengthMaxIdent:               128,
-		lengthMaxLimit:               63,
-		lengthMaxParam:               2100,
-		lengthMaxQuery:               64 * 1024,
-		lengthMaxValueByte:           1024,
-		lengthMaxValueString:         128,
-		listComparisons:              listComparisonsMssql,
-		listFunctions:                listFunctionsMssql,
-		listManagement:               listManagementMssql,
-		listModifiers:                listModifiersMssql,
-		listTypes:                    listTypesMssql,
-		parensFunction:               true,
-		placeholderNumber:            0,
-		placeholderStyle:             "@p",
-		placeholderType:              true,
-		symbolMarkLeft:               "'",
-		symbolMarkRight:              "'",
-		symbolQuoteLeft:              "[",
-		symbolQuoteRight:             "]",
-		supportAlterAddColumn:        true,
-		supportAlterAddConstraint:    true,
-		supportAlterAddDefault:       true,
-		supportAlterAddNotNull:       true,
-		supportAlterDropColumn:       true,
-		supportAlterDropConstraint:   true,
-		supportAlterDropDefault:      true,
-		supportAlterDropNotNull:      true,
-		supportAlterRenameColumn:     false,
-		supportAlterRenameConstraint: false,
-		supportAlterRenameIndex:      false,
-		supportAlterRenameSchema:     false,
-		supportAlterRenameTable:      false,
-		supportAlterRenameView:       false,
-		supportAlterSetType:          true,
-		supportAttrCreateOrder: []modifierService{
+		lengthMaxArray:       128,
+		lengthMaxConst:       63,
+		lengthMaxFunc:        48,
+		lengthMaxIdent:       128,
+		lengthMaxLimit:       63,
+		lengthMaxParam:       2100,
+		lengthMaxQuery:       64 * 1024,
+		lengthMaxValueByte:   1024,
+		lengthMaxValueString: 128,
+		listComparisons:      listComparisonsMssql,
+		listFunctions:        listFunctionsMssql,
+		listManagement:       listManagementMssql,
+		listModifiers:        listModifiersMssql,
+		listTypes:            listTypesMssql,
+		orderSupportAttr: []modifierService{
 			uastModifierAutoIncrement,
 			uastModifierNotNull,
 			uastModifierDefault,
+		},
+		parensFunction:    true,
+		placeholderNumber: 0,
+		placeholderStyle:  "@p",
+		placeholderType:   true,
+		symbolMarkLeft:    "'",
+		symbolMarkRight:   "'",
+		symbolQuoteLeft:   "[",
+		symbolQuoteRight:  "]",
+		supportAdd: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: true,
+			uastModifierDefault:    true,
+			uastModifierNotNull:    true,
 		},
 		supportCascade: map[modifierService]bool{
 			uastModifierColumn: false,
@@ -65,6 +56,12 @@ var DialectMsSQL = &SupportDialect{
 			uastModifierTable:  false,
 			uastModifierView:   false,
 		},
+		supportDrop: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: true,
+			uastModifierDefault:    true,
+			uastModifierNotNull:    true,
+		},
 		supportIfExists: map[modifierService]bool{
 			uastModifierColumn: false,
 			uastModifierIndex:  false,
@@ -79,9 +76,22 @@ var DialectMsSQL = &SupportDialect{
 			uastModifierTable:  false,
 			uastModifierView:   true,
 		},
-		supportRestartIdentity: false,
-		supportReturning:       true,
-		supportUpsert:          false,
+		supportOptions: map[modifierService]bool{
+			uastModifierRestartIdentity: false,
+			uastModifierUpsert:          false,
+		},
+		supportRename: map[modifierService]bool{
+			uastModifierColumn:     false,
+			uastModifierConstraint: false,
+			uastModifierIndex:      false,
+			uastModifierSchema:     false,
+			uastModifierTable:      false,
+			uastModifierView:       false,
+		},
+		supportReturning: true,
+		supportSet: map[modifierService]bool{
+			uastModifierType: true,
+		},
 	},
 	name:      "MsSQL",
 	strateger: &mssqlStrateger{},
@@ -170,11 +180,10 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionLength:   mssqlFunctionLength,
 	uastFunctionPosition: mssqlFunctionPosition,
 }
-var listManagementMssql = map[managementService]managementService{
-	uastManagementUpsert: "",
-}
+var listManagementMssql = map[managementService]managementService{}
 var listModifiersMssql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "IDENTITY(1,1)",
+	uastModifierUpsert:        "",
 }
 var listTypesMssql = map[ValueType]typeService{
 	// Типы бинарные
@@ -945,7 +954,7 @@ func (strateger *mssqlStrateger) transformInsert(baseTransformer *baseTransforme
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		if service, exists := listManagementMssql[uastManagementUpsert]; exists {
+		if service, exists := listModifiersMssql[uastModifierUpsert]; exists {
 			stmtInsert.values.upsert.service = service
 		}
 	}
@@ -1001,7 +1010,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -1009,7 +1018,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -1017,7 +1026,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameIndex {
+			if !baseValidator.config.supportRename[uastModifierIndex] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -1026,7 +1035,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 		}
 	case *sourceSchema:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -1034,7 +1043,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -1042,7 +1051,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameSchema {
+			if !baseValidator.config.supportRename[uastModifierSchema] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -1054,7 +1063,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			return ErrUnsupportEntityTable
 		}
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -1062,7 +1071,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -1070,7 +1079,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameTable {
+			if !baseValidator.config.supportRename[uastModifierTable] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -1079,7 +1088,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 		}
 	case *sourceView:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -1087,7 +1096,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -1095,7 +1104,7 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameView {
+			if !baseValidator.config.supportRename[uastModifierView] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {

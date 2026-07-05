@@ -8,47 +8,38 @@ import (
 // Публичные переменные
 var DialectSQLite = &SupportDialect{
 	config: &config{
-		lengthMaxArray:               128,
-		lengthMaxConst:               63,
-		lengthMaxFunc:                48,
-		lengthMaxIdent:               64,
-		lengthMaxLimit:               63,
-		lengthMaxParam:               65535,
-		lengthMaxQuery:               64 * 1024,
-		lengthMaxValueByte:           1024,
-		lengthMaxValueString:         128,
-		listComparisons:              listComparisonsSQLite,
-		listFunctions:                listFunctionsSQLite,
-		listManagement:               listManagementSQLite,
-		listModifiers:                listModifiersSQLite,
-		listTypes:                    listTypesSQLite,
-		parensFunction:               false,
-		placeholderNumber:            0,
-		placeholderStyle:             "?",
-		placeholderType:              false,
-		symbolMarkLeft:               "'",
-		symbolMarkRight:              "'",
-		symbolQuoteLeft:              "\"",
-		symbolQuoteRight:             "\"",
-		supportAlterAddColumn:        true,
-		supportAlterAddConstraint:    false,
-		supportAlterAddDefault:       false,
-		supportAlterAddNotNull:       false,
-		supportAlterDropColumn:       false,
-		supportAlterDropConstraint:   false,
-		supportAlterDropDefault:      false,
-		supportAlterDropNotNull:      false,
-		supportAlterRenameColumn:     false,
-		supportAlterRenameConstraint: false,
-		supportAlterRenameIndex:      false,
-		supportAlterRenameSchema:     false,
-		supportAlterRenameTable:      true,
-		supportAlterRenameView:       false,
-		supportAlterSetType:          false,
-		supportAttrCreateOrder: []modifierService{
+		lengthMaxArray:       128,
+		lengthMaxConst:       63,
+		lengthMaxFunc:        48,
+		lengthMaxIdent:       64,
+		lengthMaxLimit:       63,
+		lengthMaxParam:       65535,
+		lengthMaxQuery:       64 * 1024,
+		lengthMaxValueByte:   1024,
+		lengthMaxValueString: 128,
+		listComparisons:      listComparisonsSQLite,
+		listFunctions:        listFunctionsSQLite,
+		listManagement:       listManagementSQLite,
+		listModifiers:        listModifiersSQLite,
+		listTypes:            listTypesSQLite,
+		orderSupportAttr: []modifierService{
 			uastModifierNotNull,
 			uastModifierAutoIncrement,
 			uastModifierDefault,
+		},
+		parensFunction:    false,
+		placeholderNumber: 0,
+		placeholderStyle:  "?",
+		placeholderType:   false,
+		symbolMarkLeft:    "'",
+		symbolMarkRight:   "'",
+		symbolQuoteLeft:   "\"",
+		symbolQuoteRight:  "\"",
+		supportAdd: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: false,
+			uastModifierDefault:    false,
+			uastModifierNotNull:    false,
 		},
 		supportCascade: map[modifierService]bool{
 			uastModifierColumn: false,
@@ -64,6 +55,12 @@ var DialectSQLite = &SupportDialect{
 			uastModifierTable:  true,
 			uastModifierView:   false,
 		},
+		supportDrop: map[modifierService]bool{
+			uastModifierColumn:     false,
+			uastModifierConstraint: false,
+			uastModifierDefault:    false,
+			uastModifierNotNull:    false,
+		},
 		supportIfExists: map[modifierService]bool{
 			uastModifierColumn: false,
 			uastModifierIndex:  true,
@@ -78,9 +75,22 @@ var DialectSQLite = &SupportDialect{
 			uastModifierTable:  true,
 			uastModifierView:   true,
 		},
-		supportRestartIdentity: false,
-		supportReturning:       true,
-		supportUpsert:          true,
+		supportOptions: map[modifierService]bool{
+			uastModifierRestartIdentity: false,
+			uastModifierUpsert:          true,
+		},
+		supportRename: map[modifierService]bool{
+			uastModifierColumn:     false,
+			uastModifierConstraint: false,
+			uastModifierIndex:      false,
+			uastModifierSchema:     false,
+			uastModifierTable:      true,
+			uastModifierView:       false,
+		},
+		supportReturning: true,
+		supportSet: map[modifierService]bool{
+			uastModifierType: false,
+		},
 	},
 	name:      "SQLite",
 	strateger: &sqliteStrateger{},
@@ -152,11 +162,10 @@ var listFunctionsSQLite = map[functionService]functionTransform{
 	uastFunctionRand: sqliteFunctionRand,
 	// Функции строковые
 }
-var listManagementSQLite = map[managementService]managementService{
-	uastManagementUpsert: "ON CONFLICT DO UPDATE SET",
-}
+var listManagementSQLite = map[managementService]managementService{}
 var listModifiersSQLite = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTOINCREMENT",
+	uastModifierUpsert:        "ON CONFLICT DO UPDATE SET",
 }
 var listTypesSQLite = map[ValueType]typeService{
 	// Типы бинарные
@@ -794,7 +803,7 @@ func (strateger *sqliteStrateger) transformInsert(baseTransformer *baseTransform
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		if service, exists := listManagementSQLite[uastManagementUpsert]; exists {
+		if service, exists := listModifiersSQLite[uastModifierUpsert]; exists {
 			stmtInsert.values.upsert.service = service
 		}
 	}
@@ -838,7 +847,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -846,7 +855,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -854,7 +863,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameIndex {
+			if !baseValidator.config.supportRename[uastModifierIndex] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -863,7 +872,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 		}
 	case *sourceSchema:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -871,7 +880,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -879,7 +888,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameSchema {
+			if !baseValidator.config.supportRename[uastModifierSchema] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -891,7 +900,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			return ErrUnsupportEntityTable
 		}
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -899,7 +908,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -907,7 +916,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameTable {
+			if !baseValidator.config.supportRename[uastModifierTable] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -916,7 +925,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 		}
 	case *sourceView:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -924,7 +933,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -932,7 +941,7 @@ func (strateger *sqliteStrateger) validateAlter(baseValidator *baseValidator, st
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameView {
+			if !baseValidator.config.supportRename[uastModifierView] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {

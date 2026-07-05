@@ -8,47 +8,38 @@ import (
 // Публичные переменные
 var DialectMySQL = &SupportDialect{
 	config: &config{
-		lengthMaxArray:               128,
-		lengthMaxConst:               63,
-		lengthMaxFunc:                48,
-		lengthMaxIdent:               64,
-		lengthMaxLimit:               63,
-		lengthMaxParam:               65535,
-		lengthMaxQuery:               64 * 1024,
-		lengthMaxValueByte:           1024,
-		lengthMaxValueString:         128,
-		listComparisons:              listComparisonsMysql,
-		listManagement:               listManagementMysql,
-		listFunctions:                listFunctionsMysql,
-		listModifiers:                listModifiersMysql,
-		listTypes:                    listTypesMysql,
-		parensFunction:               true,
-		placeholderNumber:            -1,
-		placeholderStyle:             "?",
-		placeholderType:              false,
-		symbolMarkLeft:               "'",
-		symbolMarkRight:              "'",
-		symbolQuoteLeft:              "`",
-		symbolQuoteRight:             "`",
-		supportAlterAddColumn:        true,
-		supportAlterAddConstraint:    true,
-		supportAlterAddDefault:       true,
-		supportAlterAddNotNull:       true,
-		supportAlterDropColumn:       true,
-		supportAlterDropConstraint:   true,
-		supportAlterDropDefault:      true,
-		supportAlterDropNotNull:      true,
-		supportAlterRenameColumn:     true,
-		supportAlterRenameConstraint: true,
-		supportAlterRenameIndex:      false,
-		supportAlterRenameSchema:     false,
-		supportAlterRenameTable:      true,
-		supportAlterRenameView:       false,
-		supportAlterSetType:          true,
-		supportAttrCreateOrder: []modifierService{
+		lengthMaxArray:       128,
+		lengthMaxConst:       63,
+		lengthMaxFunc:        48,
+		lengthMaxIdent:       64,
+		lengthMaxLimit:       63,
+		lengthMaxParam:       65535,
+		lengthMaxQuery:       64 * 1024,
+		lengthMaxValueByte:   1024,
+		lengthMaxValueString: 128,
+		listComparisons:      listComparisonsMysql,
+		listManagement:       listManagementMysql,
+		listFunctions:        listFunctionsMysql,
+		listModifiers:        listModifiersMysql,
+		listTypes:            listTypesMysql,
+		orderSupportAttr: []modifierService{
 			uastModifierNotNull,
 			uastModifierAutoIncrement,
 			uastModifierDefault,
+		},
+		parensFunction:    true,
+		placeholderNumber: -1,
+		placeholderStyle:  "?",
+		placeholderType:   false,
+		symbolMarkLeft:    "'",
+		symbolMarkRight:   "'",
+		symbolQuoteLeft:   "`",
+		symbolQuoteRight:  "`",
+		supportAdd: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: true,
+			uastModifierDefault:    true,
+			uastModifierNotNull:    true,
 		},
 		supportCascade: map[modifierService]bool{
 			uastModifierColumn: false,
@@ -64,6 +55,12 @@ var DialectMySQL = &SupportDialect{
 			uastModifierTable:  true,
 			uastModifierView:   false,
 		},
+		supportDrop: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: true,
+			uastModifierDefault:    true,
+			uastModifierNotNull:    true,
+		},
 		supportIfExists: map[modifierService]bool{
 			uastModifierColumn: false,
 			uastModifierIndex:  false,
@@ -78,9 +75,22 @@ var DialectMySQL = &SupportDialect{
 			uastModifierTable:  true,
 			uastModifierView:   true,
 		},
-		supportRestartIdentity: false,
-		supportReturning:       false,
-		supportUpsert:          true,
+		supportOptions: map[modifierService]bool{
+			uastModifierRestartIdentity: false,
+			uastModifierUpsert:          true,
+		},
+		supportRename: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: true,
+			uastModifierIndex:      false,
+			uastModifierSchema:     false,
+			uastModifierTable:      true,
+			uastModifierView:       false,
+		},
+		supportReturning: false,
+		supportSet: map[modifierService]bool{
+			uastModifierType: true,
+		},
 	},
 	name:      "MySQL",
 	strateger: &mysqlStrateger{},
@@ -136,11 +146,10 @@ var listFunctionsMysql = map[functionService]functionTransform{
 	uastFunctionTrunc: mysqlFunctionTrunc,
 	// Функции строковые
 }
-var listManagementMysql = map[managementService]managementService{
-	uastManagementUpsert: "ON DUPLICATE KEY UPDATE",
-}
+var listManagementMysql = map[managementService]managementService{}
 var listModifiersMysql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
+	uastModifierUpsert:        "ON DUPLICATE KEY UPDATE",
 }
 var listTypesMysql = map[ValueType]typeService{
 	// Типы бинарные
@@ -741,7 +750,7 @@ func (strateger *mysqlStrateger) transformInsert(baseTransformer *baseTransforme
 		return err
 	}
 	if stmtInsert.values != nil && stmtInsert.values.upsert != nil {
-		if service, exists := listManagementMysql[uastManagementUpsert]; exists {
+		if service, exists := listModifiersMysql[uastModifierUpsert]; exists {
 			stmtInsert.values.upsert.service = service
 		}
 	}
@@ -776,7 +785,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -784,7 +793,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -792,7 +801,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameIndex {
+			if !baseValidator.config.supportRename[uastModifierIndex] {
 				return ErrUnsupportEntityIndex
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -801,7 +810,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 		}
 	case *sourceSchema:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -809,7 +818,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -817,7 +826,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameSchema {
+			if !baseValidator.config.supportRename[uastModifierSchema] {
 				return ErrUnsupportEntitySchema
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -829,7 +838,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			return ErrUnsupportEntityTable
 		}
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -837,7 +846,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -845,7 +854,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameTable {
+			if !baseValidator.config.supportRename[uastModifierTable] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
@@ -854,7 +863,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 		}
 	case *sourceView:
 		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportAlterRenameColumn {
+			if !baseValidator.config.supportRename[uastModifierColumn] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
@@ -862,7 +871,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportAlterRenameConstraint {
+			if !baseValidator.config.supportRename[uastModifierConstraint] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
@@ -870,7 +879,7 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportAlterRenameView {
+			if !baseValidator.config.supportRename[uastModifierView] {
 				return ErrUnsupportEntityView
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {

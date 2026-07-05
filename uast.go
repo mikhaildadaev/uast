@@ -275,23 +275,20 @@ const (
 	uastManagementWaitFor   managementService = "WAITFOR"
 	uastManagementDelay     managementService = "DELAY"
 	uastManagementTimeout   managementService = "TIMEOUT"
+	// Конструкции стейтментов
+	uastManagementAlter    managementService = "ALTER"
+	uastManagementComment  managementService = "COMMENT"
+	uastManagementCreate   managementService = "CREATE"
+	uastManagementDelete   managementService = "DELETE"
+	uastManagementDrop     managementService = "DROP"
+	uastManagementInsert   managementService = "INSERT"
+	uastManagementSelect   managementService = "SELECT"
+	uastManagementTruncate managementService = "TRUNCATE"
+	uastManagementUpdate   managementService = "UPDATE"
 	// Конструкции управления
-	uastManagementAdd         managementService = "ADD"
-	uastManagementAlter       managementService = "ALTER"
-	uastManagementComment     managementService = "COMMENT"
-	uastManagementCreate      managementService = "CREATE"
-	uastManagementDrop        managementService = "DROP"
-	uastManagementDelete      managementService = "DELETE"
-	uastManagementInsert      managementService = "INSERT"
-	uastManagementRename      managementService = "RENAME"
-	uastManagementSelect      managementService = "SELECT"
-	uastManagementUpdate      managementService = "UPDATE"
-	uastManagementTruncate    managementService = "TRUNCATE"
 	uastManagementFetchNext   managementService = "FETCH NEXT"
 	uastManagementFrom        managementService = "FROM"
 	uastManagementInto        managementService = "INTO"
-	uastManagementSet         managementService = "SET"
-	uastManagementTo          managementService = "TO"
 	uastManagementGroupBy     managementService = "GROUP BY"
 	uastManagementHaving      managementService = "HAVING"
 	uastManagementJoin        managementService = "JOIN"
@@ -301,7 +298,7 @@ const (
 	uastManagementOutput      managementService = "OUTPUT"
 	uastManagementPartitionBy managementService = "PARTITION BY"
 	uastManagementReturning   managementService = "RETURNING"
-	uastManagementUpsert      managementService = "UPSERT"
+	uastManagementSet         managementService = "SET"
 	uastManagementUsing       managementService = "USING"
 	uastManagementValues      managementService = "VALUES"
 	uastManagementWhere       managementService = "WHERE"
@@ -309,17 +306,19 @@ const (
 )
 const (
 	// Конструкции модификаторов
+	uastModifierAdd             modifierService = "ADD"
 	uastModifierAnd             modifierService = "AND"
 	uastModifierAs              modifierService = "AS"
 	uastModifierAutoIncrement   modifierService = "AUTOINCREMENT"
+	uastModifierBetween         modifierService = "BETWEEN"
 	uastModifierCascade         modifierService = "CASCADE"
 	uastModifierCheck           modifierService = "CHECK"
 	uastModifierColumn          modifierService = "COLUMN"
 	uastModifierConstraint      modifierService = "CONSTRAINT"
 	uastModifierCTE             modifierService = "CTE"
-	uastModifierBetween         modifierService = "BETWEEN"
 	uastModifierDefault         modifierService = "DEFAULT"
 	uastModifierDistinct        modifierService = "DISTINCT"
+	uastModifierDrop            modifierService = "DROP"
 	uastModifierElse            modifierService = "ELSE"
 	uastModifierEnd             modifierService = "END"
 	uastModifierForeignKey      modifierService = "FOREIGN KEY"
@@ -346,11 +345,13 @@ const (
 	uastModifierRowsOnly        modifierService = "ROWS ONLY"
 	uastModifierSchema          modifierService = "SCHEMA"
 	uastModifierSeparator       modifierService = "SEPARATOR"
+	uastModifierSet             modifierService = "SET"
 	uastModifierTable           modifierService = "TABLE"
 	uastModifierThen            modifierService = "THEN"
 	uastModifierTo              modifierService = "TO"
 	uastModifierType            modifierService = "TYPE"
 	uastModifierUnique          modifierService = "UNIQUE"
+	uastModifierUpsert          modifierService = "UPSERT"
 	uastModifierView            modifierService = "VIEW"
 	uastModifierWeekday         modifierService = "WEEKDAY"
 	uastModifierWhen            modifierService = "WHEN"
@@ -415,8 +416,8 @@ var listFunctionServices = []functionService{
 	// Функции ранжирующие
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
 }
-var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDrop, uastManagementDelete, uastManagementInsert, uastManagementSelect, uastManagementUpdate, uastManagementTruncate, uastManagementFetchNext, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementTo, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementPartitionBy, uastManagementReturning, uastManagementUpsert, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
-var listModifierServices = []modifierService{uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierCascade, uastModifierCheck, uastModifierColumn, uastModifierConstraint, uastModifierCTE, uastModifierBetween, uastModifierDefault, uastModifierDistinct, uastModifierElse, uastModifierEnd, uastModifierForeignKey, uastModifierIfExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOnDelete, uastModifierOnUpdate, uastModifierOrReplace, uastModifierOver, uastModifierPrimaryKey, uastModifierQuery, uastModifierRecursive, uastModifierReferences, uastModifierRestartIdentity, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierTable, uastModifierThen, uastModifierUnique, uastModifierView, uastModifierWeekday, uastModifierWhen}
+var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDelete, uastManagementDrop, uastManagementInsert, uastManagementSelect, uastManagementTruncate, uastManagementUpdate, uastManagementFetchNext, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementOutput, uastManagementPartitionBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
+var listModifierServices = []modifierService{uastModifierAdd, uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierBetween, uastModifierCascade, uastModifierCheck, uastModifierColumn, uastModifierConstraint, uastModifierCTE, uastModifierDefault, uastModifierDistinct, uastModifierDrop, uastModifierElse, uastModifierEnd, uastModifierForeignKey, uastModifierIfExists, uastModifierIfNotExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOnDelete, uastModifierOnUpdate, uastModifierOrReplace, uastModifierOver, uastModifierPrimaryKey, uastModifierQuery, uastModifierRecursive, uastModifierReferences, uastModifierRename, uastModifierRestartIdentity, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierSet, uastModifierTable, uastModifierThen, uastModifierTo, uastModifierType, uastModifierUnique, uastModifierUpsert, uastModifierView, uastModifierWeekday, uastModifierWhen}
 var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMsSQL, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,
@@ -455,51 +456,39 @@ type typeString interface {
 
 // Приватные структуры
 type config struct {
-	lengthMaxArray               int
-	lengthMaxConst               int
-	lengthMaxFunc                int
-	lengthMaxIdent               int
-	lengthMaxLimit               int
-	lengthMaxParam               int
-	lengthMaxQuery               int
-	lengthMaxValueByte           int
-	lengthMaxValueString         int
-	listComparisons              map[comparisonOperator]comparisonTransform
-	listFunctions                map[functionService]functionTransform
-	listManagement               map[managementService]managementService
-	listModifiers                map[modifierService]modifierService
-	listTypes                    map[ValueType]typeService
-	parensFunction               bool
-	placeholderNumber            int
-	placeholderStyle             string
-	placeholderType              bool
-	symbolMarkLeft               string
-	symbolMarkRight              string
-	symbolQuoteLeft              string
-	symbolQuoteRight             string
-	supportAlterAddColumn        bool
-	supportAlterAddConstraint    bool
-	supportAlterAddDefault       bool
-	supportAlterAddNotNull       bool
-	supportAlterDropColumn       bool
-	supportAlterDropConstraint   bool
-	supportAlterDropDefault      bool
-	supportAlterDropNotNull      bool
-	supportAlterRenameColumn     bool
-	supportAlterRenameConstraint bool
-	supportAlterRenameIndex      bool
-	supportAlterRenameSchema     bool
-	supportAlterRenameTable      bool
-	supportAlterRenameView       bool
-	supportAlterSetType          bool
-	supportAttrCreateOrder       []modifierService
-	supportCascade               map[modifierService]bool
-	supportComment               map[modifierService]bool
-	supportIfExists              map[modifierService]bool
-	supportIfNotExists           map[modifierService]bool
-	supportRestartIdentity       bool
-	supportReturning             bool
-	supportUpsert                bool
+	lengthMaxArray       int
+	lengthMaxConst       int
+	lengthMaxFunc        int
+	lengthMaxIdent       int
+	lengthMaxLimit       int
+	lengthMaxParam       int
+	lengthMaxQuery       int
+	lengthMaxValueByte   int
+	lengthMaxValueString int
+	listComparisons      map[comparisonOperator]comparisonTransform
+	listFunctions        map[functionService]functionTransform
+	listManagement       map[managementService]managementService
+	listModifiers        map[modifierService]modifierService
+	listTypes            map[ValueType]typeService
+	orderSupportAttr     []modifierService
+	parensFunction       bool
+	placeholderNumber    int
+	placeholderStyle     string
+	placeholderType      bool
+	symbolMarkLeft       string
+	symbolMarkRight      string
+	symbolQuoteLeft      string
+	symbolQuoteRight     string
+	supportAdd           map[modifierService]bool
+	supportCascade       map[modifierService]bool
+	supportComment       map[modifierService]bool
+	supportDrop          map[modifierService]bool
+	supportIfExists      map[modifierService]bool
+	supportIfNotExists   map[modifierService]bool
+	supportOptions       map[modifierService]bool
+	supportRename        map[modifierService]bool
+	supportReturning     bool
+	supportSet           map[modifierService]bool
 }
 type casePair[T typeScalar] struct {
 	then ExpressionSafe[T]

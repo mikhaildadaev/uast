@@ -20,7 +20,7 @@ func (stmt *stmtUpdate) Onto(onTo SourceBase) *stmtUpdate {
 func (stmt *stmtUpdate) Returning(returnings ...markReturnable) *stmtUpdate {
 	stmt.returning = &clauseReturning{
 		expressions:      returnings,
-		serviceReturning: uastManagementReturning,
+		serviceReturning: uastModifierReturning,
 	}
 	return stmt
 }

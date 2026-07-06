@@ -20,7 +20,7 @@ func (stmt *stmtDelete) Join(joins ...*clauseJoin) *stmtDelete {
 func (stmt *stmtDelete) Returning(returnings ...markReturnable) *stmtDelete {
 	stmt.returning = &clauseReturning{
 		expressions:      returnings,
-		serviceReturning: uastManagementReturning,
+		serviceReturning: uastModifierReturning,
 	}
 	return stmt
 }

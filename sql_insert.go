@@ -18,7 +18,7 @@ func (stmt *stmtInsert) Into(inTo SourceBase) *stmtInsert {
 func (stmt *stmtInsert) Returning(returnings ...markReturnable) *stmtInsert {
 	stmt.returning = &clauseReturning{
 		expressions:      returnings,
-		serviceReturning: uastManagementReturning,
+		serviceReturning: uastModifierReturning,
 	}
 	return stmt
 }

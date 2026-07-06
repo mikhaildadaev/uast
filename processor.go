@@ -110,7 +110,6 @@ type elementValidator interface {
 	validateValue(value any) error
 }
 type componentValidator interface {
-	validateColumns(columns []markSourceable) error
 	validateCommand(command managementService) error
 	validateEntity(entity SourceBase) error
 	validateFields(fields []markExpressable) error

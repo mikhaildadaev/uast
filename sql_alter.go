@@ -50,7 +50,7 @@ func (stmt *stmtAlter) RenameTo(name string) *stmtAlter {
 	stmt.renameTo = name
 	return stmt
 }
-func (stmt *stmtAlter) SetColumns(oprations ...columnModifiable) *stmtAlter {
+func (stmt *stmtAlter) SetColumns(oprations ...*columnSet) *stmtAlter {
 	stmt.setColumns = append(stmt.setColumns, oprations...)
 	return stmt
 }
@@ -69,7 +69,7 @@ type stmtAlter struct {
 	renameColumn     *columnRename
 	renameConstraint *constraintRename
 	renameTo         string
-	setColumns       []columnModifiable
+	setColumns       []*columnSet
 }
 
 // Приватные методы
@@ -118,7 +118,7 @@ func (stmt *stmtAlter) clone() statement {
 		}
 	}
 	if len(stmt.setColumns) > 0 {
-		copy.setColumns = make([]columnModifiable, len(stmt.setColumns))
+		copy.setColumns = make([]*columnSet, len(stmt.setColumns))
 		for i, operation := range stmt.setColumns {
 			var clonedColumn SourceBase
 			if operation.column != nil {
@@ -128,7 +128,7 @@ func (stmt *stmtAlter) clone() statement {
 			if operation.value != nil {
 				clonedValue = operation.value.clone()
 			}
-			copy.setColumns[i] = columnModifiable{
+			copy.setColumns[i] = &columnSet{
 				column:    clonedColumn,
 				operation: operation.operation,
 				value:     clonedValue,

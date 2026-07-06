@@ -349,7 +349,7 @@ func postgresqlFunctionDay(baseTransformer *baseTransformer, expr transformFunct
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionDay),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}
@@ -376,7 +376,7 @@ func postgresqlFunctionHour(baseTransformer *baseTransformer, expr transformFunc
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionHour),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}
@@ -393,7 +393,7 @@ func postgresqlFunctionMinute(baseTransformer *baseTransformer, expr transformFu
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionMinute),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}
@@ -410,7 +410,7 @@ func postgresqlFunctionMonth(baseTransformer *baseTransformer, expr transformFun
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionMonth),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}
@@ -442,7 +442,7 @@ func postgresqlFunctionQuarter(baseTransformer *baseTransformer, expr transformF
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionQuarter),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}
@@ -459,7 +459,7 @@ func postgresqlFunctionSecond(baseTransformer *baseTransformer, expr transformFu
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionSecond),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}
@@ -532,7 +532,7 @@ func postgresqlFunctionWeek(baseTransformer *baseTransformer, expr transformFunc
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionWeek),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}
@@ -549,7 +549,7 @@ func postgresqlFunctionYear(baseTransformer *baseTransformer, expr transformFunc
 	function.right = &exprComposite[string]{
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastFunctionYear),
-			serviceString(uastManagementFrom),
+			serviceString(uastModifierFrom),
 		},
 		operator: uastCompositeSingleSpace,
 	}

@@ -942,7 +942,7 @@ func (strateger *mssqlStrateger) transformDelete(baseTransformer *baseTransforme
 		return err
 	}
 	if stmtDelete.returning != nil {
-		stmtDelete.returning.serviceReturning = uastManagementOutput
+		stmtDelete.returning.serviceReturning = uastModifierOutput
 	}
 	return nil
 }
@@ -962,7 +962,7 @@ func (strateger *mssqlStrateger) transformInsert(baseTransformer *baseTransforme
 		}
 	}
 	if stmtInsert.returning != nil {
-		stmtInsert.returning.serviceReturning = uastManagementOutput
+		stmtInsert.returning.serviceReturning = uastModifierOutput
 	}
 	return nil
 }
@@ -983,8 +983,8 @@ func (strateger *mssqlStrateger) transformSelect(baseTransformer *baseTransforme
 			}
 		}
 		stmtSelect.pagination.reverse = true
-		stmtSelect.pagination.serviceLimit = uastManagementFetchNext
-		stmtSelect.pagination.serviceOffset = uastManagementOffset
+		stmtSelect.pagination.serviceLimit = uastModifierFetchNext
+		stmtSelect.pagination.serviceOffset = uastModifierOffset
 		stmtSelect.pagination.suffixLimit = uastModifierRowsOnly
 		stmtSelect.pagination.suffixOffset = uastModifierRows
 	}
@@ -1001,7 +1001,7 @@ func (strateger *mssqlStrateger) transformUpdate(baseTransformer *baseTransforme
 		return err
 	}
 	if stmtUpdate.returning != nil {
-		stmtUpdate.returning.serviceReturning = uastManagementOutput
+		stmtUpdate.returning.serviceReturning = uastModifierOutput
 	}
 	return nil
 }

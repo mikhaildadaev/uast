@@ -19,10 +19,14 @@ var DialectSQLite = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsSQLite,
 		listFunctions:        listFunctionsSQLite,
-		listManagement:       listManagementSQLite,
 		listModifiers:        listModifiersSQLite,
 		listTypes:            listTypesSQLite,
-		orderSupportAttr: []modifierService{
+		orderSupportAlter: []modifierService{
+			uastModifierType,
+			uastModifierDefault,
+			uastModifierNotNull,
+		},
+		orderSupportCreate: []modifierService{
 			uastModifierNotNull,
 			uastModifierAutoIncrement,
 			uastModifierDefault,
@@ -162,7 +166,6 @@ var listFunctionsSQLite = map[functionService]functionTransform{
 	uastFunctionRand: sqliteFunctionRand,
 	// Функции строковые
 }
-var listManagementSQLite = map[managementService]managementService{}
 var listModifiersSQLite = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTOINCREMENT",
 	uastModifierUpsert:        "ON CONFLICT DO UPDATE SET",

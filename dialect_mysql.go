@@ -18,11 +18,15 @@ var DialectMySQL = &SupportDialect{
 		lengthMaxValueByte:   1024,
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMysql,
-		listManagement:       listManagementMysql,
 		listFunctions:        listFunctionsMysql,
 		listModifiers:        listModifiersMysql,
 		listTypes:            listTypesMysql,
-		orderSupportAttr: []modifierService{
+		orderSupportAlter: []modifierService{
+			uastModifierType,
+			uastModifierDefault,
+			uastModifierNotNull,
+		},
+		orderSupportCreate: []modifierService{
 			uastModifierNotNull,
 			uastModifierAutoIncrement,
 			uastModifierDefault,
@@ -146,7 +150,6 @@ var listFunctionsMysql = map[functionService]functionTransform{
 	uastFunctionTrunc: mysqlFunctionTrunc,
 	// Функции строковые
 }
-var listManagementMysql = map[managementService]managementService{}
 var listModifiersMysql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
 	uastModifierUpsert:        "ON DUPLICATE KEY UPDATE",

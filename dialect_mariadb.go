@@ -19,10 +19,14 @@ var DialectMariaDB = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMariadb,
 		listFunctions:        listFunctionsMariadb,
-		listManagement:       listManagementMariadb,
 		listModifiers:        listModifiersMariadb,
 		listTypes:            listTypesMariadb,
-		orderSupportAttr: []modifierService{
+		orderSupportAlter: []modifierService{
+			uastModifierType,
+			uastModifierDefault,
+			uastModifierNotNull,
+		},
+		orderSupportCreate: []modifierService{
 			uastModifierNotNull,
 			uastModifierAutoIncrement,
 			uastModifierDefault,
@@ -146,7 +150,6 @@ var listFunctionsMariadb = map[functionService]functionTransform{
 	uastFunctionTrunc: mariadbFunctionTrunc,
 	// Функции строковые
 }
-var listManagementMariadb = map[managementService]managementService{}
 var listModifiersMariadb = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
 	uastModifierUpsert:        "ON DUPLICATE KEY UPDATE",

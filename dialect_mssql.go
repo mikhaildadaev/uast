@@ -20,10 +20,14 @@ var DialectMsSQL = &SupportDialect{
 		lengthMaxValueString: 128,
 		listComparisons:      listComparisonsMssql,
 		listFunctions:        listFunctionsMssql,
-		listManagement:       listManagementMssql,
 		listModifiers:        listModifiersMssql,
 		listTypes:            listTypesMssql,
-		orderSupportAttr: []modifierService{
+		orderSupportAlter: []modifierService{
+			uastModifierType,
+			uastModifierDefault,
+			uastModifierNotNull,
+		},
+		orderSupportCreate: []modifierService{
 			uastModifierAutoIncrement,
 			uastModifierNotNull,
 			uastModifierDefault,
@@ -180,7 +184,6 @@ var listFunctionsMssql = map[functionService]functionTransform{
 	uastFunctionLength:   mssqlFunctionLength,
 	uastFunctionPosition: mssqlFunctionPosition,
 }
-var listManagementMssql = map[managementService]managementService{}
 var listModifiersMssql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "IDENTITY(1,1)",
 	uastModifierUpsert:        "",

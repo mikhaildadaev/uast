@@ -474,50 +474,23 @@ func (strateger *mariadbStrateger) renderAlter(baseRenderer *baseRenderer, stmtA
 	}
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
-		if stmtAlter.renameColumn != nil {
-			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
-		}
 		if stmtAlter.renameTo != "" {
 			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
 				return err
 			}
 		}
 	case *sourceSchema:
-		if stmtAlter.renameColumn != nil {
-			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
-		}
 		if stmtAlter.renameTo != "" {
 			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
 				return err
 			}
 		}
 	case *sourceTable:
-		if err := baseRenderer.renderColumns(stmtAlter.command, stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints); err != nil {
+		if err := baseRenderer.renderTableModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
 			return err
 		}
-		if stmtAlter.renameColumn != nil {
-			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
+		if err := baseRenderer.renderTableRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
+			return err
 		}
 		if stmtAlter.renameTo != "" {
 			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
@@ -525,16 +498,6 @@ func (strateger *mariadbStrateger) renderAlter(baseRenderer *baseRenderer, stmtA
 			}
 		}
 	case *sourceView:
-		if stmtAlter.renameColumn != nil {
-			if err := baseRenderer.renderRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if err := baseRenderer.renderRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
-		}
 		if stmtAlter.renameTo != "" {
 			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
 				return err
@@ -572,7 +535,7 @@ func (strateger *mariadbStrateger) renderCreate(baseRenderer *baseRenderer, stmt
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseRenderer.renderColumns(stmtCreate.command, stmtCreate.columns, stmtCreate.constraints, nil, nil); err != nil {
+		if err := baseRenderer.renderTableNewData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -787,22 +750,6 @@ func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, s
 	}
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
-		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportRename[uastModifierColumn] {
-				return ErrUnsupportEntityIndex
-			}
-			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportRename[uastModifierConstraint] {
-				return ErrUnsupportEntityIndex
-			}
-			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
-		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportRename[uastModifierIndex] {
 				return ErrUnsupportEntityIndex
@@ -812,22 +759,6 @@ func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, s
 			}
 		}
 	case *sourceSchema:
-		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportRename[uastModifierColumn] {
-				return ErrUnsupportEntitySchema
-			}
-			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportRename[uastModifierConstraint] {
-				return ErrUnsupportEntitySchema
-			}
-			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
-		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportRename[uastModifierSchema] {
 				return ErrUnsupportEntitySchema
@@ -837,25 +768,6 @@ func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, s
 			}
 		}
 	case *sourceTable:
-		if stmtAlter.renameColumn != nil && stmtAlter.renameConstraint != nil {
-			return ErrUnsupportEntityTable
-		}
-		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportRename[uastModifierColumn] {
-				return ErrUnsupportEntityTable
-			}
-			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportRename[uastModifierConstraint] {
-				return ErrUnsupportEntityTable
-			}
-			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
-		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportRename[uastModifierTable] {
 				return ErrUnsupportEntityTable
@@ -864,23 +776,14 @@ func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, s
 				return err
 			}
 		}
+		if stmtAlter.renameColumn != nil && stmtAlter.renameConstraint != nil {
+			return ErrUnsupportEntityTable
+		} else {
+			if err := baseValidator.validateTableRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
+				return err
+			}
+		}
 	case *sourceView:
-		if stmtAlter.renameColumn != nil {
-			if !baseValidator.config.supportRename[uastModifierColumn] {
-				return ErrUnsupportEntityView
-			}
-			if err := baseValidator.validateRenameColumn(stmtAlter.renameColumn); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameConstraint != nil {
-			if !baseValidator.config.supportRename[uastModifierConstraint] {
-				return ErrUnsupportEntityView
-			}
-			if err := baseValidator.validateRenameConstraint(stmtAlter.renameConstraint); err != nil {
-				return err
-			}
-		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportRename[uastModifierView] {
 				return ErrUnsupportEntityView
@@ -907,12 +810,12 @@ func (strateger *mariadbStrateger) validateCreate(baseValidator *baseValidator, 
 	}
 	switch stmtCreate.entity.(type) {
 	case *sourceIndex:
-		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
+		if err := baseValidator.validateIndex(stmtCreate.columns); err != nil {
 			return err
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseValidator.validateColumns(stmtCreate.columns); err != nil {
+		if err := baseValidator.validateTableNewData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:

@@ -307,6 +307,7 @@ const (
 const (
 	// Конструкции модификаторов
 	uastModifierAdd             modifierService = "ADD"
+	uastModifierAlter           modifierService = "ALTER"
 	uastModifierAnd             modifierService = "AND"
 	uastModifierAs              modifierService = "AS"
 	uastModifierAutoIncrement   modifierService = "AUTOINCREMENT"
@@ -328,6 +329,7 @@ const (
 	uastModifierIndex           modifierService = "INDEX"
 	uastModifierInterval        modifierService = "INTERVAL"
 	uastModifierIs              modifierService = "IS"
+	uastModifierModify          modifierService = "MODIFY"
 	uastModifierMonth           modifierService = "MONTH"
 	uastModifierNotNull         modifierService = "NOT NULL"
 	uastModifierOn              modifierService = "ON"
@@ -417,7 +419,7 @@ var listFunctionServices = []functionService{
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDelete, uastManagementDrop, uastManagementInsert, uastManagementSelect, uastManagementTruncate, uastManagementUpdate, uastManagementFetchNext, uastManagementFrom, uastManagementInto, uastManagementSet, uastManagementGroupBy, uastManagementHaving, uastManagementJoin, uastManagementLimit, uastManagementOffset, uastManagementOrderBy, uastManagementOutput, uastManagementPartitionBy, uastManagementReturning, uastManagementUsing, uastManagementValues, uastManagementWhere, uastManagementWith}
-var listModifierServices = []modifierService{uastModifierAdd, uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierBetween, uastModifierCascade, uastModifierCheck, uastModifierColumn, uastModifierConstraint, uastModifierCTE, uastModifierDefault, uastModifierDistinct, uastModifierDrop, uastModifierElse, uastModifierEnd, uastModifierForeignKey, uastModifierIfExists, uastModifierIfNotExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOnDelete, uastModifierOnUpdate, uastModifierOrReplace, uastModifierOver, uastModifierPrimaryKey, uastModifierQuery, uastModifierRecursive, uastModifierReferences, uastModifierRename, uastModifierRestartIdentity, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierSet, uastModifierTable, uastModifierThen, uastModifierTo, uastModifierType, uastModifierUnique, uastModifierUpsert, uastModifierView, uastModifierWeekday, uastModifierWhen}
+var listModifierServices = []modifierService{uastModifierAdd, uastModifierAlter, uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierBetween, uastModifierCascade, uastModifierCheck, uastModifierColumn, uastModifierConstraint, uastModifierCTE, uastModifierDefault, uastModifierDistinct, uastModifierDrop, uastModifierElse, uastModifierEnd, uastModifierForeignKey, uastModifierIfExists, uastModifierIfNotExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierIs, uastModifierModify, uastModifierMonth, uastModifierNotNull, uastModifierOn, uastModifierOnDelete, uastModifierOnUpdate, uastModifierOrReplace, uastModifierOver, uastModifierPrimaryKey, uastModifierQuery, uastModifierRecursive, uastModifierReferences, uastModifierRename, uastModifierRestartIdentity, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierSet, uastModifierTable, uastModifierThen, uastModifierTo, uastModifierType, uastModifierUnique, uastModifierUpsert, uastModifierView, uastModifierWeekday, uastModifierWhen}
 var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMsSQL, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,

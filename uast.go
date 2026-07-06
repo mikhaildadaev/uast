@@ -469,10 +469,10 @@ type config struct {
 	lengthMaxValueString int
 	listComparisons      map[comparisonOperator]comparisonTransform
 	listFunctions        map[functionService]functionTransform
-	listManagement       map[managementService]managementService
 	listModifiers        map[modifierService]modifierService
 	listTypes            map[ValueType]typeService
-	orderSupportAttr     []modifierService
+	orderSupportAlter    []modifierService
+	orderSupportCreate   []modifierService
 	parensFunction       bool
 	placeholderNumber    int
 	placeholderStyle     string

@@ -106,21 +106,21 @@ func (source *sourceColumn[T]) NotNull() *sourceColumn[T] {
 	source.isNotNull = true
 	return source
 }
-func (source *sourceColumn[T]) SetDefault(value T) columnModifiable {
-	return columnModifiable{
+func (source *sourceColumn[T]) SetDefault(value T) *columnSet {
+	return &columnSet{
 		column:    source,
 		operation: uastModifierDefault,
 		value:     Value(value),
 	}
 }
-func (source *sourceColumn[T]) SetNotNull() columnModifiable {
-	return columnModifiable{
+func (source *sourceColumn[T]) SetNotNull() *columnSet {
+	return &columnSet{
 		column:    source,
 		operation: uastModifierNotNull,
 	}
 }
-func (source *sourceColumn[T]) SetType(valueType ValueType) columnModifiable {
-	return columnModifiable{
+func (source *sourceColumn[T]) SetType(valueType ValueType) *columnSet {
+	return &columnSet{
 		column:    source,
 		operation: uastModifierType,
 		valueType: valueType,
@@ -144,15 +144,15 @@ type registerStatement interface {
 var queryCounter atomic.Int64
 
 // Приватные структуры
-type columnModifiable struct {
+type columnRename struct {
+	column SourceBase
+	name   string
+}
+type columnSet struct {
 	column    SourceBase
 	operation modifierService
 	value     ExpressionBase
 	valueType ValueType
-}
-type columnRename struct {
-	column SourceBase
-	name   string
 }
 type sourceColumn[T typeScalar] struct {
 	defaultValue    ExpressionBase

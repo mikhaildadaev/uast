@@ -213,7 +213,7 @@ func (source *sourceColumn[T]) render(baseRenderer *baseRenderer) error {
 	baseRenderer.renderName(source.getName())
 	baseRenderer.renderOperator(uastCompositeSingleSpace)
 	baseRenderer.renderService(baseRenderer.config.listTypes[source.valueType])
-	for _, attr := range baseRenderer.config.orderSupportAttr {
+	for _, attr := range baseRenderer.config.orderSupportCreate {
 		switch attr {
 		case uastModifierAutoIncrement:
 			if source.isAutoIncrement {

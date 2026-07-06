@@ -95,8 +95,8 @@ func (source *sourceColumn[T]) AutoIncrement() *sourceColumn[T] {
 	source.isAutoIncrement = true
 	return source
 }
-func (source *sourceColumn[T]) Default(value ExpressionBase) *sourceColumn[T] {
-	source.defaultValue = value
+func (source *sourceColumn[T]) Default(value T) *sourceColumn[T] {
+	source.defaultValue = Value(value)
 	return source
 }
 func (source *sourceColumn[T]) Expr() *exprField[T] {

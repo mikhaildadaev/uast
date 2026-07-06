@@ -616,7 +616,7 @@ func (expr *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRenderer) erro
 		baseRenderer.renderOperator(uastCompositeParenLeft)
 		if expr.window != nil {
 			if len(expr.window.partition) > 0 {
-				baseRenderer.renderService(uastManagementPartitionBy)
+				baseRenderer.renderService(uastModifierPartitionBy)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
 				for i, expression := range expr.window.partition {
 					if i > 0 {
@@ -629,7 +629,7 @@ func (expr *exprFunction[InLT, InRT, T]) render(baseRenderer *baseRenderer) erro
 				if len(expr.window.partition) > 0 {
 					baseRenderer.renderOperator(uastCompositeSingleSpace)
 				}
-				baseRenderer.renderService(uastManagementOrderBy)
+				baseRenderer.renderService(uastModifierOrderBy)
 				baseRenderer.renderOperator(uastCompositeSingleSpace)
 				for i, order := range expr.window.order {
 					if i > 0 {

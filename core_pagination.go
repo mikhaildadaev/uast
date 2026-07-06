@@ -3,8 +3,8 @@ package uast
 // Приватные структуры
 type clausePagination struct {
 	reverse       bool
-	serviceLimit  managementService
-	serviceOffset managementService
+	serviceLimit  modifierService
+	serviceOffset modifierService
 	suffixLimit   modifierService
 	suffixOffset  modifierService
 	valueLimit    int

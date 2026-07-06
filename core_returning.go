@@ -9,7 +9,7 @@ type markReturnable interface {
 // Приватные структуры
 type clauseReturning struct {
 	expressions      []markReturnable
-	serviceReturning managementService
+	serviceReturning modifierService
 }
 
 // Приватные методы

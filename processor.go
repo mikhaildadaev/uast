@@ -20,7 +20,6 @@ type componentRenderer interface {
 	renderAs() error
 	renderCascade(entity SourceBase, cascade bool) error
 	renderCommand(command managementService) error
-	renderColumns(command managementService, addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase) error
 	renderDistinct(distinct bool) error
 	renderEntity(entity SourceBase, isReplace bool, ifExists bool, ifNotExists bool) error
 	renderFields(fields []markExpressable, isParen bool) error
@@ -38,8 +37,6 @@ type componentRenderer interface {
 	renderOnTo(onTo SourceBase) error
 	renderOrderBy(orders []markOrderable) error
 	renderPagination(pagination *clausePagination) error
-	renderRenameColumn(columnRename *columnRename) error
-	renderRenameConstraint(constraintRename *constraintRename) error
 	renderRenameTo(name string) error
 	renderReplace(replace bool) error
 	renderRestartIdentity(restartIdentity bool) error
@@ -47,6 +44,9 @@ type componentRenderer interface {
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
 	renderTable(table *TableSource) error
+	renderTableModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error
+	renderTableNewData(columns []markSourceable, constraints []ConstraintBase) error
+	renderTableRenameData(columnRename *columnRename, constraintRename *constraintRename) error
 	renderTarget(source SourceBase) error
 	renderUnions(unions []*clauseUnions) error
 	renderUnique(unique bool) error
@@ -117,6 +117,7 @@ type componentValidator interface {
 	validateFrom(from SourceBase) error
 	validateGroupBy(groups []markGroupable) error
 	validateHaving(having ExpressionBase) error
+	validateIndex(columns []markSourceable) error
 	validateInTo(inTo SourceBase) error
 	validateIsData(data string) error
 	validateJoin(joins []*clauseJoin) error
@@ -125,13 +126,14 @@ type componentValidator interface {
 	validateOnTo(onTo SourceBase) error
 	validateOrderBy(orders []markOrderable) error
 	validatePagination(pagination *clausePagination) error
-	validateRenameColumn(columnRename *columnRename) error
-	validateRenameConstraint(constraintRename *constraintRename) error
 	validateRenameTo(name string) error
 	validateReturning(returnings *clauseReturning) error
 	validateSet(sets []*clauseSet) error
 	validateSource(source statement) error
 	validateTable(table *TableSource) error
+	validateTableModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error
+	validateTableNewData(columns []markSourceable, constraints []ConstraintBase) error
+	validateTableRenameData(columnRename *columnRename, constraintRename *constraintRename) error
 	validateUnions(unions []*clauseUnions) error
 	validateValues(values *clauseValues) error
 	validateWhere(where ExpressionBase) error

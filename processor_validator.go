@@ -328,17 +328,6 @@ func (validator *baseValidator) validateValue(value any) error {
 	}
 	return ErrUnsupportValue
 }
-func (validator *baseValidator) validateColumns(columns []markSourceable) error {
-	if len(columns) == 0 {
-		return nil
-	}
-	for _, column := range columns {
-		if err := column.validate(validator); err != nil {
-			return err
-		}
-	}
-	return nil
-}
 func (validator *baseValidator) validateCommand(command managementService) error {
 	return nil
 }
@@ -396,6 +385,17 @@ func (validator *baseValidator) validateHaving(having ExpressionBase) error {
 	}
 	if err := having.validate(validator); err != nil {
 		return err
+	}
+	return nil
+}
+func (validator *baseValidator) validateIndex(columns []markSourceable) error {
+	if len(columns) == 0 {
+		return nil
+	}
+	for _, column := range columns {
+		if err := column.validate(validator); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -489,30 +489,6 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	}
 	return nil
 }
-func (validator *baseValidator) validateRenameColumn(columnRename *columnRename) error {
-	if columnRename == nil {
-		return nil
-	}
-	if err := columnRename.column.validate(validator); err != nil {
-		return err
-	}
-	if err := validator.validateLiteral(columnRename.name); err != nil {
-		return err
-	}
-	return nil
-}
-func (validator *baseValidator) validateRenameConstraint(constraintRename *constraintRename) error {
-	if constraintRename == nil {
-		return nil
-	}
-	if err := constraintRename.constraint.validate(validator); err != nil {
-		return err
-	}
-	if err := validator.validateLiteral(constraintRename.name); err != nil {
-		return err
-	}
-	return nil
-}
 func (validator *baseValidator) validateRenameTo(renameTo string) error {
 	if renameTo == "" {
 		return nil
@@ -559,6 +535,44 @@ func (validator *baseValidator) validateTable(table *TableSource) error {
 	}
 	if err := table.validate(validator); err != nil {
 		return err
+	}
+	return nil
+}
+func (validator *baseValidator) validateTableNewData(columns []markSourceable, constraints []ConstraintBase) error {
+	if len(columns) == 0 && len(constraints) == 0 {
+		return nil
+	}
+	for _, column := range columns {
+		if err := column.validate(validator); err != nil {
+			return err
+		}
+	}
+	for _, constraint := range constraints {
+		if err := constraint.validate(validator); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func (validator *baseValidator) validateTableRenameData(columnRename *columnRename, constraintRename *constraintRename) error {
+	if columnRename == nil && constraintRename == nil {
+		return nil
+	}
+	if columnRename != nil {
+		if err := columnRename.column.validate(validator); err != nil {
+			return err
+		}
+		if err := validator.validateLiteral(columnRename.name); err != nil {
+			return err
+		}
+	}
+	if constraintRename != nil {
+		if err := constraintRename.constraint.validate(validator); err != nil {
+			return err
+		}
+		if err := validator.validateLiteral(constraintRename.name); err != nil {
+			return err
+		}
 	}
 	return nil
 }

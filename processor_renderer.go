@@ -397,7 +397,7 @@ func (renderer *baseRenderer) renderFrom(from SourceBase) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementFrom)
+	renderer.renderService(uastModifierFrom)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := from.render(renderer); err != nil {
 		return err
@@ -410,7 +410,7 @@ func (renderer *baseRenderer) renderGroupBy(groups []markGroupable) error {
 	}
 	groupsCount := len(groups) - 1
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementGroupBy)
+	renderer.renderService(uastModifierGroupBy)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	for i, group := range groups {
 		if err := group.render(renderer); err != nil {
@@ -427,7 +427,7 @@ func (renderer *baseRenderer) renderHaving(having ExpressionBase) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementHaving)
+	renderer.renderService(uastModifierHaving)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := having.render(renderer); err != nil {
 		return err
@@ -469,7 +469,7 @@ func (renderer *baseRenderer) renderInTo(inTo SourceBase) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementInto)
+	renderer.renderService(uastModifierInto)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := inTo.render(renderer); err != nil {
 		return err
@@ -549,7 +549,7 @@ func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
 	}
 	ordersCount := len(orders) - 1
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementOrderBy)
+	renderer.renderService(uastModifierOrderBy)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	for i, order := range orders {
 		if err := order.render(renderer); err != nil {
@@ -677,7 +677,7 @@ func (renderer *baseRenderer) renderSet(sets []*clauseSet) error {
 	}
 	setsCount := len(sets) - 1
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementSet)
+	renderer.renderService(uastModifierSet)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	for i, set := range sets {
 		if err := set.render(renderer); err != nil {
@@ -758,7 +758,7 @@ func (renderer *baseRenderer) renderUsing(joins []*clauseJoin) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementUsing)
+	renderer.renderService(uastModifierUsing)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	for i, join := range joins {
 		if err := join.source.render(renderer); err != nil {
@@ -775,7 +775,7 @@ func (renderer *baseRenderer) renderValues(values *clauseValues) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementValues)
+	renderer.renderService(uastModifierValues)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	renderer.renderOperator(uastCompositeParenLeft)
 	for i, pair := range values.pairs {
@@ -797,7 +797,7 @@ func (renderer *baseRenderer) renderWhere(where ExpressionBase) error {
 		return nil
 	}
 	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastManagementWhere)
+	renderer.renderService(uastModifierWhere)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if err := where.render(renderer); err != nil {
 		return err
@@ -808,7 +808,7 @@ func (renderer *baseRenderer) renderWith(withs []*clauseWith) error {
 	if len(withs) == 0 {
 		return nil
 	}
-	renderer.renderService(uastManagementWith)
+	renderer.renderService(uastModifierWith)
 	renderer.renderOperator(uastCompositeSingleSpace)
 	for _, with := range withs {
 		if with.recursive {

@@ -3,9 +3,9 @@ export default defineConfig({
   appearance: 'dark',
   base: '/uast/',
   head: [
-    ['link', { rel: 'stylesheet', href: '/uast/styles.css' }],
-    ['script', { src: '/uast/scripts.js' }]
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0, viewport-fit=cover' }]
   ],
+  cleanUrls: true,
   lastUpdated: true,
   locales: {
     en: {
@@ -65,12 +65,10 @@ export default defineConfig({
                 link: '/en/benchmarks' 
               },
               { 
-                text: 'API', 
-                collapsed: true,
+                text: 'API',
                 items: [
                   { 
-                    text: 'Core', 
-                    collapsed: true,
+                    text: 'Core',
                     items: [
                       { 
                         text: 'Constructors', 
@@ -91,8 +89,7 @@ export default defineConfig({
                     ] 
                   },
                   { 
-                    text: 'SQL', 
-                    collapsed: true,
+                    text: 'SQL',
                     items: [
                       { 
                         text: 'Constructors', 
@@ -195,12 +192,10 @@ export default defineConfig({
                 link: '/ru/benchmarks' 
               },
               {
-                text: 'API', 
-                collapsed: true,
+                text: 'API',
                 items: [
                   { 
-                    text: 'Ядро', 
-                    collapsed: true,
+                    text: 'Ядро',
                     items: [
                       { 
                         text: 'Конструкторы', 
@@ -221,8 +216,7 @@ export default defineConfig({
                     ] 
                   },
                   { 
-                    text: 'SQL', 
-                    collapsed: true,
+                    text: 'SQL',
                     items: [
                       { 
                         text: 'Конструкторы', 
@@ -325,12 +319,10 @@ export default defineConfig({
                 link: '/zh/benchmarks' 
               },
               { 
-                text: 'API', 
-                collapsed: true,
+                text: 'API',
                 items: [
                   { 
-                    text: '核心', 
-                    collapsed: true,
+                    text: '核心',
                     items: [
                       { 
                         text: '构造函数', 
@@ -351,8 +343,7 @@ export default defineConfig({
                     ] 
                   },
                   { 
-                    text: 'SQL', 
-                    collapsed: true,
+                    text: 'SQL',
                     items: [
                       { 
                         text: '构造函数', 

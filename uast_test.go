@@ -2049,7 +2049,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectPostgreSQL:
 				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "id" TYPE UUID, ALTER COLUMN "string" SET DEFAULT '_', ALTER COLUMN "date" SET NOT NULL`, "SET COLUMNS")
 			case DialectSQLite:
-				// Not supported - ALTER [SET COLUMNS]
+				assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "date" NOT NULL`, "SET COLUMNS")
 			}
 			t.Logf("\nerr: [%s] \nsdn: %s \nsqa: [%s] \nsql: [%s]", err, sqlAlterArguments, supportDialect.name, sqlAlterQuery)
 		})

@@ -674,6 +674,10 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 				renderer.renderService(uastModifierColumn)
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderName(mod.column.getName())
+				if renderer.config.listModifiers[uastModifierType] != "" {
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderService(renderer.config.listModifiers[uastModifierType])
+				}
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderService(renderer.config.listTypes[mod.valueType])
 				needComma = true
@@ -681,9 +685,9 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 		case uastModifierDefault:
 			if renderer.config.supportSet[uastModifierDefault] {
 				if renderer.config.listModifiers[uastModifierDefaultAction] == uastModifierAdd {
-					renderer.renderService(uastModifierAdd)
+					renderer.renderService(renderer.config.listModifiers[uastModifierDefaultAction])
 					renderer.renderOperator(uastCompositeSingleSpace)
-					renderer.renderService(uastModifierDefault)
+					renderer.renderService(renderer.config.listModifiers[uastModifierDefault])
 					renderer.renderOperator(uastCompositeSingleSpace)
 					if err := mod.value.render(renderer); err != nil {
 						return err
@@ -693,15 +697,13 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 					renderer.renderOperator(uastCompositeSingleSpace)
 					renderer.renderName(mod.column.getName())
 				} else {
-					renderer.renderService(uastModifierAlter)
+					renderer.renderService(renderer.config.listModifiers[uastModifierDefaultAction])
 					renderer.renderOperator(uastCompositeSingleSpace)
 					renderer.renderService(uastModifierColumn)
 					renderer.renderOperator(uastCompositeSingleSpace)
 					renderer.renderName(mod.column.getName())
 					renderer.renderOperator(uastCompositeSingleSpace)
-					renderer.renderService(uastModifierSet)
-					renderer.renderOperator(uastCompositeSingleSpace)
-					renderer.renderService(uastModifierDefault)
+					renderer.renderService(renderer.config.listModifiers[uastModifierDefault])
 					renderer.renderOperator(uastCompositeSingleSpace)
 					if err := mod.value.render(renderer); err != nil {
 						return err
@@ -717,7 +719,7 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderName(mod.column.getName())
 				renderer.renderOperator(uastCompositeSingleSpace)
-				renderer.renderService(uastModifierNotNull)
+				renderer.renderService(renderer.config.listModifiers[uastModifierNotNull])
 				needComma = true
 			}
 		}

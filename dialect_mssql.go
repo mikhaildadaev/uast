@@ -188,11 +188,11 @@ var listFunctionsMssql = map[functionService]functionTransform{
 }
 var listModifiersMssql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "IDENTITY(1,1)",
-	uastModifierDefault:       "ADD DEFAULT",
+	uastModifierDefault:       uastModifierDefault,
 	uastModifierDefaultAction: uastModifierAdd,
-	uastModifierNotNull:       "NOT NULL",
+	uastModifierNotNull:       uastModifierNotNull,
 	uastModifierNotNullAction: uastModifierAlter,
-	uastModifierType:          "TYPE",
+	uastModifierType:          "",
 	uastModifierTypeAction:    uastModifierAlter,
 	uastModifierUpsert:        "",
 }

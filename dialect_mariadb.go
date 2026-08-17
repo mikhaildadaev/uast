@@ -156,9 +156,9 @@ var listModifiersMariadb = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
 	uastModifierDefault:       "SET DEFAULT",
 	uastModifierDefaultAction: uastModifierAlter,
-	uastModifierNotNull:       "NOT NULL",
+	uastModifierNotNull:       uastModifierNotNull,
 	uastModifierNotNullAction: uastModifierModify,
-	uastModifierType:          "TYPE",
+	uastModifierType:          "",
 	uastModifierTypeAction:    uastModifierModify,
 	uastModifierUpsert:        "ON DUPLICATE KEY UPDATE",
 }

@@ -172,9 +172,9 @@ var listModifiersSQLite = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTOINCREMENT",
 	uastModifierDefault:       "SET DEFAULT",
 	uastModifierDefaultAction: "",
-	uastModifierNotNull:       "NOT NULL",
+	uastModifierNotNull:       uastModifierNotNull,
 	uastModifierNotNullAction: uastModifierAlter,
-	uastModifierType:          "TYPE",
+	uastModifierType:          "",
 	uastModifierTypeAction:    "",
 	uastModifierUpsert:        "ON CONFLICT DO UPDATE SET",
 }

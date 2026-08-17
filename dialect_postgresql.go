@@ -201,7 +201,7 @@ var listModifiersPostgresql = map[modifierService]modifierService{
 	uastModifierDefaultAction: uastModifierAlter,
 	uastModifierNotNull:       "SET NOT NULL",
 	uastModifierNotNullAction: uastModifierAlter,
-	uastModifierType:          "TYPE",
+	uastModifierType:          uastModifierType,
 	uastModifierTypeAction:    uastModifierAlter,
 	uastModifierUpsert:        "ON CONFLICT DO UPDATE SET",
 }

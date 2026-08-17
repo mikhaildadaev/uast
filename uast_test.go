@@ -2184,13 +2184,13 @@ func Test_SQL_Create(t *testing.T) {
 			sql := NewSQL(WithDialect(supportDialect))
 			defer sql.Close()
 			stmtCreate := NewCreate(Test.Table.User).
+				IfNotExists().
 				Constraints(
 					Test.Check.UsersNumber,
 					Test.Foreign.UsersOrders,
 					Test.Primary.UsersID,
 					Test.Unique.UsersName,
 				).
-				IfNotExists().
 				Columns(
 					Test.Table.Users.ID.AutoIncrement(),
 					Test.Table.Users.Name.NotNull(),

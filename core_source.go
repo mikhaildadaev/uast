@@ -96,7 +96,7 @@ func (source *sourceColumn[T]) AutoIncrement() *sourceColumn[T] {
 	return source
 }
 func (source *sourceColumn[T]) Default(value T) *sourceColumn[T] {
-	source.defaultValue = Value(value)
+	source.defaultValue = Literal(value)
 	return source
 }
 func (source *sourceColumn[T]) Expr() *exprField[T] {
@@ -110,7 +110,7 @@ func (source *sourceColumn[T]) SetDefault(value T) *columnSet {
 	return &columnSet{
 		column:    source,
 		operation: uastModifierDefault,
-		value:     Value(value),
+		value:     Literal(value),
 	}
 }
 func (source *sourceColumn[T]) SetNotNull() *columnSet {

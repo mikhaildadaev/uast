@@ -1358,7 +1358,7 @@ func Upper(str ExpressionSafe[string]) *exprFunction[string, string, string] {
 }
 
 // -- Literal -- //
-func Literal[T typeString](value T) *exprLiteral[T] {
+func Literal[T typeScalar](value T) *exprLiteral[T] {
 	return &exprLiteral[T]{
 		value: value,
 	}

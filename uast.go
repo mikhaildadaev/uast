@@ -300,11 +300,13 @@ const (
 	uastModifierConstraint      modifierService = "CONSTRAINT"
 	uastModifierCTE             modifierService = "CTE"
 	uastModifierDefault         modifierService = "DEFAULT"
+	uastModifierDefaultAction   modifierService = "DEFAULT ACTION"
 	uastModifierDistinct        modifierService = "DISTINCT"
 	uastModifierDrop            modifierService = "DROP"
 	uastModifierElse            modifierService = "ELSE"
 	uastModifierEnd             modifierService = "END"
 	uastModifierFetchNext       modifierService = "FETCH NEXT"
+	uastModifierFor             modifierService = "FOR"
 	uastModifierForeignKey      modifierService = "FOREIGN KEY"
 	uastModifierFrom            modifierService = "FROM"
 	uastModifierIfExists        modifierService = "IF EXISTS"
@@ -321,6 +323,7 @@ const (
 	uastModifierModify          modifierService = "MODIFY"
 	uastModifierMonth           modifierService = "MONTH"
 	uastModifierNotNull         modifierService = "NOT NULL"
+	uastModifierNotNullAction   modifierService = "NOT NULL ACTION"
 	uastModifierOffset          modifierService = "OFFSET"
 	uastModifierOrderBy         modifierService = "ORDER BY"
 	uastModifierOutput          modifierService = "OUTPUT"
@@ -346,6 +349,7 @@ const (
 	uastModifierThen            modifierService = "THEN"
 	uastModifierTo              modifierService = "TO"
 	uastModifierType            modifierService = "TYPE"
+	uastModifierTypeAction      modifierService = "TYPE ACTION"
 	uastModifierUnique          modifierService = "UNIQUE"
 	uastModifierUpsert          modifierService = "UPSERT"
 	uastModifierUsing           modifierService = "USING"
@@ -417,7 +421,7 @@ var listFunctionServices = []functionService{
 	uastFunctionCumeDist, uastFunctionDenseRank, uastFunctionNTile, uastFunctionPercentRank, uastFunctionRank, uastFunctionRowNumber,
 }
 var listManagementServices = []managementService{uastManagementDatabase, uastManagementCurrentUser, uastManagementSessionUser, uastManagementSystemUser, uastManagementUser, uastManagementVersion, uastManagementBenchmark, uastManagementDelay, uastManagementSleep, uastManagementTimeout, uastManagementWaitFor, uastManagementAlter, uastManagementComment, uastManagementCreate, uastManagementDelete, uastManagementDrop, uastManagementInsert, uastManagementSelect, uastManagementTruncate, uastManagementUpdate}
-var listModifierServices = []modifierService{uastModifierAdd, uastModifierAlter, uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierBetween, uastModifierCascade, uastModifierCheck, uastModifierColumn, uastModifierConstraint, uastModifierCTE, uastModifierDefault, uastModifierDistinct, uastModifierDrop, uastModifierElse, uastModifierEnd, uastModifierFetchNext, uastModifierForeignKey, uastModifierFrom, uastModifierGroupBy, uastModifierHaving, uastModifierIfExists, uastModifierIfNotExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierInto, uastModifierIs, uastModifierJoin, uastModifierLimit, uastModifierModify, uastModifierMonth, uastModifierNotNull, uastModifierOffset, uastModifierOn, uastModifierOnDelete, uastModifierOnUpdate, uastModifierOrderBy, uastModifierOrReplace, uastModifierOutput, uastModifierOver, uastModifierPartitionBy, uastModifierPrimaryKey, uastModifierQuery, uastModifierRecursive, uastModifierReferences, uastModifierReturning, uastModifierRename, uastModifierRestartIdentity, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierSet, uastModifierTable, uastModifierThen, uastModifierTo, uastModifierType, uastModifierUnique, uastModifierUpsert, uastModifierUsing, uastModifierValues, uastModifierView, uastModifierWeekday, uastModifierWhen, uastModifierWhere, uastModifierWith}
+var listModifierServices = []modifierService{uastModifierAdd, uastModifierAlter, uastModifierAnd, uastModifierAs, uastModifierAutoIncrement, uastModifierBetween, uastModifierCascade, uastModifierCheck, uastModifierColumn, uastModifierConstraint, uastModifierCTE, uastModifierDefault, uastModifierDefaultAction, uastModifierDistinct, uastModifierDrop, uastModifierElse, uastModifierEnd, uastModifierFetchNext, uastModifierFor, uastModifierForeignKey, uastModifierFrom, uastModifierGroupBy, uastModifierHaving, uastModifierIfExists, uastModifierIfNotExists, uastModifierIn, uastModifierIndex, uastModifierInterval, uastModifierInto, uastModifierIs, uastModifierJoin, uastModifierLimit, uastModifierModify, uastModifierMonth, uastModifierNotNull, uastModifierNotNullAction, uastModifierOffset, uastModifierOn, uastModifierOnDelete, uastModifierOnUpdate, uastModifierOrderBy, uastModifierOrReplace, uastModifierOutput, uastModifierOver, uastModifierPartitionBy, uastModifierPrimaryKey, uastModifierQuery, uastModifierRecursive, uastModifierReferences, uastModifierReturning, uastModifierRename, uastModifierRestartIdentity, uastModifierRows, uastModifierRowsOnly, uastModifierSchema, uastModifierSeparator, uastModifierSet, uastModifierTable, uastModifierThen, uastModifierTo, uastModifierType, uastModifierTypeAction, uastModifierUnique, uastModifierUpsert, uastModifierUsing, uastModifierValues, uastModifierView, uastModifierWeekday, uastModifierWhen, uastModifierWhere, uastModifierWith}
 var listSupportDialects = []*SupportDialect{DialectMariaDB, DialectMsSQL, DialectMySQL, DialectPostgreSQL, DialectSQLite}
 var listSymbolSafeAlias = [256]bool{
 	'+': true, '-': true, '_': true,

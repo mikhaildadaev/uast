@@ -93,7 +93,9 @@ var DialectMySQL = &SupportDialect{
 		},
 		supportReturning: false,
 		supportSet: map[modifierService]bool{
-			uastModifierType: true,
+			uastModifierDefault: true,
+			uastModifierNotNull: true,
+			uastModifierType:    true,
 		},
 	},
 	name:      "MySQL",
@@ -152,6 +154,12 @@ var listFunctionsMysql = map[functionService]functionTransform{
 }
 var listModifiersMysql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
+	uastModifierDefault:       "SET DEFAULT",
+	uastModifierDefaultAction: uastModifierAlter,
+	uastModifierNotNull:       "NOT NULL",
+	uastModifierNotNullAction: uastModifierModify,
+	uastModifierType:          "TYPE",
+	uastModifierTypeAction:    uastModifierModify,
 	uastModifierUpsert:        "ON DUPLICATE KEY UPDATE",
 }
 var listTypesMysql = map[ValueType]typeService{

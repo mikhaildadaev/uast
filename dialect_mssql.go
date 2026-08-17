@@ -94,7 +94,9 @@ var DialectMsSQL = &SupportDialect{
 		},
 		supportReturning: true,
 		supportSet: map[modifierService]bool{
-			uastModifierType: true,
+			uastModifierDefault: true,
+			uastModifierNotNull: true,
+			uastModifierType:    true,
 		},
 	},
 	name:      "MsSQL",
@@ -186,6 +188,12 @@ var listFunctionsMssql = map[functionService]functionTransform{
 }
 var listModifiersMssql = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "IDENTITY(1,1)",
+	uastModifierDefault:       "ADD DEFAULT",
+	uastModifierDefaultAction: uastModifierAdd,
+	uastModifierNotNull:       "NOT NULL",
+	uastModifierNotNullAction: uastModifierAlter,
+	uastModifierType:          "TYPE",
+	uastModifierTypeAction:    uastModifierAlter,
 	uastModifierUpsert:        "",
 }
 var listTypesMssql = map[ValueType]typeService{
@@ -305,7 +313,7 @@ func mssqlFunctionCurDate(baseTransformer *baseTransformer, expr transformFuncti
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastMssqlFunctionCurDate),
 			serviceString(uastModifierAs),
-			serviceString(listTypesMysql[TypeDate]),
+			serviceString(listTypesMssql[TypeDate]),
 		},
 		operator: uastCompositeSingleSpace,
 	})
@@ -318,7 +326,7 @@ func mssqlFunctionCurTime(baseTransformer *baseTransformer, expr transformFuncti
 		expressions: []ExpressionSafe[string]{
 			serviceString(uastMssqlFunctionCurTime),
 			serviceString(uastModifierAs),
-			serviceString(listTypesMysql[TypeTime]),
+			serviceString(listTypesMssql[TypeTime]),
 		},
 		operator: uastCompositeSingleSpace,
 	})
@@ -504,7 +512,7 @@ func mssqlFunctionJsonExtract(baseTransformer *baseTransformer, expr transformFu
 		}
 	}
 	valueType := expr.getValueType()
-	typeService, exists := listTypesMysql[valueType]
+	typeService, exists := listTypesMssql[valueType]
 	if !exists {
 		return ErrUntransformType
 	}

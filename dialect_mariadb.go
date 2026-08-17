@@ -93,7 +93,9 @@ var DialectMariaDB = &SupportDialect{
 		},
 		supportReturning: true,
 		supportSet: map[modifierService]bool{
-			uastModifierType: true,
+			uastModifierDefault: true,
+			uastModifierNotNull: true,
+			uastModifierType:    true,
 		},
 	},
 	name:      "MariaDB",
@@ -152,6 +154,12 @@ var listFunctionsMariadb = map[functionService]functionTransform{
 }
 var listModifiersMariadb = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTO_INCREMENT",
+	uastModifierDefault:       "SET DEFAULT",
+	uastModifierDefaultAction: uastModifierAlter,
+	uastModifierNotNull:       "NOT NULL",
+	uastModifierNotNullAction: uastModifierModify,
+	uastModifierType:          "TYPE",
+	uastModifierTypeAction:    uastModifierModify,
 	uastModifierUpsert:        "ON DUPLICATE KEY UPDATE",
 }
 var listTypesMariadb = map[ValueType]typeService{

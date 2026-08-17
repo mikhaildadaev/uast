@@ -93,7 +93,9 @@ var DialectSQLite = &SupportDialect{
 		},
 		supportReturning: true,
 		supportSet: map[modifierService]bool{
-			uastModifierType: false,
+			uastModifierDefault: false,
+			uastModifierNotNull: true,
+			uastModifierType:    false,
 		},
 	},
 	name:      "SQLite",
@@ -168,6 +170,12 @@ var listFunctionsSQLite = map[functionService]functionTransform{
 }
 var listModifiersSQLite = map[modifierService]modifierService{
 	uastModifierAutoIncrement: "AUTOINCREMENT",
+	uastModifierDefault:       "SET DEFAULT",
+	uastModifierDefaultAction: "",
+	uastModifierNotNull:       "NOT NULL",
+	uastModifierNotNullAction: "",
+	uastModifierType:          "TYPE",
+	uastModifierTypeAction:    "",
 	uastModifierUpsert:        "ON CONFLICT DO UPDATE SET",
 }
 var listTypesSQLite = map[ValueType]typeService{

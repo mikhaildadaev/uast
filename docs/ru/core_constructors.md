@@ -9,13 +9,13 @@ outline: deep
 :::
 
 ## NewAlter
-Создает новый экземпляр запроса ALTER. Принимает источник типа `Index/Schema/Table/View` и возвращает запрос, который можно настроить с помощью методов `AddColumns`, `AddConstraints`, `DropColumns`, `DropConstraints`, `RenameTo`.
+Создает новый экземпляр запроса ALTER. Принимает источник типа `Index/Schema/Table/View` и возвращает запрос, который можно настроить с помощью методов `AddColumns`, `AddConstraints`, `DropColumns`, `DropConstraints`, `RenameTo`, `RenameColumn`, `RenameConstraint`, `SetColumns`.
 ```go
 stmtAlterIndex := uast.NewAlter(uast.NewIndex("users_id", uast.NewTable("users", "u"))).
 	RenameTo("new_name")
 stmtAlterSchema := uast.NewAlter(uast.NewTable("test")).
 	RenameTo("new_name")
-stmtAlterTable := uast.NewAlter(uast.NewTable("users", "u")).
+stmtAlterTableAddAndDrop := uast.NewAlter(uast.NewTable("users", "u")).
 	AddColumns(
 		Test.Table.Users.String,
 		Test.Table.Users.Date,
@@ -35,6 +35,18 @@ stmtAlterTable := uast.NewAlter(uast.NewTable("users", "u")).
 		Test.Primary.UsersID,
 		Test.Unique.UsersName,
 	)
+stmtAlterTableRename := uast.NewAlter(uast.NewTable("users", "u")).
+    RenameTo("new_users")
+stmtAlterTableRenameColumn := uast.NewAlter(uast.NewTable("users", "u")).
+    RenameColumn(uast.Field[int64]("u", "id"), "user_id")
+stmtAlterTableRenameConstraint := uast.NewAlter(uast.NewTable("users", "u")).
+    RenameConstraint(uast.NewCheck("ck_users_number", uast.Greater(uast.Field[int]("u", "number"), uast.Value(0))), "ck_user_number")
+stmtAlterTableSet := uast.NewAlter(uast.NewTable("users", "u")).
+    SetColumns(
+        uast.Field[int64]("u", "id").SetType(uast.TypeUUID),
+        uast.Field[string]("u", "string").SetDefault("_"),
+        uast.Field[time.Time]("u", "date").SetNotNull(),
+    )
 stmtAlterView := uast.NewAlter(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
 	RenameTo("new_name")
 ```
@@ -43,6 +55,10 @@ Output MariaDB:
 // Not supported
 // Not supported
 ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
+ALTER TABLE `users` RENAME TO `new_users`
+ALTER TABLE `users` RENAME COLUMN `id` TO `user_id`
+ALTER TABLE `users` RENAME CONSTRAINT `ck_users_number` TO `ck_user_number`
+ALTER TABLE `users` MODIFY COLUMN `id` UUID, ALTER COLUMN `string` SET DEFAULT '_', MODIFY COLUMN `date` NOT NULL
 // Not supported
 ```
 Output MsSQL:
@@ -51,26 +67,42 @@ Output MsSQL:
 // Not supported
 ALTER TABLE [users] ADD COLUMN [string] NVARCHAR, ADD COLUMN [date] DATE, ADD CONSTRAINT [ck_orders_number] CHECK([o].[number] > @p1), ADD CONSTRAINT [pk_orders_id] PRIMARY KEY([id]), ADD CONSTRAINT [un_orders_name] UNIQUE([string]), DROP COLUMN [id], DROP COLUMN [name], DROP CONSTRAINT [ck_users_number], DROP CONSTRAINT [fk_users_orders], DROP CONSTRAINT [pk_users_id], DROP CONSTRAINT [un_users_name]
 // Not supported
+// Not supported
+// Not supported
+ALTER TABLE [users] ALTER COLUMN [id] UNIQUEIDENTIFIER, ADD DEFAULT '_' FOR [string], ALTER COLUMN [date] NOT NULL
+// Not supported
 ```
 Output MySQL:
 ```text
 // Not supported
 // Not supported
 ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
+ALTER TABLE `users` RENAME TO `new_users`
+ALTER TABLE `users` RENAME COLUMN `id` TO `user_id`
+ALTER TABLE `users` RENAME CONSTRAINT `ck_users_number` TO `ck_user_number`
+ALTER TABLE `users` MODIFY COLUMN `id` CHAR(36), ALTER COLUMN `string` SET DEFAULT '_', MODIFY COLUMN `date` NOT NULL
 // Not supported
 ```
 Output PostgreSQL:
 ```text
-// In development
-// In development
+ALTER INDEX "users_id" RENAME TO "new_name"
+ALTER SCHEMA "test" RENAME TO "new_name"
 ALTER TABLE "users" ADD COLUMN "string" VARCHAR, ADD COLUMN "date" DATE, ADD CONSTRAINT "ck_orders_number" CHECK("o"."number" > $1), ADD CONSTRAINT "pk_orders_id" PRIMARY KEY("id"), ADD CONSTRAINT "un_orders_name" UNIQUE("string"), DROP COLUMN "id", DROP COLUMN "name", DROP CONSTRAINT "ck_users_number", DROP CONSTRAINT "fk_users_orders", DROP CONSTRAINT "pk_users_id", DROP CONSTRAINT "un_users_name"
-// In development
+ALTER TABLE "users" RENAME TO "new_users"
+ALTER TABLE "users" RENAME COLUMN "id" TO "user_id"
+ALTER TABLE "users" RENAME CONSTRAINT "ck_users_number" TO "ck_user_number"
+ALTER TABLE "users" ALTER COLUMN "id" TYPE UUID, ALTER COLUMN "string" SET DEFAULT '_', ALTER COLUMN "date" SET NOT NULL
+ALTER VIEW "users_general" RENAME TO "new_name"
 ```
 Output SQLite:
 ```text
 // Not supported
 // Not supported
 ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
+ALTER TABLE "users" RENAME TO "new_users"
+// Not supported
+// Not supported
+ALTER TABLE "users" ALTER COLUMN "date" NOT NULL
 // Not supported
 ```
 

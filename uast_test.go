@@ -2047,7 +2047,7 @@ func Test_SQL_Alter(t *testing.T) {
 			case DialectMySQL:
 				assertContains(t, sqlAlterQuery, "ALTER TABLE `users` MODIFY COLUMN `id` CHAR(36), ALTER COLUMN `string` SET DEFAULT '_', MODIFY COLUMN `date` NOT NULL", "SET COLUMNS")
 			case DialectPostgreSQL:
-				//assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "id" TYPE UUID, ALTER COLUMN "string" SET DEFAULT '_', ALTER COLUMN "date" SET NOT NULL`, "SET COLUMNS")
+				assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "id" TYPE UUID, ALTER COLUMN "string" SET DEFAULT '_', ALTER COLUMN "date" SET NOT NULL`, "SET COLUMNS")
 			case DialectSQLite:
 				assertContains(t, sqlAlterQuery, `ALTER TABLE "users" ALTER COLUMN "date" NOT NULL`, "SET COLUMNS")
 			}

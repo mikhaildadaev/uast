@@ -668,51 +668,59 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 		}
 		switch mod.operation {
 		case uastModifierType:
-			renderer.renderService(renderer.config.listModifiers[uastModifierTypeAction])
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(uastModifierColumn)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderName(mod.column.getName())
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(renderer.config.listTypes[mod.valueType])
-		case uastModifierDefault:
-			if renderer.config.listModifiers[uastModifierDefaultAction] == uastModifierAdd {
-				renderer.renderService(uastModifierAdd)
-				renderer.renderOperator(uastCompositeSingleSpace)
-				renderer.renderService(uastModifierDefault)
-				renderer.renderOperator(uastCompositeSingleSpace)
-				if err := mod.value.render(renderer); err != nil {
-					return err
-				}
-				renderer.renderOperator(uastCompositeSingleSpace)
-				renderer.renderService(uastModifierFor)
-				renderer.renderOperator(uastCompositeSingleSpace)
-				renderer.renderName(mod.column.getName())
-			} else {
-				renderer.renderService(uastModifierAlter)
+			if renderer.config.supportSet[uastModifierType] {
+				renderer.renderService(renderer.config.listModifiers[uastModifierTypeAction])
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderService(uastModifierColumn)
 				renderer.renderOperator(uastCompositeSingleSpace)
 				renderer.renderName(mod.column.getName())
 				renderer.renderOperator(uastCompositeSingleSpace)
-				renderer.renderService(uastModifierSet)
-				renderer.renderOperator(uastCompositeSingleSpace)
-				renderer.renderService(uastModifierDefault)
-				renderer.renderOperator(uastCompositeSingleSpace)
-				if err := mod.value.render(renderer); err != nil {
-					return err
+				renderer.renderService(renderer.config.listTypes[mod.valueType])
+				needComma = true
+			}
+		case uastModifierDefault:
+			if renderer.config.supportSet[uastModifierDefault] {
+				if renderer.config.listModifiers[uastModifierDefaultAction] == uastModifierAdd {
+					renderer.renderService(uastModifierAdd)
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderService(uastModifierDefault)
+					renderer.renderOperator(uastCompositeSingleSpace)
+					if err := mod.value.render(renderer); err != nil {
+						return err
+					}
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderService(uastModifierFor)
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderName(mod.column.getName())
+				} else {
+					renderer.renderService(uastModifierAlter)
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderService(uastModifierColumn)
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderName(mod.column.getName())
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderService(uastModifierSet)
+					renderer.renderOperator(uastCompositeSingleSpace)
+					renderer.renderService(uastModifierDefault)
+					renderer.renderOperator(uastCompositeSingleSpace)
+					if err := mod.value.render(renderer); err != nil {
+						return err
+					}
 				}
+				needComma = true
 			}
 		case uastModifierNotNull:
-			renderer.renderService(renderer.config.listModifiers[uastModifierNotNullAction])
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(uastModifierColumn)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderName(mod.column.getName())
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(uastModifierNotNull)
+			if renderer.config.supportSet[uastModifierNotNull] {
+				renderer.renderService(renderer.config.listModifiers[uastModifierNotNullAction])
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierColumn)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderName(mod.column.getName())
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierNotNull)
+				needComma = true
+			}
 		}
-		needComma = true
 	}
 	return nil
 }

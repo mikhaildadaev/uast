@@ -356,8 +356,8 @@ LIMIT ? OFFSET ?
 Adds a RETURNING clause to return modified rows. Supported by MariaDB, PostgreSQL, and SQLite. MySQL does not support this clause natively.
 ```go
 returning = Returning(
-	uast.Field[int64]("u", "id")
-    uast.Field[string]("u", "string")
+	uast.Field[int64]("u", "id"),
+    uast.Field[string]("u", "string"),
 )
 ```
 Output MariaDB:

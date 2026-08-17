@@ -356,8 +356,8 @@ LIMIT ? OFFSET ?
 Добавляет оператор RETURNING для возврата изменённых строк. Поддерживается MariaDB, PostgreSQL и SQLite. MySQL не поддерживает этот оператор.
 ```go
 returning = Returning(
-	uast.Field[int64]("u", "id")
-    uast.Field[string]("u", "string")
+	uast.Field[int64]("u", "id"),
+    uast.Field[string]("u", "string"),
 )
 ```
 Output MariaDB:

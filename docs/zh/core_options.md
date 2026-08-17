@@ -356,8 +356,8 @@ LIMIT ? OFFSET ?
 添加 RETURNING 子句以返回修改后的行。MariaDB、PostgreSQL 和 SQLite 支持。MySQL 原生不支持此子句。
 ```go
 returning = Returning(
-	uast.Field[int64]("u", "id")
-    uast.Field[string]("u", "string")
+	uast.Field[int64]("u", "id"),
+    uast.Field[string]("u", "string"),
 )
 ```
 Output MariaDB:

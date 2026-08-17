@@ -45,7 +45,7 @@ go test -race ./...
 ## Supported Databases
 | Database       | Version | Compatible                                                                                                                                                                         |
 |----------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **MariaDB**    | 10.5.0+ | DoltDB, SingleStore                                                                                                                                                                |
+| **MariaDB**    | 10.7.0+ | DoltDB, SingleStore                                                                                                                                                                |
 | **MsSQL**      | 16.0.0+ | AmazonRDS, AzureSQL, Synapse                                                                                                                                                       |
 | **MySQL**      | 8.0.31+ | AuroraMySQL, AzureMySQL, GoogleMySQL, OceanBase, PlanetScale, TDSQL                                                                                                                |
 | **PostgreSQL** | 9.5.0+  | AlloyDB, ArenadataDB, AuroraPostgreSQL, AzurePostgreSQL, Citus, CockroachDB, GooglePostgreSQL, Greenplum, KingbaseES, Neon, OpenGauss, Supabase, TimescaleDB, YandexDB, YugabyteDB |

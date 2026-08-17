@@ -159,6 +159,16 @@ type processor struct {
 	validator   validator
 }
 
+// Приватные функции
+func indexOf(slice []modifierService, item modifierService) int {
+	for i, v := range slice {
+		if v == item {
+			return i
+		}
+	}
+	return len(slice)
+}
+
 // Приватные методы
 func (processor processor) createRenderer(config *config, contexter *contexter, strateger strateger) *baseRenderer {
 	return newRenderer(config, contexter, strateger)

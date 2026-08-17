@@ -1,6 +1,7 @@
 package uast
 
 import (
+	"sort"
 	"strconv"
 	"time"
 )
@@ -600,6 +601,11 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 	if len(addColumns) == 0 && len(addConstraints) == 0 && len(dropColumns) == 0 && len(dropConstraints) == 0 && len(setColumns) == 0 {
 		return nil
 	}
+	if len(setColumns) > 0 && renderer.config.orderSupportAlter != nil {
+		sort.Slice(setColumns, func(i, j int) bool {
+			return indexOf(renderer.config.orderSupportAlter, setColumns[i].operation) < indexOf(renderer.config.orderSupportAlter, setColumns[j].operation)
+		})
+	}
 	needComma := false
 	renderer.renderOperator(uastCompositeSingleSpace)
 	if renderer.config.supportAdd[uastModifierColumn] {
@@ -656,7 +662,58 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 			needComma = true
 		}
 	}
-	// !!! Дописать SetColumns
+	for _, mod := range setColumns {
+		if needComma {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+		switch mod.operation {
+		case uastModifierType:
+			renderer.renderService(renderer.config.listModifiers[uastModifierTypeAction])
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierColumn)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderName(mod.column.getName())
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(renderer.config.listTypes[mod.valueType])
+		case uastModifierDefault:
+			if renderer.config.listModifiers[uastModifierDefaultAction] == uastModifierAdd {
+				renderer.renderService(uastModifierAdd)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierDefault)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				if err := mod.value.render(renderer); err != nil {
+					return err
+				}
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierFor)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderName(mod.column.getName())
+			} else {
+				renderer.renderService(uastModifierAlter)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierColumn)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderName(mod.column.getName())
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierSet)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				renderer.renderService(uastModifierDefault)
+				renderer.renderOperator(uastCompositeSingleSpace)
+				if err := mod.value.render(renderer); err != nil {
+					return err
+				}
+			}
+		case uastModifierNotNull:
+			renderer.renderService(renderer.config.listModifiers[uastModifierNotNullAction])
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierColumn)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderName(mod.column.getName())
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierNotNull)
+		}
+		needComma = true
+	}
 	return nil
 }
 func (renderer *baseRenderer) renderTableNewData(columns []markSourceable, constraints []ConstraintBase) error {

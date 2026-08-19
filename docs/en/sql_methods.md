@@ -9,6 +9,25 @@ This page documents shortcut methods available on the SQL builder instance: `Exe
 :::
 
 ## sqlBuilder
+### Build
+Compiles a statement into a SQL string and a list of arguments. This is the core method of UAST — it takes an AST statement and returns the final SQL query ready for execution.
+```go
+stmt := uast.NewSelect(uast.NewTable("users", "u")).
+    Fields(
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "name"),
+    ).
+    Where(
+        uast.Equal(uast.Field[string]("u", "status"), uast.Value("active")),
+    )
+query, args, err := builder.Build(stmt)
+```
+Output:
+```text
+// Executes: SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
+// Returns: [active]
+```
+
 ### Exec
 Builds the statement and executes it via `db.Exec()`. Returns `sql.Result` and any error. Suitable for INSERT, UPDATE, DELETE statements that do not return rows.
 ```go

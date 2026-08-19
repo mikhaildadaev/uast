@@ -9,6 +9,25 @@ outline: deep
 :::
 
 ## sqlBuilder
+### Build
+Компилирует оператор в SQL-строку и список аргументов. Это основной метод UAST — он принимает AST-оператор и возвращает финальный SQL-запрос, готовый к выполнению.
+```go
+stmt := uast.NewSelect(uast.NewTable("users", "u")).
+    Fields(
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "name"),
+    ).
+    Where(
+        uast.Equal(uast.Field[string]("u", "status"), uast.Value("active")),
+    )
+query, args, err := builder.Build(stmt)
+```
+Output:
+```text
+// Executes: SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
+// Returns: [active]
+```
+
 ### Exec
 Собирает оператор и выполняет его через `db.Exec()`. Возвращает `sql.Result` и ошибку. Подходит для операторов INSERT, UPDATE, DELETE, которые не возвращают строки.
 ```go

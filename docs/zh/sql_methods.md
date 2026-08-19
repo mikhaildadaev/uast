@@ -9,6 +9,25 @@ outline: deep
 :::
 
 ## sqlBuilder
+### Build
+将语句编译为 SQL 字符串和参数列表。这是 UAST 的核心方法 — 它接受 AST 语句并返回准备执行的最终 SQL 查询。
+```go
+stmt := uast.NewSelect(uast.NewTable("users", "u")).
+    Fields(
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "name"),
+    ).
+    Where(
+        uast.Equal(uast.Field[string]("u", "status"), uast.Value("active")),
+    )
+query, args, err := builder.Build(stmt)
+```
+Output:
+```text
+// Executes: SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
+// Returns: [active]
+```
+
 ### Exec
 构建语句并通过 `db.Exec()` 执行。返回 `sql.Result` 和错误。适用于不返回行的 INSERT、UPDATE、DELETE 语句。
 ```go

@@ -9,10 +9,35 @@ This page describes how to create a sql instance, configure all the settings, an
 :::
 
 ## NewSQL
-SQL instance configured for the specified dialect
+SQL instance with all configuration options
 ```go
-builder := uast.NewSQL()
+builder := uast.NewSQL(
+    uast.WithDialect(uast.DialectMySQL),
+    uast.WithMutate(false),
+)
 defer builder.Close()
+stmt := uast.NewSelect(uast.NewTable("users", "u")).
+    Fields(
+        uast.Field[int64]("u", "id"),
+        uast.Field[string]("u", "name"),
+    ).
+    Where(
+        uast.Equal(uast.Field[string]("u", "status"), uast.Value("active")),
+    )
+query1, args1, err1 := builder.Build(stmt)
+if err1 != nil {
+    log.Fatal(err1)
+}
+builder.SetDialect(uast.DialectPostgreSQL)
+query2, args2, err2 = builder.Build(stmt)
+```
+Output MySQL:
+```text
+SELECT `u`.`id`, `u`.`name` FROM `users` AS `u` WHERE `u`.`status` = ?
+```
+Output PostgreSQL:
+```text
+SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
 ```
 
 | Name                                                      | Description	                                                                      | Values	                                                                    | Default           |

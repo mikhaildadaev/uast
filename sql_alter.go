@@ -1,7 +1,5 @@
 package uast
 
-// !!! Внимание, находится в стадии разработки
-
 // Публичные конструкторы
 func NewAlter(entity SourceBase) *stmtAlter {
 	return &stmtAlter{

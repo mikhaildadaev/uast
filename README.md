@@ -1,7 +1,6 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/mikhaildadaev/uast/blob/main/LICENSE.md)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/mikhaildadaev/uast)](https://github.com/mikhaildadaev/uast)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mikhaildadaev/uast.svg)](https://pkg.go.dev/github.com/mikhaildadaev/uast)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mikhaildadaev/uast)](https://goreportcard.com/report/github.com/mikhaildadaev/uast)
 [![CI](https://github.com/mikhaildadaev/uast/actions/workflows/ci.yml/badge.svg)](https://github.com/mikhaildadaev/uast/actions/workflows/ci.yml)
 
 # UAST

@@ -748,7 +748,6 @@ func (strateger *sqliteStrateger) renderUpdate(baseRenderer *baseRenderer, stmtU
 	return nil
 }
 func (strateger *sqliteStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *sqliteStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {

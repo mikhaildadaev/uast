@@ -896,7 +896,6 @@ func (strateger *mssqlStrateger) renderUpdate(baseRenderer *baseRenderer, stmtUp
 	return nil
 }
 func (strateger *mssqlStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mssqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {

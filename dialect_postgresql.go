@@ -960,7 +960,6 @@ func (strateger *postgresqlStrateger) renderUpdate(baseRenderer *baseRenderer, s
 	return nil
 }
 func (strateger *postgresqlStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *postgresqlStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {

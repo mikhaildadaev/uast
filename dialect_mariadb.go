@@ -695,7 +695,6 @@ func (strateger *mariadbStrateger) renderUpdate(baseRenderer *baseRenderer, stmt
 	return nil
 }
 func (strateger *mariadbStrateger) transformAlter(baseTransformer *baseTransformer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	return nil
 }
 func (strateger *mariadbStrateger) transformComment(baseTransformer *baseTransformer, stmtComment *stmtComment) error {

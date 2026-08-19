@@ -30,6 +30,9 @@ if err1 != nil {
 }
 builder.SetDialect(uast.DialectPostgreSQL)
 query2, args2, err2 := builder.Build(stmt)
+if err2 != nil {
+    log.Fatal(err2)
+}
 ```
 Output MySQL:
 ```text

@@ -473,7 +473,6 @@ func mariadbFunctionTrunc(baseTransformer *baseTransformer, expr transformFuncti
 
 // Приватные методы
 func (strateger *mariadbStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
 		return err
 	}

@@ -683,7 +683,6 @@ func mssqlFunctionPosition(baseTransformer *baseTransformer, expr transformFunct
 
 // Приватные методы
 func (strateger *mssqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
 		return err
 	}

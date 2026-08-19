@@ -741,7 +741,6 @@ func postgresqlFunctionATan2(baseTransformer *baseTransformer, expr transformFun
 
 // Приватные методы
 func (strateger *postgresqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
 		return err
 	}

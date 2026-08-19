@@ -473,7 +473,6 @@ func mysqlFunctionTrunc(baseTransformer *baseTransformer, expr transformFunction
 
 // Приватные методы
 func (strateger *mysqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseRenderer.renderCommand(stmtAlter.command); err != nil {
 		return err
 	}

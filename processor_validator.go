@@ -538,7 +538,7 @@ func (validator *baseValidator) validateTable(table *TableSource) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validateTableCreateData(columns []markSourceable, constraints []ConstraintBase) error {
+func (validator *baseValidator) validateTableDefinitionData(columns []markSourceable, constraints []ConstraintBase) error {
 	if len(columns) == 0 && len(constraints) == 0 {
 		return nil
 	}

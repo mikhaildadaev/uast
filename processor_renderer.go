@@ -597,7 +597,7 @@ func (renderer *baseRenderer) renderTable(table *TableSource) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderTableCreateData(columns []markSourceable, constraints []ConstraintBase) error {
+func (renderer *baseRenderer) renderTableDefinitionData(columns []markSourceable, constraints []ConstraintBase) error {
 	if len(columns) == 0 && len(constraints) == 0 {
 		return nil
 	}

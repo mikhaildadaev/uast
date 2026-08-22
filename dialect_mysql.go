@@ -59,6 +59,10 @@ var DialectMySQL = &SupportDialect{
 			uastModifierTable:  true,
 			uastModifierView:   false,
 		},
+		supportCreate: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: true,
+		},
 		supportDrop: map[modifierService]bool{
 			uastModifierColumn:     true,
 			uastModifierConstraint: true,
@@ -542,7 +546,7 @@ func (strateger *mysqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseRenderer.renderTableNewData(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseRenderer.renderTableCreateData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -750,7 +754,6 @@ func (strateger *mysqlStrateger) transformUpdate(baseTransformer *baseTransforme
 	return nil
 }
 func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stmtAlter *stmtAlter) error {
-	// !!!Внимание, находится в стадии разработки
 	if err := baseValidator.validateEntity(stmtAlter.entity); err != nil {
 		return err
 	}
@@ -774,18 +777,17 @@ func (strateger *mysqlStrateger) validateAlter(baseValidator *baseValidator, stm
 			}
 		}
 	case *sourceTable:
+		if err := baseValidator.validateTableModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
+			return err
+		}
+		if err := baseValidator.validateTableRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
+			return err
+		}
 		if stmtAlter.renameTo != "" {
 			if !baseValidator.config.supportRename[uastModifierTable] {
 				return ErrUnsupportEntityTable
 			}
 			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
-		}
-		if stmtAlter.renameColumn != nil && stmtAlter.renameConstraint != nil {
-			return ErrUnsupportEntityTable
-		} else {
-			if err := baseValidator.validateTableRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
 				return err
 			}
 		}
@@ -821,7 +823,7 @@ func (strateger *mysqlStrateger) validateCreate(baseValidator *baseValidator, st
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseValidator.validateTableNewData(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseValidator.validateTableCreateData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:

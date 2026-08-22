@@ -814,7 +814,7 @@ func (strateger *postgresqlStrateger) renderCreate(baseRenderer *baseRenderer, s
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseRenderer.renderTableCreateData(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseRenderer.renderTableDefinitionData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -1100,7 +1100,7 @@ func (strateger *postgresqlStrateger) validateCreate(baseValidator *baseValidato
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseValidator.validateTableCreateData(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseValidator.validateTableDefinitionData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:

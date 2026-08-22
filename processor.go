@@ -44,8 +44,8 @@ type componentRenderer interface {
 	renderSet(sets []*clauseSet) error
 	renderSource(source statement) error
 	renderTable(table *TableSource) error
+	renderTableCreateData(columns []markSourceable, constraints []ConstraintBase) error
 	renderTableModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error
-	renderTableNewData(columns []markSourceable, constraints []ConstraintBase) error
 	renderTableRenameData(columnRename *columnRename, constraintRename *constraintRename) error
 	renderTarget(source SourceBase) error
 	renderUnions(unions []*clauseUnions) error
@@ -130,8 +130,8 @@ type componentValidator interface {
 	validateSet(sets []*clauseSet) error
 	validateSource(source statement) error
 	validateTable(table *TableSource) error
+	validateTableCreateData(columns []markSourceable, constraints []ConstraintBase) error
 	validateTableModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error
-	validateTableNewData(columns []markSourceable, constraints []ConstraintBase) error
 	validateTableRenameData(columnRename *columnRename, constraintRename *constraintRename) error
 	validateUnions(unions []*clauseUnions) error
 	validateValues(values *clauseValues) error

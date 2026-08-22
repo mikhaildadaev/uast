@@ -597,6 +597,38 @@ func (renderer *baseRenderer) renderTable(table *TableSource) error {
 	}
 	return nil
 }
+func (renderer *baseRenderer) renderTableCreateData(columns []markSourceable, constraints []ConstraintBase) error {
+	if len(columns) == 0 && len(constraints) == 0 {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderOperator(uastCompositeParenLeft)
+	needComma := false
+	if renderer.config.supportCreate[uastModifierColumn] {
+		for _, column := range columns {
+			if needComma {
+				renderer.renderOperator(uastCompositeCommaSpace)
+			}
+			if err := column.render(renderer); err != nil {
+				return err
+			}
+			needComma = true
+		}
+	}
+	if renderer.config.supportCreate[uastModifierConstraint] {
+		for _, constraint := range constraints {
+			if needComma {
+				renderer.renderOperator(uastCompositeCommaSpace)
+			}
+			if err := constraint.render(renderer); err != nil {
+				return err
+			}
+			needComma = true
+		}
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
 func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error {
 	if len(addColumns) == 0 && len(addConstraints) == 0 && len(dropColumns) == 0 && len(dropConstraints) == 0 && len(setColumns) == 0 {
 		return nil
@@ -724,34 +756,6 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 			}
 		}
 	}
-	return nil
-}
-func (renderer *baseRenderer) renderTableNewData(columns []markSourceable, constraints []ConstraintBase) error {
-	if len(columns) == 0 && len(constraints) == 0 {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderOperator(uastCompositeParenLeft)
-	for i, column := range columns {
-		if i > 0 {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-		if err := column.render(renderer); err != nil {
-			return err
-		}
-	}
-	if len(constraints) > 0 {
-		renderer.renderOperator(uastCompositeCommaSpace)
-	}
-	for i, constraint := range constraints {
-		if i > 0 {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-		if err := constraint.render(renderer); err != nil {
-			return err
-		}
-	}
-	renderer.renderOperator(uastCompositeParenRight)
 	return nil
 }
 func (renderer *baseRenderer) renderTableRenameData(columnRename *columnRename, constraintRename *constraintRename) error {

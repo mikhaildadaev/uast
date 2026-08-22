@@ -538,17 +538,55 @@ func (validator *baseValidator) validateTable(table *TableSource) error {
 	}
 	return nil
 }
-func (validator *baseValidator) validateTableNewData(columns []markSourceable, constraints []ConstraintBase) error {
+func (validator *baseValidator) validateTableCreateData(columns []markSourceable, constraints []ConstraintBase) error {
 	if len(columns) == 0 && len(constraints) == 0 {
 		return nil
 	}
-	for _, column := range columns {
-		if err := column.validate(validator); err != nil {
+	if len(columns) > 0 {
+		if !validator.config.supportCreate[uastModifierColumn] {
+			return ErrUnsupportService
+		}
+		for _, column := range columns {
+			if err := column.validate(validator); err != nil {
+				return err
+			}
+		}
+	}
+	if len(constraints) > 0 {
+		if !validator.config.supportCreate[uastModifierConstraint] {
+			return ErrUnsupportService
+		}
+		for _, constraint := range constraints {
+			if err := constraint.validate(validator); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+func (validator *baseValidator) validateTableModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error {
+	for _, column := range addColumns {
+		if err := validator.validateName(column.getName()); err != nil {
 			return err
 		}
 	}
-	for _, constraint := range constraints {
-		if err := constraint.validate(validator); err != nil {
+	for _, constraint := range addConstraints {
+		if err := validator.validateName(constraint.getName()); err != nil {
+			return err
+		}
+	}
+	for _, column := range dropColumns {
+		if err := validator.validateName(column.getName()); err != nil {
+			return err
+		}
+	}
+	for _, constraint := range dropConstraints {
+		if err := validator.validateName(constraint.getName()); err != nil {
+			return err
+		}
+	}
+	for _, mod := range setColumns {
+		if err := validator.validateName(mod.column.getName()); err != nil {
 			return err
 		}
 	}

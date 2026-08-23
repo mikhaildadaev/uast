@@ -677,34 +677,39 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 }
 func (renderer *baseRenderer) renderRenameData(columnRename *columnRename, constraintRename *constraintRename, renameTo string) error {
 	if columnRename != nil {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierRename)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierColumn)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(columnRename.column.getName())
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierTo)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		if err := renderer.renderName(columnRename.name); err != nil {
-			return err
+		if renderer.config.supportRename[uastModifierColumn] {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierRename)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierColumn)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderName(columnRename.column.getName())
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierTo)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			if err := renderer.renderName(columnRename.name); err != nil {
+				return err
+			}
 		}
 	}
 	if constraintRename != nil {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierRename)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierConstraint)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(constraintRename.constraint.getName())
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierTo)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		if err := renderer.renderName(constraintRename.name); err != nil {
-			return err
+		if renderer.config.supportRename[uastModifierConstraint] {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierRename)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierConstraint)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderName(constraintRename.constraint.getName())
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierTo)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			if err := renderer.renderName(constraintRename.name); err != nil {
+				return err
+			}
 		}
 	}
 	if renameTo != "" {
+		// !!! Нужно додумать renderer.config.supportRename[uastModifierIndex/uastModifierShema/uastModifierTable/uastModifierView]
 		if renderer.config.supportRename[uastModifierTable] {
 			renderer.renderOperator(uastCompositeSingleSpace)
 			renderer.renderService(uastModifierRename)

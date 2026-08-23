@@ -22,7 +22,7 @@ go test -race ./...
 ## Key Features
 - **类型安全** — 完整的泛型支持，在编译时检查列和值的类型。
 - **多方言支持** — 从单个 AST 生成 MariaDB、MsSQL、MySQL、PostgreSQL、SQLite 的 SQL。
-- **架构级安全** — 三级 `Value` / `Literal` / `Constant` 系统防止 SQL 注入。
+- **架构级安全** — 三级 `Constant` / `Literal` / `Value` 系统防止 SQL 注入。
 - **高性能** — `sync.Pool` 重用上下文，简单查询约 360 ns/op。
 - **零依赖** — 仅使用 Go 标准库。
 - **跨数据库文档** — 每个函数都附带了在所有支持的数据库方言中的 SQL 输出示例。

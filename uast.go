@@ -486,10 +486,10 @@ type config struct {
 	supportAdd           map[modifierService]bool
 	supportCascade       map[modifierService]bool
 	supportComment       map[modifierService]bool
-	supportCreate        map[modifierService]bool
 	supportDrop          map[modifierService]bool
 	supportIfExists      map[modifierService]bool
 	supportIfNotExists   map[modifierService]bool
+	supportNew           map[modifierService]bool
 	supportOptions       map[modifierService]bool
 	supportRename        map[modifierService]bool
 	supportReturning     bool

@@ -60,10 +60,6 @@ var DialectMsSQL = &SupportDialect{
 			uastModifierTable:  false,
 			uastModifierView:   false,
 		},
-		supportCreate: map[modifierService]bool{
-			uastModifierColumn:     true,
-			uastModifierConstraint: true,
-		},
 		supportDrop: map[modifierService]bool{
 			uastModifierColumn:     true,
 			uastModifierConstraint: true,
@@ -83,6 +79,10 @@ var DialectMsSQL = &SupportDialect{
 			uastModifierSchema: true,
 			uastModifierTable:  false,
 			uastModifierView:   true,
+		},
+		supportNew: map[modifierService]bool{
+			uastModifierColumn:     true,
+			uastModifierConstraint: true,
 		},
 		supportOptions: map[modifierService]bool{
 			uastModifierRestartIdentity: false,
@@ -695,34 +695,23 @@ func (strateger *mssqlStrateger) renderAlter(baseRenderer *baseRenderer, stmtAlt
 	}
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
-		if stmtAlter.renameTo != "" {
-			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
+		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
+			return err
 		}
 	case *sourceSchema:
-		if stmtAlter.renameTo != "" {
-			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
+		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
+			return err
 		}
 	case *sourceTable:
-		if err := baseRenderer.renderTableModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
+		if err := baseRenderer.renderModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
 			return err
 		}
-		if err := baseRenderer.renderTableRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
+		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
 			return err
-		}
-		if stmtAlter.renameTo != "" {
-			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
 		}
 	case *sourceView:
-		if stmtAlter.renameTo != "" {
-			if err := baseRenderer.renderRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
+		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
+			return err
 		}
 	}
 	return nil
@@ -747,7 +736,7 @@ func (strateger *mssqlStrateger) renderCreate(baseRenderer *baseRenderer, stmtCr
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseRenderer.renderTableDefinitionData(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseRenderer.renderDefinitionData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:
@@ -984,46 +973,23 @@ func (strateger *mssqlStrateger) validateAlter(baseValidator *baseValidator, stm
 	}
 	switch stmtAlter.entity.(type) {
 	case *sourceIndex:
-		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportRename[uastModifierIndex] {
-				return ErrUnsupportEntityIndex
-			}
-			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
+		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
+			return err
 		}
 	case *sourceSchema:
-		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportRename[uastModifierSchema] {
-				return ErrUnsupportEntitySchema
-			}
-			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
+		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
+			return err
 		}
 	case *sourceTable:
-		if err := baseValidator.validateTableModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
+		if err := baseValidator.validateModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
 			return err
 		}
-		if err := baseValidator.validateTableRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
+		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
 			return err
-		}
-		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportRename[uastModifierTable] {
-				return ErrUnsupportEntityTable
-			}
-			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
 		}
 	case *sourceView:
-		if stmtAlter.renameTo != "" {
-			if !baseValidator.config.supportRename[uastModifierView] {
-				return ErrUnsupportEntityView
-			}
-			if err := baseValidator.validateRenameTo(stmtAlter.renameTo); err != nil {
-				return err
-			}
+		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
+			return err
 		}
 	}
 	return nil
@@ -1042,7 +1008,7 @@ func (strateger *mssqlStrateger) validateCreate(baseValidator *baseValidator, st
 		}
 	case *sourceSchema:
 	case *sourceTable:
-		if err := baseValidator.validateTableDefinitionData(stmtCreate.columns, stmtCreate.constraints); err != nil {
+		if err := baseValidator.validateDefinitionData(stmtCreate.columns, stmtCreate.constraints); err != nil {
 			return err
 		}
 	case *sourceView:

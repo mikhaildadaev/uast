@@ -255,6 +255,38 @@ func (renderer *baseRenderer) renderCommand(command managementService) error {
 	renderer.renderService(command)
 	return nil
 }
+func (renderer *baseRenderer) renderDefinitionData(columns []markSourceable, constraints []ConstraintBase) error {
+	if len(columns) == 0 && len(constraints) == 0 {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderOperator(uastCompositeParenLeft)
+	needComma := false
+	if renderer.config.supportNew[uastModifierColumn] {
+		for _, column := range columns {
+			if needComma {
+				renderer.renderOperator(uastCompositeCommaSpace)
+			}
+			if err := column.render(renderer); err != nil {
+				return err
+			}
+			needComma = true
+		}
+	}
+	if renderer.config.supportNew[uastModifierConstraint] {
+		for _, constraint := range constraints {
+			if needComma {
+				renderer.renderOperator(uastCompositeCommaSpace)
+			}
+			if err := constraint.render(renderer); err != nil {
+				return err
+			}
+			needComma = true
+		}
+	}
+	renderer.renderOperator(uastCompositeParenRight)
+	return nil
+}
 func (renderer *baseRenderer) renderDistinct(distinct bool) error {
 	if distinct {
 		renderer.renderOperator(uastCompositeSingleSpace)
@@ -418,218 +450,7 @@ func (renderer *baseRenderer) renderJoin(joins []*clauseJoin) error {
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderOn(on SourceBase) error {
-	if on == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierOn)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderName(on.getName())
-	return nil
-}
-func (renderer *baseRenderer) renderOnFrom(onTable SourceBase, onColumn SourceBase) error {
-	if onTable == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierOn)
-	if onColumn == nil {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierTable)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(onTable.getName())
-	} else {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierColumn)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(onTable.getName())
-		renderer.renderOperator(uastCompositeSinglePoint)
-		renderer.renderName(onColumn.getName())
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderOnTo(onTo SourceBase) error {
-	if onTo == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := onTo.render(renderer); err != nil {
-		return err
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
-	if len(orders) == 0 {
-		return nil
-	}
-	ordersCount := len(orders) - 1
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierOrderBy)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	for i, order := range orders {
-		if err := order.render(renderer); err != nil {
-			return err
-		}
-		if i < ordersCount {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderPagination(pagination *clausePagination) error {
-	if pagination == nil {
-		return nil
-	}
-	if !pagination.reverse {
-		if pagination.valueLimit > 0 {
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(pagination.serviceLimit)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderValue(pagination.valueLimit)
-		}
-		if pagination.valueOffset >= 0 {
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(pagination.serviceOffset)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderValue(pagination.valueOffset)
-		}
-	} else {
-		if pagination.valueOffset >= 0 {
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(pagination.serviceOffset)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderValue(pagination.valueOffset)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(pagination.suffixOffset)
-		}
-		if pagination.valueLimit > 0 {
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(pagination.serviceLimit)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderValue(pagination.valueLimit)
-			renderer.renderOperator(uastCompositeSingleSpace)
-			renderer.renderService(pagination.suffixLimit)
-		}
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderRenameTo(renameTo string) error {
-	if renameTo != "" {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierRename)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierTo)
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderName(renameTo)
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderReplace(replace bool) error {
-	if replace {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierOrReplace)
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error {
-	if restartIdentity && renderer.config.supportOptions[uastModifierRestartIdentity] {
-		renderer.renderOperator(uastCompositeSingleSpace)
-		renderer.renderService(uastModifierRestartIdentity)
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderReturning(returnings *clauseReturning) error {
-	if returnings == nil || !renderer.config.supportReturning {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(returnings.serviceReturning)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	last := len(returnings.expressions) - 1
-	for i, expression := range returnings.expressions {
-		if err := expression.render(renderer); err != nil {
-			return err
-		}
-		if i < last {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderSet(sets []*clauseSet) error {
-	if len(sets) == 0 {
-		return nil
-	}
-	setsCount := len(sets) - 1
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierSet)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	for i, set := range sets {
-		if err := set.render(renderer); err != nil {
-			return err
-		}
-		if i < setsCount {
-			renderer.renderOperator(uastCompositeCommaSpace)
-		}
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderSource(source statement) error {
-	if source == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := source.render(renderer); err != nil {
-		return err
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderTable(table *TableSource) error {
-	if table == nil {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderService(uastModifierTable)
-	renderer.renderOperator(uastCompositeSingleSpace)
-	if err := table.render(renderer); err != nil {
-		return err
-	}
-	return nil
-}
-func (renderer *baseRenderer) renderTableDefinitionData(columns []markSourceable, constraints []ConstraintBase) error {
-	if len(columns) == 0 && len(constraints) == 0 {
-		return nil
-	}
-	renderer.renderOperator(uastCompositeSingleSpace)
-	renderer.renderOperator(uastCompositeParenLeft)
-	needComma := false
-	if renderer.config.supportCreate[uastModifierColumn] {
-		for _, column := range columns {
-			if needComma {
-				renderer.renderOperator(uastCompositeCommaSpace)
-			}
-			if err := column.render(renderer); err != nil {
-				return err
-			}
-			needComma = true
-		}
-	}
-	if renderer.config.supportCreate[uastModifierConstraint] {
-		for _, constraint := range constraints {
-			if needComma {
-				renderer.renderOperator(uastCompositeCommaSpace)
-			}
-			if err := constraint.render(renderer); err != nil {
-				return err
-			}
-			needComma = true
-		}
-	}
-	renderer.renderOperator(uastCompositeParenRight)
-	return nil
-}
-func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error {
+func (renderer *baseRenderer) renderModifyData(addColumns []markSourceable, addConstraints []ConstraintBase, dropColumns []markSourceable, dropConstraints []ConstraintBase, setColumns []*columnSet) error {
 	if len(addColumns) == 0 && len(addConstraints) == 0 && len(dropColumns) == 0 && len(dropConstraints) == 0 && len(setColumns) == 0 {
 		return nil
 	}
@@ -758,7 +579,103 @@ func (renderer *baseRenderer) renderTableModifyData(addColumns []markSourceable,
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderTableRenameData(columnRename *columnRename, constraintRename *constraintRename) error {
+func (renderer *baseRenderer) renderOn(on SourceBase) error {
+	if on == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierOn)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderName(on.getName())
+	return nil
+}
+func (renderer *baseRenderer) renderOnFrom(onTable SourceBase, onColumn SourceBase) error {
+	if onTable == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierOn)
+	if onColumn == nil {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierTable)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(onTable.getName())
+	} else {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierColumn)
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderName(onTable.getName())
+		renderer.renderOperator(uastCompositeSinglePoint)
+		renderer.renderName(onColumn.getName())
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderOnTo(onTo SourceBase) error {
+	if onTo == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := onTo.render(renderer); err != nil {
+		return err
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderOrderBy(orders []markOrderable) error {
+	if len(orders) == 0 {
+		return nil
+	}
+	ordersCount := len(orders) - 1
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierOrderBy)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	for i, order := range orders {
+		if err := order.render(renderer); err != nil {
+			return err
+		}
+		if i < ordersCount {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderPagination(pagination *clausePagination) error {
+	if pagination == nil {
+		return nil
+	}
+	if !pagination.reverse {
+		if pagination.valueLimit > 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceLimit)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueLimit)
+		}
+		if pagination.valueOffset >= 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceOffset)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueOffset)
+		}
+	} else {
+		if pagination.valueOffset >= 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceOffset)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueOffset)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.suffixOffset)
+		}
+		if pagination.valueLimit > 0 {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.serviceLimit)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderValue(pagination.valueLimit)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(pagination.suffixLimit)
+		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderRenameData(columnRename *columnRename, constraintRename *constraintRename, renameTo string) error {
 	if columnRename != nil {
 		renderer.renderOperator(uastCompositeSingleSpace)
 		renderer.renderService(uastModifierRename)
@@ -786,6 +703,88 @@ func (renderer *baseRenderer) renderTableRenameData(columnRename *columnRename, 
 		if err := renderer.renderName(constraintRename.name); err != nil {
 			return err
 		}
+	}
+	if renameTo != "" {
+		if renderer.config.supportRename[uastModifierTable] {
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierRename)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderService(uastModifierTo)
+			renderer.renderOperator(uastCompositeSingleSpace)
+			renderer.renderName(renameTo)
+		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderReplace(replace bool) error {
+	if replace {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierOrReplace)
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderRestartIdentity(restartIdentity bool) error {
+	if restartIdentity && renderer.config.supportOptions[uastModifierRestartIdentity] {
+		renderer.renderOperator(uastCompositeSingleSpace)
+		renderer.renderService(uastModifierRestartIdentity)
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderReturning(returnings *clauseReturning) error {
+	if returnings == nil || !renderer.config.supportReturning {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(returnings.serviceReturning)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	last := len(returnings.expressions) - 1
+	for i, expression := range returnings.expressions {
+		if err := expression.render(renderer); err != nil {
+			return err
+		}
+		if i < last {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderSet(sets []*clauseSet) error {
+	if len(sets) == 0 {
+		return nil
+	}
+	setsCount := len(sets) - 1
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierSet)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	for i, set := range sets {
+		if err := set.render(renderer); err != nil {
+			return err
+		}
+		if i < setsCount {
+			renderer.renderOperator(uastCompositeCommaSpace)
+		}
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderSource(source statement) error {
+	if source == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := source.render(renderer); err != nil {
+		return err
+	}
+	return nil
+}
+func (renderer *baseRenderer) renderTable(table *TableSource) error {
+	if table == nil {
+		return nil
+	}
+	renderer.renderOperator(uastCompositeSingleSpace)
+	renderer.renderService(uastModifierTable)
+	renderer.renderOperator(uastCompositeSingleSpace)
+	if err := table.render(renderer); err != nil {
+		return err
 	}
 	return nil
 }

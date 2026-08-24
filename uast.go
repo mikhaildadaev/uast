@@ -55,15 +55,16 @@ const (
 	uastConstUint64One     uint64  = 1
 )
 const (
-	uastCountMaxArray      = 128
-	uastCountMaxDepth      = 16
 	uastCountMaxComparison = 48
+	uastCountMaxDepth      = 16
+	uastCountMaxField      = 128
 	uastCountMaxFunction   = 128
-	uastCountMaxLenght     = 64
-	uastCountMaxLimit      = 64
 	uastCountMaxSubquery   = 32
 	uastCountMaxUnions     = 16
 	uastCountMaxWith       = 8
+	uastLenghtArray        = 256
+	uastLenghtData         = 256
+	uastLenghtLimit        = 512
 	uastSizeInitByte       = 128
 	uastSizeInitColumn     = 32
 	uastSizeInitComparison = 8

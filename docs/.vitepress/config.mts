@@ -176,7 +176,7 @@ export default defineConfig({
             link: '/ru/' 
           },
           { 
-            text: 'Лицензия', 
+            text: 'License', 
             link: '/ru/license' 
           },
           { 
@@ -196,7 +196,7 @@ export default defineConfig({
           {
             items: [
               { 
-                text: 'Лицензия', 
+                text: 'License', 
                 link: '/ru/license' 
               },
               { 
@@ -311,7 +311,7 @@ export default defineConfig({
             link: '/zh/' 
           },
           { 
-            text: '许可证', 
+            text: 'License', 
             link: '/zh/license' 
           },
           { 
@@ -331,7 +331,7 @@ export default defineConfig({
           {
             items: [
               { 
-                text: '许可证', 
+                text: 'License', 
                 link: '/zh/license' 
               },
               { 

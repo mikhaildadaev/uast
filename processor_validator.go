@@ -58,15 +58,14 @@ func (validator *baseValidator) validateAlias(value string) error {
 	return ErrUnsupportIdentAlias
 }
 func (validator *baseValidator) validateArray(value int) error {
-	if value > uastCountMaxArray {
-		return ErrExcessMaxArray
+	if value > uastLenghtArray {
+		return ErrExcessLenghtArray
 	}
 	return nil
 }
 func (validator *baseValidator) validateComparison(value transformComparison) error {
-	validator.contexter.countMaxComparison++
-	if validator.contexter.countMaxComparison > uastCountMaxComparison {
-		return ErrExcessMaxComparison
+	if err := validator.contexter.countComparisonPlus(); err != nil {
+		return err
 	}
 	left := value.getLeft()
 	operator := value.getOperator()
@@ -164,9 +163,8 @@ func (validator *baseValidator) validateConstant(value any) error {
 	return ErrUnsupportConstant
 }
 func (validator *baseValidator) validateFunction(value transformFunction) error {
-	validator.contexter.countMaxFunction++
-	if validator.contexter.countMaxFunction > uastCountMaxFunction {
-		return ErrExcessMaxFunction
+	if err := validator.contexter.countFunctionPlus(); err != nil {
+		return err
 	}
 	distinct := value.getDistinct()
 	paramCount := value.getParamCount()
@@ -225,8 +223,8 @@ func (validator *baseValidator) validateLiteral(value any) error {
 		if length == 0 {
 			return ErrInvalidLiteral
 		}
-		if length > uastCountMaxLenght {
-			return ErrExcessMaxLenght
+		if length > uastLenghtData {
+			return ErrExcessLenghtData
 		}
 		if !isSecureString(v, uastFormatLiteral) {
 			return ErrUnsupportSymbol
@@ -311,10 +309,13 @@ func (validator *baseValidator) validateService(value any) error {
 	return ErrUnsupportService
 }
 func (validator *baseValidator) validateSubquery() error {
-	validator.contexter.countMaxSubquery++
-	if validator.contexter.countMaxSubquery > uastCountMaxSubquery {
-		return ErrExcessMaxSubquery
+	if err := validator.contexter.countSubqueryPlus(); err != nil {
+		return err
 	}
+	if err := validator.contexter.countDepthPlus(); err != nil {
+		return err
+	}
+	defer validator.contexter.countDepthMinus()
 	return nil
 }
 func (validator *baseValidator) validateValue(value any) error {
@@ -389,6 +390,18 @@ func (validator *baseValidator) validateEntity(entity SourceBase) error {
 	default:
 		return ErrInvalidStatement
 	}
+}
+func (validator *baseValidator) validateField(fieldName string, fieldTableAlias string) error {
+	if err := validator.contexter.countFieldPlus(); err != nil {
+		return err
+	}
+	if err := validator.validateName(fieldName); err != nil {
+		return err
+	}
+	if err := validator.validateAlias(fieldTableAlias); err != nil {
+		return err
+	}
+	return nil
 }
 func (validator *baseValidator) validateFields(fields []markExpressable) error {
 	if len(fields) == 0 {
@@ -545,8 +558,8 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	if pagination == nil {
 		return nil
 	}
-	if pagination.valueLimit > uastCountMaxLimit {
-		return ErrExcessMaxLimit
+	if pagination.valueLimit > uastLenghtLimit {
+		return ErrExcessLenghtLimit
 	}
 	if pagination.valueLimit < 0 {
 		return ErrInvalidStatementLimit
@@ -639,10 +652,10 @@ func (validator *baseValidator) validateUnions(unions []*clauseUnions) error {
 	if len(unions) == 0 {
 		return nil
 	}
-	validator.contexter.countMaxUnions += len(unions)
-	if validator.contexter.countMaxUnions > uastCountMaxUnions {
-		return ErrExcessMaxUnions
+	if err := validator.contexter.countUnionsPlus(len(unions)); err != nil {
+		return err
 	}
+	defer validator.contexter.countUnionsMinus(len(unions))
 	for _, union := range unions {
 		if err := union.validate(validator); err != nil {
 			return err
@@ -679,10 +692,10 @@ func (validator *baseValidator) validateWith(withs []*clauseWith) error {
 	if len(withs) == 0 {
 		return nil
 	}
-	validator.contexter.countMaxWith += len(withs)
-	if validator.contexter.countMaxWith > uastCountMaxWith {
-		return ErrExcessMaxWith
+	if err := validator.contexter.countWithPlus(len(withs)); err != nil {
+		return err
 	}
+	defer validator.contexter.countWithMinus(len(withs))
 	seen := make(map[string]bool)
 	for _, with := range withs {
 		if seen[with.alias] {

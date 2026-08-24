@@ -41,6 +41,10 @@ export default defineConfig({
             link: '/en/' 
           },
           { 
+            text: 'License', 
+            link: '/en/license' 
+          },
+          { 
             text: 'Go', 
             link: '/en/go' 
           },
@@ -168,6 +172,10 @@ export default defineConfig({
             link: '/ru/' 
           },
           { 
+            text: 'Лицензия', 
+            link: '/ru/license' 
+          },
+          { 
             text: 'Go', 
             link: '/ru/go' 
           },
@@ -293,6 +301,10 @@ export default defineConfig({
           { 
             text: '首页', 
             link: '/zh/' 
+          },
+          { 
+            text: '许可证', 
+            link: '/zh/license' 
           },
           { 
             text: 'Go', 

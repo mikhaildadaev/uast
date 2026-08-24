@@ -455,11 +455,9 @@ func (expr *exprField[T]) isOrderable()       {}
 func (expr *exprField[T]) isPredicable()      {}
 func (expr *exprField[T]) isReturnable()      {}
 func (expr *exprField[T]) render(baseRenderer *baseRenderer) error {
-	if expr.tableAlias != "" {
-		baseRenderer.renderAlias(expr.tableAlias)
-		baseRenderer.renderOperator(uastCompositeSinglePoint)
+	if err := baseRenderer.renderField(expr.name, expr.tableAlias); err != nil {
+		return err
 	}
-	baseRenderer.renderName(expr.name)
 	return nil
 }
 func (expr *exprField[T]) getName() string {

@@ -28,7 +28,7 @@ go test -race ./...
 - **Type-safe** — Full generics support, compile-time type checking for columns and values.
 - **Multi-dialect** — MariaDB, MsSQL, MySQL, PostgreSQL, SQLite from a single AST.
 - **Secure by design** — Three-level `Constant` / `Literal` / `Value` system prevents SQL injection.
-- **High performance** — `sync.Pool` for context reuse, ~360 ns/op for simple queries.
+- **High performance** — `sync.Pool` for context reuse, ~216 ns/op for simple queries in mutable mode (up to 2x faster than immutable). Immutable mode runs at ~450 ns/op for guaranteed thread-safety.
 - **Zero dependencies** — Only Go standard library.
 - **Cross-dialect docs** — Every function documented with SQL output for each supported dialect.
 - **Hot dialect switch** — `SetDialect()` changes dialect at runtime without recreating the pool.

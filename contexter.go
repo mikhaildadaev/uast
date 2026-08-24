@@ -22,18 +22,19 @@ import (
 
 // Приватные структуры
 type contexter struct {
-	bufferByte           []byte
-	bufferExpr           []ExpressionBase
-	bufferQuery          strings.Builder
-	bufferValue          []any
-	collectionComparison []transformComparison
-	collectionFunction   []transformFunction
-	countMaxDepth        int
-	countMaxComparison   int
-	countMaxFunction     int
-	countMaxSubquery     int
-	countMaxUnions       int
-	countMaxWith         int
+	bufferByte             []byte
+	bufferExpr             []ExpressionBase
+	bufferQuery            strings.Builder
+	bufferValue            []any
+	collectionComparison   []transformComparison
+	collectionFunction     []transformFunction
+	currentCountComparison int
+	currentCountDepth      int
+	currentCountField      int
+	currentCountFunction   int
+	currentCountSubquery   int
+	currentCountUnions     int
+	currentCountWith       int
 }
 
 // Приватные конструкторы
@@ -51,6 +52,76 @@ func newContext() *contexter {
 }
 
 // Приватные методы
+func (contexter *contexter) countComparisonPlus() error {
+	contexter.currentCountComparison++
+	if contexter.currentCountComparison > uastCountMaxComparison {
+		return ErrExcessMaxComparison
+	}
+	return nil
+}
+func (contexter *contexter) countDepthPlus() error {
+	contexter.currentCountDepth++
+	if contexter.currentCountDepth > uastCountMaxDepth {
+		return ErrExcessMaxDepth
+	}
+	return nil
+}
+func (contexter *contexter) countDepthMinus() error {
+	contexter.currentCountDepth--
+	if contexter.currentCountDepth < 0 {
+		contexter.currentCountDepth = 0
+	}
+	return nil
+}
+func (contexter *contexter) countFieldPlus() error {
+	contexter.currentCountField++
+	if contexter.currentCountField > uastCountMaxField {
+		return ErrExcessMaxField
+	}
+	return nil
+}
+func (contexter *contexter) countFunctionPlus() error {
+	contexter.currentCountFunction++
+	if contexter.currentCountFunction > uastCountMaxFunction {
+		return ErrExcessMaxFunction
+	}
+	return nil
+}
+func (contexter *contexter) countSubqueryPlus() error {
+	contexter.currentCountSubquery++
+	if contexter.currentCountSubquery > uastCountMaxSubquery {
+		return ErrExcessMaxSubquery
+	}
+	return nil
+}
+func (contexter *contexter) countUnionsPlus(count int) error {
+	contexter.currentCountUnions += count
+	if contexter.currentCountUnions > uastCountMaxUnions {
+		return ErrExcessMaxUnions
+	}
+	return nil
+}
+func (contexter *contexter) countUnionsMinus(count int) error {
+	contexter.currentCountUnions -= count
+	if contexter.currentCountUnions < 0 {
+		contexter.currentCountUnions = 0
+	}
+	return nil
+}
+func (contexter *contexter) countWithPlus(count int) error {
+	contexter.currentCountWith += count
+	if contexter.currentCountWith > uastCountMaxWith {
+		return ErrExcessMaxWith
+	}
+	return nil
+}
+func (contexter *contexter) countWithMinus(count int) error {
+	contexter.currentCountWith -= count
+	if contexter.currentCountWith < 0 {
+		contexter.currentCountWith = 0
+	}
+	return nil
+}
 func (contexter *contexter) prependCollectionComparison(expr transformComparison) {
 	contexter.collectionComparison = append([]transformComparison{expr}, contexter.collectionComparison...)
 }
@@ -64,12 +135,12 @@ func (contexter *contexter) resetAll() {
 	contexter.resetBufferValue()
 	contexter.resetCollectionComparison()
 	contexter.resetCollectionFunction()
-	contexter.countMaxDepth = 0
-	contexter.countMaxComparison = 0
-	contexter.countMaxFunction = 0
-	contexter.countMaxSubquery = 0
-	contexter.countMaxUnions = 0
-	contexter.countMaxWith = 0
+	contexter.currentCountComparison = 0
+	contexter.currentCountDepth = 0
+	contexter.currentCountFunction = 0
+	contexter.currentCountSubquery = 0
+	contexter.currentCountUnions = 0
+	contexter.currentCountWith = 0
 }
 func (contexter *contexter) resetBufferByte() {
 	for i := range contexter.bufferByte {

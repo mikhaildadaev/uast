@@ -2,7 +2,7 @@
 outline: deep
 ---
 
-# API / Ядро / Конструкторы
+# API / Core / Конструкторы
 
 ::: info **Информация**
 Эта страница охватывает следующие конструкторы операторов: `NewAlter`, `NewComment`, `NewCreate`, `NewDelete`, `NewDrop`, `NewInsert`, `NewSelect`, `NewTruncate`, `NewUpdate`. Каждый конструктор создаёт новый экземпляр оператора, который может быть настроен с помощью методов и скомпилирован в SQL с помощью `Build()`.

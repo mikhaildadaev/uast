@@ -2,7 +2,7 @@
 outline: deep
 ---
 
-# API / 核心 / 构造函数
+# API / Core / 构造函数
 
 ::: info **关于**
 此页面涵盖以下语句构造函数：`NewAlter`、`NewComment`、`NewCreate`、`NewDelete`、`NewDrop`、`NewInsert`、`NewSelect`、`NewTruncate`、`NewUpdate`。每个构造函数创建一个新的语句实例，可使用方法进行配置，并通过 `Build()` 编译为 SQL。

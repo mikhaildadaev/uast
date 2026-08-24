@@ -543,8 +543,8 @@ func (validator *baseValidator) validatePagination(pagination *clausePagination)
 	}
 	return nil
 }
-func (validator *baseValidator) validateRenameData(columnRename *columnRename, constraintRename *constraintRename, renameTo string) error {
-	if columnRename == nil && constraintRename == nil && renameTo == "" {
+func (validator *baseValidator) validateRenameData(columnRename *columnRename, constraintRename *constraintRename) error {
+	if columnRename == nil && constraintRename == nil {
 		return nil
 	}
 	if columnRename != nil {
@@ -563,10 +563,22 @@ func (validator *baseValidator) validateRenameData(columnRename *columnRename, c
 			return err
 		}
 	}
-	if renameTo != "" {
-		if err := validator.validateLiteral(renameTo); err != nil {
-			return err
-		}
+	return nil
+}
+func (validator *baseValidator) validateRenameTo(entity SourceBase, renameTo string) error {
+	if renameTo == "" {
+		return nil
+	}
+	if err := validator.validateLiteral(renameTo); err != nil {
+		return err
+	}
+	switch entity.(type) {
+	case *sourceIndex:
+	case *sourceSchema:
+	case *sourceTable:
+	case *sourceView:
+	default:
+		return ErrUnsupportEntity
 	}
 	return nil
 }

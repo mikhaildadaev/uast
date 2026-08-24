@@ -675,7 +675,7 @@ func (renderer *baseRenderer) renderPagination(pagination *clausePagination) err
 	}
 	return nil
 }
-func (renderer *baseRenderer) renderRenameData(columnRename *columnRename, constraintRename *constraintRename, renameTo string) error {
+func (renderer *baseRenderer) renderRenameData(columnRename *columnRename, constraintRename *constraintRename) error {
 	if columnRename != nil {
 		if renderer.config.supportRename[uastModifierColumn] {
 			renderer.renderOperator(uastCompositeSingleSpace)
@@ -708,9 +708,22 @@ func (renderer *baseRenderer) renderRenameData(columnRename *columnRename, const
 			}
 		}
 	}
+	return nil
+}
+func (renderer *baseRenderer) renderRenameTo(entity SourceBase, renameTo string) error {
 	if renameTo != "" {
-		// !!! Нужно додумать renderer.config.supportRename[uastModifierIndex/uastModifierShema/uastModifierTable/uastModifierView]
-		if renderer.config.supportRename[uastModifierTable] {
+		var modifier modifierService
+		switch entity.(type) {
+		case *sourceIndex:
+			modifier = uastModifierIndex
+		case *sourceSchema:
+			modifier = uastModifierSchema
+		case *sourceTable:
+			modifier = uastModifierTable
+		case *sourceView:
+			modifier = uastModifierView
+		}
+		if renderer.config.supportRename[modifier] {
 			renderer.renderOperator(uastCompositeSingleSpace)
 			renderer.renderService(uastModifierRename)
 			renderer.renderOperator(uastCompositeSingleSpace)

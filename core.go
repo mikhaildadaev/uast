@@ -136,6 +136,7 @@ var (
 	ErrUnsupportComparison                = errors.New("unsupport comparison")
 	ErrUnsupportFunction                  = errors.New("unsupport function")
 	ErrUnsupportFunctionDistinct          = errors.New("unsupport function distinct")
+	ErrUnsupportEntity                    = errors.New("unsupport entity")
 	ErrUnsupportEntityIndex               = errors.New("unsupport entity index")
 	ErrUnsupportEntitySchema              = errors.New("unsupport entity schema")
 	ErrUnsupportEntityTable               = errors.New("unsupport entity table")

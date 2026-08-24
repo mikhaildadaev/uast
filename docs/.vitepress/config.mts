@@ -184,7 +184,7 @@ export default defineConfig({
             link: '/ru/go' 
           },
           { 
-            text: 'Бенчмарки', 
+            text: 'Benchmarks', 
             link: '/ru/benchmarks' 
           },
           { 
@@ -204,14 +204,14 @@ export default defineConfig({
                 link: '/ru/go' 
               },
               { 
-                text: 'Бенчмарки', 
+                text: 'Benchmarks', 
                 link: '/ru/benchmarks' 
               },
               {
                 text: 'API',
                 items: [
                   { 
-                    text: 'Ядро',
+                    text: 'Core',
                     items: [
                       { 
                         text: 'Конструкторы', 
@@ -319,7 +319,7 @@ export default defineConfig({
             link: '/zh/go' 
           },
           { 
-            text: '基准测试', 
+            text: 'Benchmarks', 
             link: '/zh/benchmarks' 
           },
           { 
@@ -339,14 +339,14 @@ export default defineConfig({
                 link: '/zh/go' 
               },
               { 
-                text: '基准', 
+                text: 'Benchmarks', 
                 link: '/zh/benchmarks' 
               },
               { 
                 text: 'API',
                 items: [
                   { 
-                    text: '核心',
+                    text: 'Core',
                     items: [
                       { 
                         text: '构造函数', 

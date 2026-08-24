@@ -53,10 +53,11 @@ const (
 	uastConstUint64One     uint64  = 1
 )
 const (
+	uastCountMaxArray      = 128
 	uastCountMaxDepth      = 16
-	uastCountMaxColumn     = 64
 	uastCountMaxComparison = 48
 	uastCountMaxFunction   = 128
+	uastCountMaxLenght     = 64
 	uastCountMaxLimit      = 64
 	uastCountMaxSubquery   = 32
 	uastCountMaxUnions     = 16
@@ -460,11 +461,7 @@ type typeString interface {
 
 // Приватные структуры
 type config struct {
-	lengthMaxArray       int
-	lengthMaxConst       int
-	lengthMaxFunc        int
 	lengthMaxIdent       int
-	lengthMaxLimit       int
 	lengthMaxParam       int
 	lengthMaxQuery       int
 	lengthMaxValueByte   int

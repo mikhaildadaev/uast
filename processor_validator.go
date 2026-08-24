@@ -42,8 +42,8 @@ func (validator *baseValidator) validateAlias(value string) error {
 	return ErrUnsupportIdentAlias
 }
 func (validator *baseValidator) validateArray(value int) error {
-	if value > validator.config.lengthMaxArray {
-		return ErrOverflowArray
+	if value > uastCountMaxArray {
+		return ErrExcessMaxArray
 	}
 	return nil
 }
@@ -209,8 +209,8 @@ func (validator *baseValidator) validateLiteral(value any) error {
 		if length == 0 {
 			return ErrInvalidLiteral
 		}
-		if length > validator.config.lengthMaxLimit {
-			return ErrOverflowLiteral
+		if length > uastCountMaxLenght {
+			return ErrExcessMaxLenght
 		}
 		if !isSecureString(v, uastFormatLiteral) {
 			return ErrUnsupportSymbol
@@ -528,9 +528,6 @@ func (validator *baseValidator) validateOrderBy(orders []markOrderable) error {
 func (validator *baseValidator) validatePagination(pagination *clausePagination) error {
 	if pagination == nil {
 		return nil
-	}
-	if pagination.valueLimit > validator.config.lengthMaxLimit {
-		return ErrOverflowLimit
 	}
 	if pagination.valueLimit > uastCountMaxLimit {
 		return ErrExcessMaxLimit

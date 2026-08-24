@@ -483,26 +483,14 @@ func (strateger *mariadbStrateger) renderAlter(baseRenderer *baseRenderer, stmtA
 	if err := baseRenderer.renderEntity(stmtAlter.entity, false, false, stmtAlter.ifExists, stmtAlter.ifNotExists); err != nil {
 		return err
 	}
-	switch stmtAlter.entity.(type) {
-	case *sourceIndex:
-		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
-	case *sourceSchema:
-		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
-	case *sourceTable:
-		if err := baseRenderer.renderModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
-			return err
-		}
-		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
-	case *sourceView:
-		if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
+	if err := baseRenderer.renderModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
+		return err
+	}
+	if err := baseRenderer.renderRenameTo(stmtAlter.entity, stmtAlter.renameTo); err != nil {
+		return err
 	}
 	return nil
 }
@@ -746,26 +734,14 @@ func (strateger *mariadbStrateger) validateAlter(baseValidator *baseValidator, s
 	if err := baseValidator.validateEntity(stmtAlter.entity); err != nil {
 		return err
 	}
-	switch stmtAlter.entity.(type) {
-	case *sourceIndex:
-		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
-	case *sourceSchema:
-		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
-	case *sourceTable:
-		if err := baseValidator.validateModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
-			return err
-		}
-		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
-	case *sourceView:
-		if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint, stmtAlter.renameTo); err != nil {
-			return err
-		}
+	if err := baseValidator.validateModifyData(stmtAlter.addColumns, stmtAlter.addConstraints, stmtAlter.dropColumns, stmtAlter.dropConstraints, stmtAlter.setColumns); err != nil {
+		return err
+	}
+	if err := baseValidator.validateRenameData(stmtAlter.renameColumn, stmtAlter.renameConstraint); err != nil {
+		return err
+	}
+	if err := baseValidator.validateRenameTo(stmtAlter.entity, stmtAlter.renameTo); err != nil {
+		return err
 	}
 	return nil
 }

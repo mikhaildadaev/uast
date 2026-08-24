@@ -466,10 +466,7 @@ func (expr *exprField[T]) getName() string {
 	return expr.name
 }
 func (expr *exprField[T]) validate(baseValidator *baseValidator) error {
-	if err := baseValidator.validateName(expr.name); err != nil {
-		return err
-	}
-	if err := baseValidator.validateAlias(expr.tableAlias); err != nil {
+	if err := baseValidator.validateField(expr.name, expr.tableAlias); err != nil {
 		return err
 	}
 	return nil

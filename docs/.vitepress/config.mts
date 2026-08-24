@@ -130,7 +130,7 @@ export default defineConfig({
           next: "Next page"
         },
         footer: {
-          message: 'Released under the Apache License 2.0',
+          message: 'Dual-licensed under AGPLv3 and Commercial',
           copyright: '© 2026 Mikhail Dadaev'
         }
       }
@@ -257,7 +257,7 @@ export default defineConfig({
           next: "Следующая страница"
         },
         footer: {
-          message: 'Под лицензией Apache 2.0',
+          message: 'Двойное лицензирование: AGPLv3 и Коммерческая',
           copyright: '© 2026 Михаил Дадаев'
         }
       }
@@ -384,7 +384,7 @@ export default defineConfig({
           next: "下一页"
         },
         footer: {
-          message: '根据 Apache 2.0 许可证发布',
+          message: '根据 AGPLv3 和商业许可证双许可',
           copyright: '© 2026 Mikhail Dadaev'
         }
       }

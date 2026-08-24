@@ -106,7 +106,30 @@ import (
     "github.com/mikhaildadaev/uast"
 )
 func main() {
-   ...
+    builder := uast.NewSQL(
+        uast.WithDialect(uast.DialectMySQL),
+        uast.WithMutate(false),
+    )
+    defer builder.Close()
+    stmt := uast.NewSelect(uast.NewTable("users", "u")).
+        Fields(
+            uast.Field[int64]("u", "id"),
+            uast.Field[string]("u", "name"),
+        ).
+        Where(
+            uast.Equal(uast.Field[string]("u", "status"), uast.Value("active")),
+        )
+    queryMySQL, argsMySQL, errMySQL := builder.Build(stmt)
+    if errMySQL != nil {
+        log.Fatal(errMySQL)
+    }
+    fmt.Printf("MySQL: %s | %v\n", queryMySQL, argsMySQL)
+    builder.SetDialect(uast.DialectPostgreSQL)
+    queryPostgreSQL, argsPostgreSQL, errPostgreSQL := builder.Build(stmt)
+    if errPostgreSQL != nil {
+        log.Fatal(errPostgreSQL)
+    }
+    fmt.Printf("PostgreSQL: %s | %v\n", queryPostgreSQL, argsPostgreSQL)
 }
 ```
 

@@ -8,11 +8,7 @@ import (
 // Публичные переменные
 var DialectMariaDB = &SupportDialect{
 	config: &config{
-		lengthMaxArray:       128,
-		lengthMaxConst:       63,
-		lengthMaxFunc:        48,
 		lengthMaxIdent:       64,
-		lengthMaxLimit:       63,
 		lengthMaxParam:       65535,
 		lengthMaxQuery:       64 * 1024,
 		lengthMaxValueByte:   1024,

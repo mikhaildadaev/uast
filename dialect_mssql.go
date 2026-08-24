@@ -9,11 +9,7 @@ import (
 // Публичные переменные
 var DialectMsSQL = &SupportDialect{
 	config: &config{
-		lengthMaxArray:       128,
-		lengthMaxConst:       63,
-		lengthMaxFunc:        48,
 		lengthMaxIdent:       128,
-		lengthMaxLimit:       63,
 		lengthMaxParam:       2100,
 		lengthMaxQuery:       64 * 1024,
 		lengthMaxValueByte:   1024,

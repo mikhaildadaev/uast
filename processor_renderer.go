@@ -334,6 +334,14 @@ func (renderer *baseRenderer) renderEntity(entity SourceBase, isReplace, isUniqu
 	renderer.renderName(entity.getName())
 	return nil
 }
+func (renderer *baseRenderer) renderField(fieldName string, fieldTableAlias string) error {
+	if fieldTableAlias != "" {
+		renderer.renderAlias(fieldTableAlias)
+		renderer.renderOperator(uastCompositeSinglePoint)
+	}
+	renderer.renderName(fieldName)
+	return nil
+}
 func (renderer *baseRenderer) renderFields(fields []markExpressable, isParen bool) error {
 	if len(fields) == 0 {
 		return nil

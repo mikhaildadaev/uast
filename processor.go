@@ -39,6 +39,7 @@ type componentRenderer interface {
 	renderDefinitionData(columns []markSourceable, constraints []ConstraintBase) error
 	renderDistinct(distinct bool) error
 	renderEntity(entity SourceBase, isReplace bool, ifExists bool, ifNotExists bool) error
+	renderField(fieldName string, fieldTableAlias string) error
 	renderFields(fields []markExpressable, isParen bool) error
 	renderFrom(from SourceBase) error
 	renderGroupBy(groups []markGroupable) error
@@ -129,6 +130,7 @@ type componentValidator interface {
 	validateCommand(command managementService) error
 	validateDefinitionData(columns []markSourceable, constraints []ConstraintBase) error
 	validateEntity(entity SourceBase) error
+	validateField(fieldName string, fieldTableAlias string) error
 	validateFields(fields []markExpressable) error
 	validateFrom(from SourceBase) error
 	validateGroupBy(groups []markGroupable) error

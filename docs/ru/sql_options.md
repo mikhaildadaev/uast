@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **Информация**
 На этой странице описаны параметры конфигурации SQL-построителя: `WithDialect` и `WithMutate` для настройки при создании, а также `SetDialect` и `SetMutate` для изменения во время выполнения. Каждый параметр показан с рабочим примером кода и ожидаемым выводом.
-:::
+:::**
 
 ## WithDialect/SetDialect
 `WithDialect` устанавливает диалект при создании экземпляра. `SetDialect` переключает диалект существующего экземпляра во время выполнения без пересоздания пула соединений.
@@ -32,24 +32,24 @@ postgresqlQuery, postgresqlArgs, _ := builder.Build(stmt)
 builder.SetDialect(uast.DialectSQLite)
 sqliteQuery, sqliteArgs, _ := builder.Build(stmt)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 SELECT `u`.`string` FROM `users` AS `u` WHERE `u`.`id` = ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 SELECT [u].[string] FROM [users] AS [u] WHERE [u].[id] = @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SELECT `u`.`string` FROM `users` AS `u` WHERE `u`.`id` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = ?
 ```
 
@@ -97,36 +97,36 @@ mutableBuilder.SetMutate(false)
 query7, _, _ := mutableBuilder.Build(stmt2)
 query8, _, _ := mutableBuilder.Build(stmt3)
 ```
-Output Query1:
-```text
+**Output Query1:**
+```sql
 SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
-Output Query2:
-```text
+**Output Query2:**
+```sql
 SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
-Output Query3:
-```text
+**Output Query3:**
+```sql
 SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
-Output Query4:
-```text
+**Output Query4:**
+```sql
 // Undefined result — stmt was mutated
 ```
-Output Query5:
-```text
+**Output Query5:**
+```sql
 SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
-Output Query6:
-```text
+**Output Query6:**
+```sql
 // Undefined result — stmt was mutated
 ```
-Output Query7:
-```text
+**Output Query7:**
+```sql
 // Undefined result — stmt was mutated
 ```
-Output Query8:
-```text
+**Output Query8:**
+```sql
 SELECT "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 ```
 

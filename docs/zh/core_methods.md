@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **关于**
 本页面记录了可用于表达式的方法： `As` 用于分配别名，`Over` 用于添加窗口规范。每个方法都配有可运行的代码示例和预期 SQL 输出。
-:::
+:::**
 
 ## exprColumn
 ### As
@@ -14,24 +14,24 @@ outline: deep
 ```go
 column := uast.Field[string]("u", "string").As("alias")
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` AS `alias`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] AS [alias]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` AS `alias`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" AS "alias"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" AS "alias"
 ```
 
@@ -41,24 +41,24 @@ Output SQLite:
 ```go
 function := uast.Avg(uast.Field[int]("u", "number"), false).As("alias")
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 AVG(`u`.`number`) AS `alias`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 AVG([u].[number]) AS [alias]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 AVG(`u`.`number`) AS `alias`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 AVG("u"."number") AS "alias"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 AVG("u"."number") AS "alias"
 ```
 
@@ -70,24 +70,24 @@ function := uast.Avg(uast.Field[int]("u", "number"), false).Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 AVG(`u`.`number`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 AVG([u].[number]) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 AVG(`u`.`number`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 AVG("u"."number") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 AVG("u"."number") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -97,23 +97,23 @@ AVG("u"."number") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("u", "id")).From(uast.NewTable("users", "u"))).As("alias")
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 (SELECT `u`.`id` FROM `users` AS `u`) AS `alias`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 (SELECT [u].[id] FROM [users] AS [u]) AS [alias]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 (SELECT `u`.`id` FROM `users` AS `u`) AS `alias`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 (SELECT "u"."id" FROM "users" AS "u") AS "alias"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 (SELECT "u"."id" FROM "users" AS "u") AS "alias"
 ```

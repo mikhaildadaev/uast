@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **Информация**
 На этой странице описано, как создать экземпляр sql, настроить все параметры и разобраться в каждом типе данных и конструкторе полей.
-:::
+:::**
 
 ## NewSQL
 Создание экземпляра SQL, со всеми параметрами конфигурации
@@ -34,12 +34,12 @@ if err2 != nil {
     log.Fatal(err2)
 }
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SELECT `u`.`id`, `u`.`name` FROM `users` AS `u` WHERE `u`.`status` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
 ```
 

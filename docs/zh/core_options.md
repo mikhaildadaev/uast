@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **关于**
 本页面涵盖了所有配置选项：`clauseGroupBy`、`clauseHaving`、`clauseJoin`、`clauseOrderBy`、`clausePagination`、`clauseReturning`、`clauseSet`、`clauseUnions`、`clauseValues`、`clauseWhere`、`clauseWith`、`exprArray`、`exprBinary`、`exprComparison`、`exprConstant`、`exprField`、`exprFunction`、`exprLiteral`、`exprLogical`、`exprSubquery`、`exprValue`。每个选项都配有可运行的代码示例和预期输出。
-:::
+:::**
 
 ## clauseGroupBy
 添加 GROUP BY 子句，按指定列或表达式对行进行分组。
@@ -15,24 +15,24 @@ groupBy := GroupBy(
 	uast.Field[string]("u", "string"),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 GROUP BY `u`.`string`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 GROUP BY [u].[string]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 GROUP BY `u`.`string`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 GROUP BY "u"."string"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 GROUP BY "u"."string"
 ```
 
@@ -43,24 +43,24 @@ having := Having(
 	uast.Greater(uast.Count(uast.Field[int64]("u", "id"), false), uast.Value[int64](2)),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 HAVING COUNT(`u`.`id`) > ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 HAVING COUNT([u].[id]) > @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 HAVING COUNT(`u`.`id`) > ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 HAVING COUNT("u"."id") > $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 HAVING COUNT("u"."id") > ?
 ```
 
@@ -70,24 +70,24 @@ HAVING COUNT("u"."id") > ?
 ```go
 join := uast.Cross(uast.NewTable("users").As("u"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CROSS JOIN `users` AS `u`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CROSS JOIN [users] AS [u]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CROSS JOIN `users` AS `u`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CROSS JOIN "users" AS "u"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CROSS JOIN "users" AS "u"
 ```
 
@@ -96,24 +96,24 @@ CROSS JOIN "users" AS "u"
 ```go
 join := uast.Full(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 FULL JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 FULL JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 FULL JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 FULL JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 FULL JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
@@ -122,24 +122,24 @@ FULL JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```go
 join := uast.FullOuter(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 FULL OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 FULL OUTER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 FULL OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 FULL OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 FULL OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
@@ -148,24 +148,24 @@ FULL OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```go
 join := uast.Inner(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 INNER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 INNER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 INNER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 INNER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 INNER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
@@ -174,24 +174,24 @@ INNER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```go
 join := uast.Left(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LEFT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LEFT JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LEFT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LEFT JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LEFT JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
@@ -200,24 +200,24 @@ LEFT JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```go
 join := uast.LeftOuter(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LEFT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LEFT OUTER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LEFT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LEFT OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LEFT OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
 
@@ -226,24 +226,24 @@ LEFT OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```go
 join := uast.Right(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RIGHT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RIGHT JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RIGHT JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RIGHT JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 // Not supported
 ```
 
@@ -252,24 +252,24 @@ Output SQLite:
 ```go
 join := uast.RightOuter(uast.NewTable("users").As("u"), uast.Equal(uast.Field[int64]("u", "id"), uast.Field[int64]("t1", "id")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RIGHT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RIGHT OUTER JOIN [users] AS [u] ON [u].[id] = [t1].[id]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RIGHT OUTER JOIN `users` AS `u` ON `u`.`id` = `t1`.`id`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RIGHT OUTER JOIN "users" AS "u" ON "u"."id" = "t1"."id"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 // Not supported
 ```
 
@@ -279,24 +279,24 @@ Output SQLite:
 ```go
 orderBy := uast.Asc(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` ASC
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] ASC
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` ASC
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" ASC
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" ASC
 ```
 
@@ -305,24 +305,24 @@ Output SQLite:
 ```go
 orderBy := uast.Desc(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` DESC
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] DESC
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` DESC
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" DESC
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" DESC
 ```
 
@@ -331,24 +331,24 @@ Output SQLite:
 ```go
 pagination := Pagination(10,0)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LIMIT ? OFFSET ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 OFFSET @p1 ROWS FETCH NEXT @p2 ROWS ONLY
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LIMIT ? OFFSET ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LIMIT $1 OFFSET $2
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LIMIT ? OFFSET ?
 ```
 
@@ -360,24 +360,24 @@ returning = Returning(
     uast.Field[string]("u", "string"),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RETURNING `u`.`id`, `u`.`string`
 ```
-Output MsSQL:
-```text
-OUTPUT [u].[id], [u].[string]
+**Output MsSQL:**
+```sql
+**Output [u].[id], [u].[string]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 // Not support
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RETURNING "u"."id", "u"."string"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 RETURNING "u"."id", "u"."string"
 ```
 
@@ -389,24 +389,24 @@ set := Set(
 	uast.Assign(uast.Field[string]("u", "string"), uast.Value("active")),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 UPDATE `users` AS `u` SET `u`.`string` = ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 UPDATE [users] AS [u] SET [u].[string] = @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 UPDATE `users` AS `u` SET `u`.`string` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 UPDATE "users" AS "u" SET "u"."string" = $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 UPDATE "users" AS "u" SET "u"."string" = ?
 ```
 
@@ -420,24 +420,24 @@ unions := uast.Union(uast.NewSelect(uast.NewTable("users").As("u")).
     ),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 UNION SELECT `u`.`string` FROM `users` AS `u` 
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 UNION SELECT [u].[string] FROM [users] AS [u]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 UNION SELECT `u`.`string` FROM `users` AS `u`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 UNION SELECT "u"."string" FROM "users" AS "u"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 UNION SELECT "u"."string" FROM "users" AS "u"
 ```
 
@@ -450,24 +450,24 @@ unions := uast.UnionAll(uast.NewSelect(uast.NewTable("users").As("u")).
     ),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 UNION ALL SELECT `u`.`string` FROM `users` AS `u`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 UNION ALL SELECT [u].[string] FROM [users] AS [u]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 UNION ALL SELECT `u`.`string` FROM `users` AS `u`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 UNION ALL SELECT "u"."string" FROM "users" AS "u"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 UNION ALL SELECT "u"."string" FROM "users" AS "u"
 ```
 
@@ -480,24 +480,24 @@ unions := uast.UnionExcept(uast.NewSelect(uast.NewTable("users").As("u")).
     ),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 EXCEPT SELECT `u`.`string` FROM `users` AS `u`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 EXCEPT SELECT [u].[string] FROM [users] AS [u]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 EXCEPT SELECT `u`.`string` FROM `users` AS `u`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXCEPT SELECT "u"."string" FROM "users" AS "u"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 EXCEPT SELECT "u"."string" FROM "users" AS "u"
 ```
 
@@ -510,24 +510,24 @@ unions := uast.UnionIntersect(uast.NewSelect(uast.NewTable("users").As("u")).
 	),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 INTERSECT SELECT `u`.`string` FROM `users` AS `u`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 INTERSECT SELECT [u].[string] FROM [users] AS [u]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 INTERSECT SELECT `u`.`string` FROM `users` AS `u`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 INTERSECT SELECT "u"."string" FROM "users" AS "u"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 INTERSECT SELECT "u"."string" FROM "users" AS "u"
 ```
 
@@ -540,24 +540,24 @@ values := Values(
 	uast.Pair(uast.Field[int]("u", "number"), uast.Value(2)),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 VALUES (?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 VALUES (@p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 VALUES (?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 VALUES ($1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 VALUES (?, ?)
 ```
 
@@ -572,24 +572,24 @@ Upsert(
     uast.Pair(uast.Field[string]("u", "string"), uast.Value("updated")),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 // Not supported
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
 ```
 
@@ -600,24 +600,24 @@ where = Where(
 	uast.Equal(uast.Field[string]("u", "string"), uast.Value("active")),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 WHERE `u`.`string` = ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 WHERE [u].[string] = @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 WHERE `u`.`string` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 WHERE "u"."string" = $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 WHERE "u"."string" = ?
 ```
 
@@ -636,24 +636,24 @@ with := WithN("cte_norecursive", NewSelect(uast.NewTable("users").As("u")).
     "id", "string",
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 WITH `cte_norecursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 WITH [cte_norecursive] ([id], [string]) AS (SELECT [u].[id], [u].[string] FROM [users] AS [u] WHERE [u].[string] = @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 WITH `cte_norecursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 WITH "cte_norecursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 WITH "cte_norecursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = ?)
 ```
 
@@ -682,24 +682,24 @@ with := WithR("cte_recursive", NewSelect(uast.NewTable("users").As("u")).
     "id", "string",
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ? UNION ALL SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` INNER JOIN `cte_recursive` AS `rec` ON `u`.`id` = `rec`.`id`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 WITH RECURSIVE [cte_recursive] ([id], [string]) AS (SELECT [u].[id], [u].[string] FROM [users] AS [u] WHERE [u].[string] = @p1 UNION ALL SELECT [u].[id], [u].[string] FROM [users] AS [u] INNER JOIN [cte_recursive] AS [rec] ON [u].[id] = [rec].[id])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 WITH RECURSIVE `cte_recursive` (`id`, `string`) AS (SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` WHERE `u`.`string` = ? UNION ALL SELECT `u`.`id`, `u`.`string` FROM `users` AS `u` INNER JOIN `cte_recursive` AS `rec` ON `u`.`id` = `rec`.`id`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = $1 UNION ALL SELECT "u"."id", "u"."string" FROM "users" AS "u" INNER JOIN "cte_recursive" AS "rec" ON "u"."id" = "rec"."id")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = ? UNION ALL SELECT "u"."id", "u"."string" FROM "users" AS "u" INNER JOIN "cte_recursive" AS "rec" ON "u"."id" = "rec"."id")
 ```
 
@@ -709,24 +709,24 @@ WITH RECURSIVE "cte_recursive" ("id", "string") AS (SELECT "u"."id", "u"."string
 ```go
 array := uast.Array(0, 1, 2)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ARRAY[?, ?, ?]
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ARRAY[@p1, @p2, @p3]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ARRAY[?, ?, ?]
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ARRAY[$1, $2, $3]
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ARRAY[?, ?, ?]
 ```
 
@@ -736,24 +736,24 @@ ARRAY[?, ?, ?]
 ```go
 binary := uast.BitwiseAnd(uast.Field[int]("u", "number"), uast.Value(0b0010))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` & ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] & @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` & ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" & $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" & ?
 ```
 
@@ -762,24 +762,24 @@ Output SQLite:
 ```go
 binary := uast.BitwiseOr(uast.Field[int]("u", "number"), uast.Value(0b0010))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` | ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] | @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` | ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" | $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" | ?
 ```
 
@@ -788,24 +788,24 @@ Output SQLite:
 ```go
 binary := uast.BitwiseXor(uast.Field[int]("u", "number"), uast.Value(0b0010))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` ^ ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] ^ @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` ^ ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" ^ $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" ^ ?
 ```
 
@@ -814,24 +814,24 @@ Output SQLite:
 ```go
 binary := uast.Divide(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` / ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] / @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` / ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" / $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" / ?
 ```
 
@@ -840,24 +840,24 @@ Output SQLite:
 ```go
 binary := uast.Minus(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` - ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] - @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` - ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" - $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" - ?
 ```
 
@@ -866,24 +866,24 @@ Output SQLite:
 ```go
 binary := uast.Modulo(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` % ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] % @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` % ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" % $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" % ?
 ```
 
@@ -892,24 +892,24 @@ Output SQLite:
 ```go
 binary := uast.Multiply(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` * ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] * @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` * ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" * $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" * ?
 ```
 
@@ -918,24 +918,24 @@ Output SQLite:
 ```go
 binary := uast.Plus(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` + ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] + @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` + ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" + $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" + ?
 ```
 
@@ -944,24 +944,24 @@ Output SQLite:
 ```go
 binary := uast.ShiftLeft(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` << ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] << @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` << ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" << $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" << ?
 ```
 
@@ -970,24 +970,24 @@ Output SQLite:
 ```go
 binary := uast.ShiftRight(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` >> ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] >> @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` >> ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" >> $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" >> ?
 ```
 
@@ -997,24 +997,24 @@ Output SQLite:
 ```go
 comparison := uast.Between(uast.Field[int]("u", "number"), uast.Value(0), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` BETWEEN ? AND ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] BETWEEN @p1 AND @p2
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` BETWEEN ? AND ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" BETWEEN $1 AND $2
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" BETWEEN ? AND ?
 ```
 
@@ -1023,24 +1023,24 @@ Output SQLite:
 ```go
 comparison := uast.Equal(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` = ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] = @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" = $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" = ?
 ```
 
@@ -1049,24 +1049,24 @@ Output SQLite:
 ```go
 comparison := uast.Exists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("users").As("u"))))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 EXISTS (SELECT 1 FROM [users] AS [u])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXISTS (SELECT 1 FROM "users" AS "u")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 EXISTS (SELECT 1 FROM "users" AS "u")
 ```
 
@@ -1075,24 +1075,24 @@ EXISTS (SELECT 1 FROM "users" AS "u")
 ```go
 comparison := uast.Greater(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` > ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] > @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` > ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" > $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" > ?
 ```
 
@@ -1101,24 +1101,24 @@ Output SQLite:
 ```go
 comparison := uast.GreaterEqual(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` >= ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] >= @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` >= ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" >= $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" >= ?
 ```
 
@@ -1127,24 +1127,24 @@ Output SQLite:
 ```go
 comparison := uast.ILike(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LOWER(`u`.`string`) LIKE LOWER(?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LOWER([u].[string]) LIKE LOWER(@p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LOWER(`u`.`string`) LIKE LOWER(?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" ILIKE $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LOWER("u"."string") LIKE LOWER(?)
 ```
 
@@ -1153,24 +1153,24 @@ LOWER("u"."string") LIKE LOWER(?)
 ```go
 comparison := uast.In(uast.Field[string]("u", "string"), uast.Array("active", "pending"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` IN (?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] IN (@p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` IN (?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" IN ($1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" IN (?, ?)
 ```
 
@@ -1179,24 +1179,24 @@ Output SQLite:
 ```go
 comparison := uast.IsNotNull(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` IS NOT NULL
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] IS NOT NULL
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` IS NOT NULL
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" IS NOT NULL
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" IS NOT NULL
 ```
 
@@ -1205,24 +1205,24 @@ Output SQLite:
 ```go
 comparison := uast.IsNull(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` IS NULL
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] IS NULL
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` IS NULL
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" IS NULL
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" IS NULL
 ```
 
@@ -1231,24 +1231,24 @@ Output SQLite:
 ```go
 comparison := uast.Less(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` < ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] < @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` < ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" < $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" < ?
 ```
 
@@ -1257,24 +1257,24 @@ Output SQLite:
 ```go
 comparison := uast.LessEqual(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` <= ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] <= @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` <= ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" <= $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" <= ?
 ```
 
@@ -1283,24 +1283,24 @@ Output SQLite:
 ```go
 comparison := uast.Like(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` LIKE ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] LIKE @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` LIKE ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" LIKE $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" LIKE ?
 ```
 
@@ -1309,24 +1309,24 @@ Output SQLite:
 ```go
 comparison := uast.NotBetween(uast.Field[int]("u", "number"), uast.Value(0), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` NOT BETWEEN ? AND ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] NOT BETWEEN @p1 AND @p2
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` NOT BETWEEN ? AND ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" NOT BETWEEN $1 AND $2
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" NOT BETWEEN ? AND ?
 ```
 
@@ -1335,24 +1335,24 @@ Output SQLite:
 ```go
 comparison := uast.NotEqual(uast.Field[int]("u", "number"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`number` != ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[number] != @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`number` != ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."number" != $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."number" != ?
 ```
 
@@ -1361,24 +1361,24 @@ Output SQLite:
 ```go
 comparison := uast.NotExists(uast.Subquery[int](uast.NewSelect(uast.ConstIntOne()).From(uast.NewTable("users").As("u"))))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 NOT EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 NOT EXISTS (SELECT 1 FROM [users] AS [u])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 NOT EXISTS (SELECT 1 FROM `users` AS `u`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 NOT EXISTS (SELECT 1 FROM "users" AS "u")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 NOT EXISTS (SELECT 1 FROM "users" AS "u")
 ```
 
@@ -1387,24 +1387,24 @@ NOT EXISTS (SELECT 1 FROM "users" AS "u")
 ```go
 comparison := uast.NotILike(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LOWER(`u`.`string`) NOT LIKE LOWER(?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LOWER([u].[string]) NOT LIKE LOWER(@p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LOWER(`u`.`string`) NOT LIKE LOWER(?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" NOT ILIKE $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LOWER("u"."string") NOT LIKE LOWER(?)
 ```
 
@@ -1413,24 +1413,24 @@ LOWER("u"."string") NOT LIKE LOWER(?)
 ```go
 comparison := uast.NotIn(uast.Field[string]("u", "string"), uast.Array("active", "pending"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` NOT IN (?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] NOT IN (@p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` NOT IN (?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" NOT IN ($1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" NOT IN (?, ?)
 ```
 
@@ -1439,24 +1439,24 @@ Output SQLite:
 ```go
 comparison := uast.NotLike(uast.Field[string]("u", "string"), uast.Value("%ivan%"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string` NOT LIKE ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string] NOT LIKE @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string` NOT LIKE ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string" NOT LIKE $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string" NOT LIKE ?
 ```
 
@@ -1466,8 +1466,8 @@ Output SQLite:
 ```go
 constant := uast.ConstBoolFalse()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 FALSE
 ```
 
@@ -1476,8 +1476,8 @@ FALSE
 ```go
 constant := uast.ConstBoolTrue()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 TRUE
 ```
 
@@ -1486,8 +1486,8 @@ TRUE
 ```go
 constant := uast.ConstFloat32One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1.0
 ```
 
@@ -1496,8 +1496,8 @@ Output:
 ```go
 constant := uast.ConstFloat64One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1.000000
 ```
 
@@ -1506,8 +1506,8 @@ Output:
 ```go
 constant := uast.ConstIntOne()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1516,8 +1516,8 @@ Output:
 ```go
 constant := uast.ConstInt8One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1526,8 +1526,8 @@ Output:
 ```go
 constant := uast.ConstInt16One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1536,8 +1536,8 @@ Output:
 ```go
 constant := uast.ConstInt32One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1546,8 +1546,8 @@ Output:
 ```go
 constant := uast.ConstInt64One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1556,8 +1556,8 @@ Output:
 ```go
 constant := uast.ConstStringDefault()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 DEFAULT
 ```
 
@@ -1566,8 +1566,8 @@ DEFAULT
 ```go
 constant := uast.ConstStringNull()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 NULL
 ```
 
@@ -1576,8 +1576,8 @@ NULL
 ```go
 constant := uast.ConstUintOne()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1586,8 +1586,8 @@ Output:
 ```go
 constant := uast.ConstUint8One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1596,8 +1596,8 @@ Output:
 ```go
 constant := uast.ConstUint16One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1606,8 +1606,8 @@ Output:
 ```go
 constant := uast.ConstUint32One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1616,8 +1616,8 @@ Output:
 ```go
 constant := uast.ConstUint64One()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 1
 ```
 
@@ -1627,24 +1627,24 @@ Output:
 ```go
 field := uast.Field[string]("u", "string")
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 `u`.`string`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 [u].[string]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 `u`.`string`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 "u"."string"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 "u"."string"
 ```
 
@@ -1656,28 +1656,28 @@ Output SQLite:
 function := uast.Avg(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.Avg(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 AVG(`u`.`number`)
 AVG(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 AVG([u].[number])
 AVG(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 AVG(`u`.`number`)
 AVG(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 AVG("u"."number")
 AVG(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 AVG("u"."number")
 AVG(DISTINCT "u"."number")
 ```
@@ -1688,28 +1688,28 @@ AVG(DISTINCT "u"."number")
 function := uast.BitAnd(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.BitAnd(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 BIT_AND(`u`.`number`)
 BIT_AND(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 BIT_AND([u].[number])
 BIT_AND(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 BIT_AND(`u`.`number`)
 BIT_AND(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 BIT_AND("u"."number")
 BIT_AND(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 BIT_AND("u"."number")
 BIT_AND(DISTINCT "u"."number")
 ```
@@ -1720,28 +1720,28 @@ BIT_AND(DISTINCT "u"."number")
 function := uast.BitOr(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.BitOr(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 BIT_OR(`u`.`number`)
 BIT_OR(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 BIT_OR([u].[number])
 BIT_OR(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 BIT_OR(`u`.`number`)
 BIT_OR(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 BIT_OR("u"."number")
 BIT_OR(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 BIT_OR("u"."number")
 BIT_OR(DISTINCT "u"."number")
 ```
@@ -1752,28 +1752,28 @@ BIT_OR(DISTINCT "u"."number")
 function := uast.BitXor(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.BitXor(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 BIT_XOR(`u`.`number`)
 BIT_XOR(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 BIT_XOR([u].[number])
 BIT_XOR(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 BIT_XOR(`u`.`number`)
 BIT_XOR(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 BIT_XOR("u"."number")
 BIT_XOR(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 BIT_XOR("u"."number")
 BIT_XOR(DISTINCT "u"."number")
 ```
@@ -1784,28 +1784,28 @@ BIT_XOR(DISTINCT "u"."number")
 function := uast.Count(uast.Field[string]("u", "string"), false)
 functionWithDistinct := uast.Count(uast.Field[string]("u", "string"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 COUNT(`u`.`string`)
 COUNT(DISTINCT `u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 COUNT([u].[string])
 COUNT(DISTINCT [u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 COUNT(`u`.`string`)
 COUNT(DISTINCT `u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 COUNT("u"."string")
 COUNT(DISTINCT "u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 COUNT("u"."string")
 COUNT(DISTINCT "u"."string")
 ```
@@ -1816,28 +1816,28 @@ COUNT(DISTINCT "u"."string")
 function := uast.GroupConcat(uast.Field[string]("u", "string"), false)
 functionWithDistinct := uast.GroupConcat(uast.Field[string]("u", "string"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 GROUP_CONCAT(`u`.`string` SEPARATOR ',')
 GROUP_CONCAT(DISTINCT `u`.`string` SEPARATOR ',')
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 GROUP_CONCAT([u].[string], ',')
 GROUP_CONCAT(DISTINCT [u].[string], ',')
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 GROUP_CONCAT(`u`.`string` SEPARATOR ',')
 GROUP_CONCAT(DISTINCT `u`.`string` SEPARATOR ',')
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 STRING_AGG("u"."string", ',')
 STRING_AGG(DISTINCT "u"."string", ',')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 GROUP_CONCAT("u"."string" SEPARATOR ',')
 GROUP_CONCAT(DISTINCT "u"."string" SEPARATOR ',')
 ```
@@ -1848,28 +1848,28 @@ GROUP_CONCAT(DISTINCT "u"."string" SEPARATOR ',')
 function := uast.Max(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.Max(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 MAX(`u`.`number`)
 MAX(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 MAX([u].[number])
 MAX(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 MAX(`u`.`number`)
 MAX(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 MAX("u"."number")
 MAX(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 MAX("u"."number")
 MAX(DISTINCT "u"."number")
 ```
@@ -1880,28 +1880,28 @@ MAX(DISTINCT "u"."number")
 function := uast.Min(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.Min(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 MIN(`u`.`number`)
 MIN(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 MIN([u].[number])
 MIN(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 MIN(`u`.`number`)
 MIN(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 MIN("u"."number")
 MIN(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 MIN("u"."number")
 MIN(DISTINCT "u"."number")
 ```
@@ -1912,28 +1912,28 @@ MIN(DISTINCT "u"."number")
 function := uast.StdDev(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.StdDev(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 STDDEV(`u`.`number`)
 STDDEV(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 STDEV([u].[number])
 STDEV(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 STDDEV(`u`.`number`)
 STDDEV(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 STDDEV_SAMP("u"."number")
 STDDEV_SAMP(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 STDEV("u"."number")
 STDEV(DISTINCT "u"."number")
 ```
@@ -1944,28 +1944,28 @@ STDEV(DISTINCT "u"."number")
 function := uast.Sum(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.Sum(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 SUM(`u`.`number`)
 SUM(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 SUM([u].[number])
 SUM(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SUM(`u`.`number`)
 SUM(DISTINCT `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SUM("u"."number")
 SUM(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 SUM("u"."number")
 SUM(DISTINCT "u"."number")
 ```
@@ -1976,28 +1976,28 @@ SUM(DISTINCT "u"."number")
 function := uast.Variance(uast.Field[int]("u", "number"), false)
 functionWithDistinct := uast.Variance(uast.Field[int]("u", "number"), true)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 VARIANCE(`u`.`number`)
 VARIANCE(DISTINCT `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 VAR([u].[number])
 VAR(DISTINCT [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 VARIANCE(`u`.`number`)
 VARIANCE(DISTINCT "u"."number")
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 VAR_SAMP("u"."number")
 VAR_SAMP(DISTINCT "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 VARIANCE("u"."number")
 VARIANCE(DISTINCT "u"."number")
 ```
@@ -2011,24 +2011,24 @@ function := uast.FirstValue(uast.Field[string]("u", "string")).Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 FIRST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 FIRST_VALUE([u].[string]) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 FIRST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 FIRST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 FIRST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -2040,24 +2040,24 @@ function := uast.Lag(uast.Field[int]("u", "number"), 2).Over(
     uast.OrderBy(uast.Asc(uast.Field[time.Time]("u", "date"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LAG(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LAG([u].[number], 2) OVER (PARTITION BY [u].[id] ORDER BY [u].[date] ASC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LAG(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LAG("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LAG("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
 
@@ -2070,24 +2070,24 @@ function := uast.LastValue(uast.Field[string]("u", "string")).Over(
     uast.RowsBetween("CURRENT ROW", "UNBOUNDED FOLLOWING"),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LAST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LAST_VALUE([u].[string]) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LAST_VALUE(`u`.`string`) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LAST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LAST_VALUE("u"."string") OVER (PARTITION BY "u"."id" ORDER BY "u"."number" ASC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
 ```
 
@@ -2099,24 +2099,24 @@ function := uast.Lead(uast.Field[int]("u", "number"), 2).Over(
     uast.OrderBy(uast.Asc(uast.Field[time.Time]("u", "date"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LEAD(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LEAD([u].[number], 2) OVER (PARTITION BY [u].[id] ORDER BY [u].[date] ASC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LEAD(`u`.`number`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`date` ASC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LEAD("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LEAD("u"."number", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."date" ASC)
 ```
 
@@ -2129,24 +2129,24 @@ function := uast.NthValue(uast.Field[string]("u", "string"), 2).Over(
     uast.RowsBetween("UNBOUNDED PRECEDING", "CURRENT ROW"),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 NTH_VALUE(`u`.`string`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 NTH_VALUE([u].[string], 2) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 NTH_VALUE(`u`.`string`, 2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 NTH_VALUE("u"."string", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 NTH_VALUE("u"."string", 2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 ```
 
@@ -2163,24 +2163,24 @@ pairs := uast.CaseIf(
 elseExpr := uast.CaseElse(uast.Value("new"))
 function := uast.Case(pairs, elseExpr)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CASE WHEN `u`.`number` < ? THEN ? ELSE ? END
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CASE WHEN [u].[number] < @p1 THEN @p2 ELSE @p3 END
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CASE WHEN `u`.`number` < ? THEN ? ELSE ? END
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CASE WHEN "u"."number" < $1 THEN $2 ELSE $3 END
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CASE WHEN "u"."number" < ? THEN ? ELSE ? END
 ```
 
@@ -2189,24 +2189,24 @@ CASE WHEN "u"."number" < ? THEN ? ELSE ? END
 ```go
 function := uast.Coalesce(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 COALESCE(`u`.`createat`, `u`.`updateat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 COALESCE([u].[createat], [u].[updateat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 COALESCE(`u`.`createat`, `u`.`updateat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 COALESCE("u"."createat", "u"."updateat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 COALESCE("u"."createat", "u"."updateat")
 ```
 
@@ -2215,24 +2215,24 @@ COALESCE("u"."createat", "u"."updateat")
 ```go
 function := uast.Greatest(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 GREATEST(`u`.`createat`, `u`.`updateat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 GREATEST([u].[createat], [u].[updateat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 GREATEST(`u`.`createat`, `u`.`updateat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 GREATEST("u"."createat", "u"."updateat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 GREATEST("u"."createat", "u"."updateat")
 ```
 
@@ -2241,24 +2241,24 @@ GREATEST("u"."createat", "u"."updateat")
 ```go
 function := uast.Least(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LEAST(`u`.`createat`, `u`.`updateat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LEAST([u].[createat], [u].[updateat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LEAST(`u`.`createat`, `u`.`updateat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LEAST("u"."createat", "u"."updateat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LEAST("u"."createat", "u"."updateat")
 ```
 
@@ -2267,24 +2267,24 @@ LEAST("u"."createat", "u"."updateat")
 ```go
 function := uast.NullIf(uast.Field[time.Time]("u", "createat"), uast.Field[time.Time]("u", "updateat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 NULLIF(`u`.`createat`, `u`.`updateat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 NULLIF([u].[createat], [u].[updateat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 NULLIF(`u`.`createat`, `u`.`updateat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 NULLIF("u"."createat", "u"."updateat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 NULLIF("u"."createat", "u"."updateat")
 ```
 
@@ -2294,24 +2294,24 @@ NULLIF("u"."createat", "u"."updateat")
 ```go
 function := uast.Cast(uast.Field[int]("u", "number"), uast.TypeString)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS CHAR)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS NVARCHAR)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS CHAR)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS VARCHAR)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -2320,24 +2320,24 @@ CAST("u"."number" AS TEXT)
 ```go
 function := uast.CharLength(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CHAR_LENGTH(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CHAR_LENGTH([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CHAR_LENGTH(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CHAR_LENGTH("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CHAR_LENGTH("u"."string")
 ```
 
@@ -2346,24 +2346,24 @@ CHAR_LENGTH("u"."string")
 ```go
 function := uast.DateFormat(uast.Field[time.Time]("u", "createat"), uast.Value("%Y-%m-%d"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DATE_FORMAT(`u`.`createat`, '%Y-%m-%d')
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 FORMAT([u].[createat], '%Y-%m-%d')
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DATE_FORMAT(`u`.`createat`, '%Y-%m-%d')
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 TO_CHAR("u"."createat", '%Y-%m-%d')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 STRFTIME("u"."createat", '%Y-%m-%d')
 ```
 
@@ -2372,24 +2372,24 @@ STRFTIME("u"."createat", '%Y-%m-%d')
 ```go
 function := uast.Degrees(uast.Field[int]("u", "number"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DEGREES(`u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DEGREES([u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DEGREES(`u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 DEGREES("u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DEGREES("u"."number")
 ```
 
@@ -2398,24 +2398,24 @@ DEGREES("u"."number")
 ```go
 function := uast.Length(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LENGTH(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LEN([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LENGTH(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LENGTH("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LENGTH("u"."string")
 ```
 
@@ -2424,24 +2424,24 @@ LENGTH("u"."string")
 ```go
 function := uast.Position(uast.Field[string]("u", "string"), uast.Value("old"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 POSITION(? IN `u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CHARINDEX(@p1, [u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 POSITION(? IN `u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 POSITION($1 IN "u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 POSITION(? IN "u"."string")
 ```
 
@@ -2450,24 +2450,24 @@ POSITION(? IN "u"."string")
 ```go
 function := uast.Radians(uast.Field[int]("u", "number"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RADIANS(`u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RADIANS([u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RADIANS(`u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RADIANS("u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 RADIANS("u"."number")
 ```
 
@@ -2477,24 +2477,24 @@ RADIANS("u"."number")
 ```go
 function := uast.CurDate()
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CURDATE()
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST(GETDATE() AS DATE)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CURDATE()
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CURRENT_DATE
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DATE('now')
 ```
 
@@ -2503,24 +2503,24 @@ DATE('now')
 ```go
 function := uast.CurTime()
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CURTIME()
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST(GETDATE() AS TIME)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CURTIME()
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CURRENT_TIME
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TIME('now')
 ```
 
@@ -2529,24 +2529,24 @@ TIME('now')
 ```go
 function := uast.DateAdd(uast.Field[time.Time]("u", "createat"), uast.Value("2 DAY"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DATE_ADD(`u`.`createat`, INTERVAL 2 DAY)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEADD(DAY, 2, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DATE_ADD(`u`.`createat`, INTERVAL 2 DAY)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."createat" + INTERVAL '2 DAY')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DATETIME("u"."createat", '+2 DAY')
 ```
 
@@ -2555,24 +2555,24 @@ DATETIME("u"."createat", '+2 DAY')
 ```go
 function := uast.DateDiff(uast.Field[time.Time]("u", "updateat"), uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DATEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEDIFF([u].[updateat], [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DATEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 DATE_PART('day', "u"."updateat" - "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DATEDIFF("u"."updateat", "u"."createat")
 ```
 
@@ -2581,24 +2581,24 @@ DATEDIFF("u"."updateat", "u"."createat")
 ```go
 function := uast.DateSub(uast.Field[time.Time]("u", "createat"), uast.Value("2 DAY"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DATE_SUB(`u`.`createat`, INTERVAL 2 DAY)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEADD(DAY, -2, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DATE_SUB(`u`.`createat`, INTERVAL 2 DAY)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."createat" - INTERVAL '2 DAY')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DATETIME("u"."createat", '-2 DAY')
 ```
 
@@ -2607,24 +2607,24 @@ DATETIME("u"."createat", '-2 DAY')
 ```go
 function := uast.Day(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DAY(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DAY([u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DAY(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(DAY FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DAY("u"."createat")
 ```
 
@@ -2633,24 +2633,24 @@ DAY("u"."createat")
 ```go
 function := uast.DayName(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DAYNAME(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATENAME(WEEKDAY, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DAYNAME(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 TO_CHAR("u"."createat", 'Day')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 STRFTIME('%w', "u"."createat")
 ```
 
@@ -2659,24 +2659,24 @@ STRFTIME('%w', "u"."createat")
 ```go
 function := uast.Hour(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 HOUR(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEPART(HOUR, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 HOUR(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(HOUR FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 HOUR("u"."createat")
 ```
 
@@ -2685,24 +2685,24 @@ HOUR("u"."createat")
 ```go
 function := uast.Minute(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 MINUTE(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEPART(MINUTE, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 MINUTE(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(MINUTE FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 MINUTE("u"."createat")
 ```
 
@@ -2711,24 +2711,24 @@ MINUTE("u"."createat")
 ```go
 function := uast.Month(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 MONTH(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 MONTH([u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 MONTH(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(MONTH FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 MONTH("u"."createat")
 ```
 
@@ -2737,24 +2737,24 @@ MONTH("u"."createat")
 ```go
 function := uast.MonthName(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 MONTHNAME(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATENAME(MONTH, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 MONTHNAME(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 TO_CHAR("u"."createat", 'Month')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 STRFTIME('%m', "u"."createat")
 ```
 
@@ -2763,24 +2763,24 @@ STRFTIME('%m', "u"."createat")
 ```go
 function := uast.Now()
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 NOW()
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 GETDATE()
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 NOW()
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CURRENT_TIMESTAMP
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DATETIME('now')
 ```
 
@@ -2789,24 +2789,24 @@ DATETIME('now')
 ```go
 function := uast.Quarter(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 QUARTER(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEPART(QUARTER, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 QUARTER(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(QUARTER FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 QUARTER("u"."createat")
 ```
 
@@ -2815,24 +2815,24 @@ QUARTER("u"."createat")
 ```go
 function := uast.Second(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 SECOND(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEPART(SECOND, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SECOND(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(SECOND FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 SECOND("u"."createat")
 ```
 
@@ -2841,24 +2841,24 @@ SECOND("u"."createat")
 ```go
 function := uast.TimeAdd(uast.Field[time.Time]("u", "createat"), uast.Value("2 HOUR"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 TIME_ADD(`u`.`createat`, '2 HOUR')
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEADD(HOUR, 2, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 TIME_ADD(`u`.`createat`, '2 HOUR')
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."createat" + INTERVAL '2 HOUR')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TIME("u"."createat", '+2 HOUR')
 ```
 
@@ -2867,24 +2867,24 @@ TIME("u"."createat", '+2 HOUR')
 ```go
 function := uast.TimeDiff(uast.Field[time.Time]("u", "updateat"), uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 TIMEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 TIMEDIFF([u].[updateat], [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 TIMEDIFF(`u`.`updateat`, `u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 DATE_PART('time', "u"."updateat" - "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TIMEDIFF("u"."updateat", "u"."createat")
 ```
 
@@ -2893,24 +2893,24 @@ TIMEDIFF("u"."updateat", "u"."createat")
 ```go
 function := uast.TimeSub(uast.Field[time.Time]("u", "createat"), uast.Value("2 HOUR"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 TIME_SUB(`u`.`createat`, '2 HOUR')
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEADD(HOUR, -2, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 TIME_SUB(`u`.`createat`, '2 HOUR')
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."createat" - INTERVAL '2 HOUR')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TIME("u"."createat", '-2 HOUR')
 ```
 
@@ -2919,24 +2919,24 @@ TIME("u"."createat", '-2 HOUR')
 ```go
 function := uast.Week(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 WEEK(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DATEPART(WEEK, [u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 WEEK(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(WEEK FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 WEEK("u"."createat")
 ```
 
@@ -2945,24 +2945,24 @@ WEEK("u"."createat")
 ```go
 function := uast.Year(uast.Field[time.Time]("u", "createat"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 YEAR(`u`.`createat`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 YEAR([u].[createat])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 YEAR(`u`.`createat`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXTRACT(YEAR FROM "u"."createat")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 YEAR("u"."createat")
 ```
 
@@ -2976,24 +2976,24 @@ function := uast.JsonArray(
     uast.Value("val2"),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_ARRAY(`u`.`json`, ?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 JSON_ARRAY([u].[json], @p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_ARRAY(`u`.`json`, ?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 JSON_ARRAY("u"."json", $1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_ARRAY("u"."json", ?, ?)
 ```
 
@@ -3004,24 +3004,24 @@ function := uast.JsonArrayAgg(
     uast.Field[string]("u", "json"),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_ARRAYAGG(`u`.`json`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 JSON_ARRAYAGG([u].[json])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_ARRAYAGG(`u`.`json`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 JSON_AGG("u"."json")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_GROUP_ARRAY("u"."json")
 ```
 
@@ -3033,24 +3033,24 @@ function := uast.JsonContains(
     uast.Value(`{"key":"val"}`),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_CONTAINS(`u`.`json`, '{"key":"val"}')
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 // Not supported
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_CONTAINS(`u`.`json`, '{"key":"val"}')
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."json" @> '{"key":"val"}')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_CONTAINS("u"."json", '{"key":"val"}')
 ```
 
@@ -3069,24 +3069,24 @@ function := JsonExtract(
     uast.TypeString,
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 (`u`.`json` ->> '$.parent[0].child')
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 JSON_VALUE([u].[json], '$.parent[0].child')
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 (`u`.`json` ->> '$.parent[0].child')
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."json" #>> '{parent,0,child}')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ("u"."json" ->> '$.parent[0].child')
 ```
 
@@ -3100,24 +3100,24 @@ function := uast.JsonObject(
     ),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_OBJECT('key', COUNT(`u`.`json`))
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 JSON_OBJECT('key', COUNT([u].[json]))
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_OBJECT('key', COUNT(`u`.`json`))
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 JSON_BUILD_OBJECT('key', COUNT("u"."json"))
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_OBJECT('key', COUNT("u"."json"))
 ```
 
@@ -3129,24 +3129,24 @@ function := uast.JsonObjectAgg(
     uast.Field[int]("u", "number"),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_OBJECTAGG(`u`.`json`, `u`.`number`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 JSON_OBJECTAGG([u].[json], [u].[number])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_OBJECTAGG(`u`.`json`, `u`.`number`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 JSON_OBJECT_AGG("u"."json", "u"."number")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_GROUP_OBJECT("u"."json", "u"."number")
 ```
 
@@ -3167,24 +3167,24 @@ function := uast.JsonRemove(
     ),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_REMOVE(`u`.`json`, '$.key1', '$.key2')
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 JSON_MODIFY(JSON_MODIFY([u].[json], '$.key1', NULL), '$.key2', NULL)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_REMOVE(`u`.`json`, '$.key1', '$.key2')
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."json" - '{key1}' - '{key2}')
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_REMOVE("u"."json", '$.key1', '$.key2')
 ```
 
@@ -3207,24 +3207,24 @@ function := uast.JsonSet(
     ),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_SET(`u`.`json`, '$.key1', ?, '$.key2', ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 JSON_MODIFY(JSON_MODIFY([u].[json], '$.key1', @p1), '$.key2', @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_SET(`u`.`json`, '$.key1', ?, '$.key2', ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 jsonb_set(jsonb_set("u"."json", '{key1}', $1), '{key2}', $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_SET("u"."json", '$.key1', ?, '$.key2', ?)
 ```
 
@@ -3233,24 +3233,24 @@ JSON_SET("u"."json", '$.key1', ?, '$.key2', ?)
 ```go
 function := uast.JsonType(uast.Field[string]("u", "json"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 JSON_TYPE(`u`.`json`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 // Not supported
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 JSON_TYPE(`u`.`json`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 jsonb_typeof("u"."json")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 JSON_TYPE("u"."json")
 ```
 
@@ -3260,24 +3260,24 @@ JSON_TYPE("u"."json")
 ```go
 function := uast.Abs(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ABS(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ABS([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ABS(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ABS("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ABS("u"."x")
 ```
 
@@ -3286,24 +3286,24 @@ ABS("u"."x")
 ```go
 function := uast.ACos(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ACOS(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ACOS([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ACOS(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ACOS("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ACOS("u"."x")
 ```
 
@@ -3312,24 +3312,24 @@ ACOS("u"."x")
 ```go
 function := uast.ASin(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ASIN(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ASIN([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ASIN(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ASIN("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ASIN("u"."x")
 ```
 
@@ -3338,24 +3338,24 @@ ASIN("u"."x")
 ```go
 function := uast.ATan(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ATAN(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ATAN([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ATAN(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ATAN("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ATAN("u"."x")
 ```
 
@@ -3364,24 +3364,24 @@ ATAN("u"."x")
 ```go
 function := uast.ATan2(uast.Field[int]("u", "y"), uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ATAN2(`u`.`y`, `u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ATAN2([u].[y], [u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ATAN2(`u`.`y`, `u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ATAN2("u"."y", "u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ATAN2("u"."y", "u"."x")
 ```
 
@@ -3390,24 +3390,24 @@ ATAN2("u"."y", "u"."x")
 ```go
 function := uast.Cbrt(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CBRT(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CBRT([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CBRT(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CBRT("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CBRT("u"."x")
 ```
 
@@ -3416,24 +3416,24 @@ CBRT("u"."x")
 ```go
 function := uast.Ceil(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CEILING(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CEILING([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CEILING(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CEIL("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CEIL("u"."x")
 ```
 
@@ -3442,24 +3442,24 @@ CEIL("u"."x")
 ```go
 function := uast.Cos(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 COS(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 COS([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 COS(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 COS("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 COS("u"."x")
 ```
 
@@ -3468,24 +3468,24 @@ COS("u"."x")
 ```go
 function := uast.Exp(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 EXP(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 EXP([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 EXP(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 EXP("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 EXP("u"."x")
 ```
 
@@ -3494,24 +3494,24 @@ EXP("u"."x")
 ```go
 function := uast.Floor(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 FLOOR(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 FLOOR([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 FLOOR(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 FLOOR("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 FLOOR("u"."x")
 ```
 
@@ -3520,24 +3520,24 @@ FLOOR("u"."x")
 ```go
 function := uast.Ln(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LN(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LN([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LN(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LN("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LN("u"."x")
 ```
 
@@ -3546,24 +3546,24 @@ LN("u"."x")
 ```go
 function := uast.Log(uast.Field[int]("u", "x"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LOG(`u`.`x`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LOG([u].[x], @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LOG(`u`.`x`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LOG("u"."x", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LOG("u"."x", ?)
 ```
 
@@ -3572,24 +3572,24 @@ LOG("u"."x", ?)
 ```go
 function := uast.Mod(uast.Field[int]("u", "x"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 MOD(`u`.`x`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 MOD([u].[x], @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 MOD(`u`.`x`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 MOD("u"."x", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 MOD("u"."x", ?)
 ```
 
@@ -3598,24 +3598,24 @@ MOD("u"."x", ?)
 ```go
 function := uast.Pi()
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 PI()
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 PI()
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 PI()
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 PI()
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 PI()
 ```
 
@@ -3624,24 +3624,24 @@ PI()
 ```go
 function := uast.Power(uast.Field[int]("u", "x"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 POWER(`u`.`x`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 POWER([u].[x], @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 POWER(`u`.`x`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 POWER("u"."x", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 POWER("u"."x", ?)
 ```
 
@@ -3650,24 +3650,24 @@ POWER("u"."x", ?)
 ```go
 function := uast.Rand()
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RAND()
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RAND()
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RAND()
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RANDOM()
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 RANDOM()
 ```
 
@@ -3676,24 +3676,24 @@ RANDOM()
 ```go
 function := uast.Round(uast.Field[int]("u", "x"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ROUND(`u`.`x`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ROUND([u].[x], @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ROUND(`u`.`x`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ROUND("u"."x", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ROUND("u"."x", ?)
 ```
 
@@ -3702,24 +3702,24 @@ ROUND("u"."x", ?)
 ```go
 function := uast.Sin(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 SIN(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 SIN([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SIN(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SIN("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 SIN("u"."x")
 ```
 
@@ -3728,24 +3728,24 @@ SIN("u"."x")
 ```go
 function := uast.Sqrt(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 SQRT(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 SQRT([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SQRT(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SQRT("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 SQRT("u"."x")
 ```
 
@@ -3754,24 +3754,24 @@ SQRT("u"."x")
 ```go
 function := uast.Tan(uast.Field[int]("u", "x"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 TAN(`u`.`x`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 TAN([u].[x])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 TAN(`u`.`x`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 TAN("u"."x")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TAN("u"."x")
 ```
 
@@ -3780,24 +3780,24 @@ TAN("u"."x")
 ```go
 function := uast.Trunc(uast.Field[int]("u", "x"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 TRUNCATE(`u`.`x`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ROUND([u].[x], @p1, 1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 TRUNCATE(`u`.`x`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 TRUNC("u"."x", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TRUNC("u"."x", ?)
 ```
 
@@ -3810,24 +3810,24 @@ function := uast.CumeDist().Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CUME_DIST() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CUME_DIST() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CUME_DIST() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CUME_DIST() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CUME_DIST() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -3839,24 +3839,24 @@ function := uast.DenseRank().Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DENSE_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DENSE_RANK() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DENSE_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 DENSE_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DENSE_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -3868,24 +3868,24 @@ function := uast.NTile(2).Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 NTILE(2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 NTILE(2) OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 NTILE(2) OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 NTILE(2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 NTILE(2) OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -3897,24 +3897,24 @@ function := uast.PercentRank().Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 PERCENT_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 PERCENT_RANK() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 PERCENT_RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 PERCENT_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 PERCENT_RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -3926,24 +3926,24 @@ function := uast.Rank().Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RANK() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RANK() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 RANK() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -3955,24 +3955,24 @@ function := uast.RowNumber().Over(
     uast.OrderBy(uast.Desc(uast.Field[int]("u", "number"))),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ROW_NUMBER() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ROW_NUMBER() OVER (PARTITION BY [u].[id] ORDER BY [u].[number] DESC)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ROW_NUMBER() OVER (PARTITION BY `u`.`id` ORDER BY `u`.`number` DESC)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ROW_NUMBER() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ROW_NUMBER() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```
 
@@ -3982,24 +3982,24 @@ ROW_NUMBER() OVER (PARTITION BY "u"."id" ORDER BY "u"."number" DESC)
 ```go
 function := uast.Concat(uast.Field[string]("u", "string"), uast.Value("old"), uast.Value("new"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CONCAT(`u`.`string`, ?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CONCAT([u].[string], @p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CONCAT(`u`.`string`, ?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CONCAT("u"."string", $1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CONCAT("u"."string", ?, ?)
 ```
 
@@ -4008,24 +4008,24 @@ CONCAT("u"."string", ?, ?)
 ```go
 function := uast.ConcatWs(uast.Value("_"), uast.Field[string]("u", "string"), uast.Value("old"),uast.Value("new"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CONCAT_WS(?, `u`.`string`, ?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CONCAT_WS(@p1, [u].[string], @p2, @p3)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CONCAT_WS(?, `u`.`string`, ?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CONCAT_WS($1, "u"."string", $2, $3)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CONCAT_WS(?, "u"."string", ?, ?)
 ```
 
@@ -4034,24 +4034,24 @@ CONCAT_WS(?, "u"."string", ?, ?)
 ```go
 function := uast.LeftString(uast.Field[string]("u", "string"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LEFT(`u`.`string`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LEFT([u].[string], @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LEFT(`u`.`string`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LEFT("u"."string", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LEFT("u"."string", ?)
 ```
 
@@ -4060,24 +4060,24 @@ LEFT("u"."string", ?)
 ```go
 function := uast.Lower(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LOWER(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LOWER([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LOWER(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LOWER("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LOWER("u"."string")
 ```
 
@@ -4086,24 +4086,24 @@ LOWER("u"."string")
 ```go
 function := uast.LPad(uast.Field[string]("u", "string"), uast.Value(2), uast.Value(","))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LPAD(`u`.`string`, ?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LPAD([u].[string], @p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LPAD(`u`.`string`, ?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LPAD("u"."string", $1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LPAD("u"."string", ?, ?)
 ```
 
@@ -4112,24 +4112,24 @@ LPAD("u"."string", ?, ?)
 ```go
 function := uast.LTrim(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 LTRIM(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 LTRIM([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 LTRIM(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 LTRIM("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 LTRIM("u"."string")
 ```
 
@@ -4138,24 +4138,24 @@ LTRIM("u"."string")
 ```go
 function := uast.Repeat(uast.Field[string]("u", "string"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 REPEAT(`u`.`string`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 REPEAT([u].[string], @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 REPEAT(`u`.`string`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 REPEAT("u"."string", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 REPEAT("u"."string", ?)
 ```
 
@@ -4164,24 +4164,24 @@ REPEAT("u"."string", ?)
 ```go
 function := uast.Replace(uast.Field[string]("u", "string"), uast.Value("old"), uast.Value("new"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 REPLACE(`u`.`string`, ?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 REPLACE([u].[string], @p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 REPLACE(`u`.`string`, ?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 REPLACE("u"."string", $1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 REPLACE("u"."string", ?, ?)
 ```
 
@@ -4190,24 +4190,24 @@ REPLACE("u"."string", ?, ?)
 ```go
 function := uast.Reverse(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 REVERSE(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 REVERSE([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 REVERSE(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 REVERSE("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 REVERSE("u"."string")
 ```
 
@@ -4216,24 +4216,24 @@ REVERSE("u"."string")
 ```go
 function := uast.RightString(uast.Field[string]("u", "string"), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RIGHT(`u`.`string`, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RIGHT([u].[string], @p1)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RIGHT(`u`.`string`, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RIGHT("u"."string", $1)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 RIGHT("u"."string", ?)
 ```
 
@@ -4242,24 +4242,24 @@ RIGHT("u"."string", ?)
 ```go
 function := uast.RPad(uast.Field[string]("u", "string"), uast.Value(2), uast.Value(","))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RPAD(`u`.`string`, ?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RPAD([u].[string], @p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RPAD(`u`.`string`, ?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RPAD("u"."string", $1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 RPAD("u"."string", ?, ?)
 ```
 
@@ -4268,24 +4268,24 @@ RPAD("u"."string", ?, ?)
 ```go
 function := uast.RTrim(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 RTRIM(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 RTRIM([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 RTRIM(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 RTRIM("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 RTRIM("u"."string")
 ```
 
@@ -4294,24 +4294,24 @@ RTRIM("u"."string")
 ```go
 function := uast.SubString(uast.Field[string]("u", "string"), uast.Value(0), uast.Value(2))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 SUBSTRING(`u`.`string`, ?, ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 SUBSTRING([u].[string], @p1, @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SUBSTRING(`u`.`string`, ?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SUBSTRING("u"."string", $1, $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 SUBSTRING("u"."string", ?, ?)
 ```
 
@@ -4320,24 +4320,24 @@ SUBSTRING("u"."string", ?, ?)
 ```go
 function := uast.Trim(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 TRIM(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 TRIM([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 TRIM(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 TRIM("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TRIM("u"."string")
 ```
 
@@ -4346,24 +4346,24 @@ TRIM("u"."string")
 ```go
 function := uast.Upper(uast.Field[string]("u", "string"))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 UPPER(`u`.`string`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 UPPER([u].[string])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 UPPER(`u`.`string`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 UPPER("u"."string")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 UPPER("u"."string")
 ```
 
@@ -4373,8 +4373,8 @@ UPPER("u"."string")
 ```go
 literal := uast.Literal("%Y-%m-%d")
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 '%Y-%m-%d'
 ```
 
@@ -4387,24 +4387,24 @@ logical := uast.And(
     uast.Greater(uast.Field[int]("u", "number"), uast.Value(2)),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 (`u`.`string` = ? AND `u`.`number` > ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ([u].[string] = @p1 AND [u].[number] > @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 (`u`.`string` = ? AND `u`.`number` > ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."string" = $1 AND "u"."number" > $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ("u"."string" = ? AND "u"."number" > ?)
 ```
 
@@ -4416,24 +4416,24 @@ logical := uast.Or(
     uast.Greater(uast.Field[int]("u", "number"), uast.Value(2)),
 )
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 (`u`.`string` = ? OR `u`.`number` > ?)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 ([u].[string] = @p1 OR [u].[number] > @p2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 (`u`.`string` = ? OR `u`.`number` > ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ("u"."string" = $1 OR "u"."number" > $2)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ("u"."string" = ? OR "u"."number" > ?)
 ```
 
@@ -4443,24 +4443,24 @@ Output SQLite:
 ```go
 subquery := uast.Subquery[int64](uast.NewSelect(uast.Field[int64]("u", "id")).From(uast.NewTable("users").As("u")))
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 (SELECT `u`.`id` FROM `users` AS `u`)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 (SELECT [u].[id] FROM [users] AS [u])
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 (SELECT `u`.`id` FROM `users` AS `u`)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 (SELECT "u"."id" FROM "users" AS "u")
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 (SELECT "u"."id" FROM "users" AS "u")
 ```
 
@@ -4472,23 +4472,23 @@ Output SQLite:
 var data string = "ivan"
 value := uast.Value(data)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 ?
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 @p1
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 $1
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 ?
 ```

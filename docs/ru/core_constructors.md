@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **Информация**
 Эта страница охватывает следующие конструкторы операторов: `NewAlter`, `NewComment`, `NewCreate`, `NewDelete`, `NewDrop`, `NewInsert`, `NewSelect`, `NewTruncate`, `NewUpdate`. Каждый конструктор создаёт новый экземпляр оператора, который может быть настроен с помощью методов и скомпилирован в SQL с помощью `Build()`.
-:::
+:::**
 
 ## NewAlter
 Создает новый экземпляр запроса ALTER. Принимает источник типа `Index/Schema/Table/View` и возвращает запрос, который можно настроить с помощью методов `AddColumns`, `AddConstraints`, `DropColumns`, `DropConstraints`, `RenameTo`, `RenameColumn`, `RenameConstraint`, `SetColumns`.
@@ -50,8 +50,8 @@ stmtAlterTableSet := uast.NewAlter(uast.NewTable("users", "u")).
 stmtAlterView := uast.NewAlter(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
 	RenameTo("new_name")
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 // Not supported
 // Not supported
 ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
@@ -61,8 +61,8 @@ ALTER TABLE `users` RENAME TO `new_users`
 ALTER TABLE `users` MODIFY COLUMN `id` UUID, ALTER COLUMN `string` SET DEFAULT '_', MODIFY COLUMN `date` NOT NULL
 // Not supported
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 // Not supported
 // Not supported
 ALTER TABLE [users] ADD COLUMN [string] NVARCHAR, ADD COLUMN [date] DATE, ADD CONSTRAINT [ck_orders_number] CHECK([o].[number] > @p1), ADD CONSTRAINT [pk_orders_id] PRIMARY KEY([id]), ADD CONSTRAINT [un_orders_name] UNIQUE([string]), DROP COLUMN [id], DROP COLUMN [name], DROP CONSTRAINT [ck_users_number], DROP CONSTRAINT [fk_users_orders], DROP CONSTRAINT [pk_users_id], DROP CONSTRAINT [un_users_name]
@@ -72,8 +72,8 @@ ALTER TABLE [users] ADD COLUMN [string] NVARCHAR, ADD COLUMN [date] DATE, ADD CO
 ALTER TABLE [users] ALTER COLUMN [id] UNIQUEIDENTIFIER, ADD DEFAULT '_' FOR [string], ALTER COLUMN [date] NOT NULL
 // Not supported
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 // Not supported
 // Not supported
 ALTER TABLE `users` ADD COLUMN `string` VARCHAR, ADD COLUMN `date` DATE, ADD CONSTRAINT `ck_orders_number` CHECK(`o`.`number` > ?), ADD CONSTRAINT `pk_orders_id` PRIMARY KEY(`id`), ADD CONSTRAINT `un_orders_name` UNIQUE(`string`), DROP COLUMN `id`, DROP COLUMN `name`, DROP CONSTRAINT `ck_users_number`, DROP CONSTRAINT `fk_users_orders`, DROP CONSTRAINT `pk_users_id`, DROP CONSTRAINT `un_users_name`
@@ -83,8 +83,8 @@ ALTER TABLE `users` RENAME TO `new_users`
 ALTER TABLE `users` MODIFY COLUMN `id` CHAR(36), ALTER COLUMN `string` SET DEFAULT '_', MODIFY COLUMN `date` NOT NULL
 // Not supported
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 ALTER INDEX "users_id" RENAME TO "new_name"
 ALTER SCHEMA "test" RENAME TO "new_name"
 ALTER TABLE "users" ADD COLUMN "string" VARCHAR, ADD COLUMN "date" DATE, ADD CONSTRAINT "ck_orders_number" CHECK("o"."number" > $1), ADD CONSTRAINT "pk_orders_id" PRIMARY KEY("id"), ADD CONSTRAINT "un_orders_name" UNIQUE("string"), DROP COLUMN "id", DROP COLUMN "name", DROP CONSTRAINT "ck_users_number", DROP CONSTRAINT "fk_users_orders", DROP CONSTRAINT "pk_users_id", DROP CONSTRAINT "un_users_name"
@@ -94,8 +94,8 @@ ALTER TABLE "users" RENAME TO "new_users"
 ALTER TABLE "users" ALTER COLUMN "id" TYPE UUID, ALTER COLUMN "string" SET DEFAULT '_', ALTER COLUMN "date" SET NOT NULL
 ALTER VIEW "users_general" RENAME TO "new_name"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 // Not supported
 // Not supported
 ALTER TABLE "users" ADD COLUMN "string" TEXT, ADD COLUMN "date" TEXT
@@ -114,28 +114,28 @@ stmtCommentColumn := uast.NewComment(uast.NewTable("users", "u")).OnColumn(uast.
 stmtCommentTable := uast.NewComment(uast.NewTable("users", "u")).
     Is("text")
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 COMMENT ON COLUMN `users`.`id` IS 'text'
 COMMENT ON TABLE `users` AS `u` IS 'text'
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 // Not supported
 // Not supported
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 COMMENT ON COLUMN `users`.`id` IS 'text'
 COMMENT ON TABLE `users` AS `u` IS 'text'
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 COMMENT ON COLUMN "users"."id" IS 'text'
 COMMENT ON TABLE "users" AS "u" IS 'text'
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 COMMENT ON COLUMN "users"."id" IS 'text'
 COMMENT ON TABLE "users" AS "u" IS 'text'
 ```
@@ -177,36 +177,36 @@ stmtCreateView := uast.NewCreate(uast.NewView("users_general", "ug", uast.NewTab
 		),
 	)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CREATE UNIQUE INDEX IF NOT EXISTS `users_id` ON `users` (`string`, `number`)
 CREATE SCHEMA IF NOT EXISTS `test`
 CREATE TABLE IF NOT EXISTS `users` (`id` SIGNED AUTO_INCREMENT, `name` VARCHAR NOT NULL, CONSTRAINT `ck_users_number` CHECK(`u`.`number` > ?), CONSTRAINT `fk_users_orders` FOREIGN KEY(`order_id`, `name`) REFERENCES `orders`(`id`, `string`) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT `pk_users_id` PRIMARY KEY(`id`), CONSTRAINT `un_users_name` UNIQUE(`name`))
 CREATE OR REPLACE VIEW `users_general` AS SELECT `u`.`id`, `u`.`string` FROM `users` AS `u`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CREATE UNIQUE INDEX [users_id] ON [users] ([string], [number])
 CREATE SCHEMA IF NOT EXISTS [test]
 CREATE TABLE [users] ([id] BIGINT IDENTITY(1,1), [name] NVARCHAR NOT NULL, CONSTRAINT [ck_users_number] CHECK([u].[number] > @p1), CONSTRAINT [fk_users_orders] FOREIGN KEY([order_id], [name]) REFERENCES [orders]([id], [string]) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT [pk_users_id] PRIMARY KEY([id]), CONSTRAINT [un_users_name] UNIQUE([name]))
 CREATE OR REPLACE VIEW [users_general] AS SELECT [u].[id], [u].[string] FROM [users] AS [u]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CREATE UNIQUE INDEX `users_id` ON `users` (`string`, `number`)
 CREATE SCHEMA `test`
 CREATE TABLE IF NOT EXISTS `users` (`id` SIGNED AUTO_INCREMENT, `name` VARCHAR NOT NULL, CONSTRAINT `ck_users_number` CHECK(`u`.`number` > ?), CONSTRAINT `fk_users_orders` FOREIGN KEY(`order_id`, `name`) REFERENCES `orders`(`id`, `string`) ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT `pk_users_id` PRIMARY KEY(`id`), CONSTRAINT `un_users_name` UNIQUE(`name`))
 CREATE OR REPLACE VIEW `users_general` AS SELECT `u`.`id`, `u`.`string` FROM `users` AS `u`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CREATE UNIQUE INDEX IF NOT EXISTS "users_id" ON "users" ("string", "number")
 CREATE SCHEMA IF NOT EXISTS "test"
 CREATE TABLE IF NOT EXISTS "users" ("id" BIGINT GENERATED BY DEFAULT AS IDENTITY, "name" VARCHAR NOT NULL, CONSTRAINT "ck_users_number" CHECK("u"."number" > $1), CONSTRAINT "fk_users_orders" FOREIGN KEY("order_id", "name") REFERENCES "orders"("id", "string") ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT "pk_users_id" PRIMARY KEY("id"), CONSTRAINT "un_users_name" UNIQUE("name"))
 CREATE OR REPLACE VIEW "users_general" AS SELECT "u"."id", "u"."string" FROM "users" AS "u"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CREATE UNIQUE INDEX IF NOT EXISTS "users_id" ON "users" ("string", "number")
 // Not supported
 CREATE TABLE IF NOT EXISTS "users" ("id" INTEGER AUTOINCREMENT, "name" TEXT NOT NULL, CONSTRAINT "ck_users_number" CHECK("u"."number" > ?), CONSTRAINT "fk_users_orders" FOREIGN KEY("order_id", "name") REFERENCES "orders"("id", "string") ON DELETE CASCADE ON UPDATE RESTRICT, CONSTRAINT "pk_users_id" PRIMARY KEY("id"), CONSTRAINT "un_users_name" UNIQUE("name"))
@@ -247,36 +247,36 @@ stmtDeleteWith := NewDelete(uast.NewTable("users", "u")).
 		),
 	)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DELETE `u` FROM `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` WHERE `u`.`string` = ?
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ? RETURNING `u`.`id`, `u`.`string`
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) DELETE `u` FROM `users` AS `u`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DELETE [u] FROM [users] AS [u] INNER JOIN [orders] AS [o] ON [u].[id] = [o].[id] WHERE [u].[string] = @p1
-DELETE [u] FROM [users] AS [u] OUTPUT [u].[id], [u].[string] WHERE [u].[string] = @p1
+DELETE [u] FROM [users] AS [u] **Output [u].[id], [u].[string] WHERE [u].[string] = @p1
 DELETE [u] FROM [users] AS [u] WHERE [u].[string] = @p1
 WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p1) DELETE [u] FROM [users] AS [u]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DELETE `u` FROM `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` WHERE `u`.`string` = ?
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
 DELETE `u` FROM `users` AS `u` WHERE `u`.`string` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) DELETE `u` FROM `users` AS `u`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 DELETE FROM "users" AS "u" USING "orders" AS "o" WHERE ("u"."id" = "o"."id" AND "u"."string" = $1)
 DELETE FROM "users" AS "u" WHERE "u"."string" = $1 RETURNING "u"."id", "u"."string"
 DELETE FROM "users" AS "u" WHERE "u"."string" = $1
 WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1) DELETE FROM "users" AS "u"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DELETE FROM "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id" WHERE "u"."string" = ?
 DELETE FROM "users" AS "u" WHERE "u"."string" = ? RETURNING "u"."id", "u"."string"
 DELETE FROM "users" AS "u" WHERE "u"."string" = ?
@@ -303,8 +303,8 @@ stmtDropIfExistsTable := uast.NewDrop(uast.NewTable("users", "u")).
 stmtDropIfExistsView := uast.NewDrop(uast.NewView("users_general", "ug", uast.NewTable("users", "u"))).
     IfExists()
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 DROP INDEX `users_id` CASCADE
 DROP SCHEMA `test` CASCADE
 DROP TABLE `users`
@@ -314,8 +314,8 @@ DROP SCHEMA IF EXISTS `test`
 DROP TABLE IF EXISTS `users`
 DROP VIEW IF EXISTS `users_general`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 DROP INDEX [users_id]
 DROP SCHEMA [test]
 DROP TABLE [users]
@@ -325,8 +325,8 @@ DROP SCHEMA IF EXISTS [test]
 DROP TABLE IF EXISTS [users]
 DROP VIEW IF EXISTS [users_general]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 DROP INDEX `users_id`
 DROP SCHEMA `test`
 DROP TABLE `users`
@@ -336,8 +336,8 @@ DROP SCHEMA `test`
 DROP TABLE IF EXISTS `users`
 DROP VIEW IF EXISTS `users_general`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 DROP INDEX "users_id" CASCADE
 DROP SCHEMA "test" CASCADE
 DROP TABLE "users" CASCADE
@@ -347,8 +347,8 @@ DROP SCHEMA IF EXISTS "test"
 DROP TABLE IF EXISTS "users"
 DROP VIEW IF EXISTS "users_general"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 DROP INDEX "users_id"
 DROP SCHEMA "test"
 DROP TABLE "users"
@@ -405,36 +405,36 @@ stmtInsertWith := NewInsert(uast.NewTable("users", "u")).
 		),
 	)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?) RETURNING `u`.`id`, `u`.`string`
 INSERT INTO `users` AS `u` (`string`, `number`) SELECT `u`.`string`, `u`.`number` FROM `users` AS `u` WHERE `u`.`string` = ?
 INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?)
 ```
-Output MsSQL:
-```text
-INSERT INTO [users] AS [u] ([string], [number]) OUTPUT [u].[id], [u].[string] VALUES (@p1, @p2)
+**Output MsSQL:**
+```sql
+INSERT INTO [users] AS [u] ([string], [number]) **Output [u].[id], [u].[string] VALUES (@p1, @p2)
 INSERT INTO [users] AS [u] ([string], [number]) SELECT [u].[string], [u].[number] FROM [users] AS [u] WHERE [u].[string] = @p1
 INSERT INTO [users] AS [u] ([string], [number]) VALUES (@p1, @p2)
 WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p1) INSERT INTO [users] AS [u] ([string], [number]) VALUES (@p2, @p3)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?)
 INSERT INTO `users` AS `u` (`string`, `number`) SELECT `u`.`string`, `u`.`number` FROM `users` AS `u` WHERE `u`.`string` = ?
 INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `string` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) INSERT INTO `users` AS `u` (`string`, `number`) VALUES (?, ?)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 INSERT INTO "users" AS "u" ("string", "number") VALUES ($1, $2) RETURNING "u"."id", "u"."string"
 INSERT INTO "users" AS "u" ("string", "number") SELECT "u"."string", "u"."number" FROM "users" AS "u" WHERE "u"."string" = $1
 INSERT INTO "users" AS "u" ("string", "number") VALUES ($1, $2) ON CONFLICT DO UPDATE SET "string" = $3
 WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1) INSERT INTO "users" AS "u" ("string", "number") VALUES ($2, $3)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 INSERT INTO "users" AS "u" ("string", "number") VALUES (?, ?) RETURNING "u"."id", "u"."string"
 INSERT INTO "users" AS "u" ("string", "number") SELECT "u"."string", "u"."number" FROM "users" AS "u" WHERE "u"."string" = ?
 INSERT INTO "users" AS "u" ("string", "number") VALUES (?, ?) ON CONFLICT DO UPDATE SET "string" = ?
@@ -532,8 +532,8 @@ stmtSelectWith := uast.NewSelect(uast.NewCTE("cte_test", "ct")).
 		),
 	)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 SELECT DISTINCT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string`
@@ -545,8 +545,8 @@ SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `o`.`string` FROM `orde
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 WITH `cte_test` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 SELECT DISTINCT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
 SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
 SELECT [u].[string], COUNT([u].[id]) AS [cnt] FROM [users] AS [u] GROUP BY [u].[string]
@@ -558,8 +558,8 @@ SELECT [u].[string] FROM [users] AS [u] UNION ALL SELECT [o].[string] FROM [orde
 SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] = @p1
 WITH [cte_test] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] > @p1) SELECT [ct].[id] FROM [cte_test] AS [ct]
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SELECT DISTINCT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 SELECT `u`.`string`, COUNT(`u`.`id`) AS `cnt` FROM `users` AS `u` GROUP BY `u`.`string`
@@ -571,8 +571,8 @@ SELECT `u`.`string` FROM `users` AS `u` UNION ALL SELECT `o`.`string` FROM `orde
 SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` = ?
 WITH `cte_test` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` > ?) SELECT `ct`.`id` FROM `cte_test` AS `ct`
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SELECT DISTINCT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
 SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
 SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string"
@@ -584,8 +584,8 @@ SELECT "u"."string" FROM "users" AS "u" UNION ALL SELECT "o"."string" FROM "orde
 SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = $1
 WITH "cte_test" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" > $1) SELECT "ct"."id" FROM "cte_test" AS "ct"
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 SELECT DISTINCT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
 SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" = ?
 SELECT "u"."string", COUNT("u"."id") AS "cnt" FROM "users" AS "u" GROUP BY "u"."string"
@@ -607,32 +607,32 @@ stmtTruncateCascade := uast.NewTruncate(uast.NewTable("users", "u")).
 stmtTruncateRestartIdentity := uast.NewTruncate(uast.NewTable("users", "u")).
     RestartIdentity()
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 TRUNCATE TABLE `users`
 TRUNCATE TABLE `users` CASCADE
 TRUNCATE TABLE `users` RESTART IDENTITY
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 TRUNCATE TABLE [users]
 // Not supported
 // Not supported
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 TRUNCATE TABLE `users`
 // Not supported
 // Not supported
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 TRUNCATE TABLE "users"
 TRUNCATE TABLE "users" CASCADE
 TRUNCATE TABLE "users" RESTART IDENTITY
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 TRUNCATE TABLE "users"
 // Not supported
 // Not supported
@@ -691,8 +691,8 @@ stmtUpdateWith := NewUpdate(uast.NewTable("users", "u")).
 		),
 	)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 UPDATE `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` SET `u`.`string` = ? WHERE `o`.`string` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ? RETURNING `u`.`id`, `u`.`string`
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
@@ -700,32 +700,32 @@ UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) UPDATE `users` AS `u` SET `u`.`string` = ?
 
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 UPDATE [users] AS [u] INNER JOIN [orders] AS [o] ON [u].[id] = [o].[id] SET [u].[string] = @p1 WHERE [o].[string] = @p2
-UPDATE [users] AS [u] OUTPUT [u].[id], [u].[string] SET [u].[string] = @p1 WHERE [u].[number] = @p2
+UPDATE [users] AS [u] **Output [u].[id], [u].[string] SET [u].[string] = @p1 WHERE [u].[number] = @p2
 UPDATE [users] AS [u] SET [u].[string] = @p1 WHERE [u].[number] = @p2
 UPDATE [users] AS [u] SET [u].[string] = @p1 WHERE [u].[number] = @p2
 WITH [old_users] AS (SELECT [u].[id] FROM [users] AS [u] WHERE [u].[number] < @p1) UPDATE [users] AS [u] SET [u].[string] = @p2
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 UPDATE `users` AS `u` INNER JOIN `orders` AS `o` ON `u`.`id` = `o`.`id` SET `u`.`string` = ? WHERE `o`.`string` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
 UPDATE `users` AS `u` SET `u`.`string` = ? WHERE `u`.`number` = ?
 WITH `old_users` AS (SELECT `u`.`id` FROM `users` AS `u` WHERE `u`.`number` < ?) UPDATE `users` AS `u` SET `u`.`string` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 UPDATE "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id" SET "u"."string" = $1 WHERE "o"."string" = $2
 UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2 RETURNING "u"."id", "u"."string"
 UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2
 UPDATE "users" AS "u" SET "u"."string" = $1 WHERE "u"."number" = $2
 WITH "old_users" AS (SELECT "u"."id" FROM "users" AS "u" WHERE "u"."number" < $1) UPDATE "users" AS "u" SET "u"."string" = $2
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 UPDATE "users" AS "u" INNER JOIN "orders" AS "o" ON "u"."id" = "o"."id" SET "u"."string" = ? WHERE "o"."string" = ?
 UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ? RETURNING "u"."id", "u"."string"
 UPDATE "users" AS "u" SET "u"."string" = ? WHERE "u"."number" = ?

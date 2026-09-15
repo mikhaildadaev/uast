@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **关于**
 本页面涵盖了 `Binary`、`Datetime`、`Numeric`、`String`、`Special` 类别中的所有 21 种数据类型。每种类型都使用 `Cast` 进行演示，并包含带有方言特定 SQL 输出的代码示例。
-:::
+:::**
 
 ## Binary
 ### TypeBinary
@@ -14,24 +14,24 @@ outline: deep
 ```go
 binary := uast.Cast(uast.Field[int]("u", "number"), uast.TypeBinary)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS BINARY)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS BINARY)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS BINARY)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS BYTEA)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS BLOB)
 ```
 
@@ -40,24 +40,24 @@ CAST("u"."number" AS BLOB)
 ```go
 binary := uast.Cast(uast.Field[int]("u", "number"), uast.TypeVarBinary)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS VARBINARY)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS VARBINARY)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS VARBINARY)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS BYTEA)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS BLOB)
 ```
 
@@ -67,24 +67,24 @@ CAST("u"."number" AS BLOB)
 ```go
 datetime := uast.Cast(uast.Field[int]("u", "number"), uast.TypeDate)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS DATE)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS DATE)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS DATE)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS DATE)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -93,24 +93,24 @@ CAST("u"."number" AS TEXT)
 ```go
 datetime := uast.Cast(uast.Field[int]("u", "number"), uast.TypeDateTime)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS DATETIME)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS DATETIME2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS DATETIME)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS TIMESTAMP)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -119,24 +119,24 @@ CAST("u"."number" AS TEXT)
 ```go
 datetime := uast.Cast(uast.Field[int]("u", "number"), uast.TypeTime)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS TIME)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS TIME)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS TIME)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS TIME)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -145,24 +145,24 @@ CAST("u"."number" AS TEXT)
 ```go
 datetime := uast.Cast(uast.Field[int]("u", "number"), uast.TypeTimestamp)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS TIMESTAMP)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS DATETIME2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS TIMESTAMP)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS TIMESTAMPTZ)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -172,24 +172,24 @@ CAST("u"."number" AS TEXT)
 ```go
 math := uast.Cast(uast.Field[int]("u", "number"), uast.TypeBigInt)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS SIGNED)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS BIGINT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS SIGNED)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS BIGINT)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS INTEGER)
 ```
 
@@ -198,24 +198,24 @@ CAST("u"."number" AS INTEGER)
 ```go
 math := uast.Cast(uast.Field[int]("u", "number"), uast.TypeDecimal)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS DECIMAL)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS DECIMAL)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS DECIMAL)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS DECIMAL)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS REAL)
 ```
 
@@ -224,24 +224,24 @@ CAST("u"."number" AS REAL)
 ```go
 math := uast.Cast(uast.Field[int]("u", "number"), uast.TypeDouble)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS DECIMAL)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS FLOAT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS DECIMAL)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS DOUBLE PRECISION)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS REAL)
 ```
 
@@ -250,24 +250,24 @@ CAST("u"."number" AS REAL)
 ```go
 math := uast.Cast(uast.Field[int]("u", "number"), uast.TypeFloat)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS DECIMAL)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS REAL)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS DECIMAL)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS REAL)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS REAL)
 ```
 
@@ -276,24 +276,24 @@ CAST("u"."number" AS REAL)
 ```go
 math := uast.Cast(uast.Field[int]("u", "number"), uast.TypeInt)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS SIGNED)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS INT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS SIGNED)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS INTEGER)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS INTEGER)
 ```
 
@@ -302,24 +302,24 @@ CAST("u"."number" AS INTEGER)
 ```go
 math := uast.Cast(uast.Field[int]("u", "number"), uast.TypeSmallInt)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS SIGNED)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS SMALLINT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS SIGNED)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS SMALLINT)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS INTEGER)
 ```
 
@@ -329,24 +329,24 @@ CAST("u"."number" AS INTEGER)
 ```go
 str := uast.Cast(uast.Field[int]("u", "number"), uast.TypeChar)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS CHAR)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS CHAR)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS CHAR)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS CHAR)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -355,24 +355,24 @@ CAST("u"."number" AS TEXT)
 ```go
 str := uast.Cast(uast.Field[int]("u", "number"), uast.TypeString)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS VARCHAR)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS NVARCHAR)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS VARCHAR)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS VARCHAR)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -381,24 +381,24 @@ CAST("u"."number" AS TEXT)
 ```go
 str := uast.Cast(uast.Field[int]("u", "number"), uast.TypeText)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS TEXT)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS NVARCHAR(MAX))
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS TEXT)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -407,24 +407,24 @@ CAST("u"."number" AS TEXT)
 ```go
 str := uast.Cast(uast.Field[int]("u", "number"), uast.TypeVarChar)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS VARCHAR)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS NVARCHAR)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS VARCHAR)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS VARCHAR)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -434,24 +434,24 @@ CAST("u"."number" AS TEXT)
 ```go
 special := uast.Cast(uast.Field[int]("u", "number"), uast.TypeArray)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS JSON)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS NVARCHAR(MAX))
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS JSON)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS ARRAY)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -460,24 +460,24 @@ CAST("u"."number" AS TEXT)
 ```go
 special := uast.Cast(uast.Field[int]("u", "number"), uast.TypeBoolean)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS TINYINT(1))
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS BIT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS TINYINT(1))
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS BOOLEAN)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS INTEGER)
 ```
 
@@ -486,24 +486,24 @@ CAST("u"."number" AS INTEGER)
 ```go
 special := uast.Cast(uast.Field[int]("u", "number"), uast.TypeJSON)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS JSON)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS NVARCHAR(MAX))
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS JSON)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS JSONB)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -512,24 +512,24 @@ CAST("u"."number" AS TEXT)
 ```go
 special := uast.Cast(uast.Field[int]("u", "number"), uast.TypeUUID)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS UUID)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS UNIQUEIDENTIFIER)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS CHAR(36))
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS UUID)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```
 
@@ -538,23 +538,23 @@ CAST("u"."number" AS TEXT)
 ```go
 special := uast.Cast(uast.Field[int]("u", "number"), uast.TypeXML)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`u`.`number` AS TEXT)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([u].[number] AS XML)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`u`.`number` AS TEXT)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("u"."number" AS XML)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("u"."number" AS TEXT)
 ```

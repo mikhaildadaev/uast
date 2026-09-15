@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **关于**
 本页文档介绍如何创建遥测实例、配置所有设置以及了解每个数据类型和字段构造函数。
-:::
+:::**
 
 ## NewSQL
 本页介绍如何创建 SQL 实例、配置所有设置，以及理解每种数据类型和字段构造函数。
@@ -34,12 +34,12 @@ if err2 != nil {
     log.Fatal(err2)
 }
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SELECT `u`.`id`, `u`.`name` FROM `users` AS `u` WHERE `u`.`status` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
 ```
 

@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **Info**
 This page describes how to create a sql instance, configure all the settings, and understand each data type and field constructor.
-:::
+:::**
 
 ## NewSQL
 SQL instance with all configuration options
@@ -34,12 +34,12 @@ if err2 != nil {
     log.Fatal(err2)
 }
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 SELECT `u`.`id`, `u`.`name` FROM `users` AS `u` WHERE `u`.`status` = ?
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
 ```
 

@@ -5,8 +5,8 @@ outline: deep
 # API / Core / Types
 
 ::: info **Info**
-This page covers all 21 data types in `Binary`, `Datetime`, `Numeric`, `String`, `Special` categories. Each type is demonstrated using `Cast` and includes a code example with dialect-specific SQL output.
-:::
+This page covers all 21 data types in `Binary`, `Datetime`, `Numeric`, `String`, `Special` categories. Each type is demonstrated using `Cast` and includes a code example with dialect-specific SQL **Output.
+:::**
 
 ## Binary
 ### TypeBinary
@@ -14,24 +14,24 @@ Fixed-length binary string.
 ```go
 binary := uast.Cast(uast.Field[int]("t", "number"), uast.TypeBinary)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS BINARY)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS BINARY)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS BINARY)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS BYTEA)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS BLOB)
 ```
 
@@ -40,24 +40,24 @@ Variable-length binary string.
 ```go
 binary := uast.Cast(uast.Field[int]("t", "number"), uast.TypeVarBinary)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS VARBINARY)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS VARBINARY)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS VARBINARY)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS BYTEA)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS BLOB)
 ```
 
@@ -67,24 +67,24 @@ Represents a date value (year, month, day).
 ```go
 datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDate)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS DATE)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS DATE)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS DATE)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS DATE)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -93,24 +93,24 @@ Represents a combined date and time value.
 ```go
 datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDateTime)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS DATETIME)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS DATETIME2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS DATETIME)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS TIMESTAMP)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -119,24 +119,24 @@ Represents a time value (hour, minute, second).
 ```go
 datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeTime)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS TIME)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS TIME)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS TIME)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS TIME)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -145,24 +145,24 @@ Represents a timestamp value.
 ```go
 datetime := uast.Cast(uast.Field[int]("t", "number"), uast.TypeTimestamp)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS TIMESTAMP)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS DATETIME2)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS TIMESTAMP)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS TIMESTAMPTZ)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -172,24 +172,24 @@ Large integer type.
 ```go
 math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeBigInt)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS SIGNED)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS BIGINT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS SIGNED)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS BIGINT)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS INTEGER)
 ```
 
@@ -198,24 +198,24 @@ Fixed-point decimal number.
 ```go
 math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDecimal)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS DECIMAL)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS DECIMAL)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS DECIMAL)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS DECIMAL)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS REAL)
 ```
 
@@ -224,24 +224,24 @@ Double-precision floating-point number.
 ```go
 math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeDouble)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS DECIMAL)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS FLOAT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS DECIMAL)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS DOUBLE PRECISION)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS REAL)
 ```
 
@@ -250,24 +250,24 @@ Single-precision floating-point number.
 ```go
 math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeFloat)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS DECIMAL)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS REAL)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS DECIMAL)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS REAL)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS REAL)
 ```
 
@@ -276,24 +276,24 @@ Integer type.
 ```go
 math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeInt)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS SIGNED)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS INT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS SIGNED)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS INTEGER)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS INTEGER)
 ```
 
@@ -302,24 +302,24 @@ Small integer type.
 ```go
 math := uast.Cast(uast.Field[int]("t", "number"), uast.TypeSmallInt)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS SIGNED)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS SMALLINT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS SIGNED)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS SMALLINT)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS INTEGER)
 ```
 
@@ -329,24 +329,24 @@ Fixed-length character string.
 ```go
 str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeChar)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS CHAR)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS CHAR)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS CHAR)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS CHAR)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -355,24 +355,24 @@ Variable-length character string.
 ```go
 str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeString)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS VARCHAR)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS NVARCHAR)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS VARCHAR)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS VARCHAR)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -381,24 +381,24 @@ Variable-length text string.
 ```go
 str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeText)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS TEXT)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS NVARCHAR(MAX))
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS TEXT)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -407,24 +407,24 @@ Variable-length character string with specified maximum.
 ```go
 str := uast.Cast(uast.Field[int]("t", "number"), uast.TypeVarChar)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS VARCHAR)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS NVARCHAR)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS VARCHAR)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS VARCHAR)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -434,24 +434,24 @@ Represents an array type.
 ```go
 special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeArray)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS JSON)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS NVARCHAR(MAX))
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS JSON)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS ARRAY)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -460,24 +460,24 @@ Represents a boolean (true/false) type.
 ```go
 special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeBoolean)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS TINYINT(1))
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS BIT)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS TINYINT(1))
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS BOOLEAN)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS INTEGER)
 ```
 
@@ -486,24 +486,24 @@ Represents a JSON data type.
 ```go
 special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeJSON)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS JSON)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS NVARCHAR(MAX))
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS JSON)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS JSONB)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -512,24 +512,24 @@ Represents a universally unique identifier (UUID).
 ```go
 special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeUUID)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS UUID)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS UNIQUEIDENTIFIER)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS CHAR(36))
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS UUID)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```
 
@@ -538,23 +538,23 @@ Represents an XML data type.
 ```go
 special := uast.Cast(uast.Field[int]("t", "number"), uast.TypeXML)
 ```
-Output MariaDB:
-```text
+**Output MariaDB:**
+```sql
 CAST(`t`.`number` AS TEXT)
 ```
-Output MsSQL:
-```text
+**Output MsSQL:**
+```sql
 CAST([t].[number] AS XML)
 ```
-Output MySQL:
-```text
+**Output MySQL:**
+```sql
 CAST(`t`.`number` AS TEXT)
 ```
-Output PostgreSQL:
-```text
+**Output PostgreSQL:**
+```sql
 CAST("t"."number" AS XML)
 ```
-Output SQLite:
-```text
+**Output SQLite:**
+```sql
 CAST("t"."number" AS TEXT)
 ```

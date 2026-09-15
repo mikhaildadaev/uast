@@ -6,7 +6,7 @@ outline: deep
 
 ::: info **Информация**
 Эта страница документирует сокращённые методы, доступные для экземпляра SQL-построителя: `Exec`, `Query` и `QueryRow`. Эти методы объединяют `Build()` с соответствующими методами `database/sql`, сокращая шаблонный код. Каждый метод показан с рабочим примером кода и ожидаемым поведением.
-:::
+:::**
 
 ## sqlBuilder
 ### Build
@@ -22,8 +22,8 @@ stmt := uast.NewSelect(uast.NewTable("users", "u")).
     )
 query, args, err := builder.Build(stmt)
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 // Executes: SELECT "u"."id", "u"."name" FROM "users" AS "u" WHERE "u"."status" = $1
 // Returns: [active]
 ```
@@ -45,8 +45,8 @@ if err != nil {
 }
 rowsAffected, _ := result.RowsAffected()
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 // Executes: INSERT INTO "users" AS "u" ("string") VALUES ($1)
 // Returns: sql.Result with LastInsertId and RowsAffected
 ```
@@ -78,8 +78,8 @@ for rows.Next() {
     fmt.Printf("id: %d, string: %s\n", id, str)
 }
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 // Executes: SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."string" = $1
 // Returns: *sql.Rows iterator
 ```
@@ -111,8 +111,8 @@ if err != nil {
 }
 fmt.Printf("id: %d, string: %s\n", id, str)
 ```
-Output:
-```text
+**Output SQL:**
+```sql
 // Executes: SELECT "u"."id", "u"."string" FROM "users" AS "u" WHERE "u"."id" = $1
 // Returns: *sql.Row, scanned via row.Scan()
 ```

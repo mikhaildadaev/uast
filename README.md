@@ -2,7 +2,7 @@
 [![Go Version](https://img.shields.io/github/go-mod/go-version/mikhaildadaev/uast)](https://github.com/mikhaildadaev/uast)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mikhaildadaev/uast.svg)](https://pkg.go.dev/github.com/mikhaildadaev/uast)
 [![CI](https://github.com/mikhaildadaev/uast/actions/workflows/ci.yml/badge.svg)](https://github.com/mikhaildadaev/uast/actions/workflows/ci.yml)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mikhaildadaev/uast)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-6E56CF)](https://deepwiki.com/mikhaildadaev/uast)
 
 # UAST
 
